@@ -16,25 +16,22 @@ public:
     ContinuousTask();
     ~ContinuousTask();
 
-    Vector a(const Vector &x) const;
-    Matrix B(const Vector &x) const;
-    Vector c(const Vector &x) const;
-    Matrix D(const Vector &x) const;
-    Matrix A(const Vector &m, const Matrix &D) const;
-    Matrix G(const Vector &m, const Matrix &D) const;
-    Matrix K(const Vector &x, const Matrix &D) const;
-    Matrix Psy(const Vector &x, const Matrix &D) const;
+    //объект:
+    virtual Vector a(const Vector &x) const = 0;
+    virtual Matrix B(const Vector &x) const = 0;
+    //измеритель:
+    virtual Vector c(const Vector &x) const = 0;
+    virtual Matrix D(const Vector &x) const = 0;
+
+    virtual Matrix A(const Vector &m, const Matrix &D) const = 0;
+    virtual Matrix G(const Vector &m, const Matrix &D) const = 0;
+    virtual Matrix K(const Vector &x, const Matrix &D) const;
+    virtual Matrix Psy(const Vector &x, const Matrix &D) const;
 
 protected:
-    virtual Vector funcA(const Vector &x) const = 0;
-    virtual Matrix funcB(const Vector &x) const = 0;
-    virtual Vector funcC(const Vector &x) const = 0;
-    virtual Matrix funcD(const Vector &x) const = 0;
-    virtual Matrix funcAA(const Vector &m, const Matrix &D) const = 0;
-    virtual Matrix funcG(const Vector &m, const Matrix &D) const  = 0;
-    virtual Matrix funcQ(const Vector &m, const Matrix &D) const  = 0;
-    virtual Matrix funcS(const Vector &m, const Matrix &D) const  = 0;
-    virtual Matrix funcR(const Vector &m, const Matrix &D) const  = 0;
+    virtual Matrix Q(const Vector &m, const Matrix &D) const = 0;
+    virtual Matrix S(const Vector &m, const Matrix &D) const = 0;
+    virtual Matrix R(const Vector &m, const Matrix &D) const = 0;
 };
 
 

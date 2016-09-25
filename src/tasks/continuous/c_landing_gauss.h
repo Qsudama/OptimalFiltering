@@ -16,18 +16,7 @@ class LandingGauss : public LandingLinear
 public:
     LandingGauss();
 
-
-protected:
-    // TODO :
-    // Vector funcA(const Vector &x) const override;
-    // Matrix funcB(const Vector &x) const override;
-    // Vector funcC(const Vector &x) const override;
-    // Matrix funcD(const Vector &x) const override;
-    // Matrix funcAA(const Vector &m, const Matrix &D) const override;
-    // Matrix funcG(const Vector &m, const Matrix &D) const override;
-    // Matrix funcQ(const Vector &m, const Matrix &D) const override;
-    // Matrix funcS(const Vector &m, const Matrix &D) const override;
-    // Matrix funcR(const Vector &m, const Matrix &D) const override;
+    // TODO
 };
 
 

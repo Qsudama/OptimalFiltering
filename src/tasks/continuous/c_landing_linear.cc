@@ -64,83 +64,86 @@ double LandingLinear::k(double t) const
     return KB * Math::sign(t - TT);
 }
 
-Vector LandingLinear::funcA(const Vector &x) const
+Vector LandingLinear::a(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
-    Vector a(m_dimX);
-    a[0] = -CC * x[0] * x[0] * e - GG * sin(x[1]);
-    a[1] = CC * k(m_time) * x[0] * e + cos(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
-    a[2] = x[0] * sin(x[1]);
+    Vector aa(m_dimX);
 
-    return a;
+    aa[0] = -CC * x[0] * x[0] * e - GG * sin(x[1]);
+    aa[1] = CC * k(m_time) * x[0] * e + cos(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
+    aa[2] = x[0] * sin(x[1]);
+
+    return aa;
 }
 
-Matrix LandingLinear::funcB(const Vector & /*x*/) const
+Matrix LandingLinear::B(const Vector & /*x*/) const
 {
     return Matrix::Zero(m_dimX, m_dimV);
 }
 
 
-Vector LandingLinear::funcC(const Vector &x) const
+Vector LandingLinear::c(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
-    Vector c(m_dimY);
-    c[0] = CC * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1]));
-    c[1] = CC * x[0] * x[0] * e * (sin(x[1]) - k(m_time) * cos(x[1]));
+    Vector cc(m_dimY);
 
-    return c;
+    cc[0] = CC * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1]));
+    cc[1] = CC * x[0] * x[0] * e * (sin(x[1]) - k(m_time) * cos(x[1]));
+
+    return cc;
 }
 
-Matrix LandingLinear::funcD(const Vector &x) const
+Matrix LandingLinear::D(const Vector &x) const
 {
-    Matrix d = Matrix::Zero(m_dimY, m_dimW);
-    Vector c = funcC(x);
-    d(0, 0) = c[0];
+    Matrix d  = Matrix::Zero(m_dimY, m_dimW);
+    Vector cc = c(x);
+
+    d(0, 0) = cc[0];
     d(0, 2) = 1.0;
-    d(1, 1) = c[1];
+    d(1, 1) = cc[1];
     d(1, 3) = 1.0;
 
     return d;
 }
 
-Matrix LandingLinear::funcQ(const Vector &x, const Matrix & /*D*/) const
+Matrix LandingLinear::Q(const Vector &x, const Matrix & /*D*/) const
 {
-    Matrix b = funcB(x);
+    Matrix b = B(x);
     return b * b.transpose();
 }
 
-Matrix LandingLinear::funcS(const Vector & /*x*/, const Matrix & /*D*/) const
+Matrix LandingLinear::S(const Vector & /*x*/, const Matrix & /*D*/) const
 {
     return Matrix::Zero(m_dimX, m_dimY);
 }
 
-Matrix LandingLinear::funcR(const Vector &x, const Matrix & /*D*/) const
+Matrix LandingLinear::R(const Vector &x, const Matrix & /*D*/) const
 {
-    Matrix d = funcD(x);
+    Matrix d = D(x);
     return d * d.transpose();
 }
 
-Matrix LandingLinear::funcAA(const Vector &m, const Matrix & /*D*/) const
+Matrix LandingLinear::A(const Vector &m, const Matrix & /*D*/) const
 {
     double e = exp(-BB * m[2]);
-    Matrix a(m_dimX, m_dimX);
+    Matrix aa(m_dimX, m_dimX);
 
-    a(0, 0) = -2.0 * CC * m[0] * e;
-    a(0, 1) = -GG * cos(m[1]);
-    a(0, 2) = BB * CC * m[0] * m[0] * e;
+    aa(0, 0) = -2.0 * CC * m[0] * e;
+    aa(0, 1) = -GG * cos(m[1]);
+    aa(0, 2) = BB * CC * m[0] * m[0] * e;
 
-    a(1, 0) = CC * k(m_time) * e + (GG / (m[0] * m[0]) + 1.0 / (RR + m[2])) * cos(m[1]);
-    a(1, 1) = (GG / m[0] - m[0] / (RR + m[2])) * sin(m[1]);
-    a(1, 2) = -CC * BB * k(m_time) * m[0] * e - m[0] * cos(m[1]) / ((RR + m[2]) * (RR + m[2]));
+    aa(1, 0) = CC * k(m_time) * e + (GG / (m[0] * m[0]) + 1.0 / (RR + m[2])) * cos(m[1]);
+    aa(1, 1) = (GG / m[0] - m[0] / (RR + m[2])) * sin(m[1]);
+    aa(1, 2) = -CC * BB * k(m_time) * m[0] * e - m[0] * cos(m[1]) / ((RR + m[2]) * (RR + m[2]));
 
-    a(2, 0) = sin(m[1]);
-    a(2, 1) = m[0] * cos(m[1]);
-    a(2, 2) = 0.0;
+    aa(2, 0) = sin(m[1]);
+    aa(2, 1) = m[0] * cos(m[1]);
+    aa(2, 2) = 0.0;
 
-    return a;
+    return aa;
 }
 
-Matrix LandingLinear::funcG(const Vector &m, const Matrix & /*D*/) const
+Matrix LandingLinear::G(const Vector &m, const Matrix & /*D*/) const
 {
     double e = exp(-BB * m[2]);
     Matrix g(m_dimY, m_dimX);

@@ -18,17 +18,18 @@ class LandingLinear : public Core::ContinuousTask
 public:
     LandingLinear();
 
+    Vector a(const Vector &x) const override;
+    Matrix B(const Vector &x) const override;
+    Vector c(const Vector &x) const override;
+    Matrix D(const Vector &x) const override;
+    Matrix A(const Vector &m, const Matrix &D) const override;
+    Matrix G(const Vector &m, const Matrix &D) const override;
+
 
 protected:
-    Vector funcA(const Vector &x) const override;
-    Matrix funcB(const Vector &x) const override;
-    Vector funcC(const Vector &x) const override;
-    Matrix funcD(const Vector &x) const override;
-    Matrix funcAA(const Vector &m, const Matrix &D) const override;
-    Matrix funcG(const Vector &m, const Matrix &D) const override;
-    Matrix funcQ(const Vector &m, const Matrix &D) const override;
-    Matrix funcS(const Vector &m, const Matrix &D) const override;
-    Matrix funcR(const Vector &m, const Matrix &D) const override;
+    Matrix Q(const Vector &m, const Matrix &D) const override;
+    Matrix S(const Vector &m, const Matrix &D) const override;
+    Matrix R(const Vector &m, const Matrix &D) const override;
 
     void loadParams() override;
 

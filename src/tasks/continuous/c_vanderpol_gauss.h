@@ -17,16 +17,11 @@ class VanDerPolGauss : public VanDerPolLinear
 public:
     VanDerPolGauss();
 
+    Matrix A(const Vector &m, const Matrix &D) const override;
+    Matrix G(const Vector &m, const Matrix &D) const override;
 
 protected:
-    // TODO
-    // Vector funcA(const Vector &x) const override;
-    // Matrix funcB(const Vector &x) const override;
-    // Vector funcC(const Vector &x) const override;
-    // Matrix funcD(const Vector &x) const override;
-    Matrix funcAA(const Vector &m, const Matrix &D) const override;
-    Matrix funcG(const Vector &m, const Matrix &D) const override;
-    Matrix funcQ(const Vector &m, const Matrix &D) const override;
+    Matrix Q(const Vector &m, const Matrix &D) const override;
 };
 
 
