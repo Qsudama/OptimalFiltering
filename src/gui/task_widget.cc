@@ -1,0 +1,114 @@
+#include "task_widget.h"
+#include "font_manager.h"
+#include <QApplication>
+#include <QDesktopWidget>
+
+
+TaskWidget::TaskWidget(QWidget *parent)
+    : QGroupBox(parent)
+    , m_parametersWidget(nullptr)
+{
+    setTitle(tr("Решаемая задача"));
+    loadFonts();
+    initControls();
+    initLayouts();
+    onCbTaskChanged(0);
+}
+
+void TaskWidget::loadFonts()
+{
+    this->setFont(FontManager::instance().regular(9));
+}
+
+void TaskWidget::initControls()
+{
+    m_cbTask = new QComboBox;
+    m_cbTask->addItem(tr("Спуск ЛА на планету"));
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля"));
+    m_cbTask->setCurrentIndex(0);
+    connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
+
+    m_btnParameters = new QPushButton(tr("Показать"));
+    connect(m_btnParameters, SIGNAL(clicked()), this, SLOT(onBtnParametersClicked()));
+}
+
+void TaskWidget::initLayouts()
+{
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(5);
+    mainLayout->setSpacing(5);
+
+    mainLayout->addWidget(m_cbTask);
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setMargin(5);
+    layout->setSpacing(5);
+    QLabel *lbl = new QLabel(tr("Параметры задачи"));
+    lbl->setMinimumWidth(QFontMetrics(this->font()).width(lbl->text()));
+    layout->addWidget(lbl);
+    layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
+    m_btnParameters->setMinimumWidth(QFontMetrics(this->font()).width("    " + m_btnParameters->text()));
+    layout->addWidget(m_btnParameters);
+
+    mainLayout->addLayout(layout);
+
+    this->setLayout(mainLayout);
+}
+
+void TaskWidget::onBtnParametersClicked()
+{
+    if (m_parametersWidget->isHidden()) {
+        m_parametersWidget->show();
+    }
+}
+
+void TaskWidget::onCbTaskChanged(int)
+{
+    Core::PtrTask tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, id(), Core::APPROX_TYPE::Linear);
+
+    bool hidden = true;
+    if (m_parametersWidget) {
+        if (!m_parametersWidget->isHidden()) {
+            hidden = false;
+            m_parametersWidget->hide();
+        }
+        delete m_parametersWidget;
+    }
+
+    m_parametersWidget = new TaskParametersWidget(tmpTask);
+    m_parametersWidget->setWindowTitle(tr("Параметры задачи"));
+    QRect screenRect = QApplication::desktop()->availableGeometry();
+    int   x          = screenRect.width() / 2 - 832 / 2;
+    int   y          = 193;
+    int   w          = 832;
+    int   h          = screenRect.height() - y - 65;
+    m_parametersWidget->setGeometry(x, y, w, h);
+    m_parametersWidget->setHidden(hidden);
+
+    emit changed();
+}
+
+Core::PtrTask TaskWidget::task(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype)
+{
+    Core::PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id(), atype);
+    m_parametersWidget->loadParamsTo(tmpTask);
+
+    return tmpTask;
+}
+
+Tasks::TASK_ID TaskWidget::id() const
+{
+    switch (m_cbTask->currentIndex()) {
+    case 0:
+        return Tasks::TASK_ID::Landing;
+    case 1:
+        return Tasks::TASK_ID::VanDerPol;
+    default:
+        return Tasks::TASK_ID::Landing;
+    }
+}
+
+const QString TaskWidget::name() const
+{
+    return m_cbTask->currentText();
+}
