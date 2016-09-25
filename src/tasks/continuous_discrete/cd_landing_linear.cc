@@ -66,56 +66,56 @@ double LandingLinear::k(double t) const
     return KB * Math::sign(t - TT);
 }
 
-Vector LandingLinear::funcA(const Vector &x) const
+Vector LandingLinear::a(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
-    Vector a(m_dimX);
+    Vector aa(m_dimX);
 
-    a[0] = -CC * x[0] * x[0] * e - GG * sin(x[1]);
-    a[1] = CC * k(m_time) * x[0] * e + cos(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
-    a[2] = x[0] * sin(x[1]);
+    aa[0] = -CC * x[0] * x[0] * e - GG * sin(x[1]);
+    aa[1] = CC * k(m_time) * x[0] * e + cos(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
+    aa[2] = x[0] * sin(x[1]);
 
-    return a;
+    return aa;
 }
 
-Matrix LandingLinear::funcB(const Vector & /*x*/) const
+Matrix LandingLinear::B(const Vector & /*x*/) const
 {
     return Matrix::Zero(3, 3);
 }
 
-Vector LandingLinear::funcTau(const Vector &m, const Matrix & /*D*/) const
+Vector LandingLinear::tau(const Vector &m, const Matrix & /*D*/) const
 {
     // tau (m, D, t) = a (m, t) :
-    return funcA(m);
+    return a(m);
 }
 
-Matrix LandingLinear::funcTheta(const Vector & /*m*/, const Matrix & /*D*/) const
+Matrix LandingLinear::Theta(const Vector & /*m*/, const Matrix & /*D*/) const
 {
     return Matrix::Zero(3, 3);
 }
 
-Matrix LandingLinear::funcAA(const Vector &m, const Matrix & /*D*/) const
+Matrix LandingLinear::A(const Vector &m, const Matrix & /*D*/) const
 {
     double e = exp(-BB * m[2]);
-    Matrix a(m_dimX, m_dimX);
+    Matrix aa(m_dimX, m_dimX);
 
-    a(0, 0) = -2.0 * CC * m[0] * e;
-    a(0, 1) = -GG * cos(m[1]);
-    a(0, 2) = BB * CC * m[0] * m[0] * e;
+    aa(0, 0) = -2.0 * CC * m[0] * e;
+    aa(0, 1) = -GG * cos(m[1]);
+    aa(0, 2) = BB * CC * m[0] * m[0] * e;
 
-    a(1, 0) = CC * k(m_time) * e + (GG / (m[0] * m[0]) + 1.0 / (RR + m[2])) * cos(m[1]);
-    a(1, 1) = (GG / m[0] - m[0] / (RR + m[2])) * sin(m[1]);
-    a(1, 2) = -CC * BB * k(m_time) * m[0] * e - m[0] * cos(m[1]) / ((RR + m[2]) * (RR + m[2]));
+    aa(1, 0) = CC * k(m_time) * e + (GG / (m[0] * m[0]) + 1.0 / (RR + m[2])) * cos(m[1]);
+    aa(1, 1) = (GG / m[0] - m[0] / (RR + m[2])) * sin(m[1]);
+    aa(1, 2) = -CC * BB * k(m_time) * m[0] * e - m[0] * cos(m[1]) / ((RR + m[2]) * (RR + m[2]));
 
-    a(2, 0) = sin(m[1]);
-    a(2, 1) = m[0] * cos(m[1]);
-    a(2, 2) = 0.0;
+    aa(2, 0) = sin(m[1]);
+    aa(2, 1) = m[0] * cos(m[1]);
+    aa(2, 2) = 0.0;
 
-    return a;
+    return aa;
 }
 
 
-Vector LandingLinear::funcC(const Vector &x) const
+Vector LandingLinear::c(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Vector w = gaussianVector(mw, Dw);
@@ -127,7 +127,7 @@ Vector LandingLinear::funcC(const Vector &x) const
     return c;
 }
 
-Vector LandingLinear::funcH(const Vector &m, const Matrix & /* D*/) const
+Vector LandingLinear::h(const Vector &m, const Matrix & /* D*/) const
 {
     double e = exp(-BB * m[2]);
     Vector h(2); // WARNING (size = ?)
@@ -138,7 +138,7 @@ Vector LandingLinear::funcH(const Vector &m, const Matrix & /* D*/) const
     return h;
 }
 
-Matrix LandingLinear::funcG(const Vector &m, const Matrix & /*D*/) const
+Matrix LandingLinear::G(const Vector &m, const Matrix & /*D*/) const
 {
     double e = exp(-BB * m[2]);
     Matrix g(2, 3); // WARNING (size = ?)
@@ -154,10 +154,10 @@ Matrix LandingLinear::funcG(const Vector &m, const Matrix & /*D*/) const
     return g;
 }
 
-Matrix LandingLinear::funcF(const Vector &m, const Matrix &D) const
+Matrix LandingLinear::F(const Vector &m, const Matrix &D) const
 {
     double e  = exp(-BB * m[2]);
-    Matrix cx = funcG(m, D);
+    Matrix cx = G(m, D);
     Matrix cw(2, 4); // WARNING (size = ?)
 
     cw(0, 0) = CC * m[0] * m[0] * e * (cos(m[1]) - k(m_time) * sin(m[1]));

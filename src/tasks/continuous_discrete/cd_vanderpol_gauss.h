@@ -19,11 +19,11 @@ public:
 
 
 protected:
-    Vector funcTau(const Vector &m, const Matrix &D) const override;
-    Matrix funcTheta(const Vector &m, const Matrix &D) const override;
-    Matrix funcAA(const Vector &m, const Matrix &D) const override;
-    Matrix funcG(const Vector &m, const Matrix &D) const override;
-    Matrix funcF(const Vector &m, const Matrix &D) const override;
+    Vector tau(const Vector &m, const Matrix &D) const override;
+    Matrix Theta(const Vector &m, const Matrix &D) const override;
+    Matrix A(const Vector &m, const Matrix &D) const override;
+    Matrix G(const Vector &m, const Matrix &D) const override;
+    Matrix F(const Vector &m, const Matrix &D) const override;
 };
 
 

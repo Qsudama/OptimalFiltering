@@ -14,7 +14,7 @@ VanDerPolGauss::VanDerPolGauss()
     m_info->setType("Г-");
 }
 
-Vector VanDerPolGauss::funcTau(const Vector &m, const Matrix &D) const
+Vector VanDerPolGauss::tau(const Vector &m, const Matrix &D) const
 {
     Vector tau(m_dimX);
     tau[0] = m[1];
@@ -23,14 +23,14 @@ Vector VanDerPolGauss::funcTau(const Vector &m, const Matrix &D) const
     return tau;
 }
 
-Matrix VanDerPolGauss::funcTheta(const Vector &m, const Matrix &D) const
+Matrix VanDerPolGauss::Theta(const Vector &m, const Matrix &D) const
 {
     Matrix theta = Matrix::Zero(2, 2); // WARNING (size = ?)
     theta(1, 1) = m[0] * m[0] + D(0, 0);
     return theta;
 }
 
-Matrix VanDerPolGauss::funcAA(const Vector &m, const Matrix &D) const
+Matrix VanDerPolGauss::A(const Vector &m, const Matrix &D) const
 {
     Matrix a(m_dimX, m_dimX);
     a(0, 0) = 0.0;
@@ -40,12 +40,12 @@ Matrix VanDerPolGauss::funcAA(const Vector &m, const Matrix &D) const
     return a;
 }
 
-Matrix VanDerPolGauss::funcG(const Vector & /*m*/, const Matrix & /*D*/) const
+Matrix VanDerPolGauss::G(const Vector & /*m*/, const Matrix & /*D*/) const
 {
     return Matrix::Identity(2, 2);
 }
 
-Matrix VanDerPolGauss::funcF(const Vector & /*m*/, const Matrix &D) const
+Matrix VanDerPolGauss::F(const Vector & /*m*/, const Matrix &D) const
 {
     Matrix f = D;
     f(0, 0) += Dw(0, 0);

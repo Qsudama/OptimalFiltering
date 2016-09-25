@@ -18,19 +18,18 @@ class LandingLinear : public Core::ContinuousDiscreteTask
 public:
     LandingLinear();
 
+    Vector a(const Vector &x) const override;
+    Matrix B(const Vector &x) const override;
+    Vector c(const Vector &x) const override;
+    Vector tau(const Vector &m, const Matrix &D) const override;
+    Matrix Theta(const Vector &m, const Matrix &D) const override;
+    Matrix A(const Vector &m, const Matrix &D) const override;
+    Vector h(const Vector &m, const Matrix &D) const override;
+    Matrix G(const Vector &m, const Matrix &D) const override;
+    Matrix F(const Vector &m, const Matrix &D) const override;
+
 
 protected:
-    Vector funcA(const Vector &x) const override;
-    Matrix funcB(const Vector &x) const override;
-    Vector funcTau(const Vector &m, const Matrix &D) const override;
-    Matrix funcTheta(const Vector &m, const Matrix &D) const override;
-    Matrix funcAA(const Vector &m, const Matrix &D) const override;
-
-    Vector funcC(const Vector &x) const override;
-    Vector funcH(const Vector &m, const Matrix &D) const override;
-    Matrix funcG(const Vector &m, const Matrix &D) const override;
-    Matrix funcF(const Vector &m, const Matrix &D) const override;
-
     void loadParams() override;
 
     double k(double t) const;
