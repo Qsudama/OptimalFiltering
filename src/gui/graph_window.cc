@@ -264,6 +264,11 @@ void GraphWindow::onMenuRequest(QPoint pos)
             ->setData((int(Qt::AlignBottom | Qt::AlignRight)));
         menu->addAction(tr("В левый нижний угол"), this, SLOT(onMoveLegend()))
             ->setData((int(Qt::AlignBottom | Qt::AlignLeft)));
+    } else if (m_plotter->selectedGraphs().size() > 0) {
+        QAction *action = new QAction(tr("Cкрыть"));
+        action->setData(m_plotter->selectedGraphs().at(0)->name());
+        menu->addAction(action);
+        connect(menu, SIGNAL(triggered(QAction *)), m_menuHide, SIGNAL(triggered(QAction *)));
     }
     menu->popup(m_plotter->mapToGlobal(pos));
 }
@@ -296,15 +301,14 @@ void GraphWindow::onRangesChanged(Math::Vector2 x, Math::Vector2 y)
     range.yMax = y[1];
     m_currentSheet->setAxisRange(range);
     m_currentSheet->setAutoCalcRanges(false);
-    m_actionSetAutoRanges->setChecked(false);
-    updatePlotter();
+    m_actionSetAutoRanges->setChecked(false); // вызывает updatePlotter()
 }
 
 void GraphWindow::onSavePng()
 {
-    QString filename =
-        QFileDialog::getSaveFileName(this, tr("Сохранить изображение"), QDir::currentPath(), tr("Изображение (*.png)"));
-    m_plotter->savePng(filename);
+    QString fileName =
+        QFileDialog::getSaveFileName(this, tr("Сохранить изображение"), QDir::homePath(), tr("Изображение (*.png)"));
+    m_plotter->savePng(fileName);
 }
 
 
@@ -344,7 +348,7 @@ void GraphWindow::onCurrentSheetChanged(QAction *action)
     }
     m_menuSheet->removeAction(action);
     m_currentSheet = &(m_sheets[snum]);
-    m_currentSheet->setAutoCalcRanges(m_actionSetAutoRanges->isChecked());
+    m_actionSetAutoRanges->setChecked(m_currentSheet->autoCalcRanges());
     updatePlotter();
 }
 
