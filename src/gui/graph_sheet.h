@@ -8,8 +8,12 @@ struct GCurve {
     QVector<double> x;
     QVector<double> y;
     QString         name;
+    int             number;
     QPen            pen;
     bool            visible;
+
+    GCurve();
+    QString fullName() const;
 };
 
 struct GAxisRange {

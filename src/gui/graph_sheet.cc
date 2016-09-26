@@ -1,6 +1,25 @@
 #include "graph_sheet.h"
 
 
+// GCurve:
+
+GCurve::GCurve()
+    : number(0)
+    , visible(true)
+{
+}
+
+QString GCurve::fullName() const
+{
+    if (number == 0) {
+        return name;
+    }
+    return name + "  #" + QString::number(number + 1);
+}
+
+
+// GraphSheet:
+
 GraphSheet::GraphSheet()
 {
     clear();
@@ -116,15 +135,16 @@ void GraphSheet::setCurveVisible(int index, bool visible)
 void GraphSheet::addCurve(const QVector<double> &x, const QVector<double> &y, const QString &name, const QPen &pen,
                           bool visible)
 {
-    //запрещаем добавление кривых с одинаковыми названиями (name):
-    for (int i = 0; i < m_curves.size(); i++) {
+    int number = 0;
+    for (int i = 0; i < m_curves.size(); ++i) {
         if (m_curves[i].name == name) {
-            return;
+            ++number;
         }
     }
 
     m_curves.resize(m_curves.size() + 1);
     m_curves.last().name    = name;
+    m_curves.last().number  = number;
     m_curves.last().pen     = pen;
     m_curves.last().visible = visible;
     m_curves.last().x       = x;

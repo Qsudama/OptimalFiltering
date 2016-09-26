@@ -19,9 +19,9 @@ GraphWindow::~GraphWindow()
 void GraphWindow::loadFonts()
 {
     m_plotterTitleFont         = FontManager::instance().regularBold(14);
-    m_plotterSubTitleFont      = FontManager::instance().regular(11);
+    m_plotterSubTitleFont      = FontManager::instance().regular(12);
     m_plotterAxesLabelFont     = FontManager::instance().regular(12);
-    m_plotterLegendFont        = FontManager::instance().regular(11);
+    m_plotterLegendFont        = FontManager::instance().regular(10);
     m_plotterAxesTickLabelFont = FontManager::instance().regular(9);
 }
 
@@ -161,8 +161,8 @@ void GraphWindow::updateMenu()
     int count = 0;
     for (int i = 0; i < m_currentSheet->curves().size(); i++) {
         if (m_currentSheet->curves()[i].visible == true) {
-            QAction *action = new QAction(m_currentSheet->curves()[i].name, m_menuHide);
-            action->setData(m_currentSheet->curves()[i].name);
+            QAction *action = new QAction(m_currentSheet->curves()[i].fullName(), m_menuHide);
+            action->setData(m_currentSheet->curves()[i].fullName());
             action->setAutoRepeat(false);
             m_menuHide->addAction(action);
             count++;
@@ -180,8 +180,8 @@ void GraphWindow::updateMenu()
     count = 0;
     for (int i = 0; i < m_currentSheet->curves().size(); i++) {
         if (m_currentSheet->curves()[i].visible == false) {
-            QAction *action = new QAction(m_currentSheet->curves()[i].name, m_menuShow);
-            action->setData(m_currentSheet->curves()[i].name);
+            QAction *action = new QAction(m_currentSheet->curves()[i].fullName(), m_menuShow);
+            action->setData(m_currentSheet->curves()[i].fullName());
             action->setAutoRepeat(false);
             m_menuShow->addAction(action);
             count++;
@@ -358,7 +358,7 @@ void GraphWindow::onHideCurve(QAction *action)
     int     index = -1;
 
     for (int j = 0; j < m_currentSheet->curves().size(); j++) {
-        if (m_currentSheet->curves()[j].name == name && m_currentSheet->curves()[j].visible == true) {
+        if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == true) {
             m_menuHide->removeAction(action);
             m_currentSheet->setCurveVisible(j, false);
             index = j;
@@ -380,7 +380,7 @@ void GraphWindow::onShowCurve(QAction *action)
     int     index = -1;
 
     for (int j = 0; j < m_currentSheet->curves().size(); j++) {
-        if (m_currentSheet->curves()[j].name == name && m_currentSheet->curves()[j].visible == false) {
+        if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == false) {
 
             m_menuShow->removeAction(action);
             m_currentSheet->setCurveVisible(j, true);
@@ -460,7 +460,7 @@ void GraphWindow::updatePlotter()
         m_plotter->addGraph();
         m_plotter->graph(j)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y);
         m_plotter->graph(j)->setPen(m_currentSheet->curves()[i].pen);
-        m_plotter->graph(j)->setName(m_currentSheet->curves()[i].name);
+        m_plotter->graph(j)->setName(m_currentSheet->curves()[i].fullName());
         m_plotter->graph(j)->setAntialiased(true);
         m_plotter->graph(j)->setAdaptiveSampling(true);
     }
