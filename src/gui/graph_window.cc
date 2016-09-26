@@ -130,12 +130,13 @@ void GraphWindow::initPlotter()
     connect(m_plotter->xAxis, SIGNAL(rangeChanged(QCPRange)), m_plotter->xAxis2, SLOT(setRange(QCPRange)));
     connect(m_plotter->yAxis, SIGNAL(rangeChanged(QCPRange)), m_plotter->yAxis2, SLOT(setRange(QCPRange)));
 
-    QFontMetrics *metric = new QFontMetrics(m_plotterSubTitleFont);
-    int           minWidth =
-        metric->width(QString(tr("размер выборки 99999, шаг интегрирования 0.0001, между измерениями 9999.9999")));
-    int minHeight = int(0.6 * minWidth);
+    QFontMetrics *metric    = new QFontMetrics(m_plotterSubTitleFont);
+    int           minWidth  = metric->width(tr("размер выборки 99999, шаг интегрирования 0.0001, между измерениями 9999.9999"));
+    int           minHeight = int(0.6 * minWidth);
+
     m_plotter->setMinimumWidth(minWidth);
     m_plotter->setMinimumHeight(minHeight);
+    delete metric;
 }
 
 void GraphWindow::updateMenu()
@@ -265,10 +266,7 @@ void GraphWindow::onMenuRequest(QPoint pos)
         menu->addAction(tr("В левый нижний угол"), this, SLOT(onMoveLegend()))
             ->setData((int(Qt::AlignBottom | Qt::AlignLeft)));
     } else if (m_plotter->selectedGraphs().size() > 0) {
-        QAction *action = new QAction(tr("Cкрыть"));
-        action->setData(m_plotter->selectedGraphs().at(0)->name());
-        menu->addAction(action);
-        connect(menu, SIGNAL(triggered(QAction *)), m_menuHide, SIGNAL(triggered(QAction *)));
+        menu->addAction(tr("Cкрыть"), this, SLOT(onHideCurveFromContextMenu()));
     }
     menu->popup(m_plotter->mapToGlobal(pos));
 }
@@ -350,6 +348,26 @@ void GraphWindow::onCurrentSheetChanged(QAction *action)
     m_currentSheet = &(m_sheets[snum]);
     m_actionSetAutoRanges->setChecked(m_currentSheet->autoCalcRanges());
     updatePlotter();
+}
+
+void GraphWindow::onHideCurveFromContextMenu()
+{
+    if (m_plotter->selectedGraphs().size() == 0) {
+        return;
+    }
+
+    QString name  = m_plotter->selectedGraphs().at(0)->name();
+    int     index = -1;
+    for (int j = 0; j < m_currentSheet->curves().size(); j++) {
+        if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == true) {
+            m_currentSheet->setCurveVisible(j, false);
+            index = j;
+            j     = m_currentSheet->curves().size() + 1;
+        }
+    }
+    if (index > -1) {
+        updatePlotter();
+    }
 }
 
 void GraphWindow::onHideCurve(QAction *action)

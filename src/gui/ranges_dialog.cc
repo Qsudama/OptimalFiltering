@@ -78,6 +78,7 @@ void RangesDialog::loadFonts()
     QFontMetrics *metric    = new QFontMetrics(monoFont);
     int           dsbWidth  = metric->width("-100000,000") + 2;
     int           dsbHeight = int(1.67 * metric->height());
+    delete metric;
 
     m_dsbXMin->setMinimumWidth(dsbWidth);
     m_dsbXMin->setMinimumHeight(dsbHeight);

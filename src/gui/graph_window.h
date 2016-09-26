@@ -47,6 +47,7 @@ private slots:
     void onShowSetRangesDialog();
     void onSetAutoRanges(bool checked);
     void onHideCurve(QAction *action);
+    void onHideCurveFromContextMenu();
     void onShowCurve(QAction *action);
     void onCurrentSheetChanged(QAction *action);
 
