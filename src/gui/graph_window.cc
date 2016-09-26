@@ -130,12 +130,13 @@ void GraphWindow::initPlotter()
     connect(m_plotter->xAxis, SIGNAL(rangeChanged(QCPRange)), m_plotter->xAxis2, SLOT(setRange(QCPRange)));
     connect(m_plotter->yAxis, SIGNAL(rangeChanged(QCPRange)), m_plotter->yAxis2, SLOT(setRange(QCPRange)));
 
-    QFontMetrics *metric = new QFontMetrics(m_plotterSubTitleFont);
-    int           minWidth =
-        metric->width(QString(tr("размер выборки 99999, шаг интегрирования 0.0001, между измерениями 9999.9999")));
-    int minHeight = int(0.6 * minWidth);
+    QFontMetrics *metric    = new QFontMetrics(m_plotterSubTitleFont);
+    int           minWidth  = metric->width(tr("размер выборки 99999, шаг интегрирования 0.0001, между измерениями 9999.9999"));
+    int           minHeight = int(0.6 * minWidth);
+
     m_plotter->setMinimumWidth(minWidth);
     m_plotter->setMinimumHeight(minHeight);
+    delete metric;
 }
 
 void GraphWindow::updateMenu()
@@ -264,6 +265,8 @@ void GraphWindow::onMenuRequest(QPoint pos)
             ->setData((int(Qt::AlignBottom | Qt::AlignRight)));
         menu->addAction(tr("В левый нижний угол"), this, SLOT(onMoveLegend()))
             ->setData((int(Qt::AlignBottom | Qt::AlignLeft)));
+    } else if (m_plotter->selectedGraphs().size() > 0) {
+        menu->addAction(tr("Cкрыть"), this, SLOT(onHideCurveFromContextMenu()));
     }
     menu->popup(m_plotter->mapToGlobal(pos));
 }
@@ -296,15 +299,14 @@ void GraphWindow::onRangesChanged(Math::Vector2 x, Math::Vector2 y)
     range.yMax = y[1];
     m_currentSheet->setAxisRange(range);
     m_currentSheet->setAutoCalcRanges(false);
-    m_actionSetAutoRanges->setChecked(false);
-    updatePlotter();
+    m_actionSetAutoRanges->setChecked(false); // вызывает updatePlotter()
 }
 
 void GraphWindow::onSavePng()
 {
-    QString filename =
-        QFileDialog::getSaveFileName(this, tr("Сохранить изображение"), QDir::currentPath(), tr("Изображение (*.png)"));
-    m_plotter->savePng(filename);
+    QString fileName =
+        QFileDialog::getSaveFileName(this, tr("Сохранить изображение"), QDir::homePath(), tr("Изображение (*.png)"));
+    m_plotter->savePng(fileName);
 }
 
 
@@ -344,8 +346,28 @@ void GraphWindow::onCurrentSheetChanged(QAction *action)
     }
     m_menuSheet->removeAction(action);
     m_currentSheet = &(m_sheets[snum]);
-    m_currentSheet->setAutoCalcRanges(m_actionSetAutoRanges->isChecked());
+    m_actionSetAutoRanges->setChecked(m_currentSheet->autoCalcRanges());
     updatePlotter();
+}
+
+void GraphWindow::onHideCurveFromContextMenu()
+{
+    if (m_plotter->selectedGraphs().size() == 0) {
+        return;
+    }
+
+    QString name  = m_plotter->selectedGraphs().at(0)->name();
+    int     index = -1;
+    for (int j = 0; j < m_currentSheet->curves().size(); j++) {
+        if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == true) {
+            m_currentSheet->setCurveVisible(j, false);
+            index = j;
+            j     = m_currentSheet->curves().size() + 1;
+        }
+    }
+    if (index > -1) {
+        updatePlotter();
+    }
 }
 
 void GraphWindow::onHideCurve(QAction *action)

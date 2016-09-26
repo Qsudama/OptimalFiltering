@@ -1,7 +1,7 @@
 #include "graph_sheet.h"
 
 
-// GCurve:
+// ----- GCurve:
 
 GCurve::GCurve()
     : number(0)
@@ -18,18 +18,16 @@ QString GCurve::fullName() const
 }
 
 
-// GraphSheet:
+// ----- GraphSheet:
 
 GraphSheet::GraphSheet()
 {
     clear();
 }
 
-
 GraphSheet::~GraphSheet()
 {
 }
-
 
 void GraphSheet::clear()
 {
@@ -44,9 +42,6 @@ void GraphSheet::clear()
     m_axisRange.xMax = m_axisRange.yMax = 1;
     m_userAxisRange                     = m_axisRange;
 }
-
-
-// getters -------------------------------------------------------------------//
 
 const QString &GraphSheet::xLabel() const
 {
@@ -82,9 +77,6 @@ const QVector<GCurve> &GraphSheet::curves() const
 {
     return m_curves;
 }
-
-
-// setters -------------------------------------------------------------------//
 
 void GraphSheet::setXLabel(const QString &label)
 {
@@ -129,15 +121,15 @@ void GraphSheet::setCurveVisible(int index, bool visible)
     calcRanges();
 }
 
-
-// ---------------------------------------------------------------------------//
-
 void GraphSheet::addCurve(const QVector<double> &x, const QVector<double> &y, const QString &name, const QPen &pen,
                           bool visible)
 {
     int number = 0;
     for (int i = 0; i < m_curves.size(); ++i) {
         if (m_curves[i].name == name) {
+            if (name.mid(0, 2) == "Mx" || name.mid(0, 2) == "Sx") { //
+                return;                                             // WARNING: костыль...
+            }                                                       //
             ++number;
         }
     }
@@ -153,48 +145,49 @@ void GraphSheet::addCurve(const QVector<double> &x, const QVector<double> &y, co
     calcRanges();
 }
 
-
 void GraphSheet::calcRanges()
 {
-    if (m_autoCalcRanges) {
-        if (m_curves.size() == 0) {
-            m_axisRange.xMin = m_axisRange.yMin = 0;
-            m_axisRange.xMax = m_axisRange.yMax = 1;
-            return;
-        }
-
-        double xmin = std::numeric_limits<double>::max();
-        double ymin = std::numeric_limits<double>::max();
-        double xmax = std::numeric_limits<double>::min();
-        double ymax = std::numeric_limits<double>::min();
-
-        for (int i = 0; i < m_curves.size(); i++) {
-            if (m_curves[i].visible == false) {
-                continue;
-            }
-            for (int j = 0; j < m_curves[i].x.size(); j++) {
-                if (m_curves[i].x[j] > xmax) {
-                    xmax = m_curves[i].x[j];
-                }
-                if (m_curves[i].y[j] > ymax) {
-                    ymax = m_curves[i].y[j];
-                }
-                if (m_curves[i].x[j] < xmin) {
-                    xmin = m_curves[i].x[j];
-                }
-                if (m_curves[i].y[j] < ymin) {
-                    ymin = m_curves[i].y[j];
-                }
-            }
-        }
-        double xd = (xmax - xmin) * 0.005;
-        double yd = (xmax - xmin) * 0.005;
-
-        m_axisRange.xMin = xmin - xd;
-        m_axisRange.xMax = xmax + xd;
-        m_axisRange.yMin = ymin - yd;
-        m_axisRange.yMax = ymax + yd;
-    } else {
+    if (!m_autoCalcRanges) {
         m_axisRange = m_userAxisRange;
+        return;
     }
+
+    if (m_curves.size() == 0) {
+        m_axisRange.xMin = m_axisRange.yMin = 0;
+        m_axisRange.xMax = m_axisRange.yMax = 1;
+        return;
+    }
+
+    double xmin = std::numeric_limits<double>::max();
+    double ymin = std::numeric_limits<double>::max();
+    double xmax = std::numeric_limits<double>::lowest();
+    double ymax = std::numeric_limits<double>::lowest();
+
+    for (int i = 0; i < m_curves.size(); i++) {
+        if (m_curves[i].visible == false) {
+            continue;
+        }
+        for (int j = 0; j < m_curves[i].x.size(); j++) {
+            if (m_curves[i].x[j] > xmax) {
+                xmax = m_curves[i].x[j];
+            }
+            if (m_curves[i].y[j] > ymax) {
+                ymax = m_curves[i].y[j];
+            }
+            if (m_curves[i].x[j] < xmin) {
+                xmin = m_curves[i].x[j];
+            }
+            if (m_curves[i].y[j] < ymin) {
+                ymin = m_curves[i].y[j];
+            }
+        }
+    }
+
+    double xd = (xmax - xmin) * 0.005;
+    double yd = (ymax - ymin) * 0.005;
+
+    m_axisRange.xMin = xmin - xd;
+    m_axisRange.xMax = xmax + xd;
+    m_axisRange.yMin = ymin - yd;
+    m_axisRange.yMax = ymax + yd;
 }
