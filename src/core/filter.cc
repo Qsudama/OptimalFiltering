@@ -43,7 +43,7 @@ PtrFilterParameters Filter::params()
     return m_params;
 }
 
-PtrInfo Filter::info()
+PtrInfo Filter::info() const
 {
     return m_info;
 }
@@ -91,7 +91,7 @@ void Filter::writeResult(size_t n, bool copy)
 }
 
 #ifndef QT_ENABLED
-void Filter::updatePercent(int p)
+void Filter::updatePercent(int p) const
 {
     std::cerr << "Progress: " << p << "% complete.\n";
 }

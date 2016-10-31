@@ -32,12 +32,12 @@ PtrTaskParameters Task::params()
     return m_params;
 }
 
-PtrTaskParameters Task::consts()
+PtrTaskParameters Task::consts() const
 {
     return m_consts;
 }
 
-PtrInfo Task::info()
+PtrInfo Task::info() const
 {
     return m_info;
 }

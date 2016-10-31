@@ -11,19 +11,15 @@
 #include <map>
 #include <memory>
 
-
 using Math::Matrix;
 using Math::Vector;
 using Math::RowVector;
 
-
 namespace Core
 {
 
-
 using TaskParameters    = std::map<std::string, double>;
 using PtrTaskParameters = std::shared_ptr<TaskParameters>;
-
 
 class Task : public FunctionTime
 {
@@ -36,8 +32,8 @@ public:
     Task &operator=(const Task &) = delete;
 
     PtrTaskParameters params();
-    PtrTaskParameters consts();
-    PtrInfo           info();
+    PtrTaskParameters consts() const;
+    PtrInfo           info() const;
 
     virtual Math::Vector x0() const;
 
@@ -62,7 +58,6 @@ public:
 
     void changeParameter(const std::string &key, double newValue);
 
-
 protected:
     PtrTaskParameters m_params;
     PtrTaskParameters m_consts;
@@ -75,11 +70,8 @@ protected:
     virtual void loadParams();
 };
 
-
 using PtrTask = std::shared_ptr<Task>;
 
-
 } // end Core
-
 
 #endif // TASK_H

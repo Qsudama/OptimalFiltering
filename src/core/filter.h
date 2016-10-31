@@ -48,7 +48,7 @@ public:
 
     const FilterOutput &result() const;
     PtrFilterParameters params();
-    PtrInfo             info();
+    PtrInfo             info() const;
 
 protected:
     virtual void init();
@@ -60,7 +60,7 @@ protected:
 signals:
 #endif
 
-    void updatePercent(int p);
+    void updatePercent(int p) const;
 
 
 protected:
