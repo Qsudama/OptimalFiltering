@@ -37,7 +37,7 @@ Makefile*
 CMakeLists.txt.user*
 
 # clang-format file
-*.clang-format
+#*.clang-format
 
 # kde ".directory" file:
 *.directory
