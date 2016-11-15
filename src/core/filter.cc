@@ -50,37 +50,37 @@ PtrInfo Filter::info() const
 
 void Filter::init()
 {
-    x.resize(m_params->sampleSize());
-    y.resize(m_params->sampleSize());
-    z.resize(m_params->sampleSize());
-    e.resize(m_params->sampleSize());
+    m_sampleX.resize(m_params->sampleSize());
+    m_sampleY.resize(m_params->sampleSize());
+    m_sampleZ.resize(m_params->sampleSize());
+    m_sampleE.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount() * m_params->predictionCount() * m_params->integrationCount());
     m_result.resize(size);
     for (size_t i = 0; i < size; ++i) {
-        m_result[i].t = m_params->integrationStep() * i;
+        m_result[i].time = m_params->integrationStep() * i;
     }
 }
 
 void Filter::writeResult(size_t n, bool copy)
 {
     assert(n < m_result.size());
-    m_result[n].mx = Mean(x);
-    m_result[n].Dx = Var(x, m_result[n].mx);
+    m_result[n].meanX = Mean(m_sampleX);
+    m_result[n].varX  = Var(m_sampleX, m_result[n].meanX);
 
     if (copy) {
-        m_result[n].mz = m_result[n - 1].mz;
-        m_result[n].me = m_result[n - 1].me;
-        m_result[n].Dz = m_result[n - 1].Dz;
-        m_result[n].De = m_result[n - 1].De;
+        m_result[n].meanZ = m_result[n - 1].meanZ;
+        m_result[n].meanE = m_result[n - 1].meanE;
+        m_result[n].varZ  = m_result[n - 1].varZ;
+        m_result[n].varE  = m_result[n - 1].varE;
     } else {
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            e[s] = x[s] - z[s];
+            m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
         }
-        m_result[n].mz = Mean(z);
-        m_result[n].Dz = Var(z, m_result[n].mz);
-        m_result[n].me = Mean(e);
-        m_result[n].De = Var(e, m_result[n].me);
+        m_result[n].meanZ = Mean(m_sampleZ);
+        m_result[n].varZ  = Var(m_sampleZ, m_result[n].meanZ);
+        m_result[n].meanE = Mean(m_sampleE);
+        m_result[n].varE  = Var(m_sampleE, m_result[n].meanE);
     }
 
 #ifdef QT_ENABLED

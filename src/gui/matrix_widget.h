@@ -24,14 +24,16 @@ private slots:
 
 
 private:
+    void initControls();
+    void initLayouts();
+
+
+private:
     bool         m_onlyPositive;
     bool         m_symmetric;
     Math::Matrix m_matrix;
 
     QVector<QVector<QDoubleSpinBox *>> m_boxes;
-
-    void initControls();
-    void initLayouts();
 };
 
 #endif // MATRIXWIDGET_H

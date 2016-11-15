@@ -7,6 +7,7 @@ namespace Filters
 namespace ContinuousDiscrete
 {
 
+
 using Math::Rand::gaussianVector;
 using Math::LinAlg::PinvSVD;
 using Math::Statistic::Cov;
@@ -22,25 +23,31 @@ FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
 
 void FOS::algorithm()
 {
-    Gamma         = Var(x) - Var(z);
+    Vector h;
+    Matrix G, F;
+    Matrix Gamma  = Var(m_sampleX) - Var(m_sampleZ);
     double sqrtdt = std::sqrt(m_params->integrationStep());
 
     for (size_t n = 1; n < m_result.size(); ++n) { // tn = t0 + n * dt
-        m_task->setTime(m_result[n - 1].t);
-        Gamma = Var(x) - Var(z); // Gamma для t = tn - dt;
+        m_task->setTime(m_result[n - 1].time);
+        Gamma = Var(m_sampleX) - Var(m_sampleZ); // Gamma для t = tn - dt;
+
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            x[s] = x[s] + m_task->a(x[s]) * m_params->integrationStep() +
-                   m_task->B(x[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
-            z[s] = z[s] + m_task->tau(z[s], Gamma) * m_params->integrationStep();
+            m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
+                           m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
+            m_sampleZ[s] = m_sampleZ[s] + m_task->tau(m_sampleZ[s], Gamma) * m_params->integrationStep();
         }
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
-            Gamma = Cov(x, x) - Cov(z, z); // здесь нужна Gamma для t = tn = tk
+            Gamma = Cov(m_sampleX, m_sampleX) - Cov(m_sampleZ, m_sampleZ); // здесь нужна Gamma для t = tn = tk
+
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                y[s] = m_task->c(x[s]);
-                h    = m_task->h(z[s], Gamma);
-                G    = m_task->G(z[s], Gamma);
-                F    = m_task->F(z[s], Gamma);
-                z[s] = z[s] + Gamma * G.transpose() * PinvSVD(F) * (y[s] - h);
+                m_sampleY[s] = m_task->c(m_sampleX[s]);
+
+                h = m_task->h(m_sampleZ[s], Gamma);
+                G = m_task->G(m_sampleZ[s], Gamma);
+                F = m_task->F(m_sampleZ[s], Gamma);
+
+                m_sampleZ[s] = m_sampleZ[s] + Gamma * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
             }
         }
         writeResult(n);

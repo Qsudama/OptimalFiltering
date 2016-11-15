@@ -33,17 +33,20 @@ signals:
 
 
 private:
+    void loadFonts();
+    void initControls(const Math::Vector2 &x, const Math::Vector2 &y);
+    void initLayouts();
+
+    void initPlotter();
+
+
+private:
     QDoubleSpinBox *  m_dsbXMin;
     QDoubleSpinBox *  m_dsbXMax;
     QDoubleSpinBox *  m_dsbYMin;
     QDoubleSpinBox *  m_dsbYMax;
     QCustomPlot *     m_plotter;
     QDialogButtonBox *m_buttonBox;
-
-    void loadFonts();
-    void initControls(const Math::Vector2 &x, const Math::Vector2 &y);
-    void initPlotter();
-    void initLayouts();
 };
 
 

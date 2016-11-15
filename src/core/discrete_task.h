@@ -26,6 +26,7 @@ public:
     virtual Matrix G(const Vector &m, const Matrix &D) const = 0;
     virtual Matrix F(const Vector &m, const Matrix &D) const = 0;
 
+
 protected:
     virtual Matrix dadx(const Vector &x) const = 0;
     virtual Matrix dadv(const Vector &x) const = 0;

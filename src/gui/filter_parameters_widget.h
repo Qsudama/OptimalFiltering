@@ -49,6 +49,16 @@ private slots:
 
 
 private:
+    void loadFonts();
+    void initControls();
+    void initLayouts();
+
+    void setRange(QDoubleSpinBox *dsb, double min, double max);
+    void setRange(QSpinBox *sb, int min, int max);
+    void computeSizes(int &w1, int &w2, int &w3, int &w4);
+
+
+private:
     QDoubleSpinBox *m_dsbMaxTime;
     QDoubleSpinBox *m_dsbMeasurementStep;
     QDoubleSpinBox *m_dsbPredictionStep;
@@ -68,13 +78,6 @@ private:
     QFont m_monotypeFont;
     QFont m_labelsFont;
     QFont m_spinBoxesFont;
-
-    void setRange(QDoubleSpinBox *dsb, double min, double max);
-    void setRange(QSpinBox *sb, int min, int max);
-    void loadFonts();
-    void computeSizes(int &w1, int &w2, int &w3, int &w4);
-    void initLayouts();
-    void initControls();
 };
 
 

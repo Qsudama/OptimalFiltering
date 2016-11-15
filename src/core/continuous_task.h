@@ -26,7 +26,8 @@ public:
     virtual Matrix A(const Vector &m, const Matrix &D) const = 0;
     virtual Matrix G(const Vector &m, const Matrix &D) const = 0;
     virtual Matrix K(const Vector &x, const Matrix &D) const;
-    virtual Matrix Psy(const Vector &x, const Matrix &D) const;
+    virtual Matrix Psi(const Vector &x, const Matrix &D) const;
+
 
 protected:
     virtual Matrix Q(const Vector &m, const Matrix &D) const = 0;

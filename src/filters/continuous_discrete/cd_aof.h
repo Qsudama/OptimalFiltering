@@ -24,8 +24,7 @@ protected:
 
 
 protected:
-    Array<Matrix> P;
-    Matrix        R, A, Kappa, Theta;
+    Array<Matrix> m_sampleP;
 };
 
 

@@ -24,7 +24,7 @@ protected:
 
 
 protected:
-    Array<Math::Matrix> P;
+    Array<Math::Matrix> m_sampleP;
 };
 
 

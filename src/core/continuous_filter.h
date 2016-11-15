@@ -8,6 +8,7 @@
 namespace Core
 {
 
+
 class ContinuousFilter : public Filter
 {
 
@@ -20,8 +21,7 @@ protected:
 
 
 protected:
-    PtrCTask      m_task;
-    Array<Vector> dy;
+    PtrCTask m_task;
 };
 
 

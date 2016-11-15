@@ -27,52 +27,55 @@ FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
 
 void FOS::algorithm()
 {
-    Matrix        Gamma, DxyDxz, Ddelta, Dxy, Dxz;
-    Vector        my;
-    Array<Vector> delta(m_params->sampleSize());
+    Vector        h, my, ksi, lambda, u;
+    Matrix        G, F, T, Psi, Gamma, GammaY, GammaZ, DxyDxz, Ddelta, Dxy, Dxz;
+    Array<Vector> sampleDelta(m_params->sampleSize());
 
     for (size_t n = 1; n < m_result.size(); ++n) { // tn = t0 + n * dt
         //интегрируем систему (получаем mx, Dx с шагам dt):
-        m_task->setTime(m_result[n - 1].t);
+        m_task->setTime(m_result[n - 1].time);
         m_task->setStep(m_params->integrationStep());
+
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            x[s] = m_task->a(x[s]);
+            m_sampleX[s] = m_task->a(m_sampleX[s]);
         }
         writeResult(n, true);
 
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                y[s] = m_task->b(x[s]);
-                MakeBlockVector(y[s], z[s], delta[s]);
+                m_sampleY[s] = m_task->b(m_sampleX[s]);
+                MakeBlockVector(m_sampleY[s], m_sampleZ[s], sampleDelta[s]);
             }
-            my     = Mean(y);
-            Ddelta = Var(delta);
-            Dxy    = Cov(x, y);
-            Dxz    = Cov(x, z);
+            my     = Mean(m_sampleY);
+            Ddelta = Var(sampleDelta);
+            Dxy    = Cov(m_sampleX, m_sampleY);
+            Dxz    = Cov(m_sampleX, m_sampleZ);
             MakeBlockMatrix(Dxy, Dxz, DxyDxz);
 
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 Gamma  = DxyDxz * PinvSVD(Ddelta);
-                GammaY = Gamma.leftCols(y[s].size());
-                GammaZ = Gamma.rightCols(z[s].size());
-                ksi    = m_result[n].mx - GammaY * my - GammaZ * m_result[n].mz;
-                T      = m_result[n].Dx - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
-                u      = GammaY * y[s] + GammaZ * z[s] + ksi;
+                GammaY = Gamma.leftCols(m_task->dimY());
+                GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
+                ksi    = m_result[n].meanX - GammaY * my - GammaZ * m_result[n].meanZ;
+                T      = m_result[n].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
+                u      = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + ksi;
 
-                //вычисляем lambda, Psy: время устонавливаем в предыдущий момент измерения:
-                double timeCurrent = m_task->time();
-                double timePred    = timeCurrent - m_params->measurementStep();
+                //вычисляем lambda, Psi: время устонавливаем в предыдущий момент измерения:
+                double currentTime  = m_task->time();
+                double previousTime = currentTime - m_params->measurementStep();
                 m_task->setStep(m_params->measurementStep());
-                m_task->setTime(timePred);
+                m_task->setTime(previousTime);
                 lambda = m_task->tau(u, T);
-                Psy    = m_task->Theta(u, T);
+                Psi    = m_task->Theta(u, T);
 
                 //ставим время обратно и продолжаем:
-                m_task->setTime(timeCurrent);
-                h    = m_task->h(lambda, Psy);
-                G    = m_task->G(lambda, Psy);
-                F    = m_task->F(lambda, Psy);
-                z[s] = lambda + Psy * G.transpose() * PinvSVD(F) * (y[s] - h);
+                m_task->setTime(currentTime);
+
+                h = m_task->h(lambda, Psi);
+                G = m_task->G(lambda, Psi);
+                F = m_task->F(lambda, Psi);
+
+                m_sampleZ[s] = lambda + Psi * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
             }
             writeResult(n);
         }

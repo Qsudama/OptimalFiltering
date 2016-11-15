@@ -23,8 +23,9 @@ using VectorInt3    = Eigen::Vector3i;
 using RowVector3    = Eigen::RowVector3d;
 using RowVectorInt3 = Eigen::RowVector3i;
 
-void MakeBlockVector(const Vector &m1, const Vector &m2, Vector &b);
-void MakeBlockMatrix(const Matrix &m1, const Matrix &m2, Matrix &b, bool vertical = false);
+
+void MakeBlockVector(const Vector &vec1, const Vector &vec2, Vector &blockVec);
+void MakeBlockMatrix(const Matrix &mat1, const Matrix &mat2, Matrix &blockMat, bool vertical = false);
 
 
 } // end Math

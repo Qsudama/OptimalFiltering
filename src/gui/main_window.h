@@ -40,6 +40,18 @@ private slots:
 protected:
     void closeEvent(QCloseEvent *);
 
+
+private:
+    void loadFonts();
+    void initControls();
+    void initLayouts();
+
+    void initStatusBar();
+    void initGraphWindow();
+
+    void showData(Core::PtrFilter filter);
+
+
 private:
     ColorManager m_colorManager;
     int          m_randSeed;
@@ -50,13 +62,6 @@ private:
     FilterParametersWidget *m_filterParamsWidget;
     FilterStartButtonsBox * m_filterStartWidget;
     QPushButton *           m_btnClear;
-
-    void initControls();
-    void initLayouts();
-    void initStatusBar();
-    void loadFonts();
-    void initGraphWindow();
-    void showData(Core::PtrFilter filter);
 };
 
 

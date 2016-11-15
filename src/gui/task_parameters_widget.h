@@ -19,6 +19,15 @@ public:
 
     void loadParamsTo(Core::PtrTask task);
 
+
+private:
+    void initMain(Core::PtrTask task, QVBoxLayout *mainLayout);
+    void initParameters(Core::PtrTask task, QVBoxLayout *mainLayout);
+    void initConstants(Core::PtrTask task, QVBoxLayout *mainLayout);
+
+    QHBoxLayout *createMeanVarLayout(MatrixWidget *left, MatrixWidget *right);
+
+
 private:
     MatrixWidget *m_meanX;
     MatrixWidget *m_meanV;
@@ -29,12 +38,6 @@ private:
 
     QVector<QDoubleSpinBox *> m_params;
     QVector<QDoubleSpinBox *> m_consts;
-
-    void initMain(Core::PtrTask task, QVBoxLayout *mainLayout);
-    void initParameters(Core::PtrTask task, QVBoxLayout *mainLayout);
-    void initConstants(Core::PtrTask task, QVBoxLayout *mainLayout);
-
-    QHBoxLayout *createMeanVarLayout(MatrixWidget *left, MatrixWidget *right);
 };
 
 

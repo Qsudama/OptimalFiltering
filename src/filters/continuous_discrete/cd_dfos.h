@@ -20,11 +20,6 @@ public:
 
 protected:
     void algorithm() override;
-
-
-protected:
-    Matrix Gamma, T;
-    Vector kappa;
 };
 
 

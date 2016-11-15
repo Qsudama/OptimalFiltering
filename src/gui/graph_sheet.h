@@ -5,15 +5,15 @@
 
 
 struct GCurve {
+    GCurve();
+    QString fullName() const;
+
     QVector<double> x;
     QVector<double> y;
     QString         name;
     int             number;
     QPen            pen;
     bool            visible;
-
-    GCurve();
-    QString fullName() const;
 };
 
 struct GAxisRange {
@@ -54,6 +54,10 @@ public:
 
 
 private:
+    void calcRanges();
+
+
+private:
     QVector<GCurve> m_curves;
     QString         m_xLabel;
     QString         m_yLabel;
@@ -62,8 +66,6 @@ private:
     bool            m_autoCalcRanges;
     GAxisRange      m_axisRange;
     GAxisRange      m_userAxisRange;
-
-    void calcRanges();
 };
 
 

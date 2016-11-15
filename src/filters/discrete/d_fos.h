@@ -20,11 +20,6 @@ public:
 
 protected:
     void algorithm() override;
-
-
-protected:
-    Vector ksi, lambda, u;
-    Matrix T, Psy, GammaY, GammaZ;
 };
 
 

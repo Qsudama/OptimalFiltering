@@ -11,6 +11,7 @@ namespace Core
 
 class Info
 {
+
 public:
     Info();
     Info(const std::string &name, const std::string &type);
@@ -20,6 +21,7 @@ public:
 
     void setName(const std::string &name);
     void setType(const std::string &type);
+
 
 private:
     std::string m_name;

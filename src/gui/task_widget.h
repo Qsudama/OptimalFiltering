@@ -33,13 +33,15 @@ private slots:
 
 
 private:
-    QComboBox *           m_cbTask;
-    QPushButton *         m_btnParameters;
-    TaskParametersWidget *m_parametersWidget;
-
     void loadFonts();
     void initControls();
     void initLayouts();
+
+
+private:
+    QComboBox *           m_cbTask;
+    QPushButton *         m_btnParameters;
+    TaskParametersWidget *m_parametersWidget;
 };
 
 

@@ -8,6 +8,7 @@ namespace Core
 
 class FunctionTime
 {
+
 public:
     FunctionTime(double initialTime = 0.0, double initialStep = 0.001);
     virtual ~FunctionTime();
@@ -19,6 +20,7 @@ public:
     void setStep(double newStep);
     void advanceTime(double step);
     void advanceTime();
+
 
 protected:
     double m_time;

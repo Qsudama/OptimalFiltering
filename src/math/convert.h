@@ -11,14 +11,14 @@ namespace Convert
 {
 
 
-inline double DegToRad(double x)
+inline double DegToRad(double value)
 {
-    return x * Const::PI / 180.0;
+    return value * Const::PI / 180.0;
 }
 
-inline double RadToDeg(double x)
+inline double RadToDeg(double value)
 {
-    return x * 180.0 / Const::PI;
+    return value * 180.0 / Const::PI;
 }
 
 

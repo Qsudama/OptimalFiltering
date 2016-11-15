@@ -35,7 +35,7 @@ protected:
 
 
 protected:
-    double omega, alpha, beta;
+    double m_omega, m_alpha, m_beta;
 };
 
 

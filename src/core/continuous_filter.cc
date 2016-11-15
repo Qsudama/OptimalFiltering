@@ -18,26 +18,24 @@ ContinuousFilter::ContinuousFilter(PtrFilterParameters params, PtrTask task)
 
 void ContinuousFilter::zeroIteration()
 {
-    dy.resize(m_params->sampleSize());
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        x[s]  = m_task->x0();
-        y[s]  = Vector::Zero(m_task->dimY());
-        dy[s] = y[s];
+        m_sampleX[s] = m_task->x0();
+        m_sampleY[s] = Vector::Zero(m_task->dimY());
     }
 
-    m_result[0].mx = Mean(x);
-    m_result[0].Dx = Var(x, m_result[0].mx);
-    m_result[0].mz = m_result[0].mx;
+    m_result[0].meanX = Mean(m_sampleX);
+    m_result[0].varX  = Var(m_sampleX, m_result[0].meanX);
+    m_result[0].meanZ = m_result[0].meanX;
 
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        z[s] = m_result[0].mx;
-        e[s] = x[s] - z[s];
+        m_sampleZ[s] = m_result[0].meanX;
+        m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
     }
 
-    m_result[0].me = Mean(e);
-    m_result[0].Dz = Var(z, m_result[0].mz);
-    m_result[0].De = Var(e, m_result[0].me);
-    m_result[0].t  = 0.0;
+    m_result[0].meanE = Mean(m_sampleE);
+    m_result[0].varZ  = Var(m_sampleZ, m_result[0].meanZ);
+    m_result[0].varE  = Var(m_sampleE, m_result[0].meanE);
+    m_result[0].time  = 0.0;
 }
 
 

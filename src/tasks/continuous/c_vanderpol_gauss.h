@@ -20,6 +20,7 @@ public:
     Matrix A(const Vector &m, const Matrix &D) const override;
     Matrix G(const Vector &m, const Matrix &D) const override;
 
+
 protected:
     Matrix Q(const Vector &m, const Matrix &D) const override;
 };

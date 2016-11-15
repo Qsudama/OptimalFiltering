@@ -13,6 +13,7 @@ namespace Continuous
 
 class LandingGauss : public LandingLinear
 {
+
 public:
     LandingGauss();
 

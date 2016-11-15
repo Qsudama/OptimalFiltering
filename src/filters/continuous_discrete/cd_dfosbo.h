@@ -23,10 +23,12 @@ protected:
     void zeroIteration() override;
     void algorithm() override;
 
-    ulong         ny, p;
+
+protected:
+    ulong ny;
+    ulong p;
+
     Array<Vector> Zb;
-    Matrix        Gamma, T, DZb, DxZb;
-    Vector        kappa, mx, mZb;
 };
 
 

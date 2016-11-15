@@ -7,6 +7,7 @@ namespace Filters
 namespace ContinuousDiscrete
 {
 
+
 using Math::Rand::gaussianVector;
 using Math::LinAlg::PinvSVD;
 
@@ -22,37 +23,46 @@ void AOF::zeroIteration()
 {
     ContinuousDiscreteFilter::zeroIteration();
 
-    P.resize(m_params->sampleSize());
+    m_sampleP.resize(m_params->sampleSize());
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        P[s] = m_result[0].Dx;
+        m_sampleP[s] = m_result[0].varX;
     }
 }
 
 void AOF::algorithm()
 {
     double sqrtdt = std::sqrt(m_params->integrationStep());
+    Vector h;
+    Matrix G, F, A, K, Theta;
 
     for (size_t n = 1; n < m_result.size(); ++n) { // tn = t0 + n * dt
-        m_task->setTime(m_result[n - 1].t);
+        m_task->setTime(m_result[n - 1].time);
+
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            x[s] = x[s] + m_task->a(x[s]) * m_params->integrationStep() +
-                   m_task->B(x[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
-            A     = m_task->A(z[s], P[s]);
-            Theta = m_task->Theta(z[s], P[s]);
-            z[s]  = z[s] + m_task->tau(z[s], P[s]) * m_params->integrationStep();
-            P[s]  = P[s] + (A * P[s] + P[s] * A.transpose() + Theta) * m_params->integrationStep();
-            P[s]  = 0.5 * (P[s] + P[s].transpose());
+            m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
+                           m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
+
+            A            = m_task->A(m_sampleZ[s], m_sampleP[s]);
+            Theta        = m_task->Theta(m_sampleZ[s], m_sampleP[s]);
+            m_sampleZ[s] = m_sampleZ[s] + m_task->tau(m_sampleZ[s], m_sampleP[s]) * m_params->integrationStep();
+
+            m_sampleP[s] =
+                m_sampleP[s] + (A * m_sampleP[s] + m_sampleP[s] * A.transpose() + Theta) * m_params->integrationStep();
+            m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
         }
+
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) { // t = tk - приходит измерение
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                y[s]  = m_task->c(x[s]);
-                h     = m_task->h(z[s], P[s]);
-                G     = m_task->G(z[s], P[s]);
-                F     = m_task->F(z[s], P[s]);
-                Kappa = P[s] * G.transpose() * PinvSVD(F);
-                z[s]  = z[s] + Kappa * (y[s] - h);
-                P[s]  = P[s] - Kappa * G * P[s];
-                P[s]  = 0.5 * (P[s] + P[s].transpose());
+                m_sampleY[s] = m_task->c(m_sampleX[s]);
+
+                h = m_task->h(m_sampleZ[s], m_sampleP[s]);
+                G = m_task->G(m_sampleZ[s], m_sampleP[s]);
+                F = m_task->F(m_sampleZ[s], m_sampleP[s]);
+                K = m_sampleP[s] * G.transpose() * PinvSVD(F);
+
+                m_sampleZ[s] = m_sampleZ[s] + K * (m_sampleY[s] - h);
+                m_sampleP[s] = m_sampleP[s] - K * G * m_sampleP[s];
+                m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
             }
         }
         writeResult(n);

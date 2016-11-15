@@ -10,59 +10,66 @@ namespace Continuous
 
 VanDerPolLinear::VanDerPolLinear()
     : ContinuousTask()
-    , omega(0.1 * Math::Const::PI)
-    , alpha(1.0)
-    , beta(0.25)
+    , m_omega(0.1 * Math::Const::PI)
+    , m_alpha(1.0)
+    , m_beta(0.25)
 {
     m_info->setName("Осциллятор Ван-дер-Поля");
     m_info->setType("Л-");
 
     m_dimY = 2;
 
-    mx[0] = 10.0;
-    mx[1] = -3.0;
+    m_dimX     = 2;
+    m_meanX    = Vector(m_dimX);
+    m_meanX[0] = 10.0;
+    m_meanX[1] = -3.0;
 
-    mv = Vector::Zero(2);
+    m_dimV  = 2;
+    m_meanV = Vector::Zero(m_dimV);
 
-    mw[0] = 1.0;
-    mw[1] = 1.5;
+    m_dimW     = 2;
+    m_meanW    = Vector(m_dimW);
+    m_meanW[0] = 1.0;
+    m_meanW[1] = 1.5;
 
-    Dx(0, 0) = 5.0;
-    Dx(1, 1) = 5.0;
+    m_varX = Matrix::Zero(m_dimX, m_dimX);
+    m_varX(0, 0) = 5.0;
+    m_varX(1, 1) = 5.0;
 
-    Dv = Matrix::Identity(2, 2);
+    m_varV = Matrix::Identity(m_dimV, m_dimV);
 
-    Dw(0, 0) = 4.0;
-    Dw(1, 1) = 4.0;
+    m_varW = Matrix::Identity(m_dimW, m_dimW);
+    m_varW(0, 0) = 4.0;
+    m_varW(1, 1) = 4.0;
 
-    (*m_params)["Omega"] = omega;
-    (*m_params)["Alpha"] = alpha;
-    (*m_params)["Beta"]  = beta;
+    (*m_params)["Omega"] = m_omega;
+    (*m_params)["Alpha"] = m_alpha;
+    (*m_params)["Beta"]  = m_beta;
 }
 
 void VanDerPolLinear::loadParams()
 {
-    omega = m_params->at("Omega");
-    alpha = m_params->at("Alpha");
-    beta  = m_params->at("Beta");
+    m_omega = m_params->at("Omega");
+    m_alpha = m_params->at("Alpha");
+    m_beta  = m_params->at("Beta");
 }
 
 Vector VanDerPolLinear::a(const Vector &x) const
 {
-    Vector aa(m_dimX);
+    Vector res(m_dimX);
 
-    aa[0] = x[1];
-    aa[1] = -omega * omega * x[0] + alpha * x[1] - alpha * beta * x[0] * x[0] * x[1];
+    res[0] = x[1];
+    res[1] = -m_omega * m_omega * x[0] + m_alpha * x[1] - m_alpha * m_beta * x[0] * x[0] * x[1];
 
-    return aa;
+    return res;
 }
 
 Matrix VanDerPolLinear::B(const Vector &x) const
 {
-    Matrix b = Matrix::Zero(m_dimX, m_dimV);
-    b(1, 1) = x[0];
+    Matrix res = Matrix::Zero(m_dimX, m_dimV);
+    res(1, 1) = x[0];
 
-    return b;
+    return res;
 }
 
 
@@ -95,14 +102,14 @@ Matrix VanDerPolLinear::R(const Vector &x, const Matrix & /*D*/) const
 
 Matrix VanDerPolLinear::A(const Vector &m, const Matrix & /*D*/) const
 {
-    Matrix aa(m_dimX, m_dimX);
+    Matrix res(m_dimX, m_dimX);
 
-    aa(0, 0) = 0.0;
-    aa(0, 1) = 1.0;
-    aa(1, 0) = -omega * omega - 2.0 * alpha * beta * m[0] * m[1];
-    aa(1, 1) = alpha * (1.0 - beta * m[0] * m[0]);
+    res(0, 0) = 0.0;
+    res(0, 1) = 1.0;
+    res(1, 0) = -m_omega * m_omega - 2.0 * m_alpha * m_beta * m[0] * m[1];
+    res(1, 1) = m_alpha * (1.0 - m_beta * m[0] * m[0]);
 
-    return aa;
+    return res;
 }
 
 Matrix VanDerPolLinear::G(const Vector & /*m*/, const Matrix & /*D*/) const

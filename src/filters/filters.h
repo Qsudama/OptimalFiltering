@@ -12,6 +12,7 @@
 #include "src/filters/discrete/d_fos.h"
 #include "src/filters/discrete/d_mfos.h"
 
+
 namespace Filters
 {
 
@@ -24,6 +25,7 @@ class FilterFactory
 public:
     static Core::PtrFilter create(Core::FILTER_TYPE type, FILTER_ID id, Core::PtrFilterParameters params,
                                   Core::PtrTask task);
+
 
 private:
     static Core::PtrFilter createContinuous(FILTER_ID id, Core::PtrFilterParameters params, Core::PtrTask task);

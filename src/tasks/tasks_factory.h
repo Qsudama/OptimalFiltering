@@ -23,8 +23,10 @@ enum class TASK_ID { Landing, VanDerPol };
 
 class TaskFactory
 {
+
 public:
     static Core::PtrTask create(Core::FILTER_TYPE ftype, TASK_ID id, Core::APPROX_TYPE atype);
+
 
 private:
     static Core::PtrTask createContinuous(TASK_ID id, Core::APPROX_TYPE type);

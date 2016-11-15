@@ -16,14 +16,14 @@ VanDerPolGauss::VanDerPolGauss()
 
 Matrix VanDerPolGauss::A(const Vector &m, const Matrix &D) const
 {
-    Matrix aa(m_dimX, m_dimX);
+    Matrix res(m_dimX, m_dimX);
 
-    aa(0, 0) = 0.0;
-    aa(0, 1) = 1.0;
-    aa(1, 0) = -omega * omega - 2.0 * alpha * beta * (m[0] * m[1] + D(0, 1));
-    aa(1, 1) = alpha - alpha * beta * (m[0] * m[0] + D(0, 0));
+    res(0, 0) = 0.0;
+    res(0, 1) = 1.0;
+    res(1, 0) = -m_omega * m_omega - 2.0 * m_alpha * m_beta * (m[0] * m[1] + D(0, 1));
+    res(1, 1) = m_alpha - m_alpha * m_beta * (m[0] * m[0] + D(0, 0));
 
-    return aa;
+    return res;
 }
 
 Matrix VanDerPolGauss::G(const Vector & /*m*/, const Matrix & /*D*/) const
@@ -34,11 +34,12 @@ Matrix VanDerPolGauss::G(const Vector & /*m*/, const Matrix & /*D*/) const
 
 Matrix VanDerPolGauss::Q(const Vector &m, const Matrix &D) const
 {
-    Matrix b = B(m);
-    Matrix q = b * b.transpose();
-    q(1, 1) += D(1, 1);
+    Matrix b   = B(m);
+    Matrix res = b * b.transpose();
 
-    return q;
+    res(1, 1) += D(1, 1);
+
+    return res;
 }
 
 

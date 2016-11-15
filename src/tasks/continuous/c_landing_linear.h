@@ -37,7 +37,7 @@ protected:
 
 
 protected:
-    double TT;
+    double m_turnTime;
 
     static constexpr double KB = 0.3;
     static constexpr double BB = 0.09;

@@ -22,6 +22,14 @@ public:
 
 
 private:
+    FontManager();
+    FontManager(const FontManager &) = delete;
+    FontManager &operator=(FontManager &) = delete;
+
+    static QFont getFont(int id, int size, bool bold, bool italic);
+
+
+private:
     int m_regularId;
     int m_regularItalicId;
     int m_regularBoldId;
@@ -31,12 +39,6 @@ private:
     int m_monoItalicId;
     int m_monoBoldId;
     int m_monoBoldItalicId;
-
-    static QFont getFont(int id, int size, bool bold, bool italic);
-
-    FontManager();
-    FontManager(const FontManager &) = delete;
-    FontManager &operator=(FontManager &) = delete;
 };
 
 

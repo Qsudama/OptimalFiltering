@@ -12,6 +12,7 @@ namespace Core
 
 class FilterParameters
 {
+
 public:
     FilterParameters(double maxTime, double measurementStep, double predictionStep, double integrationStep,
                      ulong sampleSize, ulong orderMult = 1);
@@ -33,6 +34,7 @@ public:
     void setIntegrationStep(double step);
     void setSampleSize(ulong size);
     void setOrderMult(ulong order);
+
 
 private:
     double m_maxTime;

@@ -19,7 +19,6 @@ public:
 
 
 protected:
-    void zeroIteration() override;
     void algorithm() override;
 };
 

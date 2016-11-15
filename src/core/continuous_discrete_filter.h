@@ -23,8 +23,6 @@ protected:
 
 protected:
     PtrCDTask m_task;
-    Vector    h;
-    Matrix    G, F;
 };
 
 

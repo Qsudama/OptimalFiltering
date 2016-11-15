@@ -13,6 +13,7 @@ namespace Discrete
 
 class LandingGauss : public LandingLinear
 {
+
 public:
     LandingGauss();
 

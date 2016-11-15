@@ -53,6 +53,16 @@ private slots:
 
 
 private:
+    void loadFonts();
+    void initLayouts();
+
+    void initActions();
+    void initMenus();
+    void initPlotter();
+    void updateMenu();
+
+
+private:
     QVector<GraphSheet> m_sheets;
     GraphSheet *        m_currentSheet;
     QCustomPlot *       m_plotter;
@@ -72,13 +82,6 @@ private:
     QMenu *m_menuSheet;
     QMenu *m_menuShow;
     QMenu *m_menuHide;
-
-    void loadFonts();
-    void initActions();
-    void initMenus();
-    void initLayouts();
-    void initPlotter();
-    void updateMenu();
 };
 
 

@@ -50,6 +50,7 @@ public:
     PtrFilterParameters params();
     PtrInfo             info() const;
 
+
 protected:
     virtual void init();
     virtual void zeroIteration() = 0;
@@ -68,7 +69,10 @@ protected:
     PtrFilterParameters m_params;
     PtrInfo             m_info;
 
-    Array<Vector> x, y, z, e; // массивы под выборки для промежуточных вычислений
+    Array<Vector> m_sampleX;
+    Array<Vector> m_sampleY;
+    Array<Vector> m_sampleZ;
+    Array<Vector> m_sampleE;
 };
 
 

@@ -14,14 +14,15 @@ namespace Core
 
 
 struct SingleFilterOutput {
-    Math::Vector mx;
-    Math::Vector mz;
-    Math::Vector me;
-    Math::Matrix Dx;
-    Math::Matrix Dz;
-    Math::Matrix De;
-    double       t;
+    Math::Vector meanX;
+    Math::Vector meanZ;
+    Math::Vector meanE;
+    Math::Matrix varX;
+    Math::Matrix varZ;
+    Math::Matrix varE;
+    double       time;
 };
+
 
 using FilterOutput = Array<SingleFilterOutput>;
 

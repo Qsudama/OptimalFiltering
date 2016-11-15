@@ -24,9 +24,7 @@ protected:
 
 
 protected:
-    Array<Matrix> P;
-    Vector        lambda;
-    Matrix        H, Psy;
+    Array<Matrix> m_sampleP;
 };
 
 

@@ -24,7 +24,7 @@ Matrix ContinuousTask::K(const Vector &m, const Matrix &D) const
     return (D * G(m, D).transpose() + S(m, D)) * PinvSVD(R(m, D));
 }
 
-Matrix ContinuousTask::Psy(const Vector &m, const Matrix &D) const
+Matrix ContinuousTask::Psi(const Vector &m, const Matrix &D) const
 {
     assert(m.size() == m_dimX);
     assert(D.rows() == m_dimX);

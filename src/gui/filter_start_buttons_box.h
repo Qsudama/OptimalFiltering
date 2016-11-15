@@ -47,6 +47,14 @@ private slots:
 
 
 private:
+    void loadFonts();
+    void initControls();
+    void initLayouts();
+
+    void computeSizes();
+
+
+private:
     QPushButton *m_btnContinuousDiscreteGaussAof;
     QPushButton *m_btnContinuousDiscreteLinearAof;
     QPushButton *m_btnContinuousDiscreteGaussFos;
@@ -65,11 +73,6 @@ private:
     QPushButton *m_btnDiscreteGaussFos;
     QPushButton *m_btnDiscreteLinearMfos;
     QPushButton *m_btnDiscreteGaussMfos;
-
-    void loadFonts();
-    void initLayouts();
-    void initControls();
-    void computeSizes();
 };
 
 

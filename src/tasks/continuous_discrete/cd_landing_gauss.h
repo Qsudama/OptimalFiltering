@@ -13,6 +13,7 @@ namespace ContinuousDiscrete
 
 class LandingGauss : public LandingLinear
 {
+
 public:
     LandingGauss();
 

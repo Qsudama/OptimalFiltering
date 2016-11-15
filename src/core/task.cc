@@ -14,12 +14,12 @@ Task::Task()
     , m_dimY(2)
     , m_dimV(2)
     , m_dimW(2)
-    , mx(Vector::Zero(2))
-    , mv(Vector::Zero(2))
-    , mw(Vector::Zero(2))
-    , Dx(Matrix::Zero(2, 2))
-    , Dv(Matrix::Zero(2, 2))
-    , Dw(Matrix::Zero(2, 2))
+    , m_meanX(Vector::Zero(2))
+    , m_meanV(Vector::Zero(2))
+    , m_meanW(Vector::Zero(2))
+    , m_varX(Matrix::Zero(2, 2))
+    , m_varV(Matrix::Zero(2, 2))
+    , m_varW(Matrix::Zero(2, 2))
 {
 }
 
@@ -64,74 +64,76 @@ long Task::dimW() const
 
 const Vector &Task::meanX() const
 {
-    return mx;
+    return m_meanX;
 }
 
 const Vector &Task::meanV() const
 {
-    return mv;
+    return m_meanV;
 }
 
 const Vector &Task::meanW() const
 {
-    return mw;
+    return m_meanW;
 }
 
 const Matrix &Task::varX() const
 {
-    return Dx;
+    return m_varX;
 }
 
 const Matrix &Task::varV() const
 {
-    return Dv;
+    return m_varV;
 }
 
 const Matrix &Task::varW() const
 {
-    return Dw;
+    return m_varW;
 }
 
 Vector Task::x0() const
 {
-    return Math::Rand::gaussianVector(mx, Dx);
+    return Math::Rand::gaussianVector(m_meanX, m_varX);
 }
 
-void Task::setMeanX(const Vector &m)
+void Task::setMeanX(const Vector &mean)
 {
-    assert(m.size() == m_dimX && "Core::Task::setMeanX(m) : corrupt dimension of m");
-    mx = m;
+    assert(mean.size() == m_dimX && "Core::Task::setMeanX(mean) : corrupt dimension of mean");
+    m_meanX = mean;
 }
 
-void Task::setMeanV(const Vector &m)
+void Task::setMeanV(const Vector &mean)
 {
-    // WARNING: assert(m.size() == m_dimV)
-    mv = m;
+    assert(mean.size() == m_dimV && "Core::Task::setMeanV(mean) : corrupt dimension of mean");
+    m_meanV = mean;
 }
 
-void Task::setMeanW(const Vector &m)
+void Task::setMeanW(const Vector &mean)
 {
-    // WARNING: assert(m.size() == m_dimW)
-    mw = m;
+    assert(mean.size() == m_dimW && "Core::Task::setMeanW(mean) : corrupt dimension of mean");
+    m_meanW = mean;
 }
 
-void Task::setVarX(const Matrix &D)
+void Task::setVarX(const Matrix &var)
 {
-    assert(D.rows() == m_dimX && "Core::Task::setVarX(D) : corrupt dimension of D (row's count)");
-    assert(D.cols() == m_dimX && "Core::Task::setVarX(D) : corrupt dimension of D (col's count)");
-    Dx = D;
+    assert(var.rows() == m_dimX && "Core::Task::setVarX(var) : corrupt dimension of var (row's count)");
+    assert(var.cols() == m_dimX && "Core::Task::setVarX(var) : corrupt dimension of var (col's count)");
+    m_varX = var;
 }
 
-void Task::setVarV(const Matrix &D)
+void Task::setVarV(const Matrix &var)
 {
-    // WARNING: asserts
-    Dv = D;
+    assert(var.rows() == m_dimV && "Core::Task::setVarV(var) : corrupt dimension of var (row's count)");
+    assert(var.cols() == m_dimV && "Core::Task::setVarV(var) : corrupt dimension of var (col's count)");
+    m_varV = var;
 }
 
-void Task::setVarW(const Matrix &D)
+void Task::setVarW(const Matrix &var)
 {
-    // WARNING: asserts
-    Dw = D;
+    assert(var.rows() == m_dimW && "Core::Task::setVarW(var) : corrupt dimension of var (row's count)");
+    assert(var.cols() == m_dimW && "Core::Task::setVarW(var) : corrupt dimension of var (col's count)");
+    m_varW = var;
 }
 
 void Task::changeParameter(const std::string &key, double newValue)

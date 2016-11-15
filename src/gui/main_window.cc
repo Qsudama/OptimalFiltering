@@ -153,7 +153,7 @@ void MainWindow::showData(Core::PtrFilter filter)
     sePen.setWidthF(1.5);
     sePen.setColor(color);
 
-    int dim = int(filter->result()[0].mx.size());
+    int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
         m_graphWindow->setCountSheets(dim);
     }
