@@ -13,10 +13,15 @@ namespace ContinuousDiscrete
 {
 
 
+/*!
+ * \brief Осциллятор Ван-дер-Поля (непрерывно-дискретный, линеаризованный) для фильтров оптимальной структуры.
+ */
+
 class VanDerPolLinear : public Core::ContinuousDiscreteTask
 {
 
 public:
+    //! \brief Конструктор.
     VanDerPolLinear();
 
     Vector a(const Vector &x) const override;

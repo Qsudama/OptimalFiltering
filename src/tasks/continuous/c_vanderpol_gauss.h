@@ -11,10 +11,15 @@ namespace Continuous
 {
 
 
+/*!
+ * \brief Осциллятор Ван-дер-Поля (непрерывный, гауссовский) для фильтров оптимальной структуры.
+ */
+
 class VanDerPolGauss : public VanDerPolLinear
 {
 
 public:
+    //! \brief Конструктор.
     VanDerPolGauss();
 
     Matrix A(const Vector &m, const Matrix &D) const override;

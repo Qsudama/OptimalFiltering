@@ -8,14 +8,21 @@
 namespace Tasks
 {
 
+//! Подмодуль, содержащий реализации задач для дискретных фильтров оптимальной структуры.
+
 namespace Discrete
 {
 
+
+/*!
+ * \brief Задача спуска ЛА на планету (дискретная, линеаризованная) для фильтров оптимальной структуры.
+ */
 
 class LandingLinear : public Core::DiscreteTask
 {
 
 public:
+    //! \brief Конструктор.
     LandingLinear();
 
     Vector a(const Vector &x) const override;

@@ -8,14 +8,21 @@
 namespace Tasks
 {
 
+//! Подмодуль, содержащий реализации задач для непрерывно-дискретных фильтров оптимальной структуры.
+
 namespace ContinuousDiscrete
 {
 
+
+/*!
+ * \brief Задача спуска ЛА на планету (непрерывно-дискретная, линеаризованная) для фильтров оптимальной структуры.
+ */
 
 class LandingLinear : public Core::ContinuousDiscreteTask
 {
 
 public:
+    //! \brief Конструктор.
     LandingLinear();
 
     Vector a(const Vector &x) const override;

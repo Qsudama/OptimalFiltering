@@ -11,10 +11,15 @@ namespace ContinuousDiscrete
 {
 
 
+/*!
+ * \brief Осциллятор Ван-дер-Поля (непрерывно-дискретный, гауссовский) для фильтров оптимальной структуры.
+ */
+
 class VanDerPolGauss : public VanDerPolLinear
 {
 
 public:
+    //! \brief Конструктор.
     VanDerPolGauss();
 
 

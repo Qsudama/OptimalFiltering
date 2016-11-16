@@ -14,23 +14,45 @@
 #include "src/tasks/discrete/d_landing_linear.h"
 
 
+//! \brief Модуль, содержащий реализации конкретных задач для фильтров.
+
 namespace Tasks
 {
 
 
-enum class TASK_ID { Landing, VanDerPol };
+//! \brief Набор идентификаторов имеющихся задач.
 
+enum class TASK_ID {
+    Landing,  ///< Спуска ЛА на планету.
+    VanDerPol ///< Осциллятор Ван-дер-Поля.
+};
+
+
+//! \brief Фабричный класс для создания экземпляров классов задач.
 
 class TaskFactory
 {
 
 public:
+    /*!
+     \brief Создает экземпляр задачи по входным параметрам.
+
+     \param ftype - тип фильтра (непрерывный, дискретный, ...).
+     \param id - идентификатор задачи.
+     \param atype - метод приближения (линейный, гауссвоский, ...).
+     \return указатель на созданный экземпляр задачи.
+    */
     static Core::PtrTask create(Core::FILTER_TYPE ftype, TASK_ID id, Core::APPROX_TYPE atype);
 
 
 private:
+    //! \brief Вспомогательный метод для создания задачи для непрерывных фильтров оптимальной структуры.
     static Core::PtrTask createContinuous(TASK_ID id, Core::APPROX_TYPE type);
+
+    //! \brief Вспомогательный метод для создания задачи для непрерывно-дискретных фильтров оптимальной структуры.
     static Core::PtrTask createContinuousDiscrete(TASK_ID id, Core::APPROX_TYPE type);
+
+    //! \brief Вспомогательный метод для создания задачи для дискретных фильтров оптимальной структуры.
     static Core::PtrTask createDiscrete(TASK_ID id, Core::APPROX_TYPE type);
 };
 
