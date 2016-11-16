@@ -1,7 +1,7 @@
 #ifndef FILTERSTARTBUTTONSBOX_H
 #define FILTERSTARTBUTTONSBOX_H
 
-#include "src/filters/filters.h"
+#include "src/filters/filters_factory.h"
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QMessageBox>
