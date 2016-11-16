@@ -12,10 +12,6 @@ ContinuousTask::ContinuousTask()
 {
 }
 
-ContinuousTask::~ContinuousTask()
-{
-}
-
 Matrix ContinuousTask::K(const Vector &m, const Matrix &D) const
 {
     assert(m.size() == m_dimX);

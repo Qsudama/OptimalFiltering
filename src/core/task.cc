@@ -14,10 +14,10 @@ Task::Task()
     , m_dimY(2)
     , m_dimV(2)
     , m_dimW(2)
-    , m_meanX(Vector::Zero(2))
+    , m_meanX0(Vector::Zero(2))
     , m_meanV(Vector::Zero(2))
     , m_meanW(Vector::Zero(2))
-    , m_varX(Matrix::Zero(2, 2))
+    , m_varX0(Matrix::Zero(2, 2))
     , m_varV(Matrix::Zero(2, 2))
     , m_varW(Matrix::Zero(2, 2))
 {
@@ -62,9 +62,9 @@ long Task::dimW() const
     return m_dimW;
 }
 
-const Vector &Task::meanX() const
+const Vector &Task::meanX0() const
 {
-    return m_meanX;
+    return m_meanX0;
 }
 
 const Vector &Task::meanV() const
@@ -77,9 +77,9 @@ const Vector &Task::meanW() const
     return m_meanW;
 }
 
-const Matrix &Task::varX() const
+const Matrix &Task::varX0() const
 {
-    return m_varX;
+    return m_varX0;
 }
 
 const Matrix &Task::varV() const
@@ -94,13 +94,13 @@ const Matrix &Task::varW() const
 
 Vector Task::x0() const
 {
-    return Math::Rand::gaussianVector(m_meanX, m_varX);
+    return Math::Rand::gaussianVector(m_meanX0, m_varX0);
 }
 
-void Task::setMeanX(const Vector &mean)
+void Task::setMeanX0(const Vector &mean)
 {
     assert(mean.size() == m_dimX && "Core::Task::setMeanX(mean) : corrupt dimension of mean");
-    m_meanX = mean;
+    m_meanX0 = mean;
 }
 
 void Task::setMeanV(const Vector &mean)
@@ -115,11 +115,11 @@ void Task::setMeanW(const Vector &mean)
     m_meanW = mean;
 }
 
-void Task::setVarX(const Matrix &var)
+void Task::setVarX0(const Matrix &var)
 {
     assert(var.rows() == m_dimX && "Core::Task::setVarX(var) : corrupt dimension of var (row's count)");
     assert(var.cols() == m_dimX && "Core::Task::setVarX(var) : corrupt dimension of var (col's count)");
-    m_varX = var;
+    m_varX0 = var;
 }
 
 void Task::setVarV(const Matrix &var)
@@ -136,9 +136,9 @@ void Task::setVarW(const Matrix &var)
     m_varW = var;
 }
 
-void Task::changeParameter(const std::string &key, double newValue)
+void Task::changeParameter(const std::string &key, double value)
 {
-    (*m_params).at(key) = newValue;
+    (*m_params).at(key) = value;
     loadParams();
 }
 

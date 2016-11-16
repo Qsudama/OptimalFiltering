@@ -27,7 +27,7 @@ FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
 
 void FOS::algorithm()
 {
-    Vector        h, my, ksi, lambda, u;
+    Vector        h, my, xi, lambda, u;
     Matrix        G, F, T, Psi, Gamma, GammaY, GammaZ, DxyDxz, Ddelta, Dxy, Dxz;
     Array<Vector> sampleDelta(m_params->sampleSize());
 
@@ -56,9 +56,9 @@ void FOS::algorithm()
                 Gamma  = DxyDxz * PinvSVD(Ddelta);
                 GammaY = Gamma.leftCols(m_task->dimY());
                 GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
-                ksi    = m_result[n].meanX - GammaY * my - GammaZ * m_result[n].meanZ;
+                xi    = m_result[n].meanX - GammaY * my - GammaZ * m_result[n].meanZ;
                 T      = m_result[n].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
-                u      = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + ksi;
+                u      = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + xi;
 
                 //вычисляем lambda, Psi: время устонавливаем в предыдущий момент измерения:
                 double currentTime  = m_task->time();

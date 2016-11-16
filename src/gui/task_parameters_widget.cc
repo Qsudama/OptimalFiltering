@@ -32,10 +32,10 @@ TaskParametersWidget::TaskParametersWidget(Core::PtrTask task, QWidget *parent)
 
 void TaskParametersWidget::loadParamsTo(Core::PtrTask task)
 {
-    task->setMeanX(m_meanX->matrix());
+    task->setMeanX0(m_meanX->matrix());
     task->setMeanV(m_meanV->matrix());
     task->setMeanW(m_meanW->matrix());
-    task->setVarX(m_varX->matrix());
+    task->setVarX0(m_varX->matrix());
     task->setVarV(m_varV->matrix());
     task->setVarW(m_varW->matrix());
 
@@ -63,10 +63,10 @@ QHBoxLayout *TaskParametersWidget::createMeanVarLayout(MatrixWidget *left, Matri
 
 void TaskParametersWidget::initMain(Core::PtrTask task, QVBoxLayout *mainLayout)
 {
-    m_meanX = new MatrixWidget(task->meanX());
+    m_meanX = new MatrixWidget(task->meanX0());
     m_meanV = new MatrixWidget(task->meanV());
     m_meanW = new MatrixWidget(task->meanW());
-    m_varX  = new MatrixWidget(task->varX(), true, true);
+    m_varX  = new MatrixWidget(task->varX0(), true, true);
     m_varV  = new MatrixWidget(task->varV(), true, true);
     m_varW  = new MatrixWidget(task->varW(), true, true);
 
