@@ -39,16 +39,21 @@ void AOF::algorithm()
     Vector h, lambda;
     Matrix G, F, H, Psi;
 
-    for (size_t n = 1; n < m_result.size(); ++n) { // tn = t0 + n * dt
+    // Индекс n соответствует моменту времени tn = t0 + n * dt  (dt - шаг интегрирования):
+    for (size_t n = 1; n < m_result.size(); ++n) {
         //интегрируем систему (получаем mx, Dx с шагам dt):
         m_task->setTime(m_result[n - 1].time);
         m_task->setStep(m_params->integrationStep());
 
+        // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleX[s] = m_task->a(m_sampleX[s]);
         }
+        writeResult(n, true);
 
+        // n = 1..K*L*N, если n нацело делится на L*N, значит сейчас время измерения tn = tk:
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
+            // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 //вычисляем lambda, Psi: время устонавливаем в предыдущий момент измерения:
                 double currentTime  = m_task->time();
@@ -60,20 +65,18 @@ void AOF::algorithm()
 
                 //ставим время обратно и продолжаем:
                 m_task->setTime(currentTime);
-                m_sampleY[s] = m_task->b(m_sampleX[s]);
 
                 h = m_task->h(lambda, Psi);
                 G = m_task->G(lambda, Psi);
                 F = m_task->F(lambda, Psi);
                 H = Psi * G.transpose() * PinvSVD(F);
 
+                m_sampleY[s] = m_task->b(m_sampleX[s]);
                 m_sampleZ[s] = lambda + H * (m_sampleY[s] - h);
                 m_sampleP[s] = Psi - H * G * Psi;
                 m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
             }
             writeResult(n);
-        } else {
-            writeResult(n, true);
         }
     }
 }
