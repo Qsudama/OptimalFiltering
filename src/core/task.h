@@ -21,72 +21,136 @@ namespace Core
 {
 
 
-using TaskParameters    = std::map<std::string, double>;
+//! \brief Тип параметров задачи.
+using TaskParameters = std::map<std::string, double>;
+
+//! \brief Тип умного указатель на TaskParameters.
 using PtrTaskParameters = std::shared_ptr<TaskParameters>;
 
+
+//! \brief Базовый класс для всех задач
 
 class Task : public FunctionTime
 {
 
 public:
+    //! \brief Конструктор.
     Task();
+
+    //! \brief Деструктор.
     virtual ~Task();
 
     Task(const Task &) = delete;
     Task &operator=(const Task &) = delete;
 
+    //! \brief Возвращает набор специфических параметров данной задачи.
     PtrTaskParameters params();
-    PtrTaskParameters consts() const;
-    PtrInfo           info() const;
 
+    //! \brief Возвращает набор специфических констант данной задачи.
+    PtrTaskParameters consts() const;
+
+    //! \brief Возвращает строковую информацию о данной задаче (имя, тип).
+    PtrInfo info() const;
+
+    /*!
+     \brief Возвращает состояние объекта в начальный момент времени.
+
+     \return \f$x_0 \sim \pi(\cdot)\f$.
+
+     По-умолчанию \f$\pi(\cdot) = N(m_0, s_0^2)\f$ - гауссовское распределение.
+
+     Если начальное состояние задается иначе в конкретной задаче, x0() необходимо переопределить.
+    */
     virtual Math::Vector x0() const;
 
+    //! \brief Возвращает размерность вектора состояния объекта \f$X\f$.
     long dimX() const;
+
+    //! \brief Возвращает размерность вектора состояния измерителя \f$Y\f$.
     long dimY() const;
+
+    //! \brief Возвращает размерность вектора шума \f$V\f$.
     long dimV() const;
+
+    //! \brief Возвращает размерность вектора шума \f$W\f$.
     long dimW() const;
 
-    const Math::Vector &meanX() const;
+    //! \brief Возвращает начальное математическое ожидание \f$M[X_0]\f$ вектора состояния объекта \f$X_0\f$.
+    const Math::Vector &meanX0() const;
+
+    //! \brief Возвращает математическое ожидание \f$M[V]\f$ вектора шума \f$V\f$.
     const Math::Vector &meanV() const;
+
+    //! \brief Возвращает математическое ожидание \f$M[W]\f$ вектора шума \f$W\f$.
     const Math::Vector &meanW() const;
-    const Math::Matrix &varX() const;
+
+    //! \brief Возвращает начальную дисперсию \f$D[X_0]\f$ вектора состояния объекта \f$X_0\f$.
+    const Math::Matrix &varX0() const;
+
+    //! \brief Возвращает дисперсию \f$D[V]\f$ вектора шума \f$V\f$.
     const Math::Matrix &varV() const;
+
+    //! \brief Возвращает дисперсию \f$D[W]\f$ вектора шума \f$W\f$.
     const Math::Matrix &varW() const;
 
-    void setMeanX(const Math::Vector &m);
+
+    //! \brief Устанавливает начальное математическое ожидание \f$M[X_0]\f$ вектора состояния объекта \f$X_0\f$.
+    void setMeanX0(const Math::Vector &m);
+
+    //! \brief Устанавливает математическое ожидание \f$M[V]\f$ вектора шума \f$V\f$.
     void setMeanV(const Math::Vector &m);
+
+    //! \brief Устанавливает математическое ожидание \f$M[W]\f$ вектора шума \f$W\f$.
     void setMeanW(const Math::Vector &m);
-    void setVarX(const Math::Matrix &D);
+
+    //! \brief Устанавливает начальную дисперсию \f$D[X_0]\f$ вектора состояния объекта \f$X_0\f$.
+    void setVarX0(const Math::Matrix &D);
+
+    //! \brief Устанавливает дисперсию \f$D[V]\f$ вектора шума \f$V\f$.
     void setVarV(const Math::Matrix &D);
+
+    //! \brief Устанавливает дисперсию \f$D[W]\f$ вектора шума \f$W\f$.
     void setVarW(const Math::Matrix &D);
 
-    void changeParameter(const std::string &key, double newValue);
+    /*!
+     \brief Изменяет значение параметра.
+
+     \param key - ключ, по которому производится поиск параметра из набора.
+     \param value - значение, которое будет присвоено элементу с ключом key.
+
+     \warning Если параметр с данным ключом не найден, пользователь не будет проинформирован об этом.
+    */
+    void changeParameter(const std::string &key, double value);
 
 
 protected:
+    //! \brief Загружает данные в локальные переменные после изменения параметров.
     virtual void loadParams();
 
 
 protected:
-    PtrTaskParameters m_params;
-    PtrTaskParameters m_consts;
-    PtrInfo           m_info;
+    PtrTaskParameters m_params; /*!< Спцифические параметры задачи. */
+    PtrTaskParameters m_consts; /*!< Спцифические константы задачи. */
+    PtrInfo           m_info;   /*!< Информация о задаче. */
 
-    long m_dimX;
-    long m_dimY;
-    long m_dimV;
-    long m_dimW;
+    long m_dimX; /*!< Размерность вектора \f$X\f$. */
+    long m_dimY; /*!< Размерность вектора \f$Y\f$. */
+    long m_dimV; /*!< Размерность вектора \f$V\f$. */
+    long m_dimW; /*!< Размерность вектора \f$W\f$. */
 
-    Math::Vector m_meanX;
-    Math::Vector m_meanV;
-    Math::Vector m_meanW;
+    Math::Vector m_meanX0; /*!< Математическое ожидание \f$M[X_0]\f$. */
+    Math::Vector m_meanV;  /*!< Математическое ожидание \f$M[V]\f$. */
+    Math::Vector m_meanW;  /*!< Математическое ожидание \f$M[W]\f$. */
 
-    Math::Matrix m_varX;
-    Math::Matrix m_varV;
-    Math::Matrix m_varW;
+    Math::Matrix m_varX0; /*!< Дисперсия \f$D[X_0]\f$. */
+    Math::Matrix m_varV;  /*!< Дисперсия \f$D[V]\f$. */
+    Math::Matrix m_varW;  /*!< Дисперсия \f$D[W]\f$. */
 };
 
 
+/*!
+ \brief Тип умного указателя на Task.
+*/
 using PtrTask = std::shared_ptr<Task>;
 
 

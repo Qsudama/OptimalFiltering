@@ -24,9 +24,17 @@ using Math::Vector;
 using Math::RowVector;
 
 
+/*!
+ \brief Модуль, содержащий основные классы и методы.
+
+ Большая часть классов здесь абстрактные, т.е. предоставляют лишь общие интерфейсы.
+*/
+
 namespace Core
 {
 
+
+//! \brief Базовый класс для всех фильтров.
 
 #ifdef QT_ENABLED
 class Filter : public QObject
@@ -38,44 +46,81 @@ class Filter
 #endif
 
 public:
+    //! \brief Конструктор.
     explicit Filter(PtrFilterParameters params);
+
+    //! \brief Деструктор.
     virtual ~Filter();
+
 
     Filter(const Filter &) = delete;
     Filter &operator=(const Filter &) = delete;
 
+    /*!
+     \brief Запускает фильтрацию.
+
+     \return полное время работы.
+
+     Схематически, полный цикл работы фильтра выглядит так:
+     \code
+     init();
+     zeroIteration();
+     algorithm();
+     \endcode
+    */
     double run();
 
+    //! \brief Возвращает результат работы (не имеет смысла до вызова run()).
     const FilterOutput &result() const;
+
+    //! \brief Возвращает текущие параметры фильтра.
     PtrFilterParameters params();
-    PtrInfo             info() const;
+
+    //! \brief Возвращает информацию о фильтре (имя, тип).
+    PtrInfo info() const;
 
 
 protected:
+    //! \brief Инициализирует массивы по входным данным.
     virtual void init();
+
+    //! \brief Выполняет нулевую итерацию алгоритма.
     virtual void zeroIteration() = 0;
-    virtual void algorithm()     = 0;
+
+    //! \brief Выполняет основной алгоритм.
+    virtual void algorithm() = 0;
+
+    /*!
+     \brief Вычисляет и записывает результаты для времени \f$t_n\f$.
+
+     \param n - результат записывается в ячейку с этим индексом.
+     \param copy - если false (по-умолчанию), то вычисляются все характеристики, если true,
+                   то только характеристики для \f$x_{t_n}\f$, остальные копируются из предыдущей ячейки
+                   (опция для дискретных фильтров - "порожки" на графиках).
+    */
     void writeResult(size_t n, bool copy = false);
 
 #ifdef QT_ENABLED
 signals:
 #endif
 
+    //! \brief Информирует о прогрессе выполнения алгоритма (в процентах).
     void updatePercent(int p) const;
 
 
 protected:
-    FilterOutput        m_result;
-    PtrFilterParameters m_params;
-    PtrInfo             m_info;
+    FilterOutput        m_result; /*!< Результаты работы. */
+    PtrFilterParameters m_params; /*!< Параметры. */
+    PtrInfo             m_info;   /*!< Информация (имя, тип). */
 
-    Array<Vector> m_sampleX;
-    Array<Vector> m_sampleY;
-    Array<Vector> m_sampleZ;
-    Array<Vector> m_sampleE;
+    Array<Vector> m_sampleX; /*!< Массив под выборку \f$X\f$. */
+    Array<Vector> m_sampleY; /*!< Массив под выборку \f$Y\f$. */
+    Array<Vector> m_sampleZ; /*!< Массив под выборку \f$Z\f$. */
+    Array<Vector> m_sampleE; /*!< Массив под выборку \f$E\f$. */
 };
 
 
+//! \brief Тип умного указателя на Filter.
 using PtrFilter = std::shared_ptr<Filter>;
 
 

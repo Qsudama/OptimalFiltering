@@ -41,3 +41,7 @@ CMakeLists.txt.user*
 
 # kde ".directory" file:
 *.directory
+
+# documentation
+docs/html
+docs/latex

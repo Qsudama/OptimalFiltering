@@ -6,8 +6,18 @@ namespace Core
 {
 
 
-enum class FILTER_TYPE { Continuous, ContinuousDiscrete, Discrete };
-enum class APPROX_TYPE { Linear, Gauss };
+//! \brief Набор возможных типов фильтров.
+enum class FILTER_TYPE {
+    Continuous,         /*!< Непрерывный фильтр. */
+    ContinuousDiscrete, /*!< Непрерывно-дискретный фильтр. */
+    Discrete            /*!< Дискретный фильтр. */
+};
+
+//! \brief Набор возможных приближений для фильтров оптимальной структуры.
+enum class APPROX_TYPE {
+    Linear, /*!< Линейное приближение. */
+    Gauss   /*!< Гауссовское приближение. */
+};
 
 
 } // end Core
