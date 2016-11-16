@@ -26,15 +26,18 @@ void DFOS::algorithm()
     Matrix Dxz    = Cov(m_sampleX, m_sampleZ);
     double sqrtdt = std::sqrt(m_params->integrationStep());
 
+    // Индекс n соответствует моменту времени tn = t0 + n * dt  (dt - шаг интегрирования):
     for (size_t n = 1; n < m_result.size(); ++n) {
         m_task->setTime(m_result[n - 1].time);
 
+        // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
                            m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
         }
         writeResult(n, true); //  mX, DX вычисляются, а mZ, DZ, mE, DE копируются из предыдущего
 
+        // n = 1..K*L*N, если n нацело делится на N, значит сейчас время прогноза tn = tl:
         if (n % m_params->integrationCount() == 0) { // t = t_tau_k^i
             Dxz   = Cov(m_sampleX, m_sampleZ);
             Gamma = Dxz * PinvSVD(m_result[n].varZ);
@@ -47,8 +50,10 @@ void DFOS::algorithm()
             }
             writeResult(n);
         }
-        if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) // t = tk
-        {
+
+        // n = 1..K*L*N, если n нацело делится на L*N, значит сейчас время измерения tn = tk:
+        if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
+            // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 m_sampleY[s] = m_task->c(m_sampleX[s]); // = Yk (Y в момент t = tk)
 

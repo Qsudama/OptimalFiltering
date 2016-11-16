@@ -13,23 +13,49 @@
 #include "src/filters/discrete/d_mfos.h"
 
 
+//! \brief Модуль, содержащий реализации конкретных алгоритмов фильтрации.
+
 namespace Filters
 {
 
 
-enum class FILTER_ID { AOF, FOS, DFOS, DFOSBO, MDFOS };
+//! \brief Набор идентификаторов фильтров.
 
+enum class FILTER_ID {
+    AOF,    /*!< АОФ - абсолютно оптимальный фильтр. */
+    FOS,    /*!< ФМП - фильтр оптимальной структуры малого порядка. */
+    DFOS,   /*!< ФМП с дискретными прогнозами. */
+    DFOSBO, /*!< ФКП - фильтр оптимальной структуры с конечной памятью (повышенного порядка). */
+    MDFOS   /*!< МФМП - модифицированный ФМП. */
+};
+
+
+//! \brief Фабричный класс для создания экземпляров классов фильтров.
 
 class FilterFactory
 {
 public:
+    /*!
+     \brief Создает экземпляр фильтра по входным параметрам.
+
+     \param type - тип фильтра (непрерывный, дискретный, ...).
+     \param id - идентификатор фильтра (АОФ, ФМП и т.д.).
+     \param params - указатель на параметры, которые будет использовать фильтр.
+     \param task - указатель на экземпляр решаемой задачи
+     \return указатель на созданный экземпляр фильтра.
+    */
     static Core::PtrFilter create(Core::FILTER_TYPE type, FILTER_ID id, Core::PtrFilterParameters params,
                                   Core::PtrTask task);
 
 
 private:
+    //! \brief Вспомогательный метод для создания непрерывных фильтров оптимальной структуры.
     static Core::PtrFilter createContinuous(FILTER_ID id, Core::PtrFilterParameters params, Core::PtrTask task);
+
+    //! \brief Вспомогательный метод для создания непрерывно-дискретных фильтров оптимальной структуры.
     static Core::PtrFilter createContinuousDiscrete(FILTER_ID id, Core::PtrFilterParameters params, Core::PtrTask task);
+
+    //! \brief Вспомогательный метод для создания дискретных фильтров оптимальной структуры.
     static Core::PtrFilter createDiscrete(FILTER_ID id, Core::PtrFilterParameters params, Core::PtrTask task);
 };
 

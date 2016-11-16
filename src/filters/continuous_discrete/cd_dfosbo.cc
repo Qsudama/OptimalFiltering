@@ -22,26 +22,19 @@ DFOSBO::DFOSBO(Core::PtrFilterParameters params, Core::PtrTask task)
     m_info->setName(m_task->info()->type() + "ФКПнд-дп (" + std::to_string(p) + ")");
 }
 
-void DFOSBO::init()
-{
-    Filter::init();
-    Zb.resize(m_params->sampleSize());
-}
-
 void DFOSBO::zeroIteration()
 {
     ContinuousDiscreteFilter::zeroIteration(); // тут вычисляются общие для всех фильтров H0, e0 и
                                                // т.д. и заполняется результат 0-го шага
 
-    Zb.resize(m_params->sampleSize());
+    m_sampleS.resize(m_params->sampleSize());
 
-    ny = uint(m_task->dimY());
-    p  = ny * m_params->orderMult();
+    long p = long(m_task->dimY()) * long(m_params->orderMult());
 
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        Zb[s] = Vector::Zero(int(p));
-        for (long i = 0; i < long(ny); ++i) {
-            Zb[s][i] = m_sampleY[s][i];
+        m_sampleS[s] = Vector::Zero(p);
+        for (long i = 0; i < long(m_task->dimY()); ++i) {
+            m_sampleS[s][i] = m_sampleY[s][i];
         }
     }
 }
@@ -49,35 +42,41 @@ void DFOSBO::zeroIteration()
 void DFOSBO::algorithm()
 {
     double sqrtdt = std::sqrt(m_params->integrationStep());
-    Vector h, kappa, mZb;
-    Matrix G, F, T, Gamma, DZb, DxZb;
+    Vector h, kappa, ms;
+    Matrix G, F, T, Gamma, Ds, Dxs;
 
-    // n = 1 .. m_params->measurementCount() * m_params->predictionCount() * m_params->integrationCount()
+    // Индекс n соответствует моменту времени tn = t0 + n * dt  (dt - шаг интегрирования):
     for (size_t n = 1; n < m_result.size(); ++n) {
         m_task->setTime(m_result[n - 1].time);
 
+        // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
                            m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
         }
         writeResult(n, true); //  mX, DX вычисляются, а mZ, DZ, mE, DE копируются из предыдущего
 
+        // n = 1..K*L*N, если n нацело делится на N, значит сейчас время прогноза tn = tl:
         if (n % m_params->integrationCount() == 0) {
-            DxZb  = Cov(m_sampleX, Zb);
-            mZb   = Mean(Zb);
-            DZb   = Var(Zb, mZb);
-            Gamma = DxZb * PinvSVD(DZb);
-            kappa = m_result[n].meanX - Gamma * mZb;
+            Dxs   = Cov(m_sampleX, m_sampleS);
+            ms    = Mean(m_sampleS);
+            Ds    = Var(m_sampleS, ms);
+            Gamma = Dxs * PinvSVD(Ds); // Gamma_k^i
+            kappa = m_result[n].meanX - Gamma * ms;
             if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
-                T = m_result[n].varX - Gamma * DxZb.transpose();
+                T = m_result[n].varX - Gamma * Dxs.transpose();
             }
+
+            // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                m_sampleZ[s] = Gamma * Zb[s] + kappa;
+                m_sampleZ[s] = Gamma * m_sampleS[s] + kappa;
             }
             writeResult(n);
         }
 
+        // n = 1..K*L*N, если n нацело делится на L*N, значит сейчас время измерения tn = tk:
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
+            // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 m_sampleY[s] = m_task->c(m_sampleX[s]); // = Yk (Y в момент t = tk)
 
@@ -87,11 +86,13 @@ void DFOSBO::algorithm()
 
                 m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
 
-                for (long i = long(p - 1); i >= long(ny); --i) {
-                    Zb[s][i] = Zb[s][i - long(ny)];
+                long ny = long(m_task->dimY());
+                long p  = ny * long(m_params->orderMult());
+                for (long i = p - 1; i >= ny; --i) {
+                    m_sampleS[s][i] = m_sampleS[s][i - ny];
                 }
                 for (long i = 0; i < long(ny); ++i) {
-                    Zb[s][i] = m_sampleY[s][i];
+                    m_sampleS[s][i] = m_sampleY[s][i];
                 }
             }
             writeResult(n);

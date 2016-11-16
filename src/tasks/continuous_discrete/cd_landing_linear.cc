@@ -22,6 +22,7 @@ LandingLinear::LandingLinear()
 
     m_dimY = 2;
 
+    m_dimX      = 3;
     m_meanX0    = Vector(m_dimX);
     m_meanX0[0] = 6.0;
     m_meanX0[1] = DegToRad(-18.0);

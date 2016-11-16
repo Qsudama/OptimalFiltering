@@ -35,9 +35,11 @@ void AOF::algorithm()
     Vector h;
     Matrix G, F, A, K, Theta;
 
-    for (size_t n = 1; n < m_result.size(); ++n) { // tn = t0 + n * dt
+    // Индекс n соответствует моменту времени tn = t0 + n * dt  (dt - шаг интегрирования):
+    for (size_t n = 1; n < m_result.size(); ++n) {
         m_task->setTime(m_result[n - 1].time);
 
+        // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
                            m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
@@ -51,7 +53,9 @@ void AOF::algorithm()
             m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
         }
 
-        if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) { // t = tk - приходит измерение
+        // n = 1..K*L*N, если n нацело делится на L*N, значит сейчас время измерения tn = tk:
+        if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
+            // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 m_sampleY[s] = m_task->c(m_sampleX[s]);
 

@@ -23,10 +23,12 @@ void FOS::algorithm()
     Vector dy;
     Matrix Gamma;
 
-    for (size_t n = 1; n < m_result.size(); ++n) { // tn = t0 + n * dt
+    // Индекс n соответствует моменту времени tn = t0 + n * dt  (dt - шаг интегрирования):
+    for (size_t n = 1; n < m_result.size(); ++n) {
         m_task->setTime(m_result[n - 1].time);
         Gamma = m_result[n - 1].varX - m_result[n - 1].varZ;
 
+        // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
                            m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
