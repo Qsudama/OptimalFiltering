@@ -22,11 +22,10 @@ LandingLinear::LandingLinear()
 
     m_dimY = 2;
 
-    m_dimX     = 3;
-    m_meanX    = Vector(m_dimX);
-    m_meanX[0] = 6.0;
-    m_meanX[1] = DegToRad(-18.0);
-    m_meanX[2] = 100.0;
+    m_meanX0    = Vector(m_dimX);
+    m_meanX0[0] = 6.0;
+    m_meanX0[1] = DegToRad(-18.0);
+    m_meanX0[2] = 100.0;
 
     m_dimV  = 3;
     m_meanV = Vector::Zero(m_dimV);
@@ -34,10 +33,10 @@ LandingLinear::LandingLinear()
     m_dimW  = 4;
     m_meanW = Vector::Zero(m_dimW);
 
-    m_varX = Matrix::Zero(m_dimX, m_dimX);
-    m_varX(0, 0) = pow(15E-3, 2);
-    m_varX(1, 1) = pow(DegToRad(1.0), 2);
-    m_varX(2, 2) = pow(7.0, 2);
+    m_varX0 = Matrix::Zero(m_dimX, m_dimX);
+    m_varX0(0, 0) = pow(15E-3, 2);
+    m_varX0(1, 1) = pow(DegToRad(1.0), 2);
+    m_varX0(2, 2) = pow(7.0, 2);
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
 

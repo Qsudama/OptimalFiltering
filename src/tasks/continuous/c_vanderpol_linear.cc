@@ -19,10 +19,10 @@ VanDerPolLinear::VanDerPolLinear()
 
     m_dimY = 2;
 
-    m_dimX     = 2;
-    m_meanX    = Vector(m_dimX);
-    m_meanX[0] = 10.0;
-    m_meanX[1] = -3.0;
+    m_dimX      = 2;
+    m_meanX0    = Vector(m_dimX);
+    m_meanX0[0] = 10.0;
+    m_meanX0[1] = -3.0;
 
     m_dimV  = 2;
     m_meanV = Vector::Zero(m_dimV);
@@ -32,9 +32,9 @@ VanDerPolLinear::VanDerPolLinear()
     m_meanW[0] = 1.0;
     m_meanW[1] = 1.5;
 
-    m_varX = Matrix::Zero(m_dimX, m_dimX);
-    m_varX(0, 0) = 5.0;
-    m_varX(1, 1) = 5.0;
+    m_varX0 = Matrix::Zero(m_dimX, m_dimX);
+    m_varX0(0, 0) = 5.0;
+    m_varX0(1, 1) = 5.0;
 
     m_varV = Matrix::Identity(m_dimV, m_dimV);
 
