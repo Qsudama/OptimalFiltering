@@ -45,6 +45,7 @@ void MFOS::algorithm()
     computeParams(0, sampleU, T);
 
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+        Vector u = sampleU[s];
         S[s] = Vector::Zero(3);
         m_sampleSigma[s] = Vector::Zero(3);
         lambda[s] = Vector::Zero(3);
@@ -64,11 +65,30 @@ void MFOS::algorithm()
 
         // n = 1..K*L*N, если n нацело делится на L*N, значит сейчас время измерения tn = tk:
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
+
+            Ds = Var(S);
+
+            double currentTime  = m_task->time();
+            double previousTime = currentTime - m_params->measurementStep();
+            m_task->setStep(m_params->measurementStep());
+            m_task->setTime(previousTime);
+
+            Dxs = Cov(m_sampleX, S);
+            L = Dxs * PinvSVD(Ds);
+            vectorN = m_result[n].meanX - L * Mean(S);
+
+            m_task->setTime(currentTime);
+
+            DSigma = Var(m_sampleSigma);
+            DSigmaE = Cov(E, m_sampleSigma);
+            K = DSigmaE*PinvSVD(DSigma);
+            vector_e = Mean(E) - K*Mean(m_sampleSigma);
+
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
 
                 S[s] = m_task->tau(sampleU[s], T);
-                Ds = Var(S);
+
 
                 //вычисляем lambda, Psi: время устонавливаем в предыдущий момент измерения:
                 double currentTime  = m_task->time();
@@ -77,9 +97,9 @@ void MFOS::algorithm()
                 m_task->setTime(previousTime);
 
                 Psi    = m_task->Theta(sampleU[s], T);
-                Dxs = Cov(m_sampleX, S);
-                L = Dxs * PinvSVD(Ds);
-                vectorN = m_result[n].meanX - L * Mean(S);
+//                Dxs = Cov(m_sampleX, S);
+//                L = Dxs * PinvSVD(Ds);
+//                vectorN = m_result[n].meanX - L * Mean(S);
                 lambda[s] = L * S[s] + vectorN;
 
                 //ставим время обратно и продолжаем:
@@ -91,13 +111,13 @@ void MFOS::algorithm()
                 m_sampleY[s] = m_task->b(m_sampleX[s]);
                 m_sampleSigma[s] = Psi * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
 
-                DSigma = Var(m_sampleSigma);
+//                DSigma = Var(m_sampleSigma);
                 for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                     E[s] = m_sampleX[s] - lambda[s];
                 }
-                DSigmaE = Cov(E, m_sampleSigma);
-                K = DSigmaE*PinvSVD(DSigma);
-                vector_e = Mean(E) - K*Mean(m_sampleSigma);
+//                DSigmaE = Cov(E, m_sampleSigma);
+//                K = DSigmaE*PinvSVD(DSigma);
+//                vector_e = Mean(E) - K*Mean(m_sampleSigma);
 
                 m_sampleZ[s] = lambda[s] + K*m_sampleSigma[s]+vector_e;
             }
