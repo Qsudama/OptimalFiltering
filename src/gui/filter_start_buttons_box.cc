@@ -295,12 +295,10 @@ void FilterStartButtonsBox::onBtnDiscreteLinearFosClicked()
 
 void FilterStartButtonsBox::onBtnDiscreteLinearMfosClicked()
 {
-    // TODO:
-    // emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::MDFOS);
+    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Linear, FILTER_ID::MDFOS);
 }
 
 void FilterStartButtonsBox::onBtnDiscreteGaussMfosClicked()
 {
-    // TODO:
-    // emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Linear, FILTER_ID::MDFOS);
+    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::MDFOS);
 }
