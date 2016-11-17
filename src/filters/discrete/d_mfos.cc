@@ -1,8 +1,6 @@
 #include "d_mfos.h"
 #include "src/math/statistic.h"
 
-#include <iostream>
-
 using namespace std;
 
 namespace Filters
@@ -91,14 +89,14 @@ void MFOS::algorithm()
                 G = m_task->G(lambda[s], Psi);
                 F = m_task->F(lambda[s], Psi);
                 m_sampleY[s] = m_task->b(m_sampleX[s]);
-                m_sampleSigma[s] = Psi * G.transpose() * PinvGreville(F) * (m_sampleY[s] - h);
+                m_sampleSigma[s] = Psi * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
 
                 DSigma = Var(m_sampleSigma);
                 for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                     E[s] = m_sampleX[s] - lambda[s];
                 }
                 DSigmaE = Cov(E, m_sampleSigma);
-                K = DSigmaE*PinvGreville(DSigma);
+                K = DSigmaE*PinvSVD(DSigma);
                 vector_e = Mean(E) - K*Mean(m_sampleSigma);
 
                 m_sampleZ[s] = lambda[s] + K*m_sampleSigma[s]+vector_e;
@@ -126,7 +124,7 @@ void MFOS::computeParams(size_t n, Array<Vector> &u, Matrix &T)
     Dxz    = Cov(m_sampleX, m_sampleZ);
     MakeBlockMatrix(Dxy, Dxz, DxyDxz);
 
-    Gamma  = DxyDxz * PinvGreville(Ddelta);
+    Gamma  = DxyDxz * PinvSVD(Ddelta);
     GammaY = Gamma.leftCols(m_task->dimY());
     GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
 
