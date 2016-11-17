@@ -1,6 +1,9 @@
 #include "d_mfos.h"
 #include "src/math/statistic.h"
 
+#include <iostream>
+
+using namespace std;
 
 namespace Filters
 {
@@ -11,6 +14,7 @@ namespace Discrete
 
 using Math::Rand::gaussianVector;
 using Math::LinAlg::PinvSVD;
+using Math::LinAlg::PinvGreville;
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
@@ -29,12 +33,25 @@ MFOS::MFOS(Core::PtrFilterParameters params, Core::PtrTask task)
 
 void MFOS::algorithm()
 {
-    Vector h, lambda;
+    Vector h;
     Matrix G, F, Psi, T;
-
+    Array<Vector> m_sampleSigma(m_params->sampleSize());
     Array<Vector> sampleU(m_params->sampleSize());
 
+    Vector vectorN, vector_e;
+    Matrix Dxs, Ds, DSigma, DSigmaE, K, L;
+
+    Array<Vector> E(m_params->sampleSize());
+    Array<Vector> lambda(m_params->sampleSize());
+    Array<Vector> S(m_params->sampleSize());
     computeParams(0, sampleU, T);
+
+    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+        S[s] = Vector::Zero(3);
+        m_sampleSigma[s] = Vector::Zero(3);
+        lambda[s] = Vector::Zero(3);
+        E[s] = Vector::Zero(3);
+    }
 
     // Индекс n соответствует моменту времени tn = t0 + n * dt  (dt - шаг интегрирования):
     for (size_t n = 1; n < m_result.size(); ++n) {
@@ -51,23 +68,40 @@ void MFOS::algorithm()
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+
+                S[s] = m_task->tau(sampleU[s], T);
+                Ds = Var(S);
+
                 //вычисляем lambda, Psi: время устонавливаем в предыдущий момент измерения:
                 double currentTime  = m_task->time();
                 double previousTime = currentTime - m_params->measurementStep();
                 m_task->setStep(m_params->measurementStep());
                 m_task->setTime(previousTime);
-                lambda = m_task->tau(sampleU[s], T);
+
                 Psi    = m_task->Theta(sampleU[s], T);
+                Dxs = Cov(m_sampleX, S);
+                L = Dxs * PinvSVD(Ds);
+                vectorN = m_result[n].meanX - L * Mean(S);
+                lambda[s] = L * S[s] + vectorN;
 
                 //ставим время обратно и продолжаем:
                 m_task->setTime(currentTime);
 
-                h = m_task->h(lambda, Psi);
-                G = m_task->G(lambda, Psi);
-                F = m_task->F(lambda, Psi);
-
+                h = m_task->h(lambda[s], Psi);
+                G = m_task->G(lambda[s], Psi);
+                F = m_task->F(lambda[s], Psi);
                 m_sampleY[s] = m_task->b(m_sampleX[s]);
-                m_sampleZ[s] = lambda + Psi * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
+                m_sampleSigma[s] = Psi * G.transpose() * PinvGreville(F) * (m_sampleY[s] - h);
+
+                DSigma = Var(m_sampleSigma);
+                for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+                    E[s] = m_sampleX[s] - lambda[s];
+                }
+                DSigmaE = Cov(E, m_sampleSigma);
+                K = DSigmaE*PinvGreville(DSigma);
+                vector_e = Mean(E) - K*Mean(m_sampleSigma);
+
+                m_sampleZ[s] = lambda[s] + K*m_sampleSigma[s]+vector_e;
             }
             writeResult(n);
             computeParams(n, sampleU, T);
@@ -92,7 +126,7 @@ void MFOS::computeParams(size_t n, Array<Vector> &u, Matrix &T)
     Dxz    = Cov(m_sampleX, m_sampleZ);
     MakeBlockMatrix(Dxy, Dxz, DxyDxz);
 
-    Gamma  = DxyDxz * PinvSVD(Ddelta);
+    Gamma  = DxyDxz * PinvGreville(Ddelta);
     GammaY = Gamma.leftCols(m_task->dimY());
     GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
 
