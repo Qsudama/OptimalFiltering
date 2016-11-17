@@ -1,3 +1,7 @@
+/*! \file
+ * \brief Файл конфигурации проекта.
+ */
+
 #ifndef CONFIG_H
 #define CONFIG_H
 

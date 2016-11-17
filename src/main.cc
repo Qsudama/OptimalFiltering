@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.setApplicationName(QObject::tr("Оптимальная фильтрация"));
-    a.setApplicationVersion("2.6.1");
+    a.setApplicationVersion("2.6.2");
     a.setApplicationDisplayName(a.applicationName() + "  " + a.applicationVersion());
 
     MainWindow window;

@@ -18,37 +18,69 @@
 #include <QVector>
 
 
+/*!
+ \brief Класс для главного окна приложения.
+*/
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
+    //! Конструктор.
     explicit MainWindow(QWidget *parent = nullptr);
+
+    //! Деструктор.
     ~MainWindow();
 
 
 signals:
+    //! Сигнал. Вызывает слоты onClear() всех связанных с ним виджетов.
     void clear();
 
 
 private slots:
+    //! Удаляет все пользовательские данные и возвращает значения по-умолчанию.
     void onClear();
+
+    //! Отображает прогресс выполнеия алгоритма (связывается с Filter).
     void onFilterUpdatePercent(int p);
+
+    /*!
+     \brief Создает экземпляр фильтра и запускает выполнение алгоритма фильтрации.
+
+     \param ftype - идентификатор типа фильтра.
+     \param atype - идентификатор метода приближения (аппроксимации).
+     \param id    - идентификатор алгоритма.
+    */
     void onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filters::FILTER_ID id);
 
 
 protected:
+    //! \brief Закрывает все второстепенные окна, затем себя.
     void closeEvent(QCloseEvent *);
 
 
 private:
+    /*!
+     \brief Загружает шрифты и устанавливает их параметры (начертание, размер и т.д.).
+     \see FontManager.
+    */
     void loadFonts();
+
+    //! \brief Инициализирует управляющие элементы и связывает их сигналы с нужными слотами.
     void initControls();
+
+    //! \brief Устанавливает расположение всех элементов на виджете.
     void initLayouts();
 
+    //! \brief Инициализирует поле статуса внизу окна.
     void initStatusBar();
+
+    //! \brief Создает, настраивает и показывает окно графиков GraphWindow
     void initGraphWindow();
 
+    //! \brief Преобразует результаты работы фильтра в нужный формат и отправляет в окно графиков.
     void showData(Core::PtrFilter filter);
 
 

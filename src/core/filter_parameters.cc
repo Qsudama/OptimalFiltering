@@ -1,17 +1,6 @@
 ﻿#include "filter_parameters.h"
 
 
-inline void correctStepAndCount(const double &intervalLength, double &step, ulong &count)
-{
-    ulong tempCount = ulong(intervalLength / step);
-    if (intervalLength - tempCount * step >= 0.5 * step) {
-        ++tempCount;
-    }
-    count = tempCount;
-    step  = intervalLength / count;
-}
-
-
 namespace Core
 {
 
@@ -123,6 +112,15 @@ void FilterParameters::setOrderMult(ulong order)
 {
     assert(order > 0);
     m_orderMult = order;
+}
+
+void FilterParameters::correctStepAndCount(const double &intervalLength, double &step, ulong &count)
+{
+    count = ulong(intervalLength / step);
+    if (intervalLength - count * step >= 0.5 * step) {
+        ++count;
+    }
+    step = intervalLength / count;
 }
 
 

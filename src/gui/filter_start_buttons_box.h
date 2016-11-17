@@ -12,20 +12,40 @@
 #include <QWidget>
 
 
+//! \brief Класс виджета, содержащего только кнопки для запуска того или иного фильтра.
+
 class FilterStartButtonsBox : public QGroupBox
 {
     Q_OBJECT
 
 public:
+    //! \brief Конструктор.
     explicit FilterStartButtonsBox(QWidget *parent = nullptr);
+
+    //! \brief Деструктор.
     ~FilterStartButtonsBox();
 
 
 signals:
+    /*!
+     \brief Сигнал. Отправляет сообщение о том, что нужно создать и запустить фильтр.
+
+     \param ftype - идентификатор типа фильтра.
+     \param atype - идентификатор метода приближения (аппроксимации).
+     \param id    - идентификатор алгоритма.
+    */
     void start(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filters::FILTER_ID id);
 
 
 private slots:
+    //@{
+    /*!
+      Слот. Реакция на нажатие кнопки (сигнал clicked() объекта класса QButtonBox).
+
+      Отправляет сигнал start(Core::FILTER_TYPE, Core::APPROX_TYPE, Filters::FILTER_ID)
+      c параметрами, соответсвующими кнопке, на которую кликнули.
+    */
+
     void onBtnContinuousDiscreteGaussAofClicked();
     void onBtnContinuousDiscreteLinearAofClicked();
     void onBtnContinuousDiscreteGaussFosClicked();
@@ -44,13 +64,28 @@ private slots:
     void onBtnDiscreteGaussFosClicked();
     void onBtnDiscreteLinearMfosClicked();
     void onBtnDiscreteGaussMfosClicked();
+    //@}
 
 
 private:
+    /*!
+     \brief Загружает шрифты и устанавливает их параметры (начертание, размер и т.д.).
+     \see FontManager.
+    */
     void loadFonts();
+
+    //! \brief Инициализирует управляющие элементы и связывает их сигналы с нужными слотами.
     void initControls();
+
+    //! \brief Устанавливает расположение всех элементов на виджете.
     void initLayouts();
 
+    /*!
+     \brief Вычисляет размеры для виджетов.
+     \details  Это, в частности, необходимо при изменении шрифтов, так как размеры элементов зависят от них.
+
+     \warning В Linux и Windows всё работает как задумано, в MacOS - фигово. Косяк либо тут, либо в FontManager.
+    */
     void computeSizes();
 
 

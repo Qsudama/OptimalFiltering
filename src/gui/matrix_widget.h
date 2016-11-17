@@ -6,25 +6,48 @@
 #include <QWidget>
 
 
+//! \brief Класс для отображения / изменения матриц (или векторов).
+
 class MatrixWidget : public QWidget
 {
     Q_OBJECT
 
 public:
+    /*!
+     \brief Конструктор.
+
+     \param matrix - матрица, по которой инициализируются элементы.
+     \param onlyPositive - запрещает ввод отрицательных значений.
+     \param symmetric - заставляет дублировать значение в симметричной ячейке.
+    */
     MatrixWidget(const Math::Matrix &matrix, bool onlyPositive = false, bool symmetric = false,
                  QWidget *parent = nullptr);
+    /*!
+     \brief  Конструктор.
+
+     \param rows - количество строк матрицы.
+     \param cols - количество столбцов матрицы.
+     \param matrix - матрица, по которой инициализируются элементы.
+     \param onlyPositive - запрещает ввод отрицательных значений.
+     \param symmetric - заставляет дублировать значение в симметричной ячейке.
+    */
     MatrixWidget(long rows, long cols = 1, bool onlyPositive = false, bool symmetric = false,
                  QWidget *parent = nullptr);
 
+    //! Возвращает матрицу, соответствующую текущему состоянию элементов виджета.
     const Math::Matrix &matrix() const;
 
 
 private slots:
+    //! \brief Записывает изменения в матрицу.
     void onValueChanged();
 
 
 private:
+    //! \brief Инициализирует управляющие элементы и связывает их сигналы с нужными слотами.
     void initControls();
+
+    //! \brief Устанавливает расположение всех элементов на виджете.
     void initLayouts();
 
 

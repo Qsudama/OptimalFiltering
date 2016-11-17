@@ -10,19 +10,32 @@
 #include <QWidget>
 
 
+/*!
+ \brief Класс виджета, предаставляющего возможность работы с параметрами задач.
+
+ \see Core::TaskParameters
+*/
+
 class TaskParametersWidget : public QWidget
 {
     Q_OBJECT
 
 public:
+    //! \brief Конструктор.
     explicit TaskParametersWidget(Core::PtrTask task, QWidget *parent = nullptr);
 
+    //! \brief Записывает измененные параметры в task.
     void loadParamsTo(Core::PtrTask task);
 
 
 private:
+    //! \brief Инициализирует элементы, соответствующие общим для всех задач параметрам.
     void initMain(Core::PtrTask task, QVBoxLayout *mainLayout);
+
+    //! \brief Инициализирует элементы для работы со специфическими параметрами (если таковые имеются).
     void initParameters(Core::PtrTask task, QVBoxLayout *mainLayout);
+
+    //! \brief Инициализирует элементы для отображения специфических константами (если таковые имеются).
     void initConstants(Core::PtrTask task, QVBoxLayout *mainLayout);
 
     QHBoxLayout *createMeanVarLayout(MatrixWidget *left, MatrixWidget *right);
