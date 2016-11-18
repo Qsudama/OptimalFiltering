@@ -1,8 +1,6 @@
 #include "d_mfos.h"
 #include "src/math/statistic.h"
 
-using namespace std;
-
 namespace Filters
 {
 
@@ -30,11 +28,7 @@ MFOS::MFOS(Core::PtrFilterParameters params, Core::PtrTask task)
 
 void MFOS::algorithm()
 {
-<<<<<<< HEAD
-    // TODO
-}
 
-=======
     Vector        h, n, e;
     Matrix        G, F, Psi, T, L, K;
     Array<Vector> sampleLambda(m_params->sampleSize());
@@ -159,8 +153,6 @@ void MFOS::computeAdditionParams(size_t nn, const Array<Vector> &sampleS, const 
     n = m_result[nn].meanX - L * ms;
 }
 
-
->>>>>>> master
 } // end Discrete
 
 } // end Filters

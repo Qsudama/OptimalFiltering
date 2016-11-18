@@ -42,9 +42,6 @@ protected:
     */
     void algorithm() override;
 
-<<<<<<< HEAD
-=======
-
 private:
     /*!
       \brief Вычисляет параметры и заполняет массивы \f$S_{k}\f$,  \f$U_k\f$.
@@ -77,7 +74,6 @@ private:
     */
     void computeAdditionParams(size_t nn, const Array<Math::Vector> &sampleS, const Array<Math::Vector> &sampleLambda,
                                const Array<Math::Vector> &sampleSigma, Matrix &L, Matrix &K, Vector &n, Vector &e);
->>>>>>> master
 };
 
 
