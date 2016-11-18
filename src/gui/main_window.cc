@@ -1,9 +1,11 @@
 #include "main_window.h"
+#include "src/gui/filter_results_table.h"
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_randSeed(1447528517)
+    , m_tablesIsVisible(false)
 {
     initControls();
     initLayouts();
@@ -33,8 +35,12 @@ void MainWindow::initControls()
     m_filterParamsWidget = new FilterParametersWidget;
     m_filterStartWidget  = new FilterStartButtonsBox;
     m_btnClear           = new QPushButton(tr("Очистить"));
+    m_btnShowHideTables  = new QPushButton(tr("Показать таблицы"));
+
+    m_btnShowHideTables->setEnabled(false);
 
     connect(m_btnClear, SIGNAL(clicked()), this, SIGNAL(clear()));
+    connect(m_btnShowHideTables, SIGNAL(clicked()), this, SLOT(onShowHideTables()));
     connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, Filters::FILTER_ID)), this,
@@ -50,7 +56,14 @@ void MainWindow::initLayouts()
     layout->addWidget(m_filterParamsWidget);
     layout->addWidget(m_filterStartWidget);
     layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    layout->addWidget(m_btnClear);
+
+    QHBoxLayout *btnLayout = new QHBoxLayout;
+    btnLayout->setMargin(0);
+    btnLayout->setSpacing(5);
+    btnLayout->addWidget(m_btnClear);
+    btnLayout->addWidget(m_btnShowHideTables);
+
+    layout->addLayout(btnLayout);
 
     if (!centralWidget()) {
         setCentralWidget(new QWidget);
@@ -111,6 +124,37 @@ void MainWindow::closeEvent(QCloseEvent *)
 void MainWindow::onClear()
 {
     m_colorManager.reset();
+
+    for (int i = 0; i < m_tables.size(); ++i) {
+        m_tables[i]->close();
+        delete m_tables[i];
+    }
+    m_tables.clear();
+
+    m_tablesIsVisible = false;
+    m_btnShowHideTables->setText(tr("Показать таблицы"));
+    m_btnShowHideTables->setEnabled(false);
+}
+
+void MainWindow::onShowHideTables()
+{
+    if (m_tables.size() == 0) {
+        return;
+    }
+
+    if (m_tablesIsVisible) {
+        for (int i = 0; i < m_tables.size(); ++i) {
+            m_tables[i]->hide();
+        }
+        m_tablesIsVisible = false;
+        m_btnShowHideTables->setText(tr("Показать таблицы"));
+    } else {
+        for (int i = 0; i < m_tables.size(); ++i) {
+            m_tables[i]->show();
+        }
+        m_tablesIsVisible = true;
+        m_btnShowHideTables->setText(tr("Скрыть таблицы"));
+    }
 }
 
 void MainWindow::onFilterUpdatePercent(int p)
@@ -176,24 +220,52 @@ void MainWindow::showData(Core::PtrFilter filter)
         m_graphWindow->sheet(2).setYLabel("Высота (м)");
     }
 
-    QVector<double> mm(dim, 1.0);
+    Math::Vector scale(dim);
     if (m_taskWidget->id() == Tasks::TASK_ID::Landing) {
-        mm[0] = mm[2] = 1000;
-        mm[1]         = Math::Convert::RadToDeg(1.0);
+        scale[0] = scale[2] = 1000.0;
+        scale[1]            = Math::Convert::RadToDeg(1.0);
+    } else {
+        for (int i = 0; i < dim; ++i) {
+            scale[i] = 1.0;
+        }
     }
+
     QVector<double> x, y;
     Core::GetTime(filter->result(), x);
 
     for (int i = 0; i < dim; i++) {
-        Core::GetMeanX(filter->result(), i, y, mm[i]);
+        Core::GetMeanX(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Mx" + QString::number(i + 1), mxPen, false);
 
-        Core::GetStdDeviationX(filter->result(), i, y, mm[i]);
+        Core::GetStdDeviationX(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
 
-        Core::GetStdDeviationE(filter->result(), i, y, mm[i]);
+        Core::GetStdDeviationE(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname, sePen, true);
     }
 
     m_graphWindow->updatePlotter();
+
+    addTable(filter->result(), filter->info()->name(), scale);
+}
+
+void MainWindow::addTable(const Core::FilterOutput &data, const std::string &label, const Math::Vector &scale)
+{
+    m_tables.append(new FilterResultsTable(data, label, scale));
+    m_tables.last()->setWindowFlags(Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint |
+                                    Qt::CustomizeWindowHint);
+
+    QRect screenRect = QApplication::desktop()->availableGeometry();
+    int   width      = m_tables.last()->minimumWidth();
+    int   height     = m_tables.last()->minimumHeight();
+
+    for (int i = 0; i < m_tables.size(); ++i) {
+        m_tables[i]->setGeometry(screenRect.x() + 75 + i * 50, screenRect.y() + 90 + i * 40, width, height);
+    }
+
+    if (m_tablesIsVisible) {
+        m_tables.last()->show();
+    }
+    m_btnShowHideTables->setEnabled(true);
+    // TODO прописать координаты - сейчас окошко создается рандомно.
 }
