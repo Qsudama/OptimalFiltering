@@ -3,6 +3,7 @@
 
 #include "src/gui/color_manager.h"
 #include "src/gui/filter_parameters_widget.h"
+#include "src/gui/filter_results_table.h"
 #include "src/gui/filter_start_buttons_box.h"
 #include "src/gui/font_manager.h"
 #include "src/gui/graph_window.h"
@@ -42,6 +43,9 @@ signals:
 private slots:
     //! Удаляет все пользовательские данные и возвращает значения по-умолчанию.
     void onClear();
+
+    //! Показывает / скрывает таблицы результатов.
+    void onShowHideTables();
 
     //! Отображает прогресс выполнеия алгоритма (связывается с Filter).
     void onFilterUpdatePercent(int p);
@@ -83,10 +87,14 @@ private:
     //! \brief Преобразует результаты работы фильтра в нужный формат и отправляет в окно графиков.
     void showData(Core::PtrFilter filter);
 
+    //! \brief Добавляет новую таблицу и открывает ее окно.
+    void addTable(const Core::FilterOutput &data, const std::string &label, const Vector &scale);
+
 
 private:
     ColorManager m_colorManager;
     int          m_randSeed;
+    bool         m_tablesIsVisible;
 
     QProgressBar *          m_statusProgressBar;
     GraphWindow *           m_graphWindow;
@@ -94,6 +102,9 @@ private:
     FilterParametersWidget *m_filterParamsWidget;
     FilterStartButtonsBox * m_filterStartWidget;
     QPushButton *           m_btnClear;
+    QPushButton *           m_btnShowHideTables;
+
+    QVector<FilterResultsTable *> m_tables;
 };
 
 
