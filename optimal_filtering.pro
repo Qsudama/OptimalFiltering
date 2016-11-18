@@ -260,7 +260,8 @@ HEADERS += \
     third_party/eigen/StdVector \
     third_party/eigen/SVD \
     third_party/qcustomplot/qcustomplot.h \
-    src/filters/filters_factory.h
+    src/filters/filters_factory.h \
+    src/gui/filter_results_table.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -312,4 +313,5 @@ SOURCES += \
     src/tasks/tasks_factory.cc \
     src/main.cc \
     third_party/qcustomplot/qcustomplot.cc \
-    src/filters/filters_factory.cc
+    src/filters/filters_factory.cc \
+    src/gui/filter_results_table.cc
