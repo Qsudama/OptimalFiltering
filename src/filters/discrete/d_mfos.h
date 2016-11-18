@@ -21,10 +21,6 @@ public:
 protected:
     void algorithm() override;
 
-
-
-private:
-    void computeParams(size_t n, Array<Math::Vector> &u, Math::Matrix &T);
 };
 
 
