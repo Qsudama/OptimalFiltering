@@ -42,6 +42,8 @@ protected:
     */
     void algorithm() override;
 
+<<<<<<< HEAD
+=======
 
 private:
     /*!
@@ -75,6 +77,7 @@ private:
     */
     void computeAdditionParams(size_t nn, const Array<Math::Vector> &sampleS, const Array<Math::Vector> &sampleLambda,
                                const Array<Math::Vector> &sampleSigma, Matrix &L, Matrix &K, Vector &n, Vector &e);
+>>>>>>> master
 };
 
 
