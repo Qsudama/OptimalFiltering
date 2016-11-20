@@ -4,6 +4,7 @@
 #include "src/array.h"
 #include "src/gui/font_manager.h"
 #include "src/gui/graph_sheet.h"
+#include "src/gui/gui_config.h"
 #include "src/gui/ranges_dialog.h"
 #include "src/math/matrix.h"
 #include "third_party/qcustomplot/qcustomplot.h"
