@@ -47,12 +47,13 @@ void FOS::algorithm()
 
         // n = 1..K*L*N, если n нацело делится на L*N, значит сейчас время измерения tn = tk:
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
+            double currentTime  = m_result[n].time;
+            double previousTime = currentTime - m_params->measurementStep();
+            m_task->setStep(m_params->measurementStep());
+
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 //вычисляем lambda, Psi: время устонавливаем в предыдущий момент измерения:
-                double currentTime  = m_task->time();
-                double previousTime = currentTime - m_params->measurementStep();
-                m_task->setStep(m_params->measurementStep());
                 m_task->setTime(previousTime);
                 lambda = m_task->tau(sampleU[s], T);
                 Psi    = m_task->Theta(sampleU[s], T);

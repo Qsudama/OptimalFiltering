@@ -39,6 +39,7 @@ void FOS::algorithm()
                            m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
             m_sampleZ[s] = m_sampleZ[s] + m_task->tau(m_sampleZ[s], Gamma) * m_params->integrationStep();
         }
+        m_task->setTime(m_result[n].time);
 
         // n = 1..K*L*N, если n нацело делится на L*N, значит сейчас время измерения tn = tk:
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {

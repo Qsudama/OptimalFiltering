@@ -7,27 +7,27 @@
 TaskParametersWidget::TaskParametersWidget(Core::PtrTask task, QWidget *parent)
     : QWidget(parent)
 {
-    this->setFont(FontManager::instance().regular(9));
+    this->setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
     this->setWindowTitle(tr("Параметры задачи"));
 
-    QWidget *    widget = new QWidget;
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(5);
-    layout->setSpacing(5);
+    QWidget *    widget     = new QWidget;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
 
-    initMain(task, layout);
-    initParameters(task, layout);
-    initConstants(task, layout);
+    initMain(task, mainLayout);
+    initParameters(task, mainLayout);
+    initConstants(task, mainLayout);
 
-    widget->setLayout(layout);
+    widget->setLayout(mainLayout);
     QScrollArea *scrollArea = new QScrollArea;
     scrollArea->setWidget(widget);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
-    mainLayout->setSpacing(0);
-    mainLayout->addWidget(scrollArea);
-    this->setLayout(mainLayout);
+    QVBoxLayout *layoutWithScrollArea = new QVBoxLayout;
+    layoutWithScrollArea->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    layoutWithScrollArea->setSpacing(GuiConfig::LAYOUT_SPACING_SMALL);
+    layoutWithScrollArea->addWidget(scrollArea);
+    this->setLayout(layoutWithScrollArea);
 }
 
 void TaskParametersWidget::loadParamsTo(Core::PtrTask task)
@@ -39,7 +39,6 @@ void TaskParametersWidget::loadParamsTo(Core::PtrTask task)
     task->setVarV(m_varV->matrix());
     task->setVarW(m_varW->matrix());
 
-    // WARNING: как-то криво написано...
     int i = 0;
     for (auto &p : *(task->params().get())) {
         task->changeParameter(p.first, m_params[i]->value());
@@ -50,8 +49,8 @@ void TaskParametersWidget::loadParamsTo(Core::PtrTask task)
 QHBoxLayout *TaskParametersWidget::createMeanVarLayout(MatrixWidget *left, MatrixWidget *right)
 {
     QHBoxLayout *layout = new QHBoxLayout;
-    layout->setMargin(5);
-    layout->setSpacing(5);
+    layout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    layout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
     layout->addWidget(new QLabel("M ="));
     layout->addWidget(left);
     layout->addWidget(new QLabel("    D ="));
@@ -88,9 +87,17 @@ void TaskParametersWidget::initParameters(Core::PtrTask task, QVBoxLayout *mainL
         return;
     }
 
-    mainLayout->addWidget(new QLabel(""));
+    mainLayout->addWidget(new QLabel(" "));
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    mainLayout->addWidget(new QLabel("Специфические параметры:"));
+    mainLayout->addWidget(new QLabel(tr("Специфические параметры:")));
+
+    int maxWidth = 0;
+    for (auto &p : *(task->params().get())) {
+        int width = QFontMetrics(this->font()).width(QString::fromStdString(p.first));
+        if (width > maxWidth) {
+            maxWidth = width;
+        }
+    }
 
     for (auto &p : *(task->params().get())) {
         QDoubleSpinBox *dsb = new QDoubleSpinBox;
@@ -101,14 +108,14 @@ void TaskParametersWidget::initParameters(Core::PtrTask task, QVBoxLayout *mainL
         dsb->setValue(p.second);
         dsb->setAlignment(Qt::AlignRight);
         dsb->setButtonSymbols(QDoubleSpinBox::NoButtons);
-        dsb->setFont(FontManager::instance().mono(9));
+        dsb->setFont(FontManager::instance().mono(GuiConfig::FONT_SIZE_NORMAL));
         m_params.push_back(dsb);
 
         QHBoxLayout *layout = new QHBoxLayout;
-        layout->setMargin(5);
-        layout->setSpacing(5);
+        layout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+        layout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
         QLabel *lbl = new QLabel(QString::fromStdString(p.first));
-        lbl->setMinimumWidth(45);
+        lbl->setMinimumWidth(maxWidth);
         layout->addWidget(lbl);
         layout->addWidget(new QLabel(" = "));
         layout->addWidget(m_params.last());
@@ -125,14 +132,22 @@ void TaskParametersWidget::initConstants(Core::PtrTask task, QVBoxLayout *mainLa
 
     mainLayout->addWidget(new QLabel(""));
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    mainLayout->addWidget(new QLabel("Специфические константы:"));
+    mainLayout->addWidget(new QLabel(tr("Специфические константы:")));
+
+    int maxWidth = 0;
+    for (auto &p : *(task->consts().get())) {
+        int width = QFontMetrics(this->font()).width(QString::fromStdString(p.first));
+        if (width > maxWidth) {
+            maxWidth = width;
+        }
+    }
 
     for (auto &p : *(task->consts().get())) {
         QHBoxLayout *layout = new QHBoxLayout;
-        layout->setMargin(5);
-        layout->setSpacing(5);
+        layout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+        layout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
         QLabel *lbl = new QLabel(QString::fromStdString(p.first));
-        lbl->setMinimumWidth(45);
+        lbl->setMinimumWidth(maxWidth);
         layout->addWidget(lbl);
         layout->addWidget(new QLabel(" = "));
         layout->addWidget(new QLabel(QString::number(p.second)));

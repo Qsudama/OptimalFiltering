@@ -24,12 +24,26 @@ MatrixWidget::MatrixWidget(long rows, long cols, bool onlyPositive, bool symmetr
     initLayouts();
 }
 
+MatrixWidget::~MatrixWidget()
+{
+    for (int i = 0; i < m_boxes.size(); ++i) {
+        for (int j = 0; j < m_boxes[0].size(); ++j) {
+            if (m_boxes[i][j] != nullptr) {
+                delete m_boxes[i][j];
+                m_boxes[i][j] = nullptr;
+            }
+        }
+        m_boxes[i].clear();
+    }
+    m_boxes.clear();
+}
+
 void MatrixWidget::initControls()
 {
     int rows = int(m_matrix.rows());
     int cols = int(m_matrix.cols());
 
-    QFont           font    = FontManager::instance().mono(9);
+    QFont           font    = FontManager::instance().mono(GuiConfig::FONT_SIZE_NORMAL);
     QDoubleSpinBox *dsbTemp = new QDoubleSpinBox(this);
     dsbTemp->setFont(font);
     int height = dsbTemp->height();
@@ -40,6 +54,10 @@ void MatrixWidget::initControls()
     for (int i = 0; i < rows; ++i) {
         m_boxes[i].resize(cols);
         for (int j = 0; j < cols; ++j) {
+            if (m_boxes[i][j] != nullptr) {
+                delete m_boxes[i][j];
+                m_boxes[i][j] = nullptr;
+            }
             m_boxes[i][j] = new QDoubleSpinBox;
             m_boxes[i][j]->setDecimals(6);
             m_boxes[i][j]->setMinimum(m_onlyPositive ? 0.0 : -999999.0);
@@ -70,18 +88,14 @@ void MatrixWidget::initControls()
 
 void MatrixWidget::initLayouts()
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
-    mainLayout->setSpacing(2);
+    QGridLayout *mainLayout = new QGridLayout;
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
     for (int i = 0; i < m_boxes.size(); ++i) {
-        QHBoxLayout *layout = new QHBoxLayout;
-        layout->setMargin(mainLayout->margin());
-        layout->setSpacing(mainLayout->spacing());
         for (int j = 0; j < m_boxes[0].size(); ++j) {
-            layout->addWidget(m_boxes[i][j]);
+            mainLayout->addWidget(m_boxes[i][j], i, j);
         }
-        mainLayout->addLayout(layout);
     }
 
     this->setLayout(mainLayout);

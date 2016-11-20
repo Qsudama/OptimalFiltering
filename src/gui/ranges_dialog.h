@@ -1,6 +1,7 @@
 #ifndef RANGES_DIALOG_H
 #define RANGES_DIALOG_H
 
+#include "src/gui/gui_config.h"
 #include "src/math/matrix.h"
 #include "third_party/qcustomplot/qcustomplot.h"
 #include <QDialog>

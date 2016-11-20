@@ -2,6 +2,7 @@
 #define TASK_PARAMETERS_WIDGET_H
 
 #include "src/core/task.h"
+#include "src/gui/gui_config.h"
 #include "src/gui/matrix_widget.h"
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>

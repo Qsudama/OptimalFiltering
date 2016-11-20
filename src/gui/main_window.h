@@ -7,6 +7,7 @@
 #include "src/gui/filter_start_buttons_box.h"
 #include "src/gui/font_manager.h"
 #include "src/gui/graph_window.h"
+#include "src/gui/gui_config.h"
 #include "src/gui/task_widget.h"
 #include "src/math/convert.h"
 #include "src/math/random.h"

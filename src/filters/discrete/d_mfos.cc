@@ -60,12 +60,13 @@ void MFOS::algorithm()
 
         // i = 1..K*L*N, если i нацело делится на L*N, значит сейчас время измерения ti = tk:
         if (i % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
+            double currentTime  = m_result[i].time;
+            double previousTime = currentTime - m_params->measurementStep();
+            m_task->setStep(m_params->measurementStep());
+
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 //вычисляем lambda, Psi: время устонавливаем в предыдущий момент измерения:
-                double currentTime  = m_result[i].time;
-                double previousTime = currentTime - m_params->measurementStep();
-                m_task->setStep(m_params->measurementStep());
                 m_task->setTime(previousTime);
                 sampleLambda[s] = L * sampleS[s] + n;
                 Psi             = m_task->Theta(sampleU[s], T);
@@ -80,8 +81,8 @@ void MFOS::algorithm()
                 m_sampleY[s]   = m_task->b(m_sampleX[s]);
                 sampleSigma[s] = Psi * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
             }
-            // Индекс s пробегает по всем элементам выборки:
             computeAdditionParams(i, sampleS, sampleLambda, sampleSigma, L, K, n, e);
+            // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 m_sampleZ[s] = sampleLambda[s] + K * sampleSigma[s] + e;
             }
@@ -152,6 +153,7 @@ void MFOS::computeAdditionParams(size_t nn, const Array<Vector> &sampleS, const 
     L = Dxs * PinvSVD(Ds);
     n = m_result[nn].meanX - L * ms;
 }
+
 
 } // end Discrete
 

@@ -2,6 +2,7 @@
 #define FILTERPARAMETERSWIDGET_H
 
 #include "src/core/filter_parameters.h"
+#include "src/gui/gui_config.h"
 #include <QCheckBox>
 #include <QDoubleSpinBox>
 #include <QGroupBox>
@@ -13,21 +14,6 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 #include <QWidget>
-
-
-/*!
- \brief Вспомогательный класс.
-
- Выстраивает горизонтально 4 виджета и задает их размеры.
-*/
-
-class SingleParamHBox : public QHBoxLayout
-{
-
-public:
-    //! \brief Конструктор.
-    SingleParamHBox(QWidget *w1, QWidget *w2, QWidget *w3, QWidget *w4, int width1, int width2, int width3, int width4);
-};
 
 
 /*!
@@ -165,17 +151,15 @@ private:
     void setRange(QSpinBox *sb, int min, int max);
 
     /*!
-     \brief Вычисляет размеры для виджетов.
+     \brief Вычисляет минимальную ширину виджета.
      \details Все элементы расположены на сетке по 4 в одной строке.
 
      Чтобы всё было "ровно" вычисляются 4 значения, каждое из которых соответствуют
      самому длинному элементу в соответсвующей колонке.
 
      Это, в частности, необходимо при изменении шрифтов, так как размеры элементов зависят от них.
-
-     \warning В Linux и Windows всё работает как задумано, в MacOS - фигово. Косяк либо тут, либо в FontManager.
     */
-    void computeSizes(int &w1, int &w2, int &w3, int &w4);
+    int computeMinimumWidth();
 
 
 private:

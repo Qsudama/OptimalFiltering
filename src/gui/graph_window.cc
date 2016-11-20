@@ -18,11 +18,11 @@ GraphWindow::~GraphWindow()
 
 void GraphWindow::loadFonts()
 {
-    m_plotterTitleFont         = FontManager::instance().regularBold(14);
-    m_plotterSubTitleFont      = FontManager::instance().regular(12);
-    m_plotterAxesLabelFont     = FontManager::instance().regular(12);
-    m_plotterLegendFont        = FontManager::instance().regular(10);
-    m_plotterAxesTickLabelFont = FontManager::instance().regular(9);
+    m_plotterTitleFont         = FontManager::instance().regularBold(GuiConfig::FONT_SIZE_HUGE);
+    m_plotterSubTitleFont      = FontManager::instance().regular(GuiConfig::FONT_SIZE_LARGE);
+    m_plotterAxesLabelFont     = FontManager::instance().regular(GuiConfig::FONT_SIZE_LARGE);
+    m_plotterLegendFont        = FontManager::instance().regular(GuiConfig::FONT_SIZE_BIG);
+    m_plotterAxesTickLabelFont = FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL);
 }
 
 void GraphWindow::initActions()
@@ -62,9 +62,9 @@ void GraphWindow::initMenus()
 
 void GraphWindow::initLayouts()
 {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(1);
-    layout->setSpacing(5);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_SMALL);
 
     QFrame *frame = new QFrame;
     frame->setFrameShape(QFrame::StyledPanel);
@@ -72,19 +72,19 @@ void GraphWindow::initLayouts()
     frame->setLineWidth(1);
 
     QHBoxLayout *frameLayout = new QHBoxLayout;
-    frameLayout->setMargin(1);
-    frameLayout->setSpacing(5);
+    frameLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    frameLayout->setSpacing(GuiConfig::LAYOUT_SPACING_SMALL);
     frameLayout->addWidget(m_plotter);
     frame->setMinimumWidth(m_plotter->minimumWidth() + 2 * frameLayout->margin());
     frame->setMinimumHeight(m_plotter->minimumHeight() + 2 * frameLayout->margin());
 
     frame->setLayout(frameLayout);
-    layout->addWidget(frame);
+    mainLayout->addWidget(frame);
 
     if (!centralWidget()) {
         setCentralWidget(new QWidget);
     }
-    centralWidget()->setLayout(layout);
+    centralWidget()->setLayout(mainLayout);
     centralWidget()->setMinimumWidth(frame->minimumWidth() + 2 * centralWidget()->layout()->margin());
     centralWidget()->setMinimumHeight(frame->minimumHeight() + 2 * centralWidget()->layout()->margin());
 
@@ -170,7 +170,7 @@ void GraphWindow::updateMenu()
         }
     }
     if (count == 0) {
-        QAction *action = new QAction(QString("Нет показываемых графиков"), m_menuHide);
+        QAction *action = new QAction(tr("Нет показываемых графиков"), m_menuHide);
         action->setAutoRepeat(false);
         m_menuHide->addAction(action);
     }
@@ -189,7 +189,7 @@ void GraphWindow::updateMenu()
         }
     }
     if (count == 0) {
-        QAction *action = new QAction(QString("Нет скрытых графиков"), m_menuShow);
+        QAction *action = new QAction(tr("Нет скрытых графиков"), m_menuShow);
         action->setAutoRepeat(false);
         m_menuShow->addAction(action);
     }
@@ -414,9 +414,6 @@ void GraphWindow::onShowCurve(QAction *action)
         updatePlotter();
     }
 }
-
-
-// funcs:
 
 int GraphWindow::countSheets() const
 {
