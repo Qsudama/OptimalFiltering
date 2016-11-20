@@ -1,17 +1,19 @@
 #include "filter_results_table.h"
 #include "src/gui/font_manager.h"
+#include <QAction>
+#include <QFileDialog>
 #include <QHBoxLayout>
+#include <QMenu>
+#include <QMenuBar>
+#include <QMessageBox>
 
 
 FilterResultsTable::FilterResultsTable(const Core::FilterOutput &data, const std::string &label,
                                        const Math::Vector &scale, QWidget *parent)
-    : QWidget(parent)
+    : QMainWindow(parent)
     , m_table(nullptr)
 {
     setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
-    setMinimumHeight(250);
-    setMinimumWidth(500);
-
     setWindowTitle(QString::fromStdString(label));
 
     initTable(data, scale);
@@ -20,7 +22,15 @@ FilterResultsTable::FilterResultsTable(const Core::FilterOutput &data, const std
     mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
     mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_SMALL);
     mainLayout->addWidget(m_table);
-    this->setLayout(mainLayout);
+
+    if (!centralWidget()) {
+        setCentralWidget(new QWidget);
+    }
+    centralWidget()->setLayout(mainLayout);
+    centralWidget()->setMinimumHeight(250);
+    centralWidget()->setMinimumWidth(500);
+
+    initMenu();
 }
 
 void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::Vector &scale)
@@ -87,6 +97,99 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
                 twItem->setFont(warningFont);
             }
             m_table->setItem(i, 4 + 4 * j, twItem);
+        }
+    }
+}
+
+void FilterResultsTable::initMenu()
+{
+    QAction *action = new QAction(tr("Сохранить таблицу"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(onSaveTable()));
+
+    QMenu *menu = menuBar()->addMenu(tr("Файл"));
+    menu->addAction(action);
+}
+
+void FilterResultsTable::onSaveTable()
+{
+    QString fileName =
+        QFileDialog::getSaveFileName(this, tr("Сохранить таблицу"), QDir::homePath(), tr("Текст (*.txt)"));
+    if (fileName.isEmpty()) {
+        return;
+    } else {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::information(this, tr("Не получилось открыть файл!"), file.errorString());
+            return;
+        }
+        QTextStream out(&file);
+        writeToFile(out);
+        file.close();
+    }
+}
+
+void FilterResultsTable::writeToFile(QTextStream &out)
+{
+    // найдем самые длинные строки в каждом столбце:
+    QVector<int> maxLength(m_table->columnCount());
+    for (int j = 0; j < m_table->columnCount(); ++j) {
+        maxLength[j] = 5;
+    }
+
+    for (int i = 0; i < m_table->rowCount(); ++i) {
+        for (int j = 0; j < m_table->columnCount(); ++j) {
+            int length;
+            if ((length = m_table->item(i, j)->text().length()) > maxLength[j]) {
+                maxLength[j] = length;
+            }
+        }
+    }
+
+    // сделаем линии для отчеркивания строк:
+    QString line = "|";
+    for (int j = 0; j < m_table->columnCount(); ++j) {
+        for (int k = 0; k < maxLength[j]; ++k) {
+            line += "-";
+        }
+        if (j != m_table->columnCount() - 1) {
+            line += "--+";
+        } else {
+            line += "--|\n";
+        }
+    }
+
+    QString simpleLine = "";
+    for (int k = 0; k < line.length() - 1; ++k) {
+        simpleLine += "-";
+    }
+    simpleLine += "\n";
+
+    QString titleLine = "";
+    titleLine += QString("| %1 |").arg("t", -maxLength[0]);
+    for (int j = 1; j < maxLength.size(); j += 4) {
+        int index = (j - 1) / 4 + 1;
+        titleLine += QString(" %1 |").arg("Mx" + QString::number(index), -maxLength[j]);
+        titleLine += QString(" %1 |").arg("Me" + QString::number(index), -maxLength[j + 1]);
+        titleLine += QString(" %1 |").arg("Sx" + QString::number(index), -maxLength[j + 2]);
+        titleLine += QString(" %1 |").arg("Se" + QString::number(index), -maxLength[j + 3]);
+    }
+    titleLine += "\n";
+
+
+    // запишем в поток:
+    QString str = "";
+    out << simpleLine << titleLine << line;
+    for (int i = 0; i < m_table->rowCount(); ++i) {
+        str = "|";
+        for (int j = 0; j < m_table->columnCount(); ++j) {
+            str += QString(" %1 |").arg(m_table->item(i, j)->text(), -maxLength[j]);
+        }
+        str += "\n";
+        out << str;
+        if (i < m_table->rowCount() - 1) {
+            out << line;
+        } else {
+            out << simpleLine;
         }
     }
 }
