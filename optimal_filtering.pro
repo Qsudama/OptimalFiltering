@@ -33,12 +33,15 @@ HEADERS += \
     src/filters/discrete/d_aof.h \
     src/filters/discrete/d_fos.h \
     src/filters/discrete/d_mfos.h \
+    src/filters/filters_factory.h \
     src/gui/color_manager.h \
     src/gui/filter_parameters_widget.h \
+    src/gui/filter_results_table.h \
     src/gui/filter_start_buttons_box.h \
     src/gui/font_manager.h \
     src/gui/graph_sheet.h \
     src/gui/graph_window.h \
+    src/gui/gui_config.h \
     src/gui/main_window.h \
     src/gui/matrix_widget.h \
     src/gui/ranges_dialog.h \
@@ -66,36 +69,59 @@ HEADERS += \
     src/config.h \
     third_party/eigen/src/Cholesky/LDLT.h \
     third_party/eigen/src/Cholesky/LLT.h \
-    third_party/eigen/src/Cholesky/LLT_MKL.h \
+    third_party/eigen/src/Cholesky/LLT_LAPACKE.h \
     third_party/eigen/src/Core/arch/AltiVec/Complex.h \
+    third_party/eigen/src/Core/arch/AltiVec/MathFunctions.h \
     third_party/eigen/src/Core/arch/AltiVec/PacketMath.h \
+    third_party/eigen/src/Core/arch/AVX/Complex.h \
+    third_party/eigen/src/Core/arch/AVX/MathFunctions.h \
+    third_party/eigen/src/Core/arch/AVX/PacketMath.h \
+    third_party/eigen/src/Core/arch/AVX/TypeCasting.h \
+    third_party/eigen/src/Core/arch/AVX512/MathFunctions.h \
+    third_party/eigen/src/Core/arch/AVX512/PacketMath.h \
+    third_party/eigen/src/Core/arch/CUDA/Complex.h \
+    third_party/eigen/src/Core/arch/CUDA/Half.h \
+    third_party/eigen/src/Core/arch/CUDA/MathFunctions.h \
+    third_party/eigen/src/Core/arch/CUDA/PacketMath.h \
+    third_party/eigen/src/Core/arch/CUDA/PacketMathHalf.h \
+    third_party/eigen/src/Core/arch/CUDA/TypeCasting.h \
     third_party/eigen/src/Core/arch/Default/Settings.h \
     third_party/eigen/src/Core/arch/NEON/Complex.h \
+    third_party/eigen/src/Core/arch/NEON/MathFunctions.h \
     third_party/eigen/src/Core/arch/NEON/PacketMath.h \
     third_party/eigen/src/Core/arch/SSE/Complex.h \
     third_party/eigen/src/Core/arch/SSE/MathFunctions.h \
     third_party/eigen/src/Core/arch/SSE/PacketMath.h \
-    third_party/eigen/src/Core/products/CoeffBasedProduct.h \
+    third_party/eigen/src/Core/arch/SSE/TypeCasting.h \
+    third_party/eigen/src/Core/arch/ZVector/Complex.h \
+    third_party/eigen/src/Core/arch/ZVector/MathFunctions.h \
+    third_party/eigen/src/Core/arch/ZVector/PacketMath.h \
+    third_party/eigen/src/Core/functors/AssignmentFunctors.h \
+    third_party/eigen/src/Core/functors/BinaryFunctors.h \
+    third_party/eigen/src/Core/functors/NullaryFunctors.h \
+    third_party/eigen/src/Core/functors/StlFunctors.h \
+    third_party/eigen/src/Core/functors/TernaryFunctors.h \
+    third_party/eigen/src/Core/functors/UnaryFunctors.h \
     third_party/eigen/src/Core/products/GeneralBlockPanelKernel.h \
     third_party/eigen/src/Core/products/GeneralMatrixMatrix.h \
-    third_party/eigen/src/Core/products/GeneralMatrixMatrix_MKL.h \
+    third_party/eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h \
     third_party/eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
-    third_party/eigen/src/Core/products/GeneralMatrixMatrixTriangular_MKL.h \
+    third_party/eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h \
     third_party/eigen/src/Core/products/GeneralMatrixVector.h \
-    third_party/eigen/src/Core/products/GeneralMatrixVector_MKL.h \
+    third_party/eigen/src/Core/products/GeneralMatrixVector_BLAS.h \
     third_party/eigen/src/Core/products/Parallelizer.h \
     third_party/eigen/src/Core/products/SelfadjointMatrixMatrix.h \
-    third_party/eigen/src/Core/products/SelfadjointMatrixMatrix_MKL.h \
+    third_party/eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h \
     third_party/eigen/src/Core/products/SelfadjointMatrixVector.h \
-    third_party/eigen/src/Core/products/SelfadjointMatrixVector_MKL.h \
+    third_party/eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h \
     third_party/eigen/src/Core/products/SelfadjointProduct.h \
     third_party/eigen/src/Core/products/SelfadjointRank2Update.h \
     third_party/eigen/src/Core/products/TriangularMatrixMatrix.h \
-    third_party/eigen/src/Core/products/TriangularMatrixMatrix_MKL.h \
+    third_party/eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h \
     third_party/eigen/src/Core/products/TriangularMatrixVector.h \
-    third_party/eigen/src/Core/products/TriangularMatrixVector_MKL.h \
+    third_party/eigen/src/Core/products/TriangularMatrixVector_BLAS.h \
     third_party/eigen/src/Core/products/TriangularSolverMatrix.h \
-    third_party/eigen/src/Core/products/TriangularSolverMatrix_MKL.h \
+    third_party/eigen/src/Core/products/TriangularSolverMatrix_BLAS.h \
     third_party/eigen/src/Core/products/TriangularSolverVector.h \
     third_party/eigen/src/Core/util/BlasUtil.h \
     third_party/eigen/src/Core/util/Constants.h \
@@ -114,13 +140,17 @@ HEADERS += \
     third_party/eigen/src/Core/ArrayWrapper.h \
     third_party/eigen/src/Core/Assign.h \
     third_party/eigen/src/Core/Assign_MKL.h \
+    third_party/eigen/src/Core/AssignEvaluator.h \
     third_party/eigen/src/Core/BandMatrix.h \
     third_party/eigen/src/Core/Block.h \
     third_party/eigen/src/Core/BooleanRedux.h \
     third_party/eigen/src/Core/CommaInitializer.h \
+    third_party/eigen/src/Core/ConditionEstimator.h \
+    third_party/eigen/src/Core/CoreEvaluators.h \
     third_party/eigen/src/Core/CoreIterators.h \
     third_party/eigen/src/Core/CwiseBinaryOp.h \
     third_party/eigen/src/Core/CwiseNullaryOp.h \
+    third_party/eigen/src/Core/CwiseTernaryOp.h \
     third_party/eigen/src/Core/CwiseUnaryOp.h \
     third_party/eigen/src/Core/CwiseUnaryView.h \
     third_party/eigen/src/Core/DenseBase.h \
@@ -131,17 +161,17 @@ HEADERS += \
     third_party/eigen/src/Core/DiagonalProduct.h \
     third_party/eigen/src/Core/Dot.h \
     third_party/eigen/src/Core/EigenBase.h \
-    third_party/eigen/src/Core/Flagged.h \
     third_party/eigen/src/Core/ForceAlignedAccess.h \
-    third_party/eigen/src/Core/Functors.h \
     third_party/eigen/src/Core/Fuzzy.h \
     third_party/eigen/src/Core/GeneralProduct.h \
     third_party/eigen/src/Core/GenericPacketMath.h \
     third_party/eigen/src/Core/GlobalFunctions.h \
+    third_party/eigen/src/Core/Inverse.h \
     third_party/eigen/src/Core/IO.h \
     third_party/eigen/src/Core/Map.h \
     third_party/eigen/src/Core/MapBase.h \
     third_party/eigen/src/Core/MathFunctions.h \
+    third_party/eigen/src/Core/MathFunctionsImpl.h \
     third_party/eigen/src/Core/Matrix.h \
     third_party/eigen/src/Core/MatrixBase.h \
     third_party/eigen/src/Core/NestByValue.h \
@@ -149,7 +179,8 @@ HEADERS += \
     third_party/eigen/src/Core/NumTraits.h \
     third_party/eigen/src/Core/PermutationMatrix.h \
     third_party/eigen/src/Core/PlainObjectBase.h \
-    third_party/eigen/src/Core/ProductBase.h \
+    third_party/eigen/src/Core/Product.h \
+    third_party/eigen/src/Core/ProductEvaluators.h \
     third_party/eigen/src/Core/Random.h \
     third_party/eigen/src/Core/Redux.h \
     third_party/eigen/src/Core/Ref.h \
@@ -159,6 +190,8 @@ HEADERS += \
     third_party/eigen/src/Core/Select.h \
     third_party/eigen/src/Core/SelfAdjointView.h \
     third_party/eigen/src/Core/SelfCwiseBinaryOp.h \
+    third_party/eigen/src/Core/Solve.h \
+    third_party/eigen/src/Core/SolverBase.h \
     third_party/eigen/src/Core/SolveTriangular.h \
     third_party/eigen/src/Core/StableNorm.h \
     third_party/eigen/src/Core/Stride.h \
@@ -171,7 +204,7 @@ HEADERS += \
     third_party/eigen/src/Core/Visitor.h \
     third_party/eigen/src/Eigenvalues/ComplexEigenSolver.h \
     third_party/eigen/src/Eigenvalues/ComplexSchur.h \
-    third_party/eigen/src/Eigenvalues/ComplexSchur_MKL.h \
+    third_party/eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h \
     third_party/eigen/src/Eigenvalues/EigenSolver.h \
     third_party/eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
     third_party/eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
@@ -179,9 +212,9 @@ HEADERS += \
     third_party/eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
     third_party/eigen/src/Eigenvalues/RealQZ.h \
     third_party/eigen/src/Eigenvalues/RealSchur.h \
-    third_party/eigen/src/Eigenvalues/RealSchur_MKL.h \
+    third_party/eigen/src/Eigenvalues/RealSchur_LAPACKE.h \
     third_party/eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
-    third_party/eigen/src/Eigenvalues/SelfAdjointEigenSolver_MKL.h \
+    third_party/eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h \
     third_party/eigen/src/Eigenvalues/Tridiagonalization.h \
     third_party/eigen/src/Geometry/arch/Geometry_SSE.h \
     third_party/eigen/src/Geometry/AlignedBox.h \
@@ -204,20 +237,25 @@ HEADERS += \
     third_party/eigen/src/IterativeLinearSolvers/BasicPreconditioners.h \
     third_party/eigen/src/IterativeLinearSolvers/BiCGSTAB.h \
     third_party/eigen/src/IterativeLinearSolvers/ConjugateGradient.h \
+    third_party/eigen/src/IterativeLinearSolvers/IncompleteCholesky.h \
     third_party/eigen/src/IterativeLinearSolvers/IncompleteLUT.h \
     third_party/eigen/src/IterativeLinearSolvers/IterativeSolverBase.h \
+    third_party/eigen/src/IterativeLinearSolvers/LeastSquareConjugateGradient.h \
+    third_party/eigen/src/IterativeLinearSolvers/SolveWithGuess.h \
     third_party/eigen/src/Jacobi/Jacobi.h \
     third_party/eigen/src/LU/arch/Inverse_SSE.h \
     third_party/eigen/src/LU/Determinant.h \
     third_party/eigen/src/LU/FullPivLU.h \
-    third_party/eigen/src/LU/Inverse.h \
+    third_party/eigen/src/LU/InverseImpl.h \
     third_party/eigen/src/LU/PartialPivLU.h \
-    third_party/eigen/src/LU/PartialPivLU_MKL.h \
+    third_party/eigen/src/LU/PartialPivLU_LAPACKE.h \
     third_party/eigen/src/misc/blas.h \
     third_party/eigen/src/misc/Image.h \
     third_party/eigen/src/misc/Kernel.h \
-    third_party/eigen/src/misc/Solve.h \
-    third_party/eigen/src/misc/SparseSolve.h \
+    third_party/eigen/src/misc/lapack.h \
+    third_party/eigen/src/misc/lapacke.h \
+    third_party/eigen/src/misc/lapacke_mangling.h \
+    third_party/eigen/src/misc/RealSvd2x2.h \
     third_party/eigen/src/OrderingMethods/Amd.h \
     third_party/eigen/src/OrderingMethods/Eigen_Colamd.h \
     third_party/eigen/src/OrderingMethods/Ordering.h \
@@ -229,18 +267,20 @@ HEADERS += \
     third_party/eigen/src/plugins/MatrixCwiseBinaryOps.h \
     third_party/eigen/src/plugins/MatrixCwiseUnaryOps.h \
     third_party/eigen/src/QR/ColPivHouseholderQR.h \
-    third_party/eigen/src/QR/ColPivHouseholderQR_MKL.h \
+    third_party/eigen/src/QR/ColPivHouseholderQR_LAPACKE.h \
+    third_party/eigen/src/QR/CompleteOrthogonalDecomposition.h \
     third_party/eigen/src/QR/FullPivHouseholderQR.h \
     third_party/eigen/src/QR/HouseholderQR.h \
-    third_party/eigen/src/QR/HouseholderQR_MKL.h \
+    third_party/eigen/src/QR/HouseholderQR_LAPACKE.h \
     third_party/eigen/src/StlSupport/details.h \
     third_party/eigen/src/StlSupport/StdDeque.h \
     third_party/eigen/src/StlSupport/StdList.h \
     third_party/eigen/src/StlSupport/StdVector.h \
+    third_party/eigen/src/SVD/BDCSVD.h \
     third_party/eigen/src/SVD/JacobiSVD.h \
-    third_party/eigen/src/SVD/JacobiSVD_MKL.h \
+    third_party/eigen/src/SVD/JacobiSVD_LAPACKE.h \
+    third_party/eigen/src/SVD/SVDBase.h \
     third_party/eigen/src/SVD/UpperBidiagonalization.h \
-    third_party/eigen/Array \
     third_party/eigen/Cholesky \
     third_party/eigen/Core \
     third_party/eigen/Dense \
@@ -250,7 +290,6 @@ HEADERS += \
     third_party/eigen/Householder \
     third_party/eigen/IterativeLinearSolvers \
     third_party/eigen/Jacobi \
-    third_party/eigen/LeastSquares \
     third_party/eigen/LU \
     third_party/eigen/OrderingMethods \
     third_party/eigen/QR \
@@ -259,10 +298,7 @@ HEADERS += \
     third_party/eigen/StdList \
     third_party/eigen/StdVector \
     third_party/eigen/SVD \
-    third_party/qcustomplot/qcustomplot.h \
-    src/filters/filters_factory.h \
-    src/gui/filter_results_table.h \
-    src/gui/gui_config.h
+    third_party/qcustomplot/qcustomplot.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -286,8 +322,10 @@ SOURCES += \
     src/filters/discrete/d_aof.cc \
     src/filters/discrete/d_fos.cc \
     src/filters/discrete/d_mfos.cc \
+    src/filters/filters_factory.cc \
     src/gui/color_manager.cc \
     src/gui/filter_parameters_widget.cc \
+    src/gui/filter_results_table.cc \
     src/gui/filter_start_buttons_box.cc \
     src/gui/font_manager.cc \
     src/gui/graph_sheet.cc \
@@ -313,6 +351,4 @@ SOURCES += \
     src/tasks/discrete/d_landing_linear.cc \
     src/tasks/tasks_factory.cc \
     src/main.cc \
-    third_party/qcustomplot/qcustomplot.cc \
-    src/filters/filters_factory.cc \
-    src/gui/filter_results_table.cc
+    third_party/qcustomplot/qcustomplot.cc
