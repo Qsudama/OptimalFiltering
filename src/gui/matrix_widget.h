@@ -35,7 +35,10 @@ public:
     MatrixWidget(long rows, long cols = 1, bool onlyPositive = false, bool symmetric = false,
                  QWidget *parent = nullptr);
 
-    //! Возвращает матрицу, соответствующую текущему состоянию элементов виджета.
+    //! \brief Деструктор.
+    ~MatrixWidget();
+
+    //! \brief Возвращает матрицу, соответствующую текущему состоянию элементов виджета.
     const Math::Matrix &matrix() const;
 
 
