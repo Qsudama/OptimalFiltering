@@ -29,7 +29,7 @@ void MatrixWidget::initControls()
     int rows = int(m_matrix.rows());
     int cols = int(m_matrix.cols());
 
-    QFont           font    = FontManager::instance().mono(9);
+    QFont           font    = FontManager::instance().mono(GuiConfig::FONT_SIZE_NORMAL);
     QDoubleSpinBox *dsbTemp = new QDoubleSpinBox(this);
     dsbTemp->setFont(font);
     int height = dsbTemp->height();
@@ -70,18 +70,14 @@ void MatrixWidget::initControls()
 
 void MatrixWidget::initLayouts()
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
-    mainLayout->setSpacing(2);
+    QGridLayout *mainLayout = new QGridLayout;
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
     for (int i = 0; i < m_boxes.size(); ++i) {
-        QHBoxLayout *layout = new QHBoxLayout;
-        layout->setMargin(mainLayout->margin());
-        layout->setSpacing(mainLayout->spacing());
         for (int j = 0; j < m_boxes[0].size(); ++j) {
-            layout->addWidget(m_boxes[i][j]);
+            mainLayout->addWidget(m_boxes[i][j], i, j);
         }
-        mainLayout->addLayout(layout);
     }
 
     this->setLayout(mainLayout);

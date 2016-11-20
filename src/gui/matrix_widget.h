@@ -1,6 +1,7 @@
 #ifndef MATRIXWIDGET_H
 #define MATRIXWIDGET_H
 
+#include "src/gui/gui_config.h"
 #include "src/math/matrix.h"
 #include <QDoubleSpinBox>
 #include <QWidget>
