@@ -261,7 +261,8 @@ HEADERS += \
     third_party/eigen/SVD \
     third_party/qcustomplot/qcustomplot.h \
     src/filters/filters_factory.h \
-    src/gui/filter_results_table.h
+    src/gui/filter_results_table.h \
+    src/gui/gui_config.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
