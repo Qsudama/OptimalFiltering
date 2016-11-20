@@ -52,6 +52,7 @@ void AOF::algorithm()
                 m_sampleP[s] + (A * m_sampleP[s] + m_sampleP[s] * A.transpose() + Theta) * m_params->integrationStep();
             m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
         }
+        m_task->setTime(m_result[n].time);
 
         // n = 1..K*L*N, если n нацело делится на L*N, значит сейчас время измерения tn = tk:
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
