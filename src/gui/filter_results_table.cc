@@ -29,7 +29,7 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
     assert(dim == scale.size());
 
     int rows = int(data.size());
-    int cols = 1 + 3 * dim; // | time | Mx0 | ... | MxN | Sx0 | ... | SxN | Se0 | ... | SeN  |
+    int cols = 1 + 4 * dim;
 
     m_table = new QTableWidget(rows, cols);
 
@@ -41,45 +41,52 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
     for (int i = 0; i < dim; ++i) {
         QString strNum = QString::number(i + 1);
         labels.append(tr("Mx") + strNum);
+        labels.append(tr("Me") + strNum);
         labels.append(tr("Sx") + strNum);
         labels.append(tr("Se") + strNum);
     }
 
     m_table->setHorizontalHeaderLabels(labels);
     m_table->setFont(titleFont);
+
     m_table->setSortingEnabled(false);
     m_table->setWordWrap(false);
 
-    QVector<double> arrT, arrMx, arrSx, arrSe;
+    QVector<double> arrT, arrMx, arrMe, arrSx, arrSe;
 
     Core::GetTime(data, arrT);
     for (int i = 0; i < rows; ++i) {
         QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(arrT[i]));
-        newItem->setFlags(newItem->flags() ^ Qt::ItemIsEditable);
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
         m_table->setItem(i, 0, newItem);
     }
 
     for (int j = 0; j < dim; ++j) {
         Core::GetMeanX(data, j, arrMx, scale[j]);
+        Core::GetMeanE(data, j, arrMe, scale[j]);
         Core::GetStdDeviationX(data, j, arrSx, scale[j]);
         Core::GetStdDeviationE(data, j, arrSe, scale[j]);
 
         for (int i = 0; i < rows; ++i) {
             QTableWidgetItem *twItem = new QTableWidgetItem(QString::number(arrMx[i]));
-            twItem->setFlags(twItem->flags() ^ Qt::ItemIsEditable);
-            m_table->setItem(i, 1 + 3 * j, twItem);
+            twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+            m_table->setItem(i, 1 + 4 * j, twItem);
+
+            twItem = new QTableWidgetItem(QString::number(arrMe[i]));
+            twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+            m_table->setItem(i, 2 + 4 * j, twItem);
 
             twItem = new QTableWidgetItem(QString::number(arrSx[i]));
-            twItem->setFlags(twItem->flags() ^ Qt::ItemIsEditable);
-            m_table->setItem(i, 2 + 3 * j, twItem);
+            twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+            m_table->setItem(i, 3 + 4 * j, twItem);
 
             twItem = new QTableWidgetItem(QString::number(arrSe[i]));
-            twItem->setFlags(twItem->flags() ^ Qt::ItemIsEditable);
+            twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
             if (arrSe[i] > arrSx[i]) {
                 twItem->setTextColor(Qt::red);
                 twItem->setFont(warningFont);
             }
-            m_table->setItem(i, 3 + 3 * j, twItem);
+            m_table->setItem(i, 4 + 4 * j, twItem);
         }
     }
 }
