@@ -2,6 +2,7 @@
 #define FILTERRESULTSTABLE_H
 
 #include "src/core/filter_output.h"
+#include "src/gui/gui_config.h"
 #include <QTableWidget>
 #include <QWidget>
 

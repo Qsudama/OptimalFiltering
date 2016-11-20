@@ -8,7 +8,7 @@ FilterResultsTable::FilterResultsTable(const Core::FilterOutput &data, const std
     : QWidget(parent)
     , m_table(nullptr)
 {
-    setFont(FontManager::instance().regular(9));
+    setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
     setMinimumHeight(250);
     setMinimumWidth(500);
 
@@ -16,9 +16,11 @@ FilterResultsTable::FilterResultsTable(const Core::FilterOutput &data, const std
 
     initTable(data, scale);
 
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(m_table);
-    this->setLayout(layout);
+    QHBoxLayout *mainLayout = new QHBoxLayout;
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_SMALL);
+    mainLayout->addWidget(m_table);
+    this->setLayout(mainLayout);
 }
 
 void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::Vector &scale)
@@ -31,8 +33,8 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
 
     m_table = new QTableWidget(rows, cols);
 
-    QFont titleFont   = FontManager::instance().mono(9);
-    QFont warningFont = FontManager::instance().monoBold(9);
+    QFont titleFont   = FontManager::instance().mono(GuiConfig::FONT_SIZE_NORMAL);
+    QFont warningFont = FontManager::instance().monoBold(GuiConfig::FONT_SIZE_NORMAL);
 
     QStringList labels;
     labels.append(tr("t"));
@@ -53,6 +55,7 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
     Core::GetTime(data, arrT);
     for (int i = 0; i < rows; ++i) {
         QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(arrT[i]));
+        newItem->setFlags(newItem->flags() ^ Qt::ItemIsEditable);
         m_table->setItem(i, 0, newItem);
     }
 
@@ -63,12 +66,15 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
 
         for (int i = 0; i < rows; ++i) {
             QTableWidgetItem *twItem = new QTableWidgetItem(QString::number(arrMx[i]));
+            twItem->setFlags(twItem->flags() ^ Qt::ItemIsEditable);
             m_table->setItem(i, 1 + 3 * j, twItem);
 
             twItem = new QTableWidgetItem(QString::number(arrSx[i]));
+            twItem->setFlags(twItem->flags() ^ Qt::ItemIsEditable);
             m_table->setItem(i, 2 + 3 * j, twItem);
 
             twItem = new QTableWidgetItem(QString::number(arrSe[i]));
+            twItem->setFlags(twItem->flags() ^ Qt::ItemIsEditable);
             if (arrSe[i] > arrSx[i]) {
                 twItem->setTextColor(Qt::red);
                 twItem->setFont(warningFont);
