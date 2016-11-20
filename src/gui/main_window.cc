@@ -25,8 +25,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadFonts()
 {
-    this->setFont(FontManager::instance().regular(9));
-    this->statusBar()->setFont(FontManager::instance().regularItalic(9));
+    this->setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
+    this->statusBar()->setFont(FontManager::instance().regularItalic(GuiConfig::FONT_SIZE_SMALL));
 }
 
 void MainWindow::initControls()
@@ -49,28 +49,28 @@ void MainWindow::initControls()
 
 void MainWindow::initLayouts()
 {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(5);
-    layout->setSpacing(5);
-    layout->addWidget(m_taskWidget);
-    layout->addWidget(m_filterParamsWidget);
-    layout->addWidget(m_filterStartWidget);
-    layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
+    mainLayout->addWidget(m_taskWidget);
+    mainLayout->addWidget(m_filterParamsWidget);
+    mainLayout->addWidget(m_filterStartWidget);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     QHBoxLayout *btnLayout = new QHBoxLayout;
-    btnLayout->setMargin(0);
-    btnLayout->setSpacing(5);
+    btnLayout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    btnLayout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
     btnLayout->addWidget(m_btnClear);
     btnLayout->addWidget(m_btnShowHideTables);
 
-    layout->addLayout(btnLayout);
+    mainLayout->addLayout(btnLayout);
 
     if (!centralWidget()) {
         setCentralWidget(new QWidget);
     }
-    centralWidget()->setLayout(layout);
+    centralWidget()->setLayout(mainLayout);
 
-    centralWidget()->setMinimumWidth(layout->margin() * 2 + m_filterParamsWidget->minimumWidth());
+    centralWidget()->setMinimumWidth(mainLayout->margin() * 2 + m_filterParamsWidget->minimumWidth());
     this->setMinimumWidth(this->layout()->margin() * 2 + centralWidget()->minimumWidth());
 }
 
@@ -166,8 +166,7 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filte
 {
     Core::PtrTask             task   = m_taskWidget->task(ftype, atype);
     Core::PtrFilterParameters params = m_filterParamsWidget->parameters();
-    // Core::PtrFilterParameters params (new Core::FilterParameters(2, 0.5, 0.1, 0.001, 100, 1));
-    Core::PtrFilter filter = Filters::FilterFactory::create(ftype, id, params, task);
+    Core::PtrFilter           filter = Filters::FilterFactory::create(ftype, id, params, task);
     connect(filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
 
     m_statusProgressBar->setEnabled(true);
@@ -202,22 +201,22 @@ void MainWindow::showData(Core::PtrFilter filter)
         m_graphWindow->setCountSheets(dim);
     }
 
-    QString title = QString("Статистика <") + m_taskWidget->name() + QString(">");
+    QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
     QString subTitle =
-        QString("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize()) +
-        QString(", шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
-        QString(", между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+        tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize()) +
+        tr(", шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
+        tr(", между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
     for (int i = 0; i < dim; i++) {
         m_graphWindow->sheet(i).setTitleLabel(title);
         m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
     if (m_taskWidget->id() == Tasks::TASK_ID::Landing) {
-        m_graphWindow->sheet(0).setXLabel("Время (с)");
-        m_graphWindow->sheet(1).setXLabel("Время (с)");
-        m_graphWindow->sheet(2).setXLabel("Время (с)");
-        m_graphWindow->sheet(0).setYLabel("Скорость (м/c)");
-        m_graphWindow->sheet(1).setYLabel("Угол наклона (°)");
-        m_graphWindow->sheet(2).setYLabel("Высота (м)");
+        m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheet(0).setYLabel(tr("Скорость (м/c)"));
+        m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
+        m_graphWindow->sheet(2).setYLabel(tr("Высота (м)"));
     }
 
     Math::Vector scale(dim);
@@ -267,5 +266,4 @@ void MainWindow::addTable(const Core::FilterOutput &data, const std::string &lab
         m_tables.last()->show();
     }
     m_btnShowHideTables->setEnabled(true);
-    // TODO прописать координаты - сейчас окошко создается рандомно.
 }
