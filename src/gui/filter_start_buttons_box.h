@@ -2,6 +2,7 @@
 #define FILTERSTARTBUTTONSBOX_H
 
 #include "src/filters/filters_factory.h"
+#include "src/gui/gui_config.h"
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QMessageBox>
@@ -79,14 +80,6 @@ private:
 
     //! \brief Устанавливает расположение всех элементов на виджете.
     void initLayouts();
-
-    /*!
-     \brief Вычисляет размеры для виджетов.
-     \details  Это, в частности, необходимо при изменении шрифтов, так как размеры элементов зависят от них.
-
-     \warning В Linux и Windows всё работает как задумано, в MacOS - фигово. Косяк либо тут, либо в FontManager.
-    */
-    void computeSizes();
 
 
 private:
