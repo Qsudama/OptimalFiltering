@@ -7,10 +7,10 @@ MainWindow::MainWindow(QWidget *parent)
     , m_randSeed(1447528517)
     , m_tablesIsVisible(false)
 {
+    loadFonts();
     initControls();
     initLayouts();
     initStatusBar();
-    loadFonts();
 
     QRect screenRect = QApplication::desktop()->availableGeometry();
     setGeometry(screenRect.x() + 25, screenRect.y() + 50, this->minimumWidth(), screenRect.height() - 75);
@@ -26,6 +26,10 @@ MainWindow::~MainWindow()
 void MainWindow::loadFonts()
 {
     this->setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
+
+    if (!statusBar()) {
+        setStatusBar(new QStatusBar);
+    }
     this->statusBar()->setFont(FontManager::instance().regularItalic(GuiConfig::FONT_SIZE_SMALL));
 }
 
@@ -87,9 +91,6 @@ void MainWindow::initStatusBar()
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
 
-    if (!statusBar()) {
-        setStatusBar(new QStatusBar);
-    }
     statusBar()->addPermanentWidget(m_statusProgressBar);
     statusBar()->layout()->setMargin(centralWidget()->layout()->margin());
     statusBar()->layout()->setSpacing(centralWidget()->layout()->spacing());
