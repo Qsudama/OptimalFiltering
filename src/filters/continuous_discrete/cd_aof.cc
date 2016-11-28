@@ -9,7 +9,7 @@ namespace ContinuousDiscrete
 
 
 using Math::Rand::gaussianVector;
-using Math::LinAlg::PinvSVD;
+using Math::LinAlg::Pinv;
 
 
 AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
@@ -63,7 +63,7 @@ void AOF::algorithm()
                 h = m_task->h(m_sampleZ[s], m_sampleP[s]);
                 G = m_task->G(m_sampleZ[s], m_sampleP[s]);
                 F = m_task->F(m_sampleZ[s], m_sampleP[s]);
-                K = m_sampleP[s] * G.transpose() * PinvSVD(F);
+                K = m_sampleP[s] * G.transpose() * Pinv(F);
 
                 m_sampleZ[s] = m_sampleZ[s] + K * (m_sampleY[s] - h);
                 m_sampleP[s] = m_sampleP[s] - K * G * m_sampleP[s];

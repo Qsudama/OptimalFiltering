@@ -9,7 +9,7 @@ namespace ContinuousDiscrete
 
 
 using Math::Rand::gaussianVector;
-using Math::LinAlg::PinvSVD;
+using Math::LinAlg::Pinv;
 using Math::Statistic::Cov;
 using Math::Statistic::Var;
 using Math::Statistic::Mean;
@@ -53,7 +53,7 @@ void FOS::algorithm()
                 G = m_task->G(m_sampleZ[s], Gamma);
                 F = m_task->F(m_sampleZ[s], Gamma);
 
-                m_sampleZ[s] = m_sampleZ[s] + Gamma * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
+                m_sampleZ[s] = m_sampleZ[s] + Gamma * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
             }
         }
         writeResult(n);
