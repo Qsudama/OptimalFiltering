@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "src/gui/filter_results_table.h"
+#include <QTabWidget>
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -35,11 +36,12 @@ void MainWindow::loadFonts()
 
 void MainWindow::initControls()
 {
-    m_taskWidget         = new TaskWidget;
-    m_filterParamsWidget = new FilterParametersWidget;
-    m_filterStartWidget  = new FilterStartButtonsBox;
-    m_btnClear           = new QPushButton(tr("Очистить"));
-    m_btnShowHideTables  = new QPushButton(tr("Показать таблицы"));
+    m_taskWidget               = new TaskWidget;
+    m_filterParamsWidget       = new FilterParametersWidget;
+    m_filterStartWidget        = new FilterStartButtonsBox;
+    m_additionalSettingsWidget = new AdditionalSettingsWidget;
+    m_btnClear                 = new QPushButton(tr("Очистить"));
+    m_btnShowHideTables        = new QPushButton(tr("Показать таблицы"));
 
     m_btnShowHideTables->setEnabled(false);
 
@@ -53,13 +55,15 @@ void MainWindow::initControls()
 
 void MainWindow::initLayouts()
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
-    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
-    mainLayout->addWidget(m_taskWidget);
-    mainLayout->addWidget(m_filterParamsWidget);
-    mainLayout->addWidget(m_filterStartWidget);
-    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    // page1:
+
+    QVBoxLayout *page1Layout = new QVBoxLayout;
+    page1Layout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    page1Layout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
+    page1Layout->addWidget(m_taskWidget);
+    page1Layout->addWidget(m_filterParamsWidget);
+    page1Layout->addWidget(m_filterStartWidget);
+    page1Layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     QHBoxLayout *btnLayout = new QHBoxLayout;
     btnLayout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
@@ -67,15 +71,39 @@ void MainWindow::initLayouts()
     btnLayout->addWidget(m_btnClear);
     btnLayout->addWidget(m_btnShowHideTables);
 
-    mainLayout->addLayout(btnLayout);
+    page1Layout->addLayout(btnLayout);
 
-    if (!centralWidget()) {
-        setCentralWidget(new QWidget);
-    }
-    centralWidget()->setLayout(mainLayout);
+    QWidget *page1 = new QWidget;
+    page1->setLayout(page1Layout);
+    page1->setMinimumWidth(page1Layout->margin() * 2 + m_filterParamsWidget->minimumWidth());
 
-    centralWidget()->setMinimumWidth(mainLayout->margin() * 2 + m_filterParamsWidget->minimumWidth());
-    this->setMinimumWidth(this->layout()->margin() * 2 + centralWidget()->minimumWidth());
+    // page2:
+
+    QVBoxLayout *page2Layout = new QVBoxLayout;
+    page2Layout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    page2Layout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
+    page2Layout->addWidget(m_additionalSettingsWidget);
+    page2Layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
+    QWidget *page2 = new QWidget;
+    page2->setLayout(page2Layout);
+
+
+    QTabWidget *tabs = new QTabWidget;
+    tabs->addTab(page1, tr("Основное"));
+    tabs->addTab(page2, tr("Дополнительные настройки"));
+
+    QWidget *    mainWidget = new QWidget;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_SMALL);
+    mainLayout->addWidget(tabs);
+    mainWidget->setLayout(mainLayout);
+
+    setCentralWidget(mainWidget);
+
+    centralWidget()->setMinimumWidth(2 * GuiConfig::LAYOUT_MARGIN_BIG + page1->minimumWidth());
+    setMinimumWidth(this->layout()->margin() * 2 + centralWidget()->minimumWidth());
 }
 
 void MainWindow::initStatusBar()

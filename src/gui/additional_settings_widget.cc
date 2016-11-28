@@ -9,7 +9,7 @@ using namespace Math::LinAlg;
 AdditionalSettingsWidget::AdditionalSettingsWidget(QWidget *parent)
     : QGroupBox(parent)
 {
-    setTitle(tr("Дополнительные настройки"));
+    setTitle(tr("Псевдообращение матриц"));
     initControls();
     initLayouts();
     loadFonts();
