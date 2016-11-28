@@ -15,6 +15,18 @@ namespace LinAlg
 {
 
 
+//! \brief Набор идентификаторов методов псевдообращения матриц.
+enum class PseudoinverseMethods {
+    GREVILLE, //!< Псевдообращение по методу Гревиля.
+    SVD //!< Псевдообращение с использованием сингулярных значений.
+};
+
+
+static PseudoinverseMethods _currentPinvMethod = PseudoinverseMethods::SVD;
+
+void SetPinvMethod(PseudoinverseMethods method);
+
+
 /*!
  * \brief Производит \f$LU\f$-разложение матрицы \f$A\f$.
  * \param[in] A - матрица, которую нужно разложить.
@@ -88,6 +100,16 @@ Matrix PinvGreville(const Matrix &A);
  * \param[in] b - вектор правой части СЛАУ.
  * \return вектор \f$x\f$.
  */
+
+/*!
+ * \brief Вычисляет псевдообратную матрицу методом по-умолчанию.
+ * \param[in] A - матрица, которую следует обратить.
+ * \return псевдообратную матрицу \f$A^{-1}\f$.
+ * \see PseudoinverseMethods
+ * \see
+ */
+
+Matrix Pinv(const Matrix &A);
 
 Vector SolveSystem(const Matrix &A, const Vector &b);
 

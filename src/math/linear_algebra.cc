@@ -115,6 +115,21 @@ Matrix PinvGreville(const Matrix &A)
     return invA;
 }
 
+void SetPinvMethod(PseudoinverseMethods method)
+{
+    _currentPinvMethod = method;
+}
+
+Matrix Pinv(const Matrix &A)
+{
+    switch (_currentPinvMethod) {
+    case PseudoinverseMethods::GREVILLE:
+        return PinvGreville(A);
+    case PseudoinverseMethods::SVD:
+        return PinvSVD(A);
+    }
+}
+
 
 } // end LinAlg
 
