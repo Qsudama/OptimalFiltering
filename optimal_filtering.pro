@@ -298,7 +298,8 @@ HEADERS += \
     third_party/eigen/StdList \
     third_party/eigen/StdVector \
     third_party/eigen/SVD \
-    third_party/qcustomplot/qcustomplot.h
+    third_party/qcustomplot/qcustomplot.h \
+    src/gui/additional_settings_widget.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -351,4 +352,5 @@ SOURCES += \
     src/tasks/discrete/d_landing_linear.cc \
     src/tasks/tasks_factory.cc \
     src/main.cc \
-    third_party/qcustomplot/qcustomplot.cc
+    third_party/qcustomplot/qcustomplot.cc \
+    src/gui/additional_settings_widget.cc
