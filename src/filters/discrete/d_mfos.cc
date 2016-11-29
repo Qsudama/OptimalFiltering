@@ -9,7 +9,7 @@ namespace Discrete
 
 
 using Math::Rand::gaussianVector;
-using Math::LinAlg::PinvSVD;
+using Math::LinAlg::Pinv;
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
@@ -43,7 +43,7 @@ void MFOS::algorithm()
         h               = m_task->h(sampleLambda[s], Psi);
         G               = m_task->G(sampleLambda[s], Psi);
         F               = m_task->F(sampleLambda[s], Psi);
-        sampleSigma[s]  = Psi * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
+        sampleSigma[s]  = Psi * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
     }
     computeAdditionParams(0, sampleS, sampleLambda, sampleSigma, L, K, n, e);
 
@@ -79,7 +79,7 @@ void MFOS::algorithm()
                 F = m_task->F(sampleLambda[s], Psi);
 
                 m_sampleY[s]   = m_task->b(m_sampleX[s]);
-                sampleSigma[s] = Psi * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
+                sampleSigma[s] = Psi * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
             }
             computeAdditionParams(i, sampleS, sampleLambda, sampleSigma, L, K, n, e);
             // Индекс s пробегает по всем элементам выборки:
@@ -109,7 +109,7 @@ void MFOS::computeParams(size_t n, Array<Vector> &sampleU, Array<Vector> &sample
     Dxz    = Cov(m_sampleX, m_sampleZ);
     MakeBlockMatrix(Dxy, Dxz, DxyDxz);
 
-    Gamma  = DxyDxz * PinvSVD(Ddelta);
+    Gamma  = DxyDxz * Pinv(Ddelta);
     GammaY = Gamma.leftCols(m_task->dimY());
     GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
 
@@ -147,10 +147,10 @@ void MFOS::computeAdditionParams(size_t nn, const Array<Vector> &sampleS, const 
     Ds       = Var(sampleS, ms);
     Dxs      = Cov(m_sampleX, sampleS);
 
-    K = Dsigma_e * PinvSVD(Dsigma);
+    K = Dsigma_e * Pinv(Dsigma);
     e = me - K * msigma;
 
-    L = Dxs * PinvSVD(Ds);
+    L = Dxs * Pinv(Ds);
     n = m_result[nn].meanX - L * ms;
 }
 

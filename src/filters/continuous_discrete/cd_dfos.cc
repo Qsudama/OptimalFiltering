@@ -9,7 +9,7 @@ namespace ContinuousDiscrete
 
 
 using Math::Rand::gaussianVector;
-using Math::LinAlg::PinvSVD;
+using Math::LinAlg::Pinv;
 using Math::Statistic::Cov;
 
 
@@ -41,7 +41,7 @@ void DFOS::algorithm()
         // n = 1..K*L*N, если n нацело делится на N, значит сейчас время прогноза tn = tl:
         if (n % m_params->integrationCount() == 0) { // t = t_tau_k^i
             Dxz   = Cov(m_sampleX, m_sampleZ);
-            Gamma = Dxz * PinvSVD(m_result[n].varZ);
+            Gamma = Dxz * Pinv(m_result[n].varZ);
             kappa = m_result[n].meanX - Gamma * m_result[n].meanZ;
             if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
                 T = m_result[n].varX - Gamma * Dxz.transpose();
@@ -62,7 +62,7 @@ void DFOS::algorithm()
                 G = m_task->G(m_sampleZ[s], T);
                 F = m_task->F(m_sampleZ[s], T);
 
-                m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
+                m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
             }
             writeResult(n);
         }

@@ -4,7 +4,7 @@
 namespace Core
 {
 
-using Math::LinAlg::PinvSVD;
+using Math::LinAlg::Pinv;
 
 
 ContinuousTask::ContinuousTask()
@@ -17,7 +17,7 @@ Matrix ContinuousTask::K(const Vector &m, const Matrix &D) const
     assert(m.size() == m_dimX);
     assert(D.rows() == m_dimX);
     assert(D.cols() == m_dimX);
-    return (D * G(m, D).transpose() + S(m, D)) * PinvSVD(R(m, D));
+    return (D * G(m, D).transpose() + S(m, D)) * Pinv(R(m, D));
 }
 
 Matrix ContinuousTask::Psi(const Vector &m, const Matrix &D) const

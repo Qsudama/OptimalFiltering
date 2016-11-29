@@ -9,7 +9,7 @@ namespace ContinuousDiscrete
 
 
 using Math::Rand::gaussianVector;
-using Math::LinAlg::PinvSVD;
+using Math::LinAlg::Pinv;
 using Math::Statistic::Cov;
 using Math::Statistic::Var;
 using Math::Statistic::Mean;
@@ -62,7 +62,7 @@ void DFOSBO::algorithm()
             Dxs   = Cov(m_sampleX, m_sampleS);
             ms    = Mean(m_sampleS);
             Ds    = Var(m_sampleS, ms);
-            Gamma = Dxs * PinvSVD(Ds); // Gamma_k^i
+            Gamma = Dxs * Pinv(Ds); // Gamma_k^i
             kappa = m_result[n].meanX - Gamma * ms;
             if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
                 T = m_result[n].varX - Gamma * Dxs.transpose();
@@ -85,7 +85,7 @@ void DFOSBO::algorithm()
                 G = m_task->G(m_sampleZ[s], T);
                 F = m_task->F(m_sampleZ[s], T);
 
-                m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
+                m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
 
                 long ny = long(m_task->dimY());
                 long p  = ny * long(m_params->orderMult());

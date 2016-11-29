@@ -1,1 +1,9 @@
-# optimal_filtering2
+#Optimal Filtering 2
+
+***
+
+###Документация онлайн [здесь](https://fedorovpavel.github.io) (формулы в png: качество плохое).
+
+***
+
+###Документация оффлайн [здесь](https://goo.gl/mWs3XR) (архив; формулы отлично отображаются; распакавать и открыть index.html).
