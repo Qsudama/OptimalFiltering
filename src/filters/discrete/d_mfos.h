@@ -31,11 +31,9 @@ protected:
      \f[Z_k = \Lambda_k + K_k \cdot \Sigma_k + e_k.\f]
      \f[U_k = \Gamma_k^y \cdot Y_k + \Gamma_k^z \cdot Z_k + \chi_k.\f]
 
-     Параметры \f$\Gamma_k^y,\ \Gamma_k^z,\ T_k,\ \chi_k\f$ вычисляются
-     в computeParams(size_t, Array<Math::Vector> &, Array<Math::Vector> &, Math::Matrix &).
+     Параметры \f$\Gamma_k^y,\ \Gamma_k^z,\ T_k,\ \chi_k\f$ вычисляются в computeParams().
 
-     Дополнительные параметры \f$K_k,\ e_k,\ L_{k},\ n_{k}\f$ вычисляются
-     в computeAdditionParams(size_t, Array<Math::Vector> &, Matrix &, Matrix &, Vector &, Vector &).
+     Дополнительные параметры \f$K_k,\ e_k,\ L_{k},\ n_{k}\f$ вычисляются в computeAdditionParams().
 
      \see Core::DiscreteFilter
      \see Core::DiscreteTask
