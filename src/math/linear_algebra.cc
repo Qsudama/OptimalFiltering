@@ -115,19 +115,36 @@ Matrix PinvGreville(const Matrix &A)
     return invA;
 }
 
-void SetPinvMethod(PseudoinverseMethods method)
+CurrentPinvMethod &CurrentPinvMethod::instance()
 {
-    _currentPinvMethod = method;
+    static CurrentPinvMethod cpm_instance;
+    return cpm_instance;
+}
+
+CurrentPinvMethod::CurrentPinvMethod()
+{
+    m_value = PseudoinverseMethods::SVD;
+}
+
+PseudoinverseMethods CurrentPinvMethod::get() const
+{
+    return m_value;
+}
+
+void CurrentPinvMethod::set(PseudoinverseMethods method)
+{
+    m_value = method;
 }
 
 Matrix Pinv(const Matrix &A)
 {
-    switch (_currentPinvMethod) {
+    switch (CurrentPinvMethod::instance().get()) {
     case PseudoinverseMethods::GREVILLE:
         return PinvGreville(A);
     case PseudoinverseMethods::SVD:
         return PinvSVD(A);
     }
+    return PinvSVD(A);
 }
 
 

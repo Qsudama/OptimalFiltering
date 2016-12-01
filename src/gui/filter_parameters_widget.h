@@ -37,6 +37,15 @@ public:
     Core::PtrFilterParameters parameters();
 
 
+public slots:
+    /*!
+     \brief Делает часть параметров доступными или недоступными.
+     \param index - номер текущей вкладки.
+     \details Слот. Реакция на изменение текущей вкладки в FilterStartButtonBox.
+    */
+    void onFiltersFamilyChanged(int index);
+
+
 private slots:
     /*!
      \brief Устанавливает новое значение времени окончания фильтрации.
@@ -187,6 +196,7 @@ private:
      */
     bool                      m_updateOn;
     Core::PtrFilterParameters m_parameters;
+    int                       m_currentFiltersFamily;
 
     QFont m_regularFont;
     QFont m_monotypeFont;

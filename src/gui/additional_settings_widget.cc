@@ -31,7 +31,7 @@ void AdditionalSettingsWidget::initControls()
 {
     m_radioPinvSvd = new QRadioButton(tr("Использовать метод SVD"));
     m_radioPinvSvd->setChecked(true);
-    connect(m_radioPinvSvd, SIGNAL(toggled(bool)), this, SLOT(onPinvGrevilleToggled(bool)));
+    connect(m_radioPinvSvd, SIGNAL(toggled(bool)), this, SLOT(onPinvSvdToggled(bool)));
 
     m_radioPinvGreville = new QRadioButton(tr("Использовать метод Гревиля"));
     m_radioPinvGreville->setChecked(false);
@@ -53,13 +53,13 @@ void AdditionalSettingsWidget::initLayouts()
 void AdditionalSettingsWidget::onPinvSvdToggled(bool checked)
 {
     if (checked) {
-        SetPinvMethod(PseudoinverseMethods::SVD);
+        CurrentPinvMethod::instance().set(PseudoinverseMethods::SVD);
     }
 }
 
 void AdditionalSettingsWidget::onPinvGrevilleToggled(bool checked)
 {
     if (checked) {
-        SetPinvMethod(PseudoinverseMethods::GREVILLE);
+        CurrentPinvMethod::instance().set(PseudoinverseMethods::GREVILLE);
     }
 }

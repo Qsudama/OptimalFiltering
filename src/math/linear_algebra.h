@@ -17,14 +17,29 @@ namespace LinAlg
 
 //! \brief Набор идентификаторов методов псевдообращения матриц.
 enum class PseudoinverseMethods {
-    GREVILLE, //!< Псевдообращение по методу Гревиля.
-    SVD //!< Псевдообращение с использованием сингулярных значений.
+    GREVILLE = 0, //!< Псевдообращение по методу Гревиля.
+    SVD = 1 //!< Псевдообращение с использованием сингулярных значений.
 };
 
 
-static PseudoinverseMethods _currentPinvMethod = PseudoinverseMethods::SVD;
+class CurrentPinvMethod
+{
+public:
+    static CurrentPinvMethod &instance();
 
-void SetPinvMethod(PseudoinverseMethods method);
+    PseudoinverseMethods get() const;
+
+    void set(PseudoinverseMethods method);
+
+
+private:
+    CurrentPinvMethod();
+
+    CurrentPinvMethod(const CurrentPinvMethod &) = delete;
+    CurrentPinvMethod &operator=(const CurrentPinvMethod &) = delete;
+
+    PseudoinverseMethods m_value;
+};
 
 
 /*!
