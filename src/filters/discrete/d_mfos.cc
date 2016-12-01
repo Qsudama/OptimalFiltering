@@ -28,13 +28,14 @@ MFOS::MFOS(Core::PtrFilterParameters params, Core::PtrTask task)
 
 void MFOS::algorithm()
 {
-
     Vector        h, n, e;
     Matrix        G, F, Psi, T, L, K;
     Array<Vector> sampleLambda(m_params->sampleSize());
     Array<Vector> sampleU(m_params->sampleSize());
     Array<Vector> sampleS(m_params->sampleSize());
     Array<Vector> sampleSigma(m_params->sampleSize());
+
+    m_task->setStep(m_params->measurementStep());
 
     computeParams(0, sampleU, sampleS, T);
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
@@ -45,54 +46,41 @@ void MFOS::algorithm()
         F               = m_task->F(sampleLambda[s], Psi);
         sampleSigma[s]  = Psi * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
     }
-    computeAdditionParams(0, sampleS, sampleLambda, sampleSigma, L, K, n, e);
+    computeAdditionParams(sampleS, sampleLambda, sampleSigma, L, K, n, e);
 
     // Индекс n соответствует моменту времени tn = t0 + n * dt  (dt - шаг интегрирования):
-    for (size_t i = 1; i < m_result.size(); ++i) {
-        m_task->setTime(m_result[i - 1].time);
-        m_task->setStep(m_params->integrationStep());
+    for (size_t k = 1; k < m_result.size(); ++k) {
+        m_task->setTime(m_result[k - 1].time);
 
         // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+            // X_k = a(X_{k-1}); время t = t_{k-1}
             m_sampleX[s] = m_task->a(m_sampleX[s]);
+            // вычисляем lambda, Psi;  время t = t_{k-1}:
+            sampleLambda[s] = L * sampleS[s] + n;
+            Psi             = m_task->Theta(sampleU[s], T);
+
+            //ставим время обратно и продолжаем:
+            m_task->setTime(m_result[k].time);
+
+            h = m_task->h(sampleLambda[s], Psi);
+            G = m_task->G(sampleLambda[s], Psi);
+            F = m_task->F(sampleLambda[s], Psi);
+
+            m_sampleY[s]   = m_task->b(m_sampleX[s]);
+            sampleSigma[s] = Psi * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
         }
-        writeResult(i, true);
-
-        // i = 1..K*L*N, если i нацело делится на L*N, значит сейчас время измерения ti = tk:
-        if (i % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
-            double currentTime  = m_result[i].time;
-            double previousTime = currentTime - m_params->measurementStep();
-            m_task->setStep(m_params->measurementStep());
-
-            // Индекс s пробегает по всем элементам выборки:
-            for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                //вычисляем lambda, Psi: время устонавливаем в предыдущий момент измерения:
-                m_task->setTime(previousTime);
-                sampleLambda[s] = L * sampleS[s] + n;
-                Psi             = m_task->Theta(sampleU[s], T);
-
-                //ставим время обратно и продолжаем:
-                m_task->setTime(currentTime);
-
-                h = m_task->h(sampleLambda[s], Psi);
-                G = m_task->G(sampleLambda[s], Psi);
-                F = m_task->F(sampleLambda[s], Psi);
-
-                m_sampleY[s]   = m_task->b(m_sampleX[s]);
-                sampleSigma[s] = Psi * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
-            }
-            computeAdditionParams(i, sampleS, sampleLambda, sampleSigma, L, K, n, e);
-            // Индекс s пробегает по всем элементам выборки:
-            for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                m_sampleZ[s] = sampleLambda[s] + K * sampleSigma[s] + e;
-            }
-            writeResult(i);
-            computeParams(i, sampleU, sampleS, T);
+        computeAdditionParams(sampleS, sampleLambda, sampleSigma, L, K, n, e);
+        // Индекс s пробегает по всем элементам выборки:
+        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+            m_sampleZ[s] = sampleLambda[s] + K * sampleSigma[s] + e;
         }
+        writeResult(k);
+        computeParams(k, sampleU, sampleS, T);
     }
 }
 
-void MFOS::computeParams(size_t n, Array<Vector> &sampleU, Array<Vector> &sampleS, Matrix &T)
+void MFOS::computeParams(size_t k, Array<Vector> &sampleU, Array<Vector> &sampleS, Matrix &T)
 {
     Vector        my, chi;
     Matrix        Gamma, GammaY, GammaZ, DxyDxz, Ddelta, Dxy, Dxz;
@@ -113,25 +101,22 @@ void MFOS::computeParams(size_t n, Array<Vector> &sampleU, Array<Vector> &sample
     GammaY = Gamma.leftCols(m_task->dimY());
     GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
 
-    chi = m_result[n].meanX - GammaY * my - GammaZ * m_result[n].meanZ;
-    T   = m_result[n].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
+    chi = m_result[k].meanX - GammaY * my - GammaZ * m_result[k].meanZ;
+    T   = m_result[k].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
 
-    double currentTime  = m_result[n].time;
-    double previousTime = currentTime - m_params->measurementStep();
-    m_task->setStep(m_params->measurementStep());
-    m_task->setTime(previousTime);
+    m_task->setTime(m_result[k - 1].time);
     // Индекс s пробегает по всем элементам выборки:
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
         sampleU[s] = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + chi;
         sampleS[s] = m_task->tau(sampleU[s], T);
     }
-    m_task->setTime(currentTime);
+    m_task->setTime(m_result[k].time);
 }
 
-void MFOS::computeAdditionParams(size_t nn, const Array<Vector> &sampleS, const Array<Vector> &sampleLambda,
+void MFOS::computeAdditionParams(const Array<Vector> &sampleS, const Array<Vector> &sampleLambda,
                                  const Array<Vector> &sampleSigma, Matrix &L, Matrix &K, Vector &n, Vector &e)
 {
-    Vector me, msigma, ms;
+    Vector me, mx, msigma, ms;
     Matrix Dsigma_e, Dsigma, Ds, Dxs;
 
     Array<Vector> sampleE(m_params->sampleSize());
@@ -139,6 +124,7 @@ void MFOS::computeAdditionParams(size_t nn, const Array<Vector> &sampleS, const 
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
         sampleE[s] = m_sampleX[s] - sampleLambda[s];
     }
+    mx       = Mean(m_sampleX);
     me       = Mean(sampleE);
     msigma   = Mean(sampleSigma);
     ms       = Mean(sampleS);
@@ -151,7 +137,7 @@ void MFOS::computeAdditionParams(size_t nn, const Array<Vector> &sampleS, const 
     e = me - K * msigma;
 
     L = Dxs * Pinv(Ds);
-    n = m_result[nn].meanX - L * ms;
+    n = mx - L * ms;
 }
 
 
