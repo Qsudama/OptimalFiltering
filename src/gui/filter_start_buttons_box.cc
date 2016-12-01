@@ -104,6 +104,8 @@ void FilterStartButtonsBox::initLayouts()
     tabWidget->addTab(tab2, tr("Непрерывные"));
     tabWidget->addTab(tab3, tr("Непрерывно-дискретные"));
 
+    connect(tabWidget, SIGNAL(currentChanged(int)), this, SIGNAL(filtersFamilyChanged(int)));
+
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
     mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);

@@ -6,11 +6,13 @@ FilterParametersWidget::FilterParametersWidget(QWidget *parent)
     : QGroupBox(parent)
     , m_updateOn(true)
     , m_parameters(new Core::FilterParameters(200.0, 1.0, 1.0, 0.1, 200, 1))
+    , m_currentFiltersFamily(0)
 {
     setTitle(tr("Параметры фильтрации"));
     loadFonts();
     initControls();
     initLayouts();
+    onFixAllToggled(m_checkFixAll->isChecked());
 }
 
 FilterParametersWidget::~FilterParametersWidget()
@@ -188,6 +190,12 @@ void FilterParametersWidget::initLayouts()
     this->setMinimumWidth(minWidth);
 }
 
+void FilterParametersWidget::onFiltersFamilyChanged(int index)
+{
+    m_currentFiltersFamily = index;
+    onFixAllToggled(m_checkFixAll->isChecked());
+}
+
 Core::PtrFilterParameters FilterParametersWidget::parameters()
 {
     return m_parameters;
@@ -273,9 +281,21 @@ void FilterParametersWidget::onFixAllToggled(bool checked)
     m_sbSampleSize->setEnabled(!checked);
     m_radioPredictionCount->setEnabled(!checked);
     m_radioPredictionStep->setEnabled(!checked);
-
     m_dsbPredictionStep->setEnabled(!checked && m_radioPredictionStep->isChecked());
     m_sbPredictionCount->setEnabled(!checked && m_radioPredictionCount->isChecked());
+
+    if (m_currentFiltersFamily == 0) { // дискретные
+        m_dsbIntegrationStep->setEnabled(false);
+        m_radioPredictionCount->setEnabled(false);
+        m_radioPredictionStep->setEnabled(false);
+        m_dsbPredictionStep->setEnabled(false);
+        m_sbPredictionCount->setEnabled(false);
+    } else if (m_currentFiltersFamily == 1) { // непрерывные
+        m_radioPredictionCount->setEnabled(false);
+        m_radioPredictionStep->setEnabled(false);
+        m_dsbPredictionStep->setEnabled(false);
+        m_sbPredictionCount->setEnabled(false);
+    }
 }
 void FilterParametersWidget::onPredictionStepToggled(bool checked)
 {

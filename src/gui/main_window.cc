@@ -51,6 +51,8 @@ void MainWindow::initControls()
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, Filters::FILTER_ID)), this,
             SLOT(onStart(Core::FILTER_TYPE, Core::APPROX_TYPE, Filters::FILTER_ID)));
+    connect(m_filterStartWidget, SIGNAL(filtersFamilyChanged(int)), m_filterParamsWidget,
+            SLOT(onFiltersFamilyChanged(int)));
 }
 
 void MainWindow::initLayouts()

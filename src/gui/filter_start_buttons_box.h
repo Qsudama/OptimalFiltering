@@ -37,6 +37,12 @@ signals:
     */
     void start(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filters::FILTER_ID id);
 
+    /*!
+     \brief Сигнал. Отправляет сообщение о том, что текущая вкладка с кнопками изменилась.
+     \param index - номер текущей вкладки.
+    */
+    void filtersFamilyChanged(int);
+
 
 private slots:
     //@{
