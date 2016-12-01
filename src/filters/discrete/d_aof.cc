@@ -43,7 +43,7 @@ void AOF::algorithm()
 
     // Индекс k соответствует моменту времени tk = t0 + k * delta_t  (delta_t - интервал между измерениями):
     for (size_t k = 1; k < m_result.size(); ++k) {
-        m_task->setTime(m_result[k-1].time);
+        m_task->setTime(m_result[k - 1].time);
 
         // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
