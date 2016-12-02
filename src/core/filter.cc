@@ -18,6 +18,7 @@ Filter::Filter(PtrFilterParameters params)
     m_params(params)
     , m_info(new Info())
 {
+    m_normalRand.setSeed(FILTER_RAND_SEED);
 }
 
 Filter::~Filter()

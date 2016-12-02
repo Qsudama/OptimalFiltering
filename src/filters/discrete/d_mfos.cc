@@ -8,7 +8,6 @@ namespace Discrete
 {
 
 
-using Math::Rand::gaussianVector;
 using Math::LinAlg::Pinv;
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
