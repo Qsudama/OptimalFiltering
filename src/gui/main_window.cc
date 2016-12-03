@@ -5,7 +5,6 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , m_randSeed(1447528517)
     , m_tablesIsVisible(false)
 {
     loadFonts();
@@ -204,7 +203,6 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filte
     QString status = tr("Состояние: выполняется ") + QString::fromStdString(filter->info()->name());
     statusBar()->showMessage(status);
 
-    Math::Rand::setRandSeed(uint(m_randSeed));
     filter->run(); // TODO сделать отдельный поток
 
     showData(filter);

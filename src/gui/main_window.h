@@ -95,7 +95,6 @@ private:
 
 private:
     ColorManager m_colorManager;
-    int          m_randSeed;
     bool         m_tablesIsVisible;
 
     QProgressBar *            m_statusProgressBar;

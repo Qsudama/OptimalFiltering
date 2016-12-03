@@ -59,11 +59,18 @@ Matrix PinvSVD(const Matrix &A)
     Matrix singularValuesInverse =
         (svd.singularValues().array().abs() > eps).select(svd.singularValues().array().inverse(), 0);
 
+    if (A.rows() < A.cols()) {
+        return (svd.matrixV() * singularValuesInverse.asDiagonal() * svd.matrixU().adjoint()).transpose();
+    }
     return svd.matrixV() * singularValuesInverse.asDiagonal() * svd.matrixU().adjoint();
 }
 
 Matrix PinvGreville(const Matrix &A)
 {
+    if (A.cols() < A.rows()) {
+        return PinvGreville(A.transpose()).transpose();
+    }
+
     // step 1:
 
     long   N = A.cols();

@@ -117,6 +117,8 @@ protected:
     Array<Vector> m_sampleY; /*!< Массив под выборку \f$Y\f$. */
     Array<Vector> m_sampleZ; /*!< Массив под выборку \f$Z\f$. */
     Array<Vector> m_sampleE; /*!< Массив под выборку \f$E\f$. */
+
+    Math::MultivariateNormalDistribution m_normalRand; /*!< Генератор гауссовских случайных векторов. */
 };
 
 

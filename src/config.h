@@ -13,5 +13,8 @@
 using uint  = unsigned int;
 using ulong = unsigned long;
 
+static constexpr ulong TASK_RAND_SEED   = 1638493;
+static constexpr ulong FILTER_RAND_SEED = 1052704;
+
 
 #endif // CONFIG_H

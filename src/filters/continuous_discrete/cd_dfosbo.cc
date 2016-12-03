@@ -8,7 +8,6 @@ namespace ContinuousDiscrete
 {
 
 
-using Math::Rand::gaussianVector;
 using Math::LinAlg::Pinv;
 using Math::Statistic::Cov;
 using Math::Statistic::Var;
@@ -52,7 +51,7 @@ void DFOSBO::algorithm()
         // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
-                           m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
+                           m_task->B(m_sampleX[s]) * sqrtdt * m_normalRand(m_task->dimV());
         }
         writeResult(n, true); //  mX, DX вычисляются, а mZ, DZ, mE, DE копируются из предыдущего
         m_task->setTime(m_result[n].time);

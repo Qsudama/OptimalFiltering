@@ -1,9 +1,6 @@
 #include "c_aof.h"
 
 
-using Math::Rand::gaussianVector;
-
-
 namespace Filters
 {
 
@@ -40,10 +37,10 @@ void AOF::algorithm()
         // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
-                           m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
+                           m_task->B(m_sampleX[s]) * sqrtdt * m_normalRand(m_task->dimV());
 
             dy = m_task->c(m_sampleX[s]) * m_params->integrationStep() +
-                 m_task->D(m_sampleX[s]) * gaussianVector(m_task->dimW(), 0.0, sqrtdt);
+                 m_task->D(m_sampleX[s]) * sqrtdt * m_normalRand(m_task->dimW());
             m_sampleY[s] = m_sampleY[s] + dy;
 
             prevZ = m_sampleZ[s];

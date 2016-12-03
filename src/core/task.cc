@@ -21,6 +21,7 @@ Task::Task()
     , m_varV(Matrix::Zero(2, 2))
     , m_varW(Matrix::Zero(2, 2))
 {
+    m_normalRand.setSeed(TASK_RAND_SEED);
 }
 
 Task::~Task()
@@ -94,7 +95,7 @@ const Matrix &Task::varW() const
 
 Vector Task::x0() const
 {
-    return Math::Rand::gaussianVector(m_meanX0, m_varX0);
+    return m_normalRand(m_meanX0, m_varX0);
 }
 
 void Task::setMeanX0(const Vector &mean)

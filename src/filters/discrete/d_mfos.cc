@@ -8,7 +8,6 @@ namespace Discrete
 {
 
 
-using Math::Rand::gaussianVector;
 using Math::LinAlg::Pinv;
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
@@ -35,12 +34,13 @@ void MFOS::algorithm()
     Array<Vector> sampleS(m_params->sampleSize());
     Array<Vector> sampleSigma(m_params->sampleSize());
 
+    m_task->setTime(m_result[0].time);
     m_task->setStep(m_params->measurementStep());
 
     computeParams(0, sampleU, sampleS, T);
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        sampleLambda[s] = m_task->tau(sampleU[s], T);
-        Psi             = m_task->Theta(sampleU[s], T);
+        sampleLambda[s] = m_result[0].meanX;
+        Psi             = m_result[0].varX;
         h               = m_task->h(sampleLambda[s], Psi);
         G               = m_task->G(sampleLambda[s], Psi);
         F               = m_task->F(sampleLambda[s], Psi);
@@ -48,12 +48,11 @@ void MFOS::algorithm()
     }
     computeAdditionParams(sampleS, sampleLambda, sampleSigma, L, K, n, e);
 
-    // Индекс n соответствует моменту времени tn = t0 + n * dt  (dt - шаг интегрирования):
+    // Индекс k соответствует моменту времени tk = t0 + k * delta_t  (delta_t - интервал между измерениями):
     for (size_t k = 1; k < m_result.size(); ++k) {
-        m_task->setTime(m_result[k - 1].time);
-
         // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+            m_task->setTime(m_result[k - 1].time);
             // X_k = a(X_{k-1}); время t = t_{k-1}
             m_sampleX[s] = m_task->a(m_sampleX[s]);
             // вычисляем lambda, Psi;  время t = t_{k-1}:
@@ -104,13 +103,12 @@ void MFOS::computeParams(size_t k, Array<Vector> &sampleU, Array<Vector> &sample
     chi = m_result[k].meanX - GammaY * my - GammaZ * m_result[k].meanZ;
     T   = m_result[k].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
 
-    m_task->setTime(m_result[k - 1].time);
+    m_task->setTime(m_result[k].time);
     // Индекс s пробегает по всем элементам выборки:
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
         sampleU[s] = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + chi;
         sampleS[s] = m_task->tau(sampleU[s], T);
     }
-    m_task->setTime(m_result[k].time);
 }
 
 void MFOS::computeAdditionParams(const Array<Vector> &sampleS, const Array<Vector> &sampleLambda,
