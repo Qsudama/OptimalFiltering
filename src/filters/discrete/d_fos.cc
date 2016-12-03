@@ -35,12 +35,11 @@ void FOS::algorithm()
 
     computeParams(0, sampleU, T);
 
-    // Индекс n соответствует моменту времени tn = t0 + n * dt  (dt - шаг интегрирования):
+    // Индекс k соответствует моменту времени tk = t0 + k * delta_t  (delta_t - интервал между измерениями):
     for (size_t k = 1; k < m_result.size(); ++k) {
-        m_task->setTime(m_result[k - 1].time);
-
         // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+            m_task->setTime(m_result[k - 1].time);
             // X_k = a(X_{k-1}); время t = t_{k-1}
             m_sampleX[s] = m_task->a(m_sampleX[s]);
             // вычисляем lambda, Psi;  время t = t_{k-1}:
