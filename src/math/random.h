@@ -11,6 +11,29 @@
 namespace Math
 {
 
+//!
+//! \brief Статический класс, помогающий управлять генератором ПСЧ.
+//!
+class RandomProperties
+{
+public:
+    //! \brief Возвращает стартовое число ГПСЧ по-умолчанию.
+    //! \details Оно равно половине наибольшего unsigned long.
+    static ulong defaultSeed()
+    {
+        static ulong seed = std::numeric_limits<ulong>::max() / 2;
+        return seed;
+    }
+
+    //! \brief Возвращает стартовое число ГПСЧ, которое берется из системного времени.
+    //! \details Оно равно количеству наносекунд, прошедших с 01.01.1970.
+    static ulong randomSeed()
+    {
+        ulong seed = ulong(std::chrono::system_clock::now().time_since_epoch().count());
+        return seed;
+    }
+};
+
 
 //!
 //! \brief Класс-генератор случайных нормальных(гауссовских) векторов.
@@ -23,9 +46,6 @@ public:
 
     //! Установливает число, на основании которого генерируется последовательсть ПСЧ.
     void setSeed(ulong seed);
-
-    //! Включает генерацию недетерминированной последовательности ПСЧ.
-    void setRandomize();
 
     //! Возвращает гауссовский случайный вектор размерности dim c независимыми компонентами.
     Vector operator()(long dim) const;

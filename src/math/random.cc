@@ -16,12 +16,6 @@ void MultivariateNormalDistribution::setSeed(ulong seed)
     m_generator.seed(seed);
 }
 
-void MultivariateNormalDistribution::setRandomize()
-{
-    ulong seed = ulong(std::chrono::system_clock::now().time_since_epoch().count());
-    m_generator.seed(seed);
-}
-
 Vector MultivariateNormalDistribution::normal01(long dim) const
 {
     assert(dim > 0);
