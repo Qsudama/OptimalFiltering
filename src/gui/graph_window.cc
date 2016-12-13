@@ -299,7 +299,8 @@ void GraphWindow::onRangesChanged(Math::Vector2 x, Math::Vector2 y)
     range.yMax = y[1];
     m_currentSheet->setAxisRange(range);
     m_currentSheet->setAutoCalcRanges(false);
-    m_actionSetAutoRanges->setChecked(false); // вызывает updatePlotter()
+    m_actionSetAutoRanges->setChecked(false);
+    updatePlotter();
 }
 
 void GraphWindow::onSavePng()
