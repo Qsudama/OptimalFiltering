@@ -19,19 +19,11 @@ class RandomProperties
 public:
     //! \brief Возвращает стартовое число ГПСЧ по-умолчанию.
     //! \details Оно равно половине наибольшего unsigned long.
-    static ulong defaultSeed()
-    {
-        static ulong seed = std::numeric_limits<ulong>::max() / 2;
-        return seed;
-    }
+    static ulong defaultSeed();
 
     //! \brief Возвращает стартовое число ГПСЧ, которое берется из системного времени.
     //! \details Оно равно количеству наносекунд, прошедших с 01.01.1970.
-    static ulong randomSeed()
-    {
-        ulong seed = ulong(std::chrono::system_clock::now().time_since_epoch().count());
-        return seed;
-    }
+    static ulong randomSeed();
 };
 
 

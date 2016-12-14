@@ -6,6 +6,20 @@ namespace Math
 {
 
 
+ulong RandomProperties::defaultSeed()
+{
+    static ulong seed = std::numeric_limits<ulong>::max() / 2;
+    return seed;
+}
+
+ulong RandomProperties::randomSeed()
+{
+    ulong seed = ulong(std::chrono::system_clock::now().time_since_epoch().count());
+    return seed;
+}
+
+//-----//
+
 MultivariateNormalDistribution::MultivariateNormalDistribution()
 {
     m_univariateNormalDistribution.param(std::normal_distribution<double>::param_type(0.0, 1.0));
