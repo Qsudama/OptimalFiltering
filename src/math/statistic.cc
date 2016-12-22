@@ -48,7 +48,7 @@ double Var(const Array<double> &sampleX)
 
 double Cov(const Array<double> &sampleX, const Array<double> &sampleY)
 {
-    assert(sampleX.size() == sampleY.size());
+    assert(sampleX.size() == sampleY.size() && "Math::Statistic::Cov(sampleX, sampleY) : different sizes of arrays");
 
     size_t size  = sampleX.size();
     double sumX  = 0.0;
@@ -66,7 +66,10 @@ Matrix Var(const Array<Vector> &sampleX, const Vector &meanX)
 {
     size_t size = sampleX.size();
     long   dimX = sampleX[0].size();
-    assert(dimX == meanX.size());
+
+    assert(dimX == meanX.size() &&
+           "Math::Statistic::Var(sampleX, meanX) : corrupt dimension of meanX (or array's elements)");
+
     Matrix sumXX = Matrix::Zero(dimX, dimX);
     for (size_t i = 0; i < size; ++i) {
         sumXX += sampleX[i] * sampleX[i].transpose();
@@ -82,7 +85,7 @@ Matrix Var(const Array<Vector> &sampleX)
 
 Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
 {
-    assert(sampleX.size() == sampleY.size());
+    assert(sampleX.size() == sampleY.size() && "Math::Statistic::Cov(sampleX, sampleY) : different sizes of arrays");
 
     size_t size  = sampleX.size();
     long   dimX  = sampleX[0].size();

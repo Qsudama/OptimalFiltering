@@ -32,7 +32,7 @@ void MultivariateNormalDistribution::setSeed(ulong seed)
 
 Vector MultivariateNormalDistribution::normal01(long dim) const
 {
-    assert(dim > 0);
+    assert(dim > 0 && "Math::MultivariateNormalDistribution::normal01(dim) : corrupt value of dim");
 
     Vector x(dim);
     for (long i = 0; i < dim; ++i) {
@@ -51,9 +51,11 @@ Vector MultivariateNormalDistribution::operator()(const Vector &mean, const Matr
 {
     long dim = mean.size();
 
-    assert(dim > 0);
-    assert(var.rows() == dim);
-    assert(var.cols() == dim);
+    assert(dim > 0 && "Math::MultivariateNormalDistribution::operator()(mean, var) : corrupt dimension of mean");
+    assert(var.rows() == dim &&
+           "Math::MultivariateNormalDistribution::operator()(mean, var) : corrupt dimension of var (row's count)");
+    assert(var.cols() == dim &&
+           "Math::MultivariateNormalDistribution::operator()(mean, var) : corrupt dimension of var (col's count)");
 
     return mean + LinAlg::Cholesky(var) * normal01(dim);
 }
