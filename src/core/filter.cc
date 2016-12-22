@@ -16,7 +16,7 @@ Filter::Filter(PtrFilterParameters params)
     ,
 #endif
     m_params(params)
-    , m_info(new Info())
+    , m_info(std::make_shared<Info>())
 {
     m_normalRand.setSeed(Math::RandomProperties::defaultSeed());
 }
@@ -65,7 +65,8 @@ void Filter::init()
 
 void Filter::writeResult(size_t n, bool copy)
 {
-    assert(n < m_result.size());
+    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
+
     m_result[n].meanX = Mean(m_sampleX);
     m_result[n].varX  = Var(m_sampleX, m_result[n].meanX);
 

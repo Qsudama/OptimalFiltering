@@ -16,7 +16,8 @@ void GetTime(const FilterOutput &fo, ArrayDbl &array)
 
 void GetMeanX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 {
-    assert(index >= 0 && index < fo[0].meanX.size());
+    assert(index >= 0 && index < fo[0].meanX.size() && "Core::GetMeanX(fo, index, array, coeff) : out of range");
+
     array.resize(int(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
         array[i] = coeff * fo[i].meanX[index];
@@ -25,7 +26,8 @@ void GetMeanX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 
 void GetMeanZ(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 {
-    assert(index >= 0 && index < fo[0].meanZ.size());
+    assert(index >= 0 && index < fo[0].meanZ.size() && "Core::GetMeanZ(fo, index, array, coeff) : out of range");
+
     array.resize(int(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
         array[i] = coeff * fo[i].meanZ[index];
@@ -34,7 +36,8 @@ void GetMeanZ(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 
 void GetMeanE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 {
-    assert(index >= 0 && index < fo[0].meanE.size());
+    assert(index >= 0 && index < fo[0].meanE.size() && "Core::GetMeanE(fo, index, array, coeff) : out of range");
+
     array.resize(int(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
         array[i] = coeff * fo[i].meanE[index];
@@ -43,7 +46,8 @@ void GetMeanE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 
 void GetStdDeviationX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 {
-    assert(index >= 0 && index < fo[0].varX.rows());
+    assert(index >= 0 && index < fo[0].varX.rows() && "Core::GetStdDeviationX(fo, index, array, coeff) : out of range");
+
     array.resize(int(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
         array[i] = coeff * Math::sqrt(fo[i].varX(index, index));
@@ -52,7 +56,8 @@ void GetStdDeviationX(const FilterOutput &fo, long index, ArrayDbl &array, doubl
 
 void GetStdDeviationZ(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 {
-    assert(index >= 0 && index < fo[0].varZ.rows());
+    assert(index >= 0 && index < fo[0].varZ.rows() && "Core::GetStdDeviationZ(fo, index, array, coeff) : out of range");
+
     array.resize(int(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
         array[i] = coeff * Math::sqrt(fo[i].varZ(index, index));
@@ -61,7 +66,8 @@ void GetStdDeviationZ(const FilterOutput &fo, long index, ArrayDbl &array, doubl
 
 void GetStdDeviationE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 {
-    assert(index >= 0 && index < fo[0].varE.rows());
+    assert(index >= 0 && index < fo[0].varE.rows() && "Core::GetStdDeviationE(fo, index, array, coeff) : out of range");
+
     array.resize(int(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
         array[i] = coeff * Math::sqrt(fo[i].varE(index, index));
