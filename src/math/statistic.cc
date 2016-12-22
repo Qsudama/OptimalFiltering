@@ -103,10 +103,14 @@ Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
 
 double Median(const Array<double> &sampleX)
 {
+    if (sampleX.size() == 1) {
+        return sampleX[0];
+    }
+
     Array<double> tmp = sampleX;
     std::sort(tmp.begin(), tmp.end());
     if (tmp.size() % 2 == 0) {
-        return 0.5 * (tmp[tmp.size() / 2] + tmp[tmp.size() + 1]);
+        return 0.5 * (tmp[tmp.size() / 2] + tmp[tmp.size() / 2 + 1]);
     }
     return tmp[tmp.size() / 2 + 1];
 }
