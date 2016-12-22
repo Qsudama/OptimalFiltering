@@ -15,7 +15,7 @@ using Math::Statistic::Cov;
 DFOS::DFOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousDiscreteFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФМПнд-дп (" + std::to_string(task->dimX()) + ")");
+    m_info->setName(m_task->info()->type() + "ФМПнд-дп (p=" + std::to_string(task->dimX()) + ")");
 }
 
 void DFOS::algorithm()

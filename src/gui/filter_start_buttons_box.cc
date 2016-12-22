@@ -79,16 +79,16 @@ void FilterStartButtonsBox::initControls()
     m_btnDiscreteGaussAof = new QPushButton(tr("Г-АОФ"));
     connect(m_btnDiscreteGaussAof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussAofClicked()));
 
-    m_btnDiscreteLinearFos = new QPushButton(tr("Л-ФКП"));
+    m_btnDiscreteLinearFos = new QPushButton(tr("Л-ФМП"));
     connect(m_btnDiscreteLinearFos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteLinearFosClicked()));
 
-    m_btnDiscreteGaussFos = new QPushButton(tr("Г-ФКП"));
+    m_btnDiscreteGaussFos = new QPushButton(tr("Г-ФМП"));
     connect(m_btnDiscreteGaussFos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussFosClicked()));
 
-    m_btnDiscreteLinearMfos = new QPushButton(tr("Л-MФКП"));
+    m_btnDiscreteLinearMfos = new QPushButton(tr("Л-MФМП"));
     connect(m_btnDiscreteLinearMfos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteLinearMfosClicked()));
 
-    m_btnDiscreteGaussMfos = new QPushButton(tr("Г-MФКП"));
+    m_btnDiscreteGaussMfos = new QPushButton(tr("Г-MФМП"));
     connect(m_btnDiscreteGaussMfos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussMfosClicked()));
 }
 

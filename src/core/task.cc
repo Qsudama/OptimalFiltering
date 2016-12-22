@@ -21,7 +21,7 @@ Task::Task()
     , m_varV(Matrix::Zero(2, 2))
     , m_varW(Matrix::Zero(2, 2))
 {
-    m_normalRand.setSeed(TASK_RAND_SEED);
+    m_normalRand.setSeed(Math::RandomProperties::defaultSeed());
 }
 
 Task::~Task()

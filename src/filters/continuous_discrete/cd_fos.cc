@@ -17,7 +17,7 @@ using Math::Statistic::Mean;
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousDiscreteFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФКПнд-нп (" + std::to_string(task->dimX()) + ")");
+    m_info->setName(m_task->info()->type() + "ФМПнд-нп (p=" + std::to_string(task->dimX()) + ")");
 }
 
 void FOS::algorithm()

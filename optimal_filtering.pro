@@ -34,6 +34,7 @@ HEADERS += \
     src/filters/discrete/d_fos.h \
     src/filters/discrete/d_mfos.h \
     src/filters/filters_factory.h \
+    src/gui/additional_settings_widget.h \
     src/gui/color_manager.h \
     src/gui/filter_parameters_widget.h \
     src/gui/filter_results_table.h \
@@ -298,8 +299,7 @@ HEADERS += \
     third_party/eigen/StdList \
     third_party/eigen/StdVector \
     third_party/eigen/SVD \
-    third_party/qcustomplot/qcustomplot.h \
-    src/gui/additional_settings_widget.h
+    third_party/qcustomplot/qcustomplot.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -324,6 +324,7 @@ SOURCES += \
     src/filters/discrete/d_fos.cc \
     src/filters/discrete/d_mfos.cc \
     src/filters/filters_factory.cc \
+    src/gui/additional_settings_widget.cc \
     src/gui/color_manager.cc \
     src/gui/filter_parameters_widget.cc \
     src/gui/filter_results_table.cc \
@@ -352,5 +353,5 @@ SOURCES += \
     src/tasks/discrete/d_landing_linear.cc \
     src/tasks/tasks_factory.cc \
     src/main.cc \
-    third_party/qcustomplot/qcustomplot.cc \
-    src/gui/additional_settings_widget.cc
+    third_party/qcustomplot/qcustomplot.cc
+
