@@ -16,7 +16,7 @@ Filter::Filter(PtrFilterParameters params)
     ,
 #endif
     m_params(params)
-    , m_info(new Info())
+    , m_info(std::make_shared<Info>())
 {
     m_normalRand.setSeed(Math::RandomProperties::defaultSeed());
 }

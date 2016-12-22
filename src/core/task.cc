@@ -7,9 +7,9 @@ namespace Core
 
 Task::Task()
     : FunctionTime(0.0)
-    , m_params(new TaskParameters)
-    , m_consts(new TaskParameters)
-    , m_info(new Info())
+    , m_params(std::make_shared<TaskParameters>())
+    , m_consts(std::make_shared<TaskParameters>())
+    , m_info(std::make_shared<Info>())
     , m_dimX(2)
     , m_dimY(2)
     , m_dimV(2)
