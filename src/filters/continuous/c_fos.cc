@@ -11,7 +11,7 @@ namespace Continuous
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФОСн (" + std::to_string(task->dimX()) + ")");
+    m_info->setName(m_task->info()->type() + "ФМПн (p=" + std::to_string(task->dimX()) + ")");
 }
 
 void FOS::algorithm()

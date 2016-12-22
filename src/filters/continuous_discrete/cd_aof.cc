@@ -15,7 +15,7 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousDiscreteFilter(params, task)
 {
     long n = task->dimX();
-    m_info->setName(m_task->info()->type() + "AОФнд (" + std::to_string(n * (n + 3) / 2) + ")");
+    m_info->setName(m_task->info()->type() + "AОФнд (p=" + std::to_string(n * (n + 3) / 2) + ")");
 }
 
 void AOF::zeroIteration()

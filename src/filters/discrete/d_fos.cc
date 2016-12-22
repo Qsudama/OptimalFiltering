@@ -19,9 +19,7 @@ using Math::MakeBlockMatrix;
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : DiscreteFilter(params, task)
 {
-    long n = task->dimX();
-    long m = task->dimY();
-    m_info->setName(m_task->info()->type() + "ФОСд (" + std::to_string(n * (n + m) + n + n * (n + 1) / 2) + ")");
+    m_info->setName(m_task->info()->type() + "ФМПд (p=" + std::to_string(task->dimX()) + ")");
 }
 
 void FOS::algorithm()
