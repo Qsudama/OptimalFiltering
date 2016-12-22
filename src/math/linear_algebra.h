@@ -22,17 +22,22 @@ enum class PseudoinverseMethods {
 };
 
 
+//! \brief Класс, упрощающий выбор метода псевдообращения матриц.
 class CurrentPinvMethod
 {
 public:
+    //! \brief Возвращает ссылку на объект класса (singleton).
     static CurrentPinvMethod &instance();
 
+    //! \brief Возвращает идентификатор выбранного метода.
     PseudoinverseMethods get() const;
 
+    //! \brief Устанавливает другой метод.
     void set(PseudoinverseMethods method);
 
 
 private:
+    //! \brief Конструктор.
     CurrentPinvMethod();
 
     CurrentPinvMethod(const CurrentPinvMethod &) = delete;
@@ -116,6 +121,9 @@ Matrix PinvGreville(const Matrix &A);
  * \return вектор \f$x\f$.
  */
 
+Matrix Pinv(const Matrix &A);
+
+
 /*!
  * \brief Вычисляет псевдообратную матрицу методом по-умолчанию.
  * \param[in] A - матрица, которую следует обратить.
@@ -123,8 +131,6 @@ Matrix PinvGreville(const Matrix &A);
  * \see PseudoinverseMethods
  * \see
  */
-
-Matrix Pinv(const Matrix &A);
 
 Vector SolveSystem(const Matrix &A, const Vector &b);
 
