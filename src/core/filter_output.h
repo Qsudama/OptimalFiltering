@@ -30,9 +30,11 @@ using FilterOutput = Array<SingleFilterOutput>;
 
 
 #ifdef QT_ENABLED
-using ArrayDbl = QVector<double>;
+using ArrayDbl  = QVector<double>;
+using IndexType = int;
 #else
-using ArrayDbl = Array<double>;
+using ArrayDbl  = Array<double>;
+using IndexType = std::size_t;
 #endif
 
 
