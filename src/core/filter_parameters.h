@@ -52,7 +52,7 @@ public:
      После автоматической коррекции значения могут несколько отличаться от заданных.
     */
     FilterParameters(double maxTime, double measurementStep, double predictionStep, double integrationStep,
-                     ulong sampleSize, ulong orderMult = 1);
+                     Uint sampleSize, Uint orderMult = 1);
 
     //! \brief Возвращает время \f$T_{max}\f$ окончания фильтрации.
     const double &maxTime() const;
@@ -68,19 +68,19 @@ public:
 
 
     //! \brief Возвращает количество \f$K\f$ измерений.
-    const ulong &measurementCount() const;
+    const Uint &measurementCount() const;
 
     //! \brief Возвращает количество \f$L\f$ прогнозов между двумя измерениями.
-    const ulong &predictionCount() const;
+    const Uint &predictionCount() const;
 
     //! \brief Возвращает количество \f$N\f$ интегрирований между двумя прогнозами.
-    const ulong &integrationCount() const;
+    const Uint &integrationCount() const;
 
     //! \brief Возвращает размер выборок.
-    const ulong &sampleSize() const;
+    const Uint &sampleSize() const;
 
     //! \brief Возвращает кратность порядка фильтра для ФКП (ФОСпп).
-    const ulong &orderMult() const;
+    const Uint &orderMult() const;
 
     //! \brief Устанавливает время \f$T_{max}\f$ окончания фильтрации.
     void setMaxTime(double tmax);
@@ -95,10 +95,10 @@ public:
     void setIntegrationStep(double step);
 
     //! \brief Устанавливает размер выборок.
-    void setSampleSize(ulong size);
+    void setSampleSize(Uint size);
 
     //! \brief Устанавливает кратность порядка фильтра для ФКП (ФОСпп).
-    void setOrderMult(ulong order);
+    void setOrderMult(Uint order);
 
 
 private:
@@ -116,7 +116,7 @@ private:
      *
      * Теперь корректируется шаг: \f$h = \frac{d}{N}\f$.
      */
-    void correctStepAndCount(const double &intervalLength, double &step, ulong &count);
+    void correctStepAndCount(const double &intervalLength, double &step, Uint &count);
 
 
 private:
@@ -125,11 +125,11 @@ private:
     double m_predictionStep;  /*!< Интервал \f$\delta \tau\f$ между прогнозами. */
     double m_integrationStep; /*!< Шаг интегрирования \f$\Delta t\f$. */
 
-    ulong m_measurementCount; /*!< Количество \f$K\f$ измерений на \f$[0, T_{max}]\f$. */
-    ulong m_predictionCount; /*!< Количество \f$L\f$ прогнозов между двумя измерениями. */
-    ulong m_integrationCount; /*!< Количество \f$N\f$ интегрирований между двумя прогнозами. */
-    ulong m_sampleSize; /*!< Размер выборок. */
-    ulong m_orderMult;  /*!< Кратность порядка фильтра. */
+    Uint m_measurementCount; /*!< Количество \f$K\f$ измерений на \f$[0, T_{max}]\f$. */
+    Uint m_predictionCount; /*!< Количество \f$L\f$ прогнозов между двумя измерениями. */
+    Uint m_integrationCount; /*!< Количество \f$N\f$ интегрирований между двумя прогнозами. */
+    Uint m_sampleSize; /*!< Размер выборок. */
+    Uint m_orderMult;  /*!< Кратность порядка фильтра. */
 };
 
 
