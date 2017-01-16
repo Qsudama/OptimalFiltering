@@ -2,6 +2,8 @@ QT             += core gui printsupport
 CONFIG         += c++11
 QMAKE_CXXFLAGS += -std=c++11
 
+#LIBS += -L/usr/local/lib
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = OptimalFiltering
