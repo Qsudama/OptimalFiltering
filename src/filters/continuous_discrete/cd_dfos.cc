@@ -8,15 +8,14 @@ namespace ContinuousDiscrete
 {
 
 
-using Math::Rand::gaussianVector;
-using Math::LinAlg::PinvSVD;
+using Math::LinAlg::Pinv;
 using Math::Statistic::Cov;
 
 
 DFOS::DFOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousDiscreteFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФМПнд-дп (" + std::to_string(task->dimX()) + ")");
+    m_info->setName(m_task->info()->type() + "ФМПнд-дп (p=" + std::to_string(task->dimX()) + ")");
 }
 
 void DFOS::algorithm()
@@ -33,14 +32,15 @@ void DFOS::algorithm()
         // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
-                           m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
+                           m_task->B(m_sampleX[s]) * sqrtdt * m_normalRand(m_task->dimV());
         }
         writeResult(n, true); //  mX, DX вычисляются, а mZ, DZ, mE, DE копируются из предыдущего
+        m_task->setTime(m_result[n].time);
 
         // n = 1..K*L*N, если n нацело делится на N, значит сейчас время прогноза tn = tl:
         if (n % m_params->integrationCount() == 0) { // t = t_tau_k^i
             Dxz   = Cov(m_sampleX, m_sampleZ);
-            Gamma = Dxz * PinvSVD(m_result[n].varZ);
+            Gamma = Dxz * Pinv(m_result[n].varZ);
             kappa = m_result[n].meanX - Gamma * m_result[n].meanZ;
             if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
                 T = m_result[n].varX - Gamma * Dxz.transpose();
@@ -61,7 +61,7 @@ void DFOS::algorithm()
                 G = m_task->G(m_sampleZ[s], T);
                 F = m_task->F(m_sampleZ[s], T);
 
-                m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
+                m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
             }
             writeResult(n);
         }

@@ -1,12 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "src/gui/additional_settings_widget.h"
 #include "src/gui/color_manager.h"
 #include "src/gui/filter_parameters_widget.h"
 #include "src/gui/filter_results_table.h"
 #include "src/gui/filter_start_buttons_box.h"
 #include "src/gui/font_manager.h"
 #include "src/gui/graph_window.h"
+#include "src/gui/gui_config.h"
 #include "src/gui/task_widget.h"
 #include "src/math/convert.h"
 #include "src/math/random.h"
@@ -93,16 +95,16 @@ private:
 
 private:
     ColorManager m_colorManager;
-    int          m_randSeed;
     bool         m_tablesIsVisible;
 
-    QProgressBar *          m_statusProgressBar;
-    GraphWindow *           m_graphWindow;
-    TaskWidget *            m_taskWidget;
-    FilterParametersWidget *m_filterParamsWidget;
-    FilterStartButtonsBox * m_filterStartWidget;
-    QPushButton *           m_btnClear;
-    QPushButton *           m_btnShowHideTables;
+    QProgressBar *            m_statusProgressBar;
+    GraphWindow *             m_graphWindow;
+    TaskWidget *              m_taskWidget;
+    FilterParametersWidget *  m_filterParamsWidget;
+    FilterStartButtonsBox *   m_filterStartWidget;
+    AdditionalSettingsWidget *m_additionalSettingsWidget;
+    QPushButton *             m_btnClear;
+    QPushButton *             m_btnShowHideTables;
 
     QVector<FilterResultsTable *> m_tables;
 };

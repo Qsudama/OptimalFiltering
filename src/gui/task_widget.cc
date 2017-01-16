@@ -17,7 +17,7 @@ TaskWidget::TaskWidget(QWidget *parent)
 
 void TaskWidget::loadFonts()
 {
-    this->setFont(FontManager::instance().regular(9));
+    this->setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
 }
 
 void TaskWidget::initControls()
@@ -35,14 +35,14 @@ void TaskWidget::initControls()
 void TaskWidget::initLayouts()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(5);
-    mainLayout->setSpacing(5);
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
 
     mainLayout->addWidget(m_cbTask);
 
     QHBoxLayout *layout = new QHBoxLayout;
-    layout->setMargin(5);
-    layout->setSpacing(5);
+    layout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    layout->setSpacing(GuiConfig::LAYOUT_SPACING_SMALL);
     QLabel *lbl = new QLabel(tr("Параметры задачи"));
     lbl->setMinimumWidth(QFontMetrics(this->font()).width(lbl->text()));
     layout->addWidget(lbl);
@@ -79,7 +79,7 @@ void TaskWidget::onCbTaskChanged(int)
     m_parametersWidget->setWindowTitle(tr("Параметры задачи"));
     QRect screenRect = QApplication::desktop()->availableGeometry();
     int   x          = screenRect.width() / 2 - 832 / 2;
-    int   y          = 193;
+    int   y          = 193; // this is magic! :D
     int   w          = 832;
     int   h          = screenRect.height() - y - 65;
     m_parametersWidget->setGeometry(x, y, w, h);

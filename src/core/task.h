@@ -145,6 +145,8 @@ protected:
     Math::Matrix m_varX0; /*!< Дисперсия \f$D[X_0]\f$. */
     Math::Matrix m_varV;  /*!< Дисперсия \f$D[V]\f$. */
     Math::Matrix m_varW;  /*!< Дисперсия \f$D[W]\f$. */
+
+    Math::MultivariateNormalDistribution m_normalRand; /*!< Генератор гауссовских случайных векторов. */
 };
 
 

@@ -7,9 +7,9 @@ namespace Core
 
 Task::Task()
     : FunctionTime(0.0)
-    , m_params(new TaskParameters)
-    , m_consts(new TaskParameters)
-    , m_info(new Info())
+    , m_params(std::make_shared<TaskParameters>())
+    , m_consts(std::make_shared<TaskParameters>())
+    , m_info(std::make_shared<Info>())
     , m_dimX(2)
     , m_dimY(2)
     , m_dimV(2)
@@ -21,6 +21,7 @@ Task::Task()
     , m_varV(Matrix::Zero(2, 2))
     , m_varW(Matrix::Zero(2, 2))
 {
+    m_normalRand.setSeed(Math::RandomProperties::defaultSeed());
 }
 
 Task::~Task()
@@ -94,7 +95,7 @@ const Matrix &Task::varW() const
 
 Vector Task::x0() const
 {
-    return Math::Rand::gaussianVector(m_meanX0, m_varX0);
+    return m_normalRand(m_meanX0, m_varX0);
 }
 
 void Task::setMeanX0(const Vector &mean)

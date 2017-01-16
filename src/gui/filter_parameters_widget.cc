@@ -2,42 +2,17 @@
 #include "src/gui/font_manager.h"
 
 
-SingleParamHBox::SingleParamHBox(QWidget *w1, QWidget *w2, QWidget *w3, QWidget *w4, int width1, int width2, int width3,
-                                 int width4)
-{
-    setSpacing(5);
-    setMargin(0);
-
-    w1->setMinimumWidth(width1);
-    w1->setMaximumWidth(width1);
-
-    w2->setMinimumWidth(width2);
-    w2->setMaximumWidth(width2);
-
-    w3->setMinimumWidth(width3);
-    w3->setMaximumWidth(width3);
-
-    w4->setMinimumWidth(width4);
-    w4->setMaximumWidth(width4);
-
-    addWidget(w1);
-    addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
-    addWidget(w2);
-    addWidget(w3);
-    addWidget(w4);
-}
-
-
 FilterParametersWidget::FilterParametersWidget(QWidget *parent)
     : QGroupBox(parent)
     , m_updateOn(true)
-    , m_parameters(new Core::FilterParameters(100.0, 1.0, 0.5, 0.1, 200, 1))
+    , m_parameters(new Core::FilterParameters(200.0, 1.0, 1.0, 0.1, 200, 1))
+    , m_currentFiltersFamily(0)
 {
     setTitle(tr("Параметры фильтрации"));
     loadFonts();
     initControls();
     initLayouts();
-    // onUpdateValues();
+    onFixAllToggled(m_checkFixAll->isChecked());
 }
 
 FilterParametersWidget::~FilterParametersWidget()
@@ -46,16 +21,17 @@ FilterParametersWidget::~FilterParametersWidget()
 
 void FilterParametersWidget::loadFonts()
 {
-    m_regularFont  = FontManager::instance().regular(9);
-    m_monotypeFont = FontManager::instance().mono(9);
+    m_regularFont  = FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL);
+    m_monotypeFont = FontManager::instance().mono(GuiConfig::FONT_SIZE_NORMAL);
     this->setFont(m_regularFont);
 }
 
-void FilterParametersWidget::computeSizes(int &w1, int &w2, int &w3, int &w4)
+int FilterParametersWidget::computeMinimumWidth()
 {
     QDoubleSpinBox *dsbTemp = new QDoubleSpinBox(this);
     dsbTemp->setFont(m_monotypeFont);
     int h = dsbTemp->height();
+    int w1, w2, w3, w4;
     delete dsbTemp;
 
     w1 = h + QFontMetrics(m_regularFont).width(tr("Количество прогнозов на интервале δt"));
@@ -66,6 +42,8 @@ void FilterParametersWidget::computeSizes(int &w1, int &w2, int &w3, int &w4)
 
     w3 = QFontMetrics(m_regularFont).width("=");
     w4 = h + QFontMetrics(m_monotypeFont).width("499.9999");
+
+    return w1 + w2 + w3 + w4;
 }
 
 void FilterParametersWidget::setRange(QDoubleSpinBox *dsb, double min, double max)
@@ -153,40 +131,69 @@ void FilterParametersWidget::initControls()
 
 void FilterParametersWidget::initLayouts()
 {
-    int w1, w2, w3, w4;
-    computeSizes(w1, w2, w3, w4);
+    QGridLayout *mainLayout = new QGridLayout;
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(5);
-    mainLayout->setSpacing(5);
+    mainLayout->addWidget(new QLabel(tr("Терминальное время")), 0, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 0, 1);
+    mainLayout->addWidget(new QLabel(tr("T")), 0, 2);
+    mainLayout->addWidget(new QLabel("="), 0, 3);
+    mainLayout->addWidget(m_dsbMaxTime, 0, 4);
 
-    mainLayout->addLayout(new SingleParamHBox(new QLabel(tr("Терминальное время")), new QLabel(tr("T")),
-                                              new QLabel("="), m_dsbMaxTime, w1, w2, w3, w4));
+    mainLayout->addWidget(new QLabel(tr("Интервал между измерениями")), 1, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 1, 1);
+    mainLayout->addWidget(new QLabel(tr("δt")), 1, 2);
+    mainLayout->addWidget(new QLabel("="), 1, 3);
+    mainLayout->addWidget(m_dsbMeasurementStep, 1, 4);
 
-    mainLayout->addLayout(new SingleParamHBox(new QLabel(tr("Интервал между измерениями")), new QLabel(tr("δt")),
-                                              new QLabel("="), m_dsbMeasurementStep, w1, w2, w3, w4));
+    mainLayout->addWidget(m_radioPredictionStep, 2, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 2, 1);
+    mainLayout->addWidget(new QLabel(tr("δτ")), 2, 2);
+    mainLayout->addWidget(new QLabel("="), 2, 3);
+    mainLayout->addWidget(m_dsbPredictionStep, 2, 4);
 
-    mainLayout->addLayout(new SingleParamHBox(m_radioPredictionStep, new QLabel(tr("δτ")), new QLabel("="),
-                                              m_dsbPredictionStep, w1, w2, w3, w4));
+    mainLayout->addWidget(m_radioPredictionCount, 3, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 3, 1);
+    mainLayout->addWidget(new QLabel(tr("L")), 3, 2);
+    mainLayout->addWidget(new QLabel("="), 3, 3);
+    mainLayout->addWidget(m_sbPredictionCount, 3, 4);
 
-    mainLayout->addLayout(new SingleParamHBox(m_radioPredictionCount, new QLabel(tr("L")), new QLabel("="),
-                                              m_sbPredictionCount, w1, w2, w3, w4));
+    mainLayout->addWidget(new QLabel(tr("Шаг интегрирования")), 4, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 4, 1);
+    mainLayout->addWidget(new QLabel(tr("Δt")), 4, 2);
+    mainLayout->addWidget(new QLabel("="), 4, 3);
+    mainLayout->addWidget(m_dsbIntegrationStep, 4, 4);
 
-    mainLayout->addLayout(new SingleParamHBox(new QLabel(tr("Шаг интегрирования")), new QLabel(tr("Δt")),
-                                              new QLabel("="), m_dsbIntegrationStep, w1, w2, w3, w4));
+    mainLayout->addWidget(new QLabel(tr("Кратность порядка фильтра (для ФПП)")), 5, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 5, 1);
+    mainLayout->addWidget(new QLabel(tr("l")), 5, 2);
+    mainLayout->addWidget(new QLabel("="), 5, 3);
+    mainLayout->addWidget(m_sbOrderMultiplicity, 5, 4);
 
-    mainLayout->addLayout(new SingleParamHBox(new QLabel(tr("Кратность порядка фильтра (для ФПП)")),
-                                              new QLabel(tr("l")), new QLabel("="), m_sbOrderMultiplicity, w1, w2, w3,
-                                              w4));
+    mainLayout->addWidget(new QLabel(tr("Размер выборок")), 6, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 6, 1);
+    mainLayout->addWidget(new QLabel(tr("S")), 6, 2);
+    mainLayout->addWidget(new QLabel("="), 6, 3);
+    mainLayout->addWidget(m_sbSampleSize, 6, 4);
 
-    mainLayout->addLayout(new SingleParamHBox(new QLabel(tr("Размер выборок")), new QLabel(tr("S")), new QLabel("="),
-                                              m_sbSampleSize, w1, w2, w3, w4));
-
-    mainLayout->addLayout(
-        new SingleParamHBox(m_checkFixAll, new QLabel(" "), new QLabel(" "), m_btnUpdate, w1, w2, w3, w4));
+    mainLayout->addWidget(m_checkFixAll, 7, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 7, 1);
+    mainLayout->addWidget(new QLabel(" "), 7, 2);
+    mainLayout->addWidget(new QLabel(" "), 7, 3);
+    mainLayout->addWidget(m_btnUpdate, 7, 4);
 
     this->setLayout(mainLayout);
-    this->setMinimumWidth(this->layout()->margin() * 2 + 15 + w1 + w2 + w3 + w4);
+
+    int minWidth = computeMinimumWidth();
+    minWidth += 2 * GuiConfig::LAYOUT_MARGIN_BIG + 3 * GuiConfig::LAYOUT_SPACING_BIG;
+    this->setMinimumWidth(minWidth);
+}
+
+void FilterParametersWidget::onFiltersFamilyChanged(int index)
+{
+    m_currentFiltersFamily = index;
+    onFixAllToggled(m_checkFixAll->isChecked());
 }
 
 Core::PtrFilterParameters FilterParametersWidget::parameters()
@@ -274,9 +281,21 @@ void FilterParametersWidget::onFixAllToggled(bool checked)
     m_sbSampleSize->setEnabled(!checked);
     m_radioPredictionCount->setEnabled(!checked);
     m_radioPredictionStep->setEnabled(!checked);
-
     m_dsbPredictionStep->setEnabled(!checked && m_radioPredictionStep->isChecked());
     m_sbPredictionCount->setEnabled(!checked && m_radioPredictionCount->isChecked());
+
+    if (m_currentFiltersFamily == 0) { // дискретные
+        m_dsbIntegrationStep->setEnabled(false);
+        m_radioPredictionCount->setEnabled(false);
+        m_radioPredictionStep->setEnabled(false);
+        m_dsbPredictionStep->setEnabled(false);
+        m_sbPredictionCount->setEnabled(false);
+    } else if (m_currentFiltersFamily == 1) { // непрерывные
+        m_radioPredictionCount->setEnabled(false);
+        m_radioPredictionStep->setEnabled(false);
+        m_dsbPredictionStep->setEnabled(false);
+        m_sbPredictionCount->setEnabled(false);
+    }
 }
 void FilterParametersWidget::onPredictionStepToggled(bool checked)
 {

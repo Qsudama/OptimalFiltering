@@ -11,7 +11,6 @@ FilterStartButtonsBox::FilterStartButtonsBox(QWidget *parent)
 {
     loadFonts();
     initControls();
-    computeSizes();
     initLayouts();
 
     this->setTitle(tr("Фильтры"));
@@ -23,7 +22,7 @@ FilterStartButtonsBox::~FilterStartButtonsBox()
 
 void FilterStartButtonsBox::loadFonts()
 {
-    this->setFont(FontManager::instance().regular(9));
+    this->setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
 }
 
 void FilterStartButtonsBox::initControls()
@@ -80,21 +79,17 @@ void FilterStartButtonsBox::initControls()
     m_btnDiscreteGaussAof = new QPushButton(tr("Г-АОФ"));
     connect(m_btnDiscreteGaussAof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussAofClicked()));
 
-    m_btnDiscreteLinearFos = new QPushButton(tr("Л-ФКП"));
+    m_btnDiscreteLinearFos = new QPushButton(tr("Л-ФМП"));
     connect(m_btnDiscreteLinearFos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteLinearFosClicked()));
 
-    m_btnDiscreteGaussFos = new QPushButton(tr("Г-ФКП"));
+    m_btnDiscreteGaussFos = new QPushButton(tr("Г-ФМП"));
     connect(m_btnDiscreteGaussFos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussFosClicked()));
 
-    m_btnDiscreteLinearMfos = new QPushButton(tr("Л-MФКП"));
+    m_btnDiscreteLinearMfos = new QPushButton(tr("Л-MФМП"));
     connect(m_btnDiscreteLinearMfos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteLinearMfosClicked()));
 
-    m_btnDiscreteGaussMfos = new QPushButton(tr("Г-MФКП"));
+    m_btnDiscreteGaussMfos = new QPushButton(tr("Г-MФМП"));
     connect(m_btnDiscreteGaussMfos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussMfosClicked()));
-}
-
-void FilterStartButtonsBox::computeSizes()
-{
 }
 
 void FilterStartButtonsBox::initLayouts()
@@ -105,103 +100,61 @@ void FilterStartButtonsBox::initLayouts()
     QWidget *tab2 = new QWidget;
     QWidget *tab3 = new QWidget;
 
-    tabWidget->addTab(tab1, tr("Непрерывно-дискретные"));
+    tabWidget->addTab(tab1, tr("Дискретные"));
     tabWidget->addTab(tab2, tr("Непрерывные"));
-    tabWidget->addTab(tab3, tr("Дискретные"));
+    tabWidget->addTab(tab3, tr("Непрерывно-дискретные"));
+
+    connect(tabWidget, SIGNAL(currentChanged(int)), this, SIGNAL(filtersFamilyChanged(int)));
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
-    mainLayout->setMargin(5);
-    mainLayout->setSpacing(0);
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
     mainLayout->addWidget(tabWidget);
     this->setLayout(mainLayout);
 
-    // tab1:
-    QHBoxLayout *tab1MainLayout = new QHBoxLayout;
-    tab1MainLayout->setMargin(5);
-    tab1MainLayout->setSpacing(5);
 
-    // tab3:
-    QHBoxLayout *tab3MainLayout = new QHBoxLayout;
-    tab3MainLayout->setMargin(5);
-    tab3MainLayout->setSpacing(5);
+    // дискретные фильтры:
+    QGridLayout *tab1Layout = new QGridLayout;
+    tab1Layout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    tab1Layout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
-    // непрерывно-дискретные фильтры
-    QVBoxLayout *layoutCDAof = new QVBoxLayout;
-    layoutCDAof->setMargin(0);
-    layoutCDAof->setSpacing(5);
-    layoutCDAof->addWidget(m_btnContinuousDiscreteGaussAof);
-    layoutCDAof->addWidget(m_btnContinuousDiscreteLinearAof);
-    tab1MainLayout->addLayout(layoutCDAof);
-
-    QVBoxLayout *layoutCDFos = new QVBoxLayout;
-    layoutCDFos->setMargin(0);
-    layoutCDFos->setSpacing(5);
-    layoutCDFos->addWidget(m_btnContinuousDiscreteGaussFos);
-    layoutCDFos->addWidget(m_btnContinuousDiscreteLinearFos);
-    tab1MainLayout->addLayout(layoutCDFos);
-
-    QVBoxLayout *layoutCDDfos = new QVBoxLayout;
-    layoutCDDfos->setMargin(0);
-    layoutCDDfos->setSpacing(5);
-    layoutCDDfos->addWidget(m_btnContinuousDiscreteGaussDfos);
-    layoutCDDfos->addWidget(m_btnContinuousDiscreteLinearDfos);
-    tab1MainLayout->addLayout(layoutCDDfos);
-
-    QVBoxLayout *layoutCDDfosbo = new QVBoxLayout;
-    layoutCDDfosbo->setMargin(0);
-    layoutCDDfosbo->setSpacing(5);
-    layoutCDDfosbo->addWidget(m_btnContinuousDiscreteGaussDfosbo);
-    layoutCDDfosbo->addWidget(m_btnContinuousDiscreteLinearDfosbo);
-    tab1MainLayout->addLayout(layoutCDDfosbo);
+    tab1Layout->addWidget(m_btnDiscreteGaussAof, 0, 0);
+    tab1Layout->addWidget(m_btnDiscreteLinearAof, 1, 0);
+    tab1Layout->addWidget(m_btnDiscreteGaussFos, 0, 1);
+    tab1Layout->addWidget(m_btnDiscreteLinearFos, 1, 1);
+    tab1Layout->addWidget(m_btnDiscreteGaussMfos, 0, 2);
+    tab1Layout->addWidget(m_btnDiscreteLinearMfos, 1, 2);
 
 
-    // дискретные фильтры
-    QVBoxLayout *layoutDaof = new QVBoxLayout;
-    layoutDaof->setMargin(0);
-    layoutDaof->setSpacing(5);
-    layoutDaof->addWidget(m_btnDiscreteGaussAof);
-    layoutDaof->addWidget(m_btnDiscreteLinearAof);
-    tab3MainLayout->addLayout(layoutDaof);
+    // непрерывные фильтры:
+    QGridLayout *tab2Layout = new QGridLayout;
+    tab2Layout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    tab2Layout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
-    QVBoxLayout *layoutDfos = new QVBoxLayout;
-    layoutDfos->setMargin(0);
-    layoutDfos->setSpacing(5);
-    layoutDfos->addWidget(m_btnDiscreteGaussFos);
-    layoutDfos->addWidget(m_btnDiscreteLinearFos);
-    tab3MainLayout->addLayout(layoutDfos);
-
-    QVBoxLayout *layoutDmfos = new QVBoxLayout;
-    layoutDmfos->setMargin(0);
-    layoutDmfos->setSpacing(5);
-    layoutDmfos->addWidget(m_btnDiscreteGaussMfos);
-    layoutDmfos->addWidget(m_btnDiscreteLinearMfos);
-    tab3MainLayout->addLayout(layoutDmfos);
-
-    tab1->setLayout(tab1MainLayout);
+    tab2Layout->addWidget(m_btnContinuousGaussAof, 0, 0);
+    tab2Layout->addWidget(m_btnContinuousLinearAof, 1, 0);
+    tab2Layout->addWidget(m_btnContinuousGaussFos, 0, 1);
+    tab2Layout->addWidget(m_btnContinuousLinearFos, 1, 1);
 
 
-    // tab2:
-    QHBoxLayout *tab2MainLayout = new QHBoxLayout;
-    tab2MainLayout->setMargin(5);
-    tab2MainLayout->setSpacing(5);
+    // непрерывно-дискретные фильтры:
+    QGridLayout *tab3Layout = new QGridLayout;
+    tab3Layout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    tab3Layout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
-    QVBoxLayout *layoutCAof = new QVBoxLayout;
-    layoutCAof->setMargin(0);
-    layoutCAof->setSpacing(5);
-    layoutCAof->addWidget(m_btnContinuousGaussAof);
-    layoutCAof->addWidget(m_btnContinuousLinearAof);
-    tab2MainLayout->addLayout(layoutCAof);
+    tab3Layout->addWidget(m_btnContinuousDiscreteGaussAof, 0, 0);
+    tab3Layout->addWidget(m_btnContinuousDiscreteLinearAof, 1, 0);
+    tab3Layout->addWidget(m_btnContinuousDiscreteGaussFos, 0, 1);
+    tab3Layout->addWidget(m_btnContinuousDiscreteLinearFos, 1, 1);
+    tab3Layout->addWidget(m_btnContinuousDiscreteGaussDfos, 0, 2);
+    tab3Layout->addWidget(m_btnContinuousDiscreteLinearDfos, 1, 2);
+    tab3Layout->addWidget(m_btnContinuousDiscreteGaussDfosbo, 0, 3);
+    tab3Layout->addWidget(m_btnContinuousDiscreteLinearDfosbo, 1, 3);
 
-    QVBoxLayout *layoutCFos = new QVBoxLayout;
-    layoutCFos->setMargin(0);
-    layoutCFos->setSpacing(5);
-    layoutCFos->addWidget(m_btnContinuousGaussFos);
-    layoutCFos->addWidget(m_btnContinuousLinearFos);
-    tab2MainLayout->addLayout(layoutCFos);
 
-    tab2->setLayout(tab2MainLayout);
-
-    tab3->setLayout(tab3MainLayout);
+    tab1->setLayout(tab1Layout);
+    tab2->setLayout(tab2Layout);
+    tab3->setLayout(tab3Layout);
 }
 
 

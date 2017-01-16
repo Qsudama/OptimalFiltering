@@ -1,6 +1,7 @@
 #ifndef TASK_WIDGET_H
 #define TASK_WIDGET_H
 
+#include "src/gui/gui_config.h"
 #include "src/gui/task_parameters_widget.h"
 #include "src/tasks/tasks_factory.h"
 #include <QComboBox>

@@ -8,8 +8,6 @@ namespace Tasks
 namespace ContinuousDiscrete
 {
 
-using Math::Rand::gaussianVector;
-
 
 VanDerPolLinear::VanDerPolLinear()
     : ContinuousDiscreteTask()
@@ -108,7 +106,7 @@ Matrix VanDerPolLinear::A(const Vector &m, const Matrix & /*D*/) const
 
 Vector VanDerPolLinear::c(const Vector &x) const
 {
-    return x + gaussianVector(m_meanW, m_varW);
+    return x + m_normalRand(m_meanW, m_varW);
 }
 
 Vector VanDerPolLinear::h(const Vector &m, const Matrix & /* D*/) const

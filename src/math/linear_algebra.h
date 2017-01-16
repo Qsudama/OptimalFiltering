@@ -15,6 +15,38 @@ namespace LinAlg
 {
 
 
+//! \brief Набор идентификаторов методов псевдообращения матриц.
+enum class PseudoinverseMethods {
+    GREVILLE = 0, //!< Псевдообращение по методу Гревиля.
+    SVD = 1 //!< Псевдообращение с использованием сингулярных значений.
+};
+
+
+//! \brief Класс, упрощающий выбор метода псевдообращения матриц.
+class CurrentPinvMethod
+{
+public:
+    //! \brief Возвращает ссылку на объект класса (singleton).
+    static CurrentPinvMethod &instance();
+
+    //! \brief Возвращает идентификатор выбранного метода.
+    PseudoinverseMethods get() const;
+
+    //! \brief Устанавливает другой метод.
+    void set(PseudoinverseMethods method);
+
+
+private:
+    //! \brief Конструктор.
+    CurrentPinvMethod();
+
+    CurrentPinvMethod(const CurrentPinvMethod &) = delete;
+    CurrentPinvMethod &operator=(const CurrentPinvMethod &) = delete;
+
+    PseudoinverseMethods m_value;
+};
+
+
 /*!
  * \brief Производит \f$LU\f$-разложение матрицы \f$A\f$.
  * \param[in] A - матрица, которую нужно разложить.
@@ -25,17 +57,6 @@ namespace LinAlg
  * \return матрицу \f$LU\f$.
  *
  * \f$LU\f$-разложение имеет вид: \f$A = P^{-1} \cdot L\cdot U \cdot Q^{-1}\f$.
- *
- * Матрица-результат \f$R\f$ представляет собой следующее:
- * \f[ R = L + U =
-   \begin{bmatrix}
-        u_{11} & u_{12} & u_{13} & \dots  & u_{1n} \\
-        l_{21} & u_{22} & u_{23} & \dots  & u_{2n} \\
-        \vdots & \vdots & \vdots & \ddots & \vdots \\
-        l_{d1} & l_{d2} & l_{d3} & \dots  & u_{dn}
-   \end{bmatrix},
- * \f]
- * где \f$L\f$ и \f$U\f$ - соответственно, нижнаяя и верхняя треугольные матрицы, полученные в ходе \f$LU\f$-разложения.
  */
 
 Matrix LU(const Matrix &A, Matrix &L, Matrix &U, Matrix &permutationP, Matrix &permutationQ);
@@ -87,6 +108,17 @@ Matrix PinvGreville(const Matrix &A);
  * \param[in] A - матрица коэффициентов левой части СЛАУ.
  * \param[in] b - вектор правой части СЛАУ.
  * \return вектор \f$x\f$.
+ */
+
+Matrix Pinv(const Matrix &A);
+
+
+/*!
+ * \brief Вычисляет псевдообратную матрицу методом по-умолчанию.
+ * \param[in] A - матрица, которую следует обратить.
+ * \return псевдообратную матрицу \f$A^{-1}\f$.
+ * \see PseudoinverseMethods
+ * \see
  */
 
 Vector SolveSystem(const Matrix &A, const Vector &b);

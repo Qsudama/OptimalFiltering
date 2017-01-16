@@ -44,7 +44,7 @@ protected:
 private:
     /*!
       \brief Вычисляет параметры и заполняет массив \f$U_k\f$.
-      \param[in] n - индекс, соответствующий времени \f$t = n \cdot \Delta t\f$.
+      \param[in] k - индекс, соответствующий времени \f$t = k \cdot \delta t\f$.
       \param[out] u - масcив под выборку \f$U_k\f$.
       \param[out] T - матрица \f$T_k\f$.
 
@@ -53,7 +53,7 @@ private:
      \f[\chi_k = m_k^x - \Gamma_k^y \cdot m_k^y - \Gamma_k^z \cdot m_k^z,\f]
      \f[T_k = D_k^x - \Gamma_k^y \cdot (D_{kk}^{xy})^T - \Gamma_k^z \cdot (D_{kk}^{xz})^T.\f]
      */
-    void computeParams(size_t n, Array<Math::Vector> &u, Math::Matrix &T);
+    void computeParams(size_t k, Array<Math::Vector> &u, Math::Matrix &T);
 };
 
 

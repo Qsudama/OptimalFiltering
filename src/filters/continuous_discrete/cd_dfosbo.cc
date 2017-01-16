@@ -8,8 +8,7 @@ namespace ContinuousDiscrete
 {
 
 
-using Math::Rand::gaussianVector;
-using Math::LinAlg::PinvSVD;
+using Math::LinAlg::Pinv;
 using Math::Statistic::Cov;
 using Math::Statistic::Var;
 using Math::Statistic::Mean;
@@ -19,7 +18,7 @@ DFOSBO::DFOSBO(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousDiscreteFilter(params, task)
 {
     long p = task->dimY() * long(params->orderMult());
-    m_info->setName(m_task->info()->type() + "ФКПнд-дп (" + std::to_string(p) + ")");
+    m_info->setName(m_task->info()->type() + "ФКПнд-дп (p=" + std::to_string(p) + ")");
 }
 
 void DFOSBO::zeroIteration()
@@ -52,16 +51,17 @@ void DFOSBO::algorithm()
         // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
-                           m_task->B(m_sampleX[s]) * gaussianVector(m_task->dimV(), 0.0, sqrtdt);
+                           m_task->B(m_sampleX[s]) * sqrtdt * m_normalRand(m_task->dimV());
         }
         writeResult(n, true); //  mX, DX вычисляются, а mZ, DZ, mE, DE копируются из предыдущего
+        m_task->setTime(m_result[n].time);
 
         // n = 1..K*L*N, если n нацело делится на N, значит сейчас время прогноза tn = tl:
         if (n % m_params->integrationCount() == 0) {
             Dxs   = Cov(m_sampleX, m_sampleS);
             ms    = Mean(m_sampleS);
             Ds    = Var(m_sampleS, ms);
-            Gamma = Dxs * PinvSVD(Ds); // Gamma_k^i
+            Gamma = Dxs * Pinv(Ds); // Gamma_k^i
             kappa = m_result[n].meanX - Gamma * ms;
             if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
                 T = m_result[n].varX - Gamma * Dxs.transpose();
@@ -84,7 +84,7 @@ void DFOSBO::algorithm()
                 G = m_task->G(m_sampleZ[s], T);
                 F = m_task->F(m_sampleZ[s], T);
 
-                m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * PinvSVD(F) * (m_sampleY[s] - h);
+                m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
 
                 long ny = long(m_task->dimY());
                 long p  = ny * long(m_params->orderMult());

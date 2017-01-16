@@ -72,43 +72,21 @@ void RangesDialog::initPlotter()
 
 void RangesDialog::loadFonts()
 {
-    this->setFont(FontManager::instance().regular(9));
+    this->setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
 
-    QFont         monoFont  = FontManager::instance().mono(9);
-    QFontMetrics *metric    = new QFontMetrics(monoFont);
-    int           dsbWidth  = metric->width("-100000,000") + 2;
-    int           dsbHeight = int(1.67 * metric->height());
-    delete metric;
+    QFont monoFont = FontManager::instance().mono(GuiConfig::FONT_SIZE_NORMAL);
 
-    m_dsbXMin->setMinimumWidth(dsbWidth);
-    m_dsbXMin->setMinimumHeight(dsbHeight);
-    m_dsbXMin->setMaximumHeight(dsbHeight);
     m_dsbXMin->setFont(monoFont);
-
-    m_dsbXMax->setMinimumWidth(dsbWidth);
-    m_dsbXMax->setMinimumHeight(dsbHeight);
-    m_dsbXMax->setMaximumHeight(dsbHeight);
     m_dsbXMax->setFont(monoFont);
-
-    m_dsbYMin->setMinimumWidth(dsbWidth);
-    m_dsbYMin->setMinimumHeight(dsbHeight);
-    m_dsbYMin->setMaximumHeight(dsbHeight);
     m_dsbYMin->setFont(monoFont);
-
-    m_dsbYMax->setMinimumWidth(dsbWidth);
-    m_dsbYMax->setMinimumHeight(dsbHeight);
-    m_dsbYMax->setMaximumHeight(dsbHeight);
     m_dsbYMax->setFont(monoFont);
-
-    this->setMinimumWidth(int(4.1 * dsbWidth));
-    this->setMinimumHeight(int(4.1 * dsbWidth));
 }
 
 void RangesDialog::initLayouts()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(5);
-    mainLayout->setSpacing(5);
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
 
     QFrame *frame = new QFrame;
     frame->setFrameShape(QFrame::StyledPanel);
@@ -116,44 +94,38 @@ void RangesDialog::initLayouts()
     frame->setLineWidth(1);
 
     QHBoxLayout *frameLayout = new QHBoxLayout;
-    frameLayout->setMargin(1);
-    frameLayout->setSpacing(5);
+    frameLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    frameLayout->setSpacing(GuiConfig::LAYOUT_SPACING_SMALL);
     frameLayout->addWidget(m_plotter);
 
     frame->setLayout(frameLayout);
     mainLayout->addWidget(frame);
 
-    QHBoxLayout *dsbLayout1 = new QHBoxLayout;
-    dsbLayout1->setMargin(0);
-    dsbLayout1->setSpacing(5);
+    QGridLayout *gridLayout = new QGridLayout;
+    gridLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    gridLayout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
-    dsbLayout1->addWidget(new QLabel(tr(" Ось X:")));
-    dsbLayout1->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
-    dsbLayout1->addWidget(new QLabel(tr("от")));
-    dsbLayout1->addWidget(m_dsbXMin);
-    dsbLayout1->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
-    dsbLayout1->addWidget(new QLabel(tr("до")));
-    dsbLayout1->addWidget(m_dsbXMax);
+    gridLayout->addWidget(new QLabel(tr(" Ось X:")), 0, 0);
+    gridLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 0, 1);
+    gridLayout->addWidget(new QLabel(tr("от")), 0, 2);
+    gridLayout->addWidget(m_dsbXMin, 0, 3);
+    gridLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 0, 4);
+    gridLayout->addWidget(new QLabel(tr("до")), 0, 5);
+    gridLayout->addWidget(m_dsbXMax, 0, 6);
 
-    mainLayout->addLayout(dsbLayout1);
+    gridLayout->addWidget(new QLabel(tr(" Ось Y:")), 1, 0);
+    gridLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding), 1, 1);
+    gridLayout->addWidget(new QLabel(tr("от")), 1, 2);
+    gridLayout->addWidget(m_dsbYMin, 1, 3);
+    gridLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding), 1, 4);
+    gridLayout->addWidget(new QLabel(tr("до")), 1, 5);
+    gridLayout->addWidget(m_dsbYMax, 1, 6);
 
-    QHBoxLayout *dsbLayout2 = new QHBoxLayout;
-    dsbLayout2->setMargin(0);
-    dsbLayout2->setSpacing(5);
-
-    dsbLayout2->addWidget(new QLabel(tr(" Ось Y:")));
-    dsbLayout2->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
-    dsbLayout2->addWidget(new QLabel(tr("от")));
-    dsbLayout2->addWidget(m_dsbYMin);
-    dsbLayout2->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
-    dsbLayout2->addWidget(new QLabel(tr("до")));
-    dsbLayout2->addWidget(m_dsbYMax);
-
-    mainLayout->addLayout(dsbLayout2);
+    mainLayout->addLayout(gridLayout);
 
     QHBoxLayout *btnLayout = new QHBoxLayout;
-    btnLayout->setMargin(0);
-    btnLayout->setSpacing(5);
+    btnLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    btnLayout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
     btnLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
     btnLayout->addWidget(m_buttonBox);
@@ -161,6 +133,13 @@ void RangesDialog::initLayouts()
     mainLayout->addLayout(btnLayout);
 
     this->setLayout(mainLayout);
+
+    int dsbWidth    = QFontMetrics(m_dsbXMin->font()).width("-100000,000") + 5;
+    int labelsWidth = QFontMetrics(m_dsbXMin->font()).width(tr("Ось Y: от до"));
+    int minWidth    = 2 * dsbWidth + labelsWidth + 2 * GuiConfig::LAYOUT_MARGIN_BIG + 5 * GuiConfig::LAYOUT_SPACING_BIG;
+
+    this->setMinimumWidth(minWidth);
+    this->setMinimumHeight(minWidth);
 }
 
 void RangesDialog::onYMaxChanged(double yMax)

@@ -1,16 +1,16 @@
 #include "main_window.h"
 #include "src/gui/filter_results_table.h"
+#include <QTabWidget>
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , m_randSeed(1447528517)
     , m_tablesIsVisible(false)
 {
+    loadFonts();
     initControls();
     initLayouts();
     initStatusBar();
-    loadFonts();
 
     QRect screenRect = QApplication::desktop()->availableGeometry();
     setGeometry(screenRect.x() + 25, screenRect.y() + 50, this->minimumWidth(), screenRect.height() - 75);
@@ -25,17 +25,22 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadFonts()
 {
-    this->setFont(FontManager::instance().regular(9));
-    this->statusBar()->setFont(FontManager::instance().regularItalic(9));
+    this->setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
+
+    if (!statusBar()) {
+        setStatusBar(new QStatusBar);
+    }
+    this->statusBar()->setFont(FontManager::instance().regularItalic(GuiConfig::FONT_SIZE_SMALL));
 }
 
 void MainWindow::initControls()
 {
-    m_taskWidget         = new TaskWidget;
-    m_filterParamsWidget = new FilterParametersWidget;
-    m_filterStartWidget  = new FilterStartButtonsBox;
-    m_btnClear           = new QPushButton(tr("Очистить"));
-    m_btnShowHideTables  = new QPushButton(tr("Показать таблицы"));
+    m_taskWidget               = new TaskWidget;
+    m_filterParamsWidget       = new FilterParametersWidget;
+    m_filterStartWidget        = new FilterStartButtonsBox;
+    m_additionalSettingsWidget = new AdditionalSettingsWidget;
+    m_btnClear                 = new QPushButton(tr("Очистить"));
+    m_btnShowHideTables        = new QPushButton(tr("Показать таблицы"));
 
     m_btnShowHideTables->setEnabled(false);
 
@@ -45,33 +50,61 @@ void MainWindow::initControls()
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, Filters::FILTER_ID)), this,
             SLOT(onStart(Core::FILTER_TYPE, Core::APPROX_TYPE, Filters::FILTER_ID)));
+    connect(m_filterStartWidget, SIGNAL(filtersFamilyChanged(int)), m_filterParamsWidget,
+            SLOT(onFiltersFamilyChanged(int)));
 }
 
 void MainWindow::initLayouts()
 {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(5);
-    layout->setSpacing(5);
-    layout->addWidget(m_taskWidget);
-    layout->addWidget(m_filterParamsWidget);
-    layout->addWidget(m_filterStartWidget);
-    layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    // page1:
+
+    QVBoxLayout *page1Layout = new QVBoxLayout;
+    page1Layout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    page1Layout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
+    page1Layout->addWidget(m_taskWidget);
+    page1Layout->addWidget(m_filterParamsWidget);
+    page1Layout->addWidget(m_filterStartWidget);
+    page1Layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     QHBoxLayout *btnLayout = new QHBoxLayout;
-    btnLayout->setMargin(0);
-    btnLayout->setSpacing(5);
+    btnLayout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    btnLayout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
     btnLayout->addWidget(m_btnClear);
     btnLayout->addWidget(m_btnShowHideTables);
 
-    layout->addLayout(btnLayout);
+    page1Layout->addLayout(btnLayout);
 
-    if (!centralWidget()) {
-        setCentralWidget(new QWidget);
-    }
-    centralWidget()->setLayout(layout);
+    QWidget *page1 = new QWidget;
+    page1->setLayout(page1Layout);
+    page1->setMinimumWidth(page1Layout->margin() * 2 + m_filterParamsWidget->minimumWidth());
 
-    centralWidget()->setMinimumWidth(layout->margin() * 2 + m_filterParamsWidget->minimumWidth());
-    this->setMinimumWidth(this->layout()->margin() * 2 + centralWidget()->minimumWidth());
+    // page2:
+
+    QVBoxLayout *page2Layout = new QVBoxLayout;
+    page2Layout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
+    page2Layout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
+    page2Layout->addWidget(m_additionalSettingsWidget);
+    page2Layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
+    QWidget *page2 = new QWidget;
+    page2->setLayout(page2Layout);
+
+
+    QTabWidget *tabs = new QTabWidget;
+    tabs->addTab(page1, tr("Основное"));
+    tabs->addTab(page2, tr("Дополнительные настройки"));
+
+    QWidget *    mainWidget = new QWidget;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_SMALL);
+    mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_SMALL);
+    mainLayout->addWidget(tabs);
+    mainWidget->setLayout(mainLayout);
+
+    setCentralWidget(mainWidget);
+
+    centralWidget()->setMinimumWidth(2 * GuiConfig::LAYOUT_MARGIN_BIG + page1->minimumWidth());
+    setMinimumWidth(this->layout()->margin() * 2 + centralWidget()->minimumWidth());
 }
 
 void MainWindow::initStatusBar()
@@ -87,9 +120,6 @@ void MainWindow::initStatusBar()
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
 
-    if (!statusBar()) {
-        setStatusBar(new QStatusBar);
-    }
     statusBar()->addPermanentWidget(m_statusProgressBar);
     statusBar()->layout()->setMargin(centralWidget()->layout()->margin());
     statusBar()->layout()->setSpacing(centralWidget()->layout()->spacing());
@@ -166,15 +196,13 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filte
 {
     Core::PtrTask             task   = m_taskWidget->task(ftype, atype);
     Core::PtrFilterParameters params = m_filterParamsWidget->parameters();
-    // Core::PtrFilterParameters params (new Core::FilterParameters(2, 0.5, 0.1, 0.001, 100, 1));
-    Core::PtrFilter filter = Filters::FilterFactory::create(ftype, id, params, task);
+    Core::PtrFilter           filter = Filters::FilterFactory::create(ftype, id, params, task);
     connect(filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
 
     m_statusProgressBar->setEnabled(true);
     QString status = tr("Состояние: выполняется ") + QString::fromStdString(filter->info()->name());
     statusBar()->showMessage(status);
 
-    Math::Rand::setRandSeed(uint(m_randSeed));
     filter->run(); // TODO сделать отдельный поток
 
     showData(filter);
@@ -188,9 +216,12 @@ void MainWindow::showData(Core::PtrFilter filter)
     QColor  color = m_colorManager.nextColor();
     QString fname = QString::fromStdString(filter->info()->name());
 
-    QPen mxPen, sxPen, sePen;
+    QPen mxPen, mePen, sxPen, sePen;
     mxPen.setWidthF(2.0);
     mxPen.setColor(Qt::darkMagenta);
+    mePen.setWidthF(2.0);
+    mePen.setColor(color);
+    mePen.setStyle(Qt::DashDotLine);
     sxPen.setWidthF(1.5);
     sxPen.setColor(Qt::darkGray);
     sxPen.setStyle(Qt::DashLine);
@@ -202,22 +233,22 @@ void MainWindow::showData(Core::PtrFilter filter)
         m_graphWindow->setCountSheets(dim);
     }
 
-    QString title = QString("Статистика <") + m_taskWidget->name() + QString(">");
+    QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
     QString subTitle =
-        QString("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize()) +
-        QString(", шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
-        QString(", между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+        tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize()) +
+        tr(", шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
+        tr(", между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
     for (int i = 0; i < dim; i++) {
         m_graphWindow->sheet(i).setTitleLabel(title);
         m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
     if (m_taskWidget->id() == Tasks::TASK_ID::Landing) {
-        m_graphWindow->sheet(0).setXLabel("Время (с)");
-        m_graphWindow->sheet(1).setXLabel("Время (с)");
-        m_graphWindow->sheet(2).setXLabel("Время (с)");
-        m_graphWindow->sheet(0).setYLabel("Скорость (м/c)");
-        m_graphWindow->sheet(1).setYLabel("Угол наклона (°)");
-        m_graphWindow->sheet(2).setYLabel("Высота (м)");
+        m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheet(0).setYLabel(tr("Скорость (м/c)"));
+        m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
+        m_graphWindow->sheet(2).setYLabel(tr("Высота (м)"));
     }
 
     Math::Vector scale(dim);
@@ -239,6 +270,9 @@ void MainWindow::showData(Core::PtrFilter filter)
 
         Core::GetStdDeviationX(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
+
+        Core::GetMeanE(filter->result(), i, y, scale[i]);
+        m_graphWindow->sheet(i).addCurve(x, y, "Me" + QString::number(i + 1) + " " + fname, mePen, false);
 
         Core::GetStdDeviationE(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname, sePen, true);
@@ -267,5 +301,4 @@ void MainWindow::addTable(const Core::FilterOutput &data, const std::string &lab
         m_tables.last()->show();
     }
     m_btnShowHideTables->setEnabled(true);
-    // TODO прописать координаты - сейчас окошко создается рандомно.
 }

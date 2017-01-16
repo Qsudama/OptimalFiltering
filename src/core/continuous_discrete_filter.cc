@@ -4,7 +4,7 @@
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
-using Math::LinAlg::PinvSVD;
+using Math::LinAlg::Pinv;
 
 
 namespace Core
@@ -29,7 +29,7 @@ void ContinuousDiscreteFilter::zeroIteration()
     Vector my0  = Mean(m_sampleY);
     Matrix Dy0  = Var(m_sampleY, my0);
     Matrix Dxy0 = Cov(m_sampleX, m_sampleY);
-    Matrix H0   = Dxy0 * PinvSVD(Dy0);
+    Matrix H0   = Dxy0 * Pinv(Dy0);
     Vector e0   = mx0 - H0 * my0;
 
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {

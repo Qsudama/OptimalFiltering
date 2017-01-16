@@ -5,110 +5,60 @@
 namespace Math
 {
 
-namespace Rand
-{
 
-
-void setRandomize()
+ulong RandomProperties::defaultSeed()
 {
-    uint seed = uint(std::time(0));
-    std::srand(seed);
+    static ulong seed = std::numeric_limits<ulong>::max() / 2;
+    return seed;
 }
 
-void setRandSeed(uint seed)
+ulong RandomProperties::randomSeed()
 {
-    std::srand(seed);
+    ulong seed = ulong(std::chrono::system_clock::now().time_since_epoch().count());
+    return seed;
 }
 
+//-----//
 
-double uniform() // in (0,1]
+MultivariateNormalDistribution::MultivariateNormalDistribution()
 {
-    return double(rand() + 1.0) / double(RAND_MAX + 1.0);
+    m_univariateNormalDistribution.param(std::normal_distribution<double>::param_type(0.0, 1.0));
 }
 
-double uniform(double a, double b) // in [a,b]
+void MultivariateNormalDistribution::setSeed(ulong seed)
 {
-    return (b - a) * uniform() + a;
+    m_generator.seed(seed);
 }
 
-double gaussian() // ~ N(0,1)
+Vector MultivariateNormalDistribution::normal01(long dim) const
 {
-    double x = uniform();
-    double y = uniform();
-    return cos(2.0 * Math::Const::PI * y) * sqrt(-2.0 * log(x));
-}
+    assert(dim > 0 && "Math::MultivariateNormalDistribution::normal01(dim) : corrupt value of dim");
 
-double gaussian(double m, double s) // ~ N (m,s^2)
-{
-    return m + s * gaussian();
-}
-
-double logNormal(double m, double s)
-{
-    return exp(gaussian(m, s));
-}
-
-double chiSquared(uint K)
-{
-    double sum_z = 0;
-    for (uint i = 0; i < K; ++i) {
-        sum_z += pow(gaussian(), 2);
+    Vector x(dim);
+    for (long i = 0; i < dim; ++i) {
+        x[i] = m_univariateNormalDistribution(m_generator);
     }
-    return sum_z;
+
+    return x;
 }
 
-double students(uint N)
+Vector MultivariateNormalDistribution::operator()(long dim) const
 {
-    double y0 = gaussian();
-    double y  = chiSquared(N);
-    return y0 * sqrt(double(N) / y);
+    return normal01(dim);
 }
 
-double fishers(uint N1, uint N2)
+Vector MultivariateNormalDistribution::operator()(const Vector &mean, const Matrix &var) const
 {
-    double y1 = chiSquared(N1);
-    double y2 = chiSquared(N2);
-    return double(N2) * y1 / (double(N1) * y2);
+    long dim = mean.size();
+
+    assert(dim > 0 && "Math::MultivariateNormalDistribution::operator()(mean, var) : corrupt dimension of mean");
+    assert(var.rows() == dim &&
+           "Math::MultivariateNormalDistribution::operator()(mean, var) : corrupt dimension of var (row's count)");
+    assert(var.cols() == dim &&
+           "Math::MultivariateNormalDistribution::operator()(mean, var) : corrupt dimension of var (col's count)");
+
+    return mean + LinAlg::Cholesky(var) * normal01(dim);
 }
 
-double rayleighs(double s)
-{
-    double x = gaussian(0, s);
-    double y = gaussian(0, s);
-    return sqrt(x * x + y * y);
-}
-
-double exponential(double L)
-{
-    return (-1.0 / L) * log(uniform());
-}
-
-Vector gaussianVector(long n)
-{
-    Vector v(n);
-    for (long i = 0; i < n; ++i) {
-        v[i] = gaussian();
-    }
-    return v;
-}
-
-Vector gaussianVector(long n, double m, double s)
-{
-    Vector v(n);
-    for (long i = 0; i < n; ++i) {
-        v[i] = gaussian(m, s);
-    }
-    return v;
-}
-
-
-Vector gaussianVector(const Vector &mean, const Matrix &cov)
-{
-    assert(cov.rows() == mean.size());
-    return mean + LinAlg::Cholesky(cov) * gaussianVector(mean.size());
-}
-
-
-} // end Rand
 
 } // end Math
