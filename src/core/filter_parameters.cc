@@ -6,7 +6,7 @@ namespace Core
 
 
 FilterParameters::FilterParameters(double maxTime, double measurementStep, double predictionStep,
-                                   double integrationStep, ulong sampleSize, ulong orderMult)
+                                   double integrationStep, Uint sampleSize, Uint orderMult)
     : m_maxTime(maxTime)
     , m_predictionStep(predictionStep)
     , m_integrationStep(integrationStep)
@@ -39,27 +39,27 @@ const double &FilterParameters::integrationStep() const
     return m_integrationStep;
 }
 
-const ulong &FilterParameters::measurementCount() const
+const Uint &FilterParameters::measurementCount() const
 {
     return m_measurementCount;
 }
 
-const ulong &FilterParameters::predictionCount() const
+const Uint &FilterParameters::predictionCount() const
 {
     return m_predictionCount;
 }
 
-const ulong &FilterParameters::integrationCount() const
+const Uint &FilterParameters::integrationCount() const
 {
     return m_integrationCount;
 }
 
-const ulong &FilterParameters::sampleSize() const
+const Uint &FilterParameters::sampleSize() const
 {
     return m_sampleSize;
 }
 
-const ulong &FilterParameters::orderMult() const
+const Uint &FilterParameters::orderMult() const
 {
     return m_orderMult;
 }
@@ -68,7 +68,7 @@ void FilterParameters::setMaxTime(double tmax)
 {
     assert(tmax > 0.0 && "Core::FilterParameters::setMaxTime(tmax) : corrupt value of tmax");
 
-    m_measurementCount = ulong(tmax / m_measurementStep);
+    m_measurementCount = Uint(tmax / m_measurementStep);
     double T1          = m_measurementCount * m_measurementStep;
     if (tmax - T1 >= 0.5 * m_measurementStep) {
         m_maxTime = T1 + m_measurementStep;
@@ -83,7 +83,7 @@ void FilterParameters::setMeasurementStep(double step)
     assert(step > 0.0 && "Core::FilterParameters::setMeasurementStep(step) : corrupt value of step");
 
     m_measurementStep  = step;
-    m_measurementCount = ulong(m_maxTime / m_measurementStep);
+    m_measurementCount = Uint(m_maxTime / m_measurementStep);
     setPredictionStep(m_predictionStep);
 }
 
@@ -112,23 +112,23 @@ void FilterParameters::setIntegrationStep(double step)
            "Core::FilterParameters::setIntegrationStep(step) : logic error (integration step > prediction step)");
 }
 
-void FilterParameters::setSampleSize(ulong size)
+void FilterParameters::setSampleSize(Uint size)
 {
     assert(size > 0 && "Core::FilterParameters::setSampleSize(size) : corrupt value of size");
 
     m_sampleSize = size;
 }
 
-void FilterParameters::setOrderMult(ulong order)
+void FilterParameters::setOrderMult(Uint order)
 {
     assert(order > 0 && "Core::FilterParameters::setOrderMult(order) : corrupt value of order");
 
     m_orderMult = order;
 }
 
-void FilterParameters::correctStepAndCount(const double &intervalLength, double &step, ulong &count)
+void FilterParameters::correctStepAndCount(const double &intervalLength, double &step, Uint &count)
 {
-    count = ulong(intervalLength / step);
+    count = Uint(intervalLength / step);
     if (intervalLength - count * step >= 0.5 * step) {
         ++count;
     }
