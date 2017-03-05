@@ -308,7 +308,7 @@ void FilterParametersWidget::onPredictionCountToggled(bool checked)
 }
 void FilterParametersWidget::onOrderMultChanged(int value)
 {
-    m_parameters->setOrderMult(ulong(value));
+    m_parameters->setOrderMult(Uint(value));
 }
 
 void FilterParametersWidget::onSampleSizeChanged(int value)

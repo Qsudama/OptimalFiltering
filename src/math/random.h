@@ -19,11 +19,11 @@ class RandomProperties
 public:
     //! \brief Возвращает стартовое число ГПСЧ по-умолчанию.
     //! \details Оно равно половине наибольшего unsigned long.
-    static ulong defaultSeed();
+    static Uint defaultSeed();
 
     //! \brief Возвращает стартовое число ГПСЧ, которое берется из системного времени.
     //! \details Оно равно количеству наносекунд, прошедших с 01.01.1970.
-    static ulong randomSeed();
+    static Uint randomSeed();
 };
 
 
@@ -37,7 +37,7 @@ public:
     MultivariateNormalDistribution();
 
     //! Установливает число, на основании которого генерируется последовательсть ПСЧ.
-    void setSeed(ulong seed);
+    void setSeed(Uint seed);
 
     //! Возвращает гауссовский случайный вектор размерности dim c независимыми компонентами.
     Vector operator()(long dim) const;
@@ -60,7 +60,12 @@ private:
 
 
 private:
-    mutable std::mt19937                     m_generator;
+#if defined(ARCHITECTURE_64)
+    mutable std::mt19937_64 m_generator;
+#else
+    mutable std::mt19937 m_generator;
+#endif
+
     mutable std::normal_distribution<double> m_univariateNormalDistribution;
 };
 
