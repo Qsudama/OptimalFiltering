@@ -284,7 +284,7 @@ void FilterParametersWidget::onFixAllToggled(bool checked)
     m_dsbPredictionStep->setEnabled(!checked && m_radioPredictionStep->isChecked());
     m_sbPredictionCount->setEnabled(!checked && m_radioPredictionCount->isChecked());
 
-    if (m_currentFiltersFamily == 0) { // дискретные
+    if (m_currentFiltersFamily == 0 || m_currentFiltersFamily == 3) { // дискретные и лд
         m_dsbIntegrationStep->setEnabled(false);
         m_radioPredictionCount->setEnabled(false);
         m_radioPredictionStep->setEnabled(false);
