@@ -17,12 +17,12 @@ namespace LogicDynamic
  * \brief Задача спуска ЛА на планету (дискретная, линеаризованная) для фильтров оптимальной структуры.
  */
 
-class LandingLinearTest : public Core::LogicDynamicTask
+class LandingTestLinear : public Core::LogicDynamicTask
 {
 
 public:
     //! \brief Конструктор.
-    LandingLinearTest();
+    LandingTestLinear();
 
     Vector a(const Vector &x) const override;
     Vector b(const Vector &x) const override;

@@ -12,7 +12,7 @@ namespace LogicDynamic
 using Math::Convert::DegToRad;
 
 
-LandingLinearTest::LandingLinearTest()
+LandingTestLinear::LandingTestLinear()
     : LogicDynamicTask()
     , m_turnTime(45.0)
 {
@@ -55,17 +55,17 @@ LandingLinearTest::LandingLinearTest()
     (*m_params)["tau"] = m_turnTime;
 }
 
-void LandingLinearTest::loadParams()
+void LandingTestLinear::loadParams()
 {
     m_turnTime = m_params->at("tau");
 }
 
-double LandingLinearTest::k(double t) const
+double LandingTestLinear::k(double t) const
 {
     return KB * Math::sign(t - m_turnTime);
 }
 
-Vector LandingLinearTest::a(const Vector &x) const
+Vector LandingTestLinear::a(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Vector dx(m_dimX);
@@ -77,7 +77,7 @@ Vector LandingLinearTest::a(const Vector &x) const
     return x + m_step * dx;
 }
 
-Vector LandingLinearTest::b(const Vector &x) const
+Vector LandingTestLinear::b(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Vector w = m_normalRand(m_meanW, m_varW);
@@ -89,12 +89,12 @@ Vector LandingLinearTest::b(const Vector &x) const
     return res;
 }
 
-Vector LandingLinearTest::tau(const Vector &z, const Matrix & /*D*/) const
+Vector LandingTestLinear::tau(const Vector &z, const Matrix & /*D*/) const
 {
     return a(z);
 }
 
-Matrix LandingLinearTest::Theta(const Vector &z, const Matrix &P) const
+Matrix LandingTestLinear::Theta(const Vector &z, const Matrix &P) const
 {
     Matrix Ax = dadx(z);
     Matrix Av = dadv(z);
@@ -104,7 +104,7 @@ Matrix LandingLinearTest::Theta(const Vector &z, const Matrix &P) const
     // TODO V = 0 --> m_meanV = 0, m_varV = 0 --> Av = 0....
 }
 
-Vector LandingLinearTest::h(const Vector &m, const Matrix & /* D*/) const
+Vector LandingTestLinear::h(const Vector &m, const Matrix & /* D*/) const
 {
     double e = exp(-BB * m[2]);
     Vector res(m_dimY);
@@ -115,12 +115,12 @@ Vector LandingLinearTest::h(const Vector &m, const Matrix & /* D*/) const
     return res;
 }
 
-Matrix LandingLinearTest::G(const Vector &m, const Matrix & /*D*/) const
+Matrix LandingTestLinear::G(const Vector &m, const Matrix & /*D*/) const
 {
     return dbdx(m);
 }
 
-Matrix LandingLinearTest::F(const Vector &m, const Matrix &D) const
+Matrix LandingTestLinear::F(const Vector &m, const Matrix &D) const
 {
     Matrix Bx = dbdx(m);
     Matrix Bw = dbdw(m);
@@ -128,7 +128,7 @@ Matrix LandingLinearTest::F(const Vector &m, const Matrix &D) const
     return Bx * D * Bx.transpose() + Bw * m_varW * Bw.transpose();
 }
 
-Matrix LandingLinearTest::dadx(const Vector &x) const
+Matrix LandingTestLinear::dadx(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Matrix res(m_dimX, m_dimX);
@@ -148,12 +148,12 @@ Matrix LandingLinearTest::dadx(const Vector &x) const
     return res;
 }
 
-Matrix LandingLinearTest::dadv(const Vector & /*x*/) const
+Matrix LandingTestLinear::dadv(const Vector & /*x*/) const
 {
     return Matrix::Zero(m_dimX, m_dimV);
 }
 
-Matrix LandingLinearTest::dbdx(const Vector &x) const
+Matrix LandingTestLinear::dbdx(const Vector &x) const
 {
     double e0 = CC * x[0] * x[0] * exp(-BB * x[2]) * (cos(x[1]) - k(m_time) * sin(x[1]));
     double e1 = CC * x[0] * x[0] * exp(-BB * x[2]) * (sin(x[1]) - k(m_time) * cos(x[1]));
@@ -170,7 +170,7 @@ Matrix LandingLinearTest::dbdx(const Vector &x) const
     return res;
 }
 
-Matrix LandingLinearTest::dbdw(const Vector &x) const
+Matrix LandingTestLinear::dbdw(const Vector &x) const
 {
     Matrix res(m_dimY, m_dimW);
 

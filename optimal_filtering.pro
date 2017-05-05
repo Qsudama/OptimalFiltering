@@ -302,7 +302,8 @@ HEADERS += \
     third_party/qcustomplot/qcustomplot.h \
     src/core/logic_dynamic_filter.h \
     src/core/logic_dynamic_task.h \
-    src/tasks/logic_dynamic/ld_landing_test_linear.h
+    src/tasks/logic_dynamic/ld_landing_test_linear.h \
+    src/tasks/logic_dynamic/ld_landing_test_gauss.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -359,5 +360,6 @@ SOURCES += \
     third_party/qcustomplot/qcustomplot.cc \
     src/core/logic_dynamic_filter.cc \
     src/core/logic_dynamic_task.cc \
-    src/tasks/logic_dynamic/ld_landing_test_linear.cc
+    src/tasks/logic_dynamic/ld_landing_test_linear.cc \
+    src/tasks/logic_dynamic/ld_landing_test_gauss.cc
 

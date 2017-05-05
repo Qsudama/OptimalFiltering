@@ -16,6 +16,8 @@ PtrTask TaskFactory::create(FILTER_TYPE ftype, TASK_ID id, APPROX_TYPE atype)
         return createContinuousDiscrete(id, atype);
     case FILTER_TYPE::Discrete:
         return createDiscrete(id, atype);
+    case FILTER_TYPE::LogicDynamic:
+        return createLogicDynamic(id, atype);
     }
     return PtrTask(nullptr);
 }
@@ -83,5 +85,26 @@ PtrTask TaskFactory::createDiscrete(TASK_ID id, APPROX_TYPE type)
     return PtrTask(nullptr);
 }
 
+
+PtrTask TaskFactory::createLogicDynamic(TASK_ID id, APPROX_TYPE type)
+{
+    switch (type) {
+    case APPROX_TYPE::Linear:
+        switch (id) {
+        case TASK_ID::LandingTest:
+            return PtrTask(new Tasks::LogicDynamic::LandingTestLinear);
+//        case TASK_ID::VanDerPol:
+//            return PtrTask(nullptr); // WARNING
+        }
+    case APPROX_TYPE::Gauss:
+        switch (id) {
+        case TASK_ID::LandingTest:
+            return PtrTask(new Tasks::LogicDynamic::LandingTestGauss);
+//        case TASK_ID::VanDerPol:
+//            return PtrTask(nullptr); // WARNING
+        }
+    }
+    return PtrTask(nullptr);
+}
 
 } // end Tasks
