@@ -1,12 +1,12 @@
-#ifndef LOGICDYNAMIC_TASK_H
-#define LOGICDYNAMIC_TASK_H
+#ifndef LOGIC_DYNAMIC_TASK_H
+#define LOGIC_DYNAMIC_TASK_H
 
 #include "task.h"
 
 namespace Core
 {
 
-/*! \brief Базовый тип задач для дискретных фильтров оптимальной структуры.
+/*! \brief Базовый тип задач для логико-динамических фильтров оптимальной структуры.
 
   Описываемая система имеет следующий вид
 
@@ -117,4 +117,4 @@ using PtrLDTask = std::shared_ptr<LogicDynamicTask>;
 
 } // end Core
 
-#endif // LOGICDYNAMIC_TASK_H
+#endif // LOGIC_DYNAMIC_TASK_H

@@ -1,12 +1,4 @@
-#include "logicdynamic_filter.h"
-
-//logicdynamic_filter::logicdynamic_filter()
-//{
-
-//}
-
-//#include "discrete_filter.h"
-
+#include "logic_dynamic_filter.h"
 
 using Math::Statistic::Mean;
 using Math::Statistic::Var;

@@ -1,7 +1,7 @@
-#ifndef LOGICDYNAMIC_FILTER_H
-#define LOGICDYNAMIC_FILTER_H
+#ifndef LOGIC_DYNAMIC_FILTER_H
+#define LOGIC_DYNAMIC_FILTER_H
 
-#include "logicdynamic_task.h"
+#include "logic_dynamic_task.h"
 #include "filter.h"
 #include "src/math/linear_algebra.h"
 
@@ -9,9 +9,9 @@ namespace Core
 {
 
 
-/*! \brief Базовый класс для всех дискретных фильтров оптимальной структуры.
+/*! \brief Базовый класс для всех логико-динамических фильтров оптимальной структуры.
 
-    \see DiscreteTask.
+    \see LogicDynamicTask.
 */
 
 class LogicDynamicFilter : public Filter
@@ -27,7 +27,7 @@ protected:
 
     /*! \brief Нулевая итерация алгоритма (инициализирует начальные состояния).
 
-        Практически для всех дискретных фильтров оптимальной структуры имеет вид:
+        Практически для всех логико-динамических фильтров оптимальной структуры имеет вид:
         \f[Z_0 = H_0 \cdot  Y_0 + e_0,\f]
         \f[H_0 = D_{00}^{xy} \cdot  (D_0^y)^{-1},\f]
         \f[e_0 = m_0^x - H_0 \cdot  m_0^y.\f]
@@ -50,4 +50,4 @@ using PtrLDFilter = std::shared_ptr<LogicDynamicFilter>;
 } // end Core
 
 
-#endif // LOGICDYNAMIC_FILTER_H
+#endif // LOGIC_DYNAMIC_FILTER_H
