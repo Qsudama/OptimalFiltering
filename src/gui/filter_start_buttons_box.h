@@ -71,6 +71,10 @@ private slots:
     void onBtnDiscreteGaussFosClicked();
     void onBtnDiscreteLinearMfosClicked();
     void onBtnDiscreteGaussMfosClicked();
+
+    void onBtnLDAofClicked();
+    void onBtnLDFosClicked();
+    void onBtnLDFkpClicked();
     //@}
 
 
@@ -107,6 +111,10 @@ private:
     QPushButton *m_btnDiscreteGaussFos;
     QPushButton *m_btnDiscreteLinearMfos;
     QPushButton *m_btnDiscreteGaussMfos;
+
+    QPushButton *m_btnLDAof;
+    QPushButton *m_btnLDFos;
+    QPushButton *m_btnLDFkp;
 };
 
 
