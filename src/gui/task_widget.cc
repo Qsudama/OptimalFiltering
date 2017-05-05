@@ -66,11 +66,12 @@ void TaskWidget::onBtnParametersClicked()
 void TaskWidget::onCbTaskChanged(int)
 {
     Tasks::TASK_ID taskId = id();
-    Core::PtrTask tmpTask;
-    if(taskId == Tasks::TASK_ID::LandingTest) {
+    Core::PtrTask  tmpTask;
+    if (taskId == Tasks::TASK_ID::LandingTest) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId, Core::APPROX_TYPE::Linear);
+    } else {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId, Core::APPROX_TYPE::Linear);
     }
-    tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId, Core::APPROX_TYPE::Linear);
 
     bool hidden = true;
     if (m_parametersWidget) {
