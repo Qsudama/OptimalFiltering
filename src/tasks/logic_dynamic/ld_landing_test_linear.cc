@@ -16,7 +16,7 @@ LandingTestLinear::LandingTestLinear()
     : LogicDynamicTask()
     , m_turnTime(45.0)
 {
-    m_info->setName("Спуск ЛА на планету Тест");
+    m_info->setName("Спуск ЛА с неполной информацией. Тестовый пример");
     m_info->setType("Л-");
 
     m_dimY = 2;

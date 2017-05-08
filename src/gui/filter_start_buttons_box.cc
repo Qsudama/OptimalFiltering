@@ -283,15 +283,15 @@ void FilterStartButtonsBox::onBtnDiscreteGaussMfosClicked()
 
 void FilterStartButtonsBox::onBtnLDAofClicked()
 {
-//    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::MDFOS);
+    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::AOF);
 }
 
 void FilterStartButtonsBox::onBtnLDFosClicked()
 {
-//    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::MDFOS);
+    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::FOS);
 }
 
 void FilterStartButtonsBox::onBtnLDFkpClicked()
 {
-//    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::MDFOS);
+//    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::MDFOS);
 }

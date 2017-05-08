@@ -25,7 +25,7 @@ void TaskWidget::initControls()
     m_cbTask = new QComboBox;
     m_cbTask->addItem(tr("Спуск ЛА на планету"));
     m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля"));
-    m_cbTask->addItem(tr("Спуск ЛА с неполной информацией. Тест"));
+    m_cbTask->addItem(tr("Спуск ЛА с неполной информацией. Тестовый пример"));
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
