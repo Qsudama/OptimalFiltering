@@ -1,4 +1,4 @@
-#include "ld_landing_test_linear.h"
+#include "ld_landing_rejection_linear.h"
 #include "src/math/convert.h"
 
 
@@ -12,11 +12,11 @@ namespace LogicDynamic
 using Math::Convert::DegToRad;
 
 
-LandingTestLinear::LandingTestLinear()
+LandingRejectionLinear::LandingRejectionLinear()
     : LogicDynamicTask()
     , m_turnTime(45.0)
 {
-    m_info->setName("Спуск ЛА с неполной информацией. Тестовый пример");
+    m_info->setName("Спуск ЛА с неполной информацией");
     m_info->setType("Л-");
 
     m_dimY = 2;
@@ -55,17 +55,17 @@ LandingTestLinear::LandingTestLinear()
     (*m_params)["tau"] = m_turnTime;
 }
 
-void LandingTestLinear::loadParams()
+void LandingRejectionLinear::loadParams()
 {
     m_turnTime = m_params->at("tau");
 }
 
-double LandingTestLinear::k(double t) const
+double LandingRejectionLinear::k(double t) const
 {
     return KB * Math::sign(t - m_turnTime);
 }
 
-Vector LandingTestLinear::a(const Vector &x) const
+Vector LandingRejectionLinear::a(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Vector dx(m_dimX);
@@ -77,7 +77,7 @@ Vector LandingTestLinear::a(const Vector &x) const
     return x + m_step * dx;
 }
 
-Vector LandingTestLinear::b(const Vector &x) const
+Vector LandingRejectionLinear::b(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Vector w = m_normalRand(m_meanW, m_varW);
@@ -89,12 +89,12 @@ Vector LandingTestLinear::b(const Vector &x) const
     return res;
 }
 
-Vector LandingTestLinear::tau(const Vector &z, const Matrix & /*D*/) const
+Vector LandingRejectionLinear::tau(const Vector &z, const Matrix & /*D*/) const
 {
     return a(z);
 }
 
-Matrix LandingTestLinear::Theta(const Vector &z, const Matrix &P) const
+Matrix LandingRejectionLinear::Theta(const Vector &z, const Matrix &P) const
 {
     Matrix Ax = dadx(z);
     Matrix Av = dadv(z);
@@ -104,7 +104,7 @@ Matrix LandingTestLinear::Theta(const Vector &z, const Matrix &P) const
     // TODO V = 0 --> m_meanV = 0, m_varV = 0 --> Av = 0....
 }
 
-Vector LandingTestLinear::h(const Vector &m, const Matrix & /* D*/) const
+Vector LandingRejectionLinear::h(const Vector &m, const Matrix & /* D*/) const
 {
     double e = exp(-BB * m[2]);
     Vector res(m_dimY);
@@ -115,12 +115,12 @@ Vector LandingTestLinear::h(const Vector &m, const Matrix & /* D*/) const
     return res;
 }
 
-Matrix LandingTestLinear::G(const Vector &m, const Matrix & /*D*/) const
+Matrix LandingRejectionLinear::G(const Vector &m, const Matrix & /*D*/) const
 {
     return dbdx(m);
 }
 
-Matrix LandingTestLinear::F(const Vector &m, const Matrix &D) const
+Matrix LandingRejectionLinear::F(const Vector &m, const Matrix &D) const
 {
     Matrix Bx = dbdx(m);
     Matrix Bw = dbdw(m);
@@ -128,7 +128,7 @@ Matrix LandingTestLinear::F(const Vector &m, const Matrix &D) const
     return Bx * D * Bx.transpose() + Bw * m_varW * Bw.transpose();
 }
 
-Matrix LandingTestLinear::dadx(const Vector &x) const
+Matrix LandingRejectionLinear::dadx(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Matrix res(m_dimX, m_dimX);
@@ -148,12 +148,12 @@ Matrix LandingTestLinear::dadx(const Vector &x) const
     return res;
 }
 
-Matrix LandingTestLinear::dadv(const Vector & /*x*/) const
+Matrix LandingRejectionLinear::dadv(const Vector & /*x*/) const
 {
     return Matrix::Zero(m_dimX, m_dimV);
 }
 
-Matrix LandingTestLinear::dbdx(const Vector &x) const
+Matrix LandingRejectionLinear::dbdx(const Vector &x) const
 {
     double e0 = CC * x[0] * x[0] * exp(-BB * x[2]) * (cos(x[1]) - k(m_time) * sin(x[1]));
     double e1 = CC * x[0] * x[0] * exp(-BB * x[2]) * (sin(x[1]) - k(m_time) * cos(x[1]));
@@ -170,7 +170,7 @@ Matrix LandingTestLinear::dbdx(const Vector &x) const
     return res;
 }
 
-Matrix LandingTestLinear::dbdw(const Vector &x) const
+Matrix LandingRejectionLinear::dbdw(const Vector &x) const
 {
     Matrix res(m_dimY, m_dimW);
 

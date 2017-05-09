@@ -31,6 +31,10 @@ PtrTask TaskFactory::createContinuous(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::Continuous::LandingLinear);
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::Continuous::VanDerPolLinear);
+        case TASK_ID::LandingTest:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
@@ -38,6 +42,10 @@ PtrTask TaskFactory::createContinuous(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::Continuous::LandingGauss);
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::Continuous::VanDerPolGauss);
+        case TASK_ID::LandingTest:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
         }
     }
     return PtrTask(nullptr);
@@ -52,6 +60,10 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::ContinuousDiscrete::LandingLinear);
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::ContinuousDiscrete::VanDerPolLinear);
+        case TASK_ID::LandingTest:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
@@ -59,6 +71,10 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::ContinuousDiscrete::LandingGauss);
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::ContinuousDiscrete::VanDerPolGauss);
+        case TASK_ID::LandingTest:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
         }
     }
     return PtrTask(nullptr);
@@ -73,12 +89,20 @@ PtrTask TaskFactory::createDiscrete(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::Discrete::LandingLinear);
         case TASK_ID::VanDerPol:
             return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingTest:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
         case TASK_ID::Landing:
             return PtrTask(new Tasks::Discrete::LandingGauss);
         case TASK_ID::VanDerPol:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingTest:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingRejection:
             return PtrTask(nullptr); // WARNING
         }
     }
@@ -91,17 +115,25 @@ PtrTask TaskFactory::createLogicDynamic(TASK_ID id, APPROX_TYPE type)
     switch (type) {
     case APPROX_TYPE::Linear:
         switch (id) {
+        case TASK_ID::Landing:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::VanDerPol:
+            return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingTest:
             return PtrTask(new Tasks::LogicDynamic::LandingTestLinear);
-//        case TASK_ID::VanDerPol:
-//            return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingRejection:
+            return PtrTask(new Tasks::LogicDynamic::LandingRejectionLinear);
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
+        case TASK_ID::Landing:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::VanDerPol:
+            return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingTest:
             return PtrTask(new Tasks::LogicDynamic::LandingTestGauss);
-//        case TASK_ID::VanDerPol:
-//            return PtrTask(nullptr); // WARNING
+        case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
         }
     }
     return PtrTask(nullptr);
