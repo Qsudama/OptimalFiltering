@@ -1,5 +1,5 @@
-#ifndef LD_LANDING_TEST_LINEAR_H
-#define LD_LANDING_TEST_LINEAR_H
+#ifndef LD_LANDING_REJECTION_LINEAR_H
+#define LD_LANDING_REJECTION_LINEAR_H
 
 #include "src/core/logic_dynamic_task.h"
 #include "src/math/math.h"
@@ -17,12 +17,12 @@ namespace LogicDynamic
  * \brief Задача спуска ЛА на планету (логико-динамическая, линеаризованная) для фильтров оптимальной структуры.
  */
 
-class LandingTestLinear : public Core::LogicDynamicTask
+class LandingRejectionLinear : public Core::LogicDynamicTask
 {
 
 public:
     //! \brief Конструктор.
-    LandingTestLinear();
+    LandingRejectionLinear();
 
     Vector a(const Vector &x) const override;
     Vector b(const Vector &x) const override;
@@ -59,5 +59,4 @@ protected:
 
 } // end Tasks
 
-
-#endif // LD_LANDING_TEST_LINEAR_H
+#endif // LD_LANDING_REJECTION_LINEAR_H

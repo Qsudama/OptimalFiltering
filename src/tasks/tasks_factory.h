@@ -14,6 +14,7 @@
 #include "src/tasks/discrete/d_landing_linear.h"
 #include "src/tasks/logic_dynamic/ld_landing_test_gauss.h"
 #include "src/tasks/logic_dynamic/ld_landing_test_linear.h"
+#include "src/tasks/logic_dynamic/ld_landing_rejection_linear.h"
 
 //! \brief Модуль, содержащий реализации конкретных задач для фильтров.
 
@@ -24,9 +25,10 @@ namespace Tasks
 //! \brief Набор идентификаторов имеющихся задач.
 
 enum class TASK_ID {
-    Landing,    ///< Спуска ЛА на планету.
-    VanDerPol,  ///< Осциллятор Ван-дер-Поля.
-    LandingTest ///< Спуск ЛА с неполной информацией. Тестовый пример
+    Landing,            ///< Спуска ЛА на планету.
+    VanDerPol,          ///< Осциллятор Ван-дер-Поля.
+    LandingTest,        ///< Спуск ЛА с неполной информацией. Тестовый пример
+    LandingRejection    ///< Спуск ЛА с неполной информацией
 };
 
 

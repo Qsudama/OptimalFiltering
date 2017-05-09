@@ -90,6 +90,6 @@ void FOS::computeParams(size_t k, Array<Vector> &u, Matrix &T)
 }
 
 
-} // end Discrete
+} // end LogicDynamic
 
 } // end Filters

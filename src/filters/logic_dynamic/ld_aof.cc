@@ -68,6 +68,6 @@ void AOF::algorithm()
 }
 
 
-} // end Discrete
+} // end LogicDynamic
 
 } // end Filters
