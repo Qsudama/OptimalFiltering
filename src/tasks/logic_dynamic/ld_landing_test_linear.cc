@@ -46,11 +46,12 @@ LandingTestLinear::LandingTestLinear()
     m_varW(2, 2) = pow(2E-7, 2);
     m_varW(3, 3) = pow(2E-7, 2);
 
-    (*m_consts)["Kb"]   = KB;
-    (*m_consts)["Beta"] = BB;
-    (*m_consts)["c"]    = CC;
-    (*m_consts)["g"]    = GG;
-    (*m_consts)["R"]    = RR;
+    (*m_consts)["Kb"]     = KB;
+    (*m_consts)["Beta"]   = BB;
+    (*m_consts)["SigmaX"] = SX;
+    (*m_consts)["rho0"]   = R0;
+    (*m_consts)["g"]      = GG;
+    (*m_consts)["R"]      = RR;
 
     (*m_params)["tau"] = m_turnTime;
 }
@@ -109,8 +110,10 @@ Vector LandingTestLinear::h(const Vector &m, const Matrix & /* D*/) const
     double e = exp(-BB * m[2]);
     Vector res(m_dimY);
 
-    res[0] = CC * (m_meanW[0] + 1.0) * m[0] * m[0] * e * (cos(m[1]) - k(m_time) * sin(m[1])) + m_meanW[2];
-    res[1] = CC * (m_meanW[1] + 1.0) * m[0] * m[0] * e * (sin(m[1]) - k(m_time) * cos(m[1])) + m_meanW[3];
+    res[0] = CC * (m_meanW[0] + 1.0) * m[0] * m[0] * e * (cos(m[1]) - k(m_time) * sin(m[1])) +
+             m_meanW[2];
+    res[1] = CC * (m_meanW[1] + 1.0) * m[0] * m[0] * e * (sin(m[1]) - k(m_time) * cos(m[1])) +
+             m_meanW[3];
 
     return res;
 }
@@ -137,9 +140,11 @@ Matrix LandingTestLinear::dadx(const Vector &x) const
     res(0, 1) = -m_step * GG * cos(x[1]);
     res(0, 2) = m_step * BB * CC * x[0] * x[0] * e;
 
-    res(1, 0) = m_step * (CC * k(m_time) * e + (GG / (x[0] * x[0]) + 1.0 / (RR + x[2])) * cos(x[1]));
+    res(1, 0) =
+        m_step * (CC * k(m_time) * e + (GG / (x[0] * x[0]) + 1.0 / (RR + x[2])) * cos(x[1]));
     res(1, 1) = 1.0 + m_step * ((GG / x[0] - x[0] / (RR + x[2])) * sin(x[1]));
-    res(1, 2) = m_step * (-CC * BB * k(m_time) * x[0] * e - x[0] * cos(x[1]) / ((RR + x[2]) * (RR + x[2])));
+    res(1, 2) =
+        m_step * (-CC * BB * k(m_time) * x[0] * e - x[0] * cos(x[1]) / ((RR + x[2]) * (RR + x[2])));
 
     res(2, 0) = m_step * sin(x[1]);
     res(2, 1) = m_step * x[0] * cos(x[1]);
@@ -191,5 +196,3 @@ Matrix LandingTestLinear::dbdw(const Vector &x) const
 } // end Tasks::LogicDynamic
 
 } // end Tasks
-
-

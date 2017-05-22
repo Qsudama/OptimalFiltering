@@ -14,7 +14,8 @@ namespace LogicDynamic
 
 
 /*!
- * \brief Задача спуска ЛА на планету (логико-динамическая, линеаризованная) для фильтров оптимальной структуры.
+ * \brief Задача спуска ЛА на планету (логико-динамическая, линеаризованная) для фильтров
+ * оптимальной структуры.
  */
 
 class LandingTestLinear : public Core::LogicDynamicTask
@@ -49,7 +50,8 @@ protected:
 
     static constexpr double KB = 0.3;
     static constexpr double BB = 0.09;
-    static constexpr double CC = 0.043333333333333333333333333333333333333333333333333;
+    static constexpr double SX = 1.0 / 150.0;
+    static constexpr double R0 = 0.013;
     static constexpr double GG = 3.711E-3;
     static constexpr double RR = 3390.0;
 };
