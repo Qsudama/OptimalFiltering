@@ -26,22 +26,25 @@ public:
     LandingTestLinear();
 
     Vector a(const Vector &x) const override;
-    Vector b(const Vector &x) const override;
+    Vector b(int i, const Vector &x) const override;
     Vector tau(const Vector &z, const Matrix &P) const override;
     Matrix Theta(const Vector &z, const Matrix &P) const override;
-    Vector h(const Vector &m, const Matrix &D) const override;
-    Matrix G(const Vector &m, const Matrix &D) const override;
-    Matrix F(const Vector &m, const Matrix &D) const override;
+    Vector h(int i, const Vector &m, const Matrix &D) const override;
+    Matrix G(int i, const Vector &m, const Matrix &D) const override;
+    Matrix F(int i, const Vector &m, const Matrix &D) const override;
 
 
 protected:
     Matrix dadx(const Vector &x) const override;
     Matrix dadv(const Vector &x) const override;
-    Matrix dbdx(const Vector &x) const override;
-    Matrix dbdw(const Vector &x) const override;
+    Matrix dbdx(int i, const Vector &x) const override;
+    Matrix dbdw(int i, const Vector &x) const override;
 
     void loadParams() override;
 
+    Matrix e(int i, const Vector &x) const;
+    double gammaX(int i) const;
+    double gammaY(int i) const;
     double k(double t) const;
 
 
