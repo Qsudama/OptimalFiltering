@@ -11,33 +11,74 @@ namespace Statistic
 
 double Mean(const Array<double> &sampleX)
 {
-    size_t size = sampleX.size();
     double sumX = 0.0;
-    for (size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; i < sampleX.size(); ++i) {
         sumX += sampleX[i];
     }
-    return sumX / size;
+    return sumX / sampleX.size();
+}
+
+double Mean(const Array<double> &sampleX, const Array<int> sampleI, int i)
+{
+    assert(sampleX.size() == sampleI.size());
+
+    double sumXi   = 0.0;
+    int    countXi = 0;
+    for (size_t j = 0; j < sampleI.size(); ++j) {
+        if (sampleI[j] == i) {
+            sumXi += sampleX[j];
+            ++countXi;
+        }
+    }
+    return sumXi / countXi;
 }
 
 Vector Mean(const Array<Vector> &sampleX)
 {
-    size_t size = sampleX.size();
-    long   dim  = sampleX[0].size();
-    Vector sumX = Vector::Zero(dim);
-    for (size_t i = 0; i < size; ++i) {
+    Vector sumX = Vector::Zero(sampleX[0].size());
+    for (size_t i = 0; i < sampleX.size(); ++i) {
         sumX += sampleX[i];
     }
-    return sumX / size;
+    return sumX / sampleX.size();
+}
+
+Vector Mean(const Array<Vector> &sampleX, const Array<int> sampleI, int i)
+{
+    assert(sampleX.size() == sampleI.size());
+
+    Vector sumXi   = Vector::Zero(sampleX[0].size());
+    int    countXi = 0;
+    for (size_t j = 0; j < sampleI.size(); ++j) {
+        if (sampleI[j] == i) {
+            sumXi += sampleX[j];
+            ++countXi;
+        }
+    }
+    return sumXi / countXi;
 }
 
 double Var(const Array<double> &sampleX, double meanX)
 {
-    size_t size = sampleX.size();
-    double sum  = 0.0;
-    for (size_t i = 0; i < size; ++i) {
+    double sum = 0.0;
+    for (size_t i = 0; i < sampleX.size(); ++i) {
         sum += pow(sampleX[i] - meanX, 2.0);
     }
-    return sum / (size - 1);
+    return sum / (sampleX.size() - 1);
+}
+
+double Var(const Array<double> &sampleX, double meanXi, const Array<int> sampleI, int i)
+{
+    assert(sampleX.size() == sampleI.size());
+
+    double sumXi = 0.0;
+    int    count = 0;
+    for (size_t j = 0; j < sampleI.size(); ++j) {
+        if (sampleI[j] == i) {
+            sumXi += pow(sampleX[j] - meanXi, 2.0);
+            ++count;
+        }
+    }
+    return sumXi / (count - 1);
 }
 
 double Var(const Array<double> &sampleX)
@@ -46,9 +87,56 @@ double Var(const Array<double> &sampleX)
     return Var(sampleX, meanX);
 }
 
+double Var(const Array<double> &sampleX, const Array<int> sampleI, int i)
+{
+    assert(sampleX.size() == sampleI.size());
+
+    double meanXi = Mean(sampleX, sampleI, i);
+    return Var(sampleX, meanXi, sampleI, i);
+}
+
+Matrix Var(const Array<Vector> &sampleX, const Vector &meanX)
+{
+    assert(sampleX[0].size() == meanX.size());
+
+    Matrix sumXX = Matrix::Zero(sampleX[0].size(), sampleX[0].size());
+    for (size_t i = 0; i < sampleX.size(); ++i) {
+        sumXX += sampleX[i] * sampleX[i].transpose();
+    }
+    return sumXX / sampleX.size() - meanX * meanX.transpose();
+}
+
+Matrix Var(const Array<Vector> &sampleX, const Vector &meanX, const Array<int> sampleI, int i)
+{
+    assert(sampleX.size() == sampleI.size());
+    assert(sampleX[0].size() == meanX.size());
+
+    Matrix sumXX = Matrix::Zero(sampleX[0].size(), sampleX[0].size());
+    int    count = 0;
+    for (size_t j = 0; j < sampleX.size(); ++j) {
+        if (sampleI[j] == i) {
+            sumXX += sampleX[j] * sampleX[j].transpose();
+            ++count;
+        }
+    }
+    return sumXX / count - meanX * meanX.transpose();
+}
+
+Matrix Var(const Array<Vector> &sampleX)
+{
+    Vector meanX = Mean(sampleX);
+    return Var(sampleX, meanX);
+}
+
+Matrix Var(const Array<Vector> &sampleX, const Array<int> sampleI, int i)
+{
+    Vector meanXi = Mean(sampleX, sampleI, i);
+    return Var(sampleX, meanXi, sampleI, i);
+}
+
 double Cov(const Array<double> &sampleX, const Array<double> &sampleY)
 {
-    assert(sampleX.size() == sampleY.size() && "Math::Statistic::Cov(sampleX, sampleY) : different sizes of arrays");
+    assert(sampleX.size() == sampleY.size());
 
     size_t size  = sampleX.size();
     double sumX  = 0.0;
@@ -62,30 +150,26 @@ double Cov(const Array<double> &sampleX, const Array<double> &sampleY)
     return sumXY / size - (sumX / size) * (sumY / size);
 }
 
-Matrix Var(const Array<Vector> &sampleX, const Vector &meanX)
+double Cov(const Array<double> &sampleX, const Array<double> &sampleY, const Array<int> sampleI,
+           int i)
 {
-    size_t size = sampleX.size();
-    long   dimX = sampleX[0].size();
+    assert(sampleX.size() == sampleI.size());
+    assert(sampleY.size() == sampleI.size());
 
-    assert(dimX == meanX.size() &&
-           "Math::Statistic::Var(sampleX, meanX) : corrupt dimension of meanX (or array's elements)");
-
-    Matrix sumXX = Matrix::Zero(dimX, dimX);
-    for (size_t i = 0; i < size; ++i) {
-        sumXX += sampleX[i] * sampleX[i].transpose();
+    Array<double> tmpX, tmpY;
+    for (size_t j = 0; j < sampleI.size(); ++j) {
+        if (sampleI[j] == i) {
+            tmpX.push_back(sampleX[j]);
+            tmpY.push_back(sampleY[j]);
+        }
     }
-    return sumXX / size - meanX * meanX.transpose();
-}
 
-Matrix Var(const Array<Vector> &sampleX)
-{
-    Vector meanX = Mean(sampleX);
-    return Var(sampleX, meanX);
+    return Cov(tmpX, tmpY);
 }
 
 Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
 {
-    assert(sampleX.size() == sampleY.size() && "Math::Statistic::Cov(sampleX, sampleY) : different sizes of arrays");
+    assert(sampleX.size() == sampleY.size());
 
     size_t size  = sampleX.size();
     long   dimX  = sampleX[0].size();
@@ -99,6 +183,23 @@ Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
         sumXY += sampleX[i] * sampleY[i].transpose();
     }
     return sumXY / size - (sumX / size) * (sumY / size).transpose();
+}
+
+Vector Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Array<int> sampleI,
+           int i)
+{
+    assert(sampleX.size() == sampleI.size());
+    assert(sampleY.size() == sampleI.size());
+
+    Array<Vector> tmpX, tmpY;
+    for (size_t j = 0; j < sampleI.size(); ++j) {
+        if (sampleI[j] == i) {
+            tmpX.push_back(sampleX[j]);
+            tmpY.push_back(sampleY[j]);
+        }
+    }
+
+    return Cov(tmpX, tmpY);
 }
 
 double Median(const Array<double> &sampleX)
