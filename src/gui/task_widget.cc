@@ -49,7 +49,8 @@ void TaskWidget::initLayouts()
     lbl->setMinimumWidth(QFontMetrics(this->font()).width(lbl->text()));
     layout->addWidget(lbl);
     layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
-    m_btnParameters->setMinimumWidth(QFontMetrics(this->font()).width("    " + m_btnParameters->text()));
+    m_btnParameters->setMinimumWidth(
+        QFontMetrics(this->font()).width("    " + m_btnParameters->text()));
     layout->addWidget(m_btnParameters);
 
     mainLayout->addLayout(layout);
@@ -68,10 +69,12 @@ void TaskWidget::onCbTaskChanged(int)
 {
     Tasks::TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-    if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId, Core::APPROX_TYPE::Linear);
+    if (taskId == Tasks::TASK_ID::LandingTest) {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId,
+                                             Core::APPROX_TYPE::Linear);
     } else {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId, Core::APPROX_TYPE::Linear);
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId,
+                                             Core::APPROX_TYPE::Linear);
     }
 
     bool hidden = true;
@@ -113,8 +116,6 @@ Tasks::TASK_ID TaskWidget::id() const
         return Tasks::TASK_ID::VanDerPol;
     case 2:
         return Tasks::TASK_ID::LandingTest;
-    case 3:
-        return Tasks::TASK_ID::LandingRejection;
     default:
         return Tasks::TASK_ID::Landing;
     }
