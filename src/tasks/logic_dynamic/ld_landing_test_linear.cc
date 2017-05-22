@@ -15,6 +15,7 @@ using Math::Convert::DegToRad;
 LandingTestLinear::LandingTestLinear()
     : LogicDynamicTask()
     , m_turnTime(45.0)
+    , m_p(0.8)
 {
     m_info->setName("Спуск ЛА с неполной информацией. Тестовый пример");
     m_info->setType("Л-");
@@ -60,11 +61,13 @@ LandingTestLinear::LandingTestLinear()
     (*m_consts)["R"]      = RR;
 
     (*m_params)["tau"] = m_turnTime;
+    (*m_params)["p"]   = m_p;
 }
 
 void LandingTestLinear::loadParams()
 {
     m_turnTime = m_params->at("tau");
+    m_p        = m_params->at("p");
 }
 
 double LandingTestLinear::k(double t) const
@@ -245,6 +248,16 @@ Matrix LandingTestLinear::dbdw(int i, const Vector &x) const
     res(1, 3) = 1.0;
 
     return res;
+}
+
+Vector LandingTestLinear::Pr() const
+{
+    double e = 0.4 * (1.0 - m_p);
+    Vector pr(4);
+
+    pr << m_p, e, e, 0.5 * e;
+
+    return pr;
 }
 
 

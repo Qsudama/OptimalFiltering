@@ -112,6 +112,9 @@ protected:
 
     //! Вспомогательная функция, вычисляет \f$\nabla_w b_k(x,w)\f$.
     virtual Matrix dbdw(int i, const Vector &x) const = 0;
+
+    //! Возващает вектор вероятностей изменения режима.
+    virtual Vector Pr() const = 0;
 };
 
 

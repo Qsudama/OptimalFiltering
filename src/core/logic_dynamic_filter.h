@@ -1,8 +1,8 @@
 #ifndef LOGIC_DYNAMIC_FILTER_H
 #define LOGIC_DYNAMIC_FILTER_H
 
-#include "logic_dynamic_task.h"
 #include "filter.h"
+#include "logic_dynamic_task.h"
 #include "src/math/linear_algebra.h"
 
 namespace Core

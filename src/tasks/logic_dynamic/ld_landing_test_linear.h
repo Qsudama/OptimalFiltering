@@ -33,6 +33,8 @@ public:
     Matrix G(int i, const Vector &m, const Matrix &D) const override;
     Matrix F(int i, const Vector &m, const Matrix &D) const override;
 
+    Vector Pr() const override;
+
 
 protected:
     Matrix dadx(const Vector &x) const override;
@@ -50,6 +52,7 @@ protected:
 
 protected:
     double m_turnTime;
+    double m_p;
 
     static constexpr double KB = 0.3;
     static constexpr double BB = 0.09;
