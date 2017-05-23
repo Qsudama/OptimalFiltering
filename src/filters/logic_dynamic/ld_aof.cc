@@ -14,6 +14,7 @@ using Math::Statistic::Cov;
 using Math::MakeBlockVector;
 using Math::MakeBlockMatrix;
 
+
 AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
     : LogicDynamicFilter(params, task)
 {
@@ -43,7 +44,6 @@ void AOF::algorithm()
         m_sampleI[s] = m_task->nextI(i);
         m_sampleX[s] = m_task->x0();
         m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
-
     }
 
     Vector mx  = Mean(m_sampleX, m_sampleI, i);
@@ -78,41 +78,76 @@ void AOF::algorithm()
     m_result[0].time  = 0.0;
 
 
-//    Vector h, lambda;
-//    Matrix G, F, H, Psi;
+    m_task->setStep(m_params->measurementStep());
 
-//    m_task->setStep(m_params->measurementStep());
+    // Индекс k соответствует моменту времени tk = t0 + k * delta_t  (delta_t - интервал между измерениями):
+    for (size_t k = 1; k < m_result.size(); ++k) {
+        Array<int> sampleI = m_sampleI;
+        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+            m_sampleI[s] = m_task->nextI(sampleI[s]);
+        }
+        // Индекс s пробегает по всем элементам выборки:
+        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+            m_task->setTime(m_result[k - 1].time);
 
-//    // Индекс k соответствует моменту времени tk = t0 + k * delta_t  (delta_t - интервал между измерениями):
-//    for (size_t k = 1; k < m_result.size(); ++k) {
-//        Array<int> sampleI = m_sampleI;
-//        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-//            m_sampleI[s] = m_task->nextI(sampleI[s]);
-//        }
-//        // Индекс s пробегает по всем элементам выборки:
-//        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-//            m_task->setTime(m_result[k - 1].time);
-//            // X_k = a(X_{k-1}); время t = t_{k-1}
-//            m_sampleX[s] = m_task->a(m_sampleI[s], m_sampleX[s]);
-//            // вычисляем lambda, Psi;  время t = t_{k-1}:
-//            lambda = m_task->tau(m_sampleI[s], sampleI[s], m_sampleZ[s], m_sampleP[s]);
-//            Psi    = m_task->Theta(m_sampleI[s], sampleI[s], m_sampleZ[s], m_sampleP[s]);
+            // X_k = a(X_{k-1}); время t = t_{k-1}
+            m_sampleI[s] = m_task->nextI(m_sampleI[s]);
+            m_sampleX[s] = m_task->a(m_sampleI[s], m_sampleX[s]);
+            m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
 
-//            //ставим текущее (t = tk) время и продолжаем:
-//            m_task->setTime(m_result[k].time);
+            mx  = Mean(m_sampleX, m_sampleI, i);
+            Dx = Cov(m_sampleX, m_sampleY, m_sampleI, i);
 
-//            h = m_task->h(m_sampleI[s], lambda, Psi);
-//            G = m_task->G(m_sampleI[s], lambda, Psi);
-//            F = m_task->F(m_sampleI[s], lambda, Psi);
-//            H = Psi * G.transpose() * Pinv(F);
+            Mu = m_task->h(m_sampleI[s], mx, Dx);
+            Delta = m_task->G(m_sampleI[s], mx, Dx) - Lambda * Mu.transpose();
+            Phi = m_task->F(m_sampleI[s], mx, Dx) - Mu*Mu.transpose();
 
-//            m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
-//            m_sampleZ[s] = lambda + H * (m_sampleY[s] - h);
-//            m_sampleP[s] = Psi - H * G * Psi;
-//            m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
-//        }
-//        writeResult(k);
-//    }
+            double p = Omega * m_normalRand(Mu, Phi);
+            int sizeI = m_task->Pr().size();
+            P = p / sumForP(p, sizeI);
+            K = Delta*Pinv(Phi);
+            sigma = Lambda + K*(m_sampleY[s] - Mu);
+            Upsilon = Psi - K*Delta.transpose();
+
+            double resZ = P*sigma;
+
+            m_sampleZ[s] = sumForP(resZ, sizeI);
+            //ставим текущее (t = tk) время и продолжаем:
+            m_task->setTime(m_result[k].time);
+            double resOmega = 0.0;
+            for(int j = 1; j <= sizeI; j++) {
+                for(int ll = 1; ll <= sizeI; ll++) {
+                    resOmega += P*m_task->nu(j, ll, sigma, Upsilon);
+                }
+            }
+            Omega = resOmega;
+//            Vector resOmega;
+//            for(int j = 1; j <= sizeI; j++) {
+//                for(int ll = 1; ll <= sizeI; ll++) {
+//                    resOmega += P*m_task->tau(j, ll, sigma, Upsilon);
+//                }
+//            }
+//            Omega = resOmega;
+//            double resOmega = 0.0;
+//            for(int j = 1; j <= sizeI; j++) {
+//                for(int ll = 1; ll <= sizeI; ll++) {
+//                    resOmega += P*m_task->nu(j, ll, sigma, Upsilon);
+//                }
+//            }
+//            Omega = resOmega;
+
+            m_sampleP[s] = Psi;
+            m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
+        }
+        writeResult(k);
+    }
+}
+
+double sumForP(double p, int size) {
+    double res = 0.0;
+    for(int i = 0; i < size; i++) {
+        res += p;
+    }
 }
 
 
