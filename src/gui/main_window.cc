@@ -242,7 +242,7 @@ void MainWindow::showData(Core::PtrFilter filter)
         m_graphWindow->sheet(i).setTitleLabel(title);
         m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::Landing) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
@@ -250,11 +250,21 @@ void MainWindow::showData(Core::PtrFilter filter)
         m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
         m_graphWindow->sheet(2).setYLabel(tr("Высота (м)"));
     }
+    if (m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
+        m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheet(3).setYLabel(tr("Квазиплотность (1/км)"));
+        m_graphWindow->sheet(4).setYLabel(tr("Качество"));
+        m_graphWindow->sheet(5).setYLabel(tr("Ошибка гировертикали (°)"));
+    }
 
     Math::Vector scale(dim);
-    if (m_taskWidget->id() == Tasks::TASK_ID::Landing) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
         scale[0] = scale[2] = 1000.0;
-        scale[1]            = Math::Convert::RadToDeg(1.0);
+        scale[1] = scale[5] = Math::Convert::RadToDeg(1.0);
+        scale[3]            = 1000.0;
+        scale[4]            = 1.0;
     } else {
         for (int i = 0; i < dim; ++i) {
             scale[i] = 1.0;
