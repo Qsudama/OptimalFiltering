@@ -23,6 +23,7 @@ void LogicDynamicFilter::init()
     m_sampleY.resize(m_params->sampleSize());
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
+    m_sampleI.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount());
     m_result.resize(size);
@@ -34,8 +35,9 @@ void LogicDynamicFilter::init()
 void LogicDynamicFilter::zeroIteration()
 {
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+        m_sampleI[s] = m_task->nextI(1);
         m_sampleX[s] = m_task->x0();
-        m_sampleY[s] = m_task->b(m_sampleX[s]);
+        m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
     }
 
     Vector mx0  = Mean(m_sampleX);
