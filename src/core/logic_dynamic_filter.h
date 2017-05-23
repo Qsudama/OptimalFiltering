@@ -47,8 +47,7 @@ protected:
     Vector Mu;
     Matrix Psi;
     Matrix Delta;
-    Matrix Phi;
-
+    Matrix Phi;    
 };
 
 
