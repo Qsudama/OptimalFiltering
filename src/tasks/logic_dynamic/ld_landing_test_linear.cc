@@ -41,7 +41,7 @@ LandingTestLinear::LandingTestLinear()
     m_varX0(0, 0) = pow(15E-3, 2);
     m_varX0(1, 1) = pow(DegToRad(1.0), 2);
     m_varX0(2, 2) = pow(7.0, 2);
-    m_varX0(3, 3) = pow(0.1, 2); // WARNING ... = 0.1 * m0, m0 - ???
+    m_varX0(3, 3) = pow(0.1 * m_meanX0[3], 2);
     m_varX0(4, 4) = pow(0.02, 2);
     m_varX0(5, 5) = pow(DegToRad(1.0), 2);
 
@@ -72,18 +72,18 @@ void LandingTestLinear::loadParams()
 
 double LandingTestLinear::k(double t) const
 {
-    return KB * Math::sign(t - m_turnTime);
+    return Math::sign(t - m_turnTime);
 }
 
 Matrix LandingTestLinear::e(int i, const Vector &x) const
 {
-    double _exp = exp(-BB * x[2]);
-    Matrix e    = Matrix::Zero(2, 2);
+    double E = x[0] * x[0] * x[3] * exp(-BB * x[2]);
+    Matrix e = Matrix::Zero(2, 2);
 
-    e(0, 0) = gammaX(i) * _exp * cos(x[1] - x[5]);
-    e(0, 1) = gammaX(i) * _exp * k(m_time) * sin(x[1] - x[5]);
-    e(1, 0) = gammaY(i) * _exp * sin(x[1] - x[5]);
-    e(1, 1) = gammaY(i) * _exp * k(m_time) * cos(x[1] - x[5]);
+    e(0, 0) = gammaX(i) * E * cos(x[1] - x[5]);
+    e(0, 1) = gammaX(i) * E * k(m_time) * sin(x[1] - x[5]);
+    e(1, 0) = gammaY(i) * E * sin(x[1] - x[5]);
+    e(1, 1) = gammaY(i) * E * k(m_time) * cos(x[1] - x[5]);
 
     return e;
 }
@@ -106,7 +106,7 @@ double LandingTestLinear::gammaY(int i) const
     }
 }
 
-Vector LandingTestLinear::a(const Vector &x) const
+Vector LandingTestLinear::a(int /*i*/, const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Vector dx(m_dimX);
@@ -132,19 +132,29 @@ Vector LandingTestLinear::b(int i, const Vector &x) const
     return res;
 }
 
-Vector LandingTestLinear::tau(const Vector &z, const Matrix & /*D*/) const
+double LandingTestLinear::nu(int i, int i0, const Vector &m, const Matrix &D) const
 {
-    return a(z);
+    double p = m_p;
+    double e = 0.4 * (1.0 - p);
+
+    Matrix A(4, 4);
+    A << p, p, p, p, e, e, e, e, e, e, e, e, 0.5 * e, 0.5 * e, 0.5 * e, 0.5 * e;
+
+    return A(i - 1, i0 - 1);
 }
 
-Matrix LandingTestLinear::Theta(const Vector &z, const Matrix &P) const
+Vector LandingTestLinear::tau(int i, int i0, const Vector &z, const Matrix &P) const
 {
-    Matrix Ax = dadx(z);
-    Matrix Av = dadv(z);
+    return nu(i, i0, z, P) * a(i, z);
+}
 
-    return Ax * P * Ax.transpose() + Av * m_varV * Av.transpose();
+Matrix LandingTestLinear::Theta(int i, int i0, const Vector &z, const Matrix &P) const
+{
+    Matrix Ax = dadx(i, z);
+    Matrix Av = dadv(i, z);
+    Vector a  = this->a(i, z);
 
-    // TODO V = 0 --> m_meanV = 0, m_varV = 0 --> Av = 0....
+    return nu(i, i0, z, P) * (Ax * P * Ax.transpose() + Av * m_varV * Av.transpose() + a * a.transpose());
 }
 
 Vector LandingTestLinear::h(int i, const Vector &m, const Matrix & /* D*/) const
@@ -167,87 +177,94 @@ Matrix LandingTestLinear::F(int i, const Vector &m, const Matrix &D) const
 {
     Matrix Bx = dbdx(i, m);
     Matrix Bw = dbdw(i, m);
+    Vector b  = h(i, m, m_varW);
 
-    return Bx * D * Bx.transpose() + Bw * m_varW * Bw.transpose();
+    return Bx * D * Bx.transpose() + Bw * m_varW * Bw.transpose() + b * b.transpose();
 }
 
-Matrix LandingTestLinear::dadx(const Vector &x) const
+Matrix LandingTestLinear::dadx(int /*i*/, const Vector &x) const
 {
-    double e   = exp(-BB * x[2]);
+    double E   = x[0] * x[0] * x[3] * exp(-BB * x[2]);
     double h   = m_step;
     double kt  = k(m_time);
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
 
-    res(0, 0) = 1.0 - 2.0 * h * x[0] * x[3] * e;
+    res(0, 0) = 1.0 - 2.0 * h * E;
     res(0, 1) = -h * GG * cos(x[1]);
-    res(0, 2) = h * BB * x[0] * x[0] * x[3] * e;
-    res(0, 3) = -h * x[0] * x[0] * e;
+    res(0, 2) = h * BB * E;
+    res(0, 3) = -h * E / x[3];
     res(0, 4) = 0.0;
     res(0, 5) = 0.0;
 
-    res(1, 0) = h * (x[3] * x[4] * kt * e + (GG / (x[0] * x[0]) + 1.0 / (RR + x[2])) * cos(x[1]));
+    res(1, 0) = h * (E * x[4] * kt / pow(x[0], 2) + (GG / pow(x[0], 2) + 1.0 / (RR + x[2])) * cos(x[1]));
     res(1, 1) = 1.0 - h * sin(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
-    res(1, 2) = -h * (BB * x[0] * x[3] * x[4] * kt * e + x[0] * cos(x[1]) / (RR + x[2]));
-    res(1, 3) = h * x[0] * x[4] * kt * e;
-    res(1, 4) = h * x[0] * x[3] * kt * e;
+    res(1, 2) = -h * (BB * x[4] * kt * E + x[0] * cos(x[1]) / pow(RR + x[2], 2));
+    res(1, 3) = h * x[4] * kt * E / (x[0] * x[3]);
+    res(1, 4) = h * kt * E;
     res(1, 5) = 0.0;
 
     res(2, 0) = h * sin(x[1]);
     res(2, 1) = h * x[0] * cos(x[1]);
-    res(2, 2) = 1.0;
 
-    res(3, 3) = res(4, 4) = res(5, 5) = 1.0;
+    res(2, 2) = res(3, 3) = res(4, 4) = res(5, 5) = 1.0;
 
     return res;
 }
 
-Matrix LandingTestLinear::dadv(const Vector & /*x*/) const
+Matrix LandingTestLinear::dadv(int /*i*/, const Vector & /*x*/) const
 {
     return Matrix::Zero(m_dimX, m_dimV);
 }
 
 Matrix LandingTestLinear::dbdx(int i, const Vector &x) const
 {
-    Matrix _e = e(i, x);
-    double e0 = _e(0, 0) - x[4] * _e(0, 1);
-    double e1 = _e(1, 0) + x[4] * _e(1, 1);
-    Matrix res(m_dimY, m_dimX);
+    double e0 = cos(x[1] - x[5]) - x[4] * sin(x[1] - x[5]) * k(m_time);
+    double e1 = sin(x[1] - x[5]) + x[4] * cos(x[1] - x[5]) * k(m_time);
+    Matrix tmp(m_dimY, m_dimX);
 
-    res(0, 0) = 2.0 * e0 / x[0];
-    res(0, 1) = -e1;
-    res(0, 2) = -BB * e0;
-    res(0, 3) = e0 / x[3];
-    res(0, 4) = -_e(0, 1);
-    res(0, 5) = BB * e0;
+    tmp(0, 0) = 2.0 * e0 / x[0];
+    tmp(0, 1) = -e1;
+    tmp(0, 2) = -BB * e0;
+    tmp(0, 3) = e0 / x[3];
+    tmp(0, 4) = -k(m_time) * sin(x[1] - x[5]);
+    tmp(0, 5) = e1;
 
-    res(1, 0) = 2.0 * e1 / x[0];
-    res(1, 1) = e0;
-    res(1, 2) = -BB * e1;
-    res(1, 3) = e1 / x[3];
-    res(1, 4) = _e(1, 1);
-    res(1, 5) = BB * e1;
+    tmp(1, 0) = 2.0 * e1 / x[0];
+    tmp(1, 1) = e0;
+    tmp(1, 2) = -BB * e1;
+    tmp(1, 3) = e0 / x[3];
+    tmp(1, 4) = k(m_time) * cos(x[1] - x[5]);
+    tmp(1, 5) = -e0;
 
-    return res;
+    Matrix gamma = Matrix::Zero(2, 2);
+    gamma(0, 0) = gammaX(i);
+    gamma(1, 1) = gammaY(i);
+
+    return gamma * tmp;
 }
 
 Matrix LandingTestLinear::dbdw(int i, const Vector &x) const
 {
-    Matrix _e = e(i, x);
-    double e0 = _e(0, 0) - x[4] * _e(0, 1);
-    double e1 = _e(1, 0) + x[4] * _e(1, 1);
-    Matrix res(m_dimY, m_dimW);
+    double E  = x[0] * x[0] * x[3] * exp(-BB * x[2]);
+    double e0 = cos(x[1] - x[5]) - x[4] * sin(x[1] - x[5]) * k(m_time);
+    double e1 = sin(x[1] - x[5]) + x[4] * cos(x[1] - x[5]) * k(m_time);
+    Matrix tmp(m_dimY, m_dimW);
 
-    res(0, 0) = e0;
-    res(0, 1) = 0.0;
-    res(0, 2) = 1.0;
-    res(0, 3) = 0.0;
+    tmp(0, 0) = E * e0;
+    tmp(0, 1) = 0.0;
+    tmp(0, 2) = 1.0;
+    tmp(0, 3) = 0.0;
 
-    res(1, 0) = 0.0;
-    res(1, 1) = e1;
-    res(1, 2) = 0.0;
-    res(1, 3) = 1.0;
+    tmp(1, 0) = 0.0;
+    tmp(1, 1) = E * e1;
+    tmp(1, 2) = 0.0;
+    tmp(1, 3) = 1.0;
 
-    return res;
+    Matrix gamma = Matrix::Zero(2, 2);
+    gamma(0, 0) = gammaX(i);
+    gamma(1, 1) = gammaY(i);
+
+    return gamma * tmp;
 }
 
 Vector LandingTestLinear::Pr() const
@@ -258,6 +275,30 @@ Vector LandingTestLinear::Pr() const
     pr << m_p, e, e, 0.5 * e;
 
     return pr;
+}
+
+int LandingTestLinear::nextI(int) const
+{
+#if defined(ARCHITECTURE_64)
+    std::mt19937_64 generator;
+#else
+    std::mt19937 generator;
+#endif
+
+    static std::uniform_real_distribution<double> uniform(0.0, 1.0);
+
+    double p = m_p;
+    double e = 0.4 * (1.0 - p);
+    double u = uniform(generator);
+    if (u < p) {
+        return 1;
+    } else if (u < p + e) {
+        return 2;
+    } else if (u < p + 2 * e) {
+        return 3;
+    } else {
+        return 4;
+    }
 }
 
 

@@ -25,20 +25,23 @@ public:
     //! \brief Конструктор.
     LandingTestLinear();
 
-    Vector a(const Vector &x) const override;
+    Vector a(int i, const Vector &x) const override;
     Vector b(int i, const Vector &x) const override;
-    Vector tau(const Vector &z, const Matrix &P) const override;
-    Matrix Theta(const Vector &z, const Matrix &P) const override;
+    Vector tau(int i, int i0, const Vector &z, const Matrix &P) const override;
+    Matrix Theta(int i, int i0, const Vector &z, const Matrix &P) const override;
     Vector h(int i, const Vector &m, const Matrix &D) const override;
     Matrix G(int i, const Vector &m, const Matrix &D) const override;
     Matrix F(int i, const Vector &m, const Matrix &D) const override;
 
+    double nu(int i, int i0, const Vector &m, const Matrix &D) const override;
+
     Vector Pr() const override;
+    int nextI(int i) const override;
 
 
 protected:
-    Matrix dadx(const Vector &x) const override;
-    Matrix dadv(const Vector &x) const override;
+    Matrix dadx(int i, const Vector &x) const override;
+    Matrix dadv(int i, const Vector &x) const override;
     Matrix dbdx(int i, const Vector &x) const override;
     Matrix dbdw(int i, const Vector &x) const override;
 

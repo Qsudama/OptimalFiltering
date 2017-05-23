@@ -29,7 +29,7 @@ public:
 
         Шум \f$V_k\f$ генерируется внутри.
     */
-    virtual Vector a(const Vector &x) const = 0;
+    virtual Vector a(int i, const Vector &x) const = 0;
 
     /*! \brief Функция измерителя \f$b(X_k) = b_k(X_k, W_k)\f$.
 
@@ -45,7 +45,7 @@ public:
 
         * * линеаризованного приближения: \f[\tau_k(m, D) = a_k(m, M[V_k]).\f]
     */
-    virtual Vector tau(const Vector &m, const Matrix &D) const = 0;
+    virtual Vector tau(int i, int i0, const Vector &m, const Matrix &D) const = 0;
 
     /*! \brief Структурная функция прогноза \f$\Theta_k(m, D)\f$.
 
@@ -61,7 +61,7 @@ public:
 
         Здесь \f$A_k^x(x) = \nabla_x a_k(x,M[V_k]),\ A_k^v(x) = \nabla_v a_k(x,M[V_k])\f$.
     */
-    virtual Matrix Theta(const Vector &m, const Matrix &D) const = 0;
+    virtual Matrix Theta(int i, int i0, const Vector &m, const Matrix &D) const = 0;
 
     /*! \brief Структурная функция коррекции \f$h_k(m, D)\f$.
 
@@ -99,22 +99,27 @@ public:
     */
     virtual Matrix F(int i, const Vector &m, const Matrix &D) const = 0;
 
+    //! Возващает вектор вероятностей изменения режима.
+    virtual Vector Pr() const = 0;
+
+    //! Возвращает случайное значение режима по предыдущему значению.
+    virtual int nextI(int i) const = 0;
+
+    virtual double nu(int i, int l, const Vector &m, const Matrix &D) const = 0;
+
 
 protected:
     //! Вспомогательная функция, вычисляет \f$\nabla_x a_k(x,v)\f$.
-    virtual Matrix dadx(const Vector &x) const = 0;
+    virtual Matrix dadx(int i, const Vector &x) const = 0;
 
     //! Вспомогательная функция, вычисляет \f$\nabla_v a_k(x,v)\f$.
-    virtual Matrix dadv(const Vector &x) const = 0;
+    virtual Matrix dadv(int i, const Vector &x) const = 0;
 
     //! Вспомогательная функция, вычисляет \f$\nabla_x b_k(x,w)\f$.
     virtual Matrix dbdx(int i, const Vector &x) const = 0;
 
     //! Вспомогательная функция, вычисляет \f$\nabla_w b_k(x,w)\f$.
     virtual Matrix dbdw(int i, const Vector &x) const = 0;
-
-    //! Возващает вектор вероятностей изменения режима.
-    virtual Vector Pr() const = 0;
 };
 
 
