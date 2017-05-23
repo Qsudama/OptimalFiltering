@@ -42,6 +42,13 @@ protected:
 protected:
     PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
     Array<int> m_sampleI; /*!< Массив для выборки режимов. */
+    double Omega;
+    Vector Lambda;
+    Vector Mu;
+    Matrix Psi;
+    Matrix Delta;
+    Matrix Phi;
+
 };
 
 
