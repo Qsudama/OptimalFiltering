@@ -47,17 +47,17 @@ void AOF::algorithm()
     }
 
     Vector mx  = Mean(m_sampleX, m_sampleI, i);
-    Matrix Dx = Cov(m_sampleX, m_sampleY, m_sampleI, i);
+    Matrix Dxy = Cov(m_sampleX, m_sampleY, m_sampleI, i);
 
     double P = m_task->Pr()[i-1];
 
     Omega = P;
     Lambda = mx;
-    Mu = m_task->h(i, mx, Dx);
-    Psi = Dx;
+    Mu = m_task->h(i, mx, Dxy);
+    Psi = Dxy;
     Matrix r = Lambda * Mu.transpose();
     Delta = m_task->G(i, mx, Dx) - r.transpose(); // This NOT TRANSPOSE!
-    Matrix fi =  m_task->F(i, mx, Dx);
+    Matrix fi =  m_task->F(i, mx, DxDxy
     Matrix muT = Mu*Mu.transpose();
     Phi = fi - muT;
 
@@ -99,13 +99,13 @@ void AOF::algorithm()
             m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
 
             mx  = Mean(m_sampleX, m_sampleI, i);
-            Dx = Cov(m_sampleX, m_sampleY, m_sampleI, i);
+            Dxy = Cov(m_sampleX, m_sampleY, m_sampleI, i);
 
-            Mu = m_task->h(m_sampleI[s], mx, Dx);
-            Delta = m_task->G(m_sampleI[s], mx, Dx) - Lambda * Mu.transpose();
-            Phi = m_task->F(m_sampleI[s], mx, Dx) - Mu*Mu.transpose();
+            Mu = m_task->h(m_sampleI[s], mx, Dxy);
+            Delta = m_task->G(m_sampleI[s], mx, Dxy) - Lambda * Mu.transpose();
+            Phi = m_task->F(m_sampleI[s], mx, Dxy) - Mu*Mu.transpose();
 
-//            double p = Omega * m_normalRand(Mu, Phi);
+            double p = Omega * m_normalRand(Mu, Phi);
             int sizeI = m_task->Pr().size();
 
             P = Omega;//p / (p*sizeI);
