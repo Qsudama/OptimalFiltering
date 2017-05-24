@@ -185,7 +185,7 @@ Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
     return sumXY / size - (sumX / size) * (sumY / size).transpose();
 }
 
-Vector Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Array<int> sampleI,
+Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Array<int> sampleI,
            int i)
 {
     assert(sampleX.size() == sampleI.size());

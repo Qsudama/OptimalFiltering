@@ -55,8 +55,11 @@ void AOF::algorithm()
     Lambda = mx;
     Mu = m_task->h(i, mx, Dx);
     Psi = Dx;
-    Delta = m_task->G(i, mx, Dx) - Lambda * Mu.transpose();
-    Phi = m_task->F(i, mx, Dx) - Mu*Mu.transpose();
+    Matrix r = Lambda * Mu.transpose();
+    Delta = m_task->G(i, mx, Dx) - r.transpose(); // This NOT TRANSPOSE!
+    Matrix fi =  m_task->F(i, mx, Dx);
+    Matrix muT = Mu*Mu.transpose();
+    Phi = fi - muT;
 
     Matrix K = Delta*Pinv(Phi);
     Vector sigma = Lambda + K*(m_sampleY[0] - Mu);
@@ -102,16 +105,17 @@ void AOF::algorithm()
             Delta = m_task->G(m_sampleI[s], mx, Dx) - Lambda * Mu.transpose();
             Phi = m_task->F(m_sampleI[s], mx, Dx) - Mu*Mu.transpose();
 
-            double p = Omega * m_normalRand(Mu, Phi);
+//            double p = Omega * m_normalRand(Mu, Phi);
             int sizeI = m_task->Pr().size();
-            P = p / sumForP(p, sizeI);
+
+            P = Omega;//p / (p*sizeI);
             K = Delta*Pinv(Phi);
             sigma = Lambda + K*(m_sampleY[s] - Mu);
             Upsilon = Psi - K*Delta.transpose();
 
-            double resZ = P*sigma;
+            Vector resZ = P*sigma;
 
-            m_sampleZ[s] = sumForP(resZ, sizeI);
+            m_sampleZ[s] = resZ*sizeI;//sumForP(resZ, sizeI);
             //ставим текущее (t = tk) время и продолжаем:
             m_task->setTime(m_result[k].time);
             double resOmega = 0.0;
@@ -121,20 +125,31 @@ void AOF::algorithm()
                 }
             }
             Omega = resOmega;
-//            Vector resOmega;
-//            for(int j = 1; j <= sizeI; j++) {
-//                for(int ll = 1; ll <= sizeI; ll++) {
-//                    resOmega += P*m_task->tau(j, ll, sigma, Upsilon);
-//                }
-//            }
-//            Omega = resOmega;
-//            double resOmega = 0.0;
-//            for(int j = 1; j <= sizeI; j++) {
-//                for(int ll = 1; ll <= sizeI; ll++) {
-//                    resOmega += P*m_task->nu(j, ll, sigma, Upsilon);
-//                }
-//            }
-//            Omega = resOmega;
+
+            Vector resLambda = P*m_task->tau(1, 1, sigma, Upsilon);
+            for(int j = 1; j <= sizeI; j++) {
+                for(int ll = 1; ll <= sizeI; ll++) {
+                    if (j == 1 && ll == 1) {
+                        continue;
+                    } else {
+                        resLambda = resLambda + P*m_task->tau(j, ll, sigma, Upsilon);
+                    }
+                }
+            }
+
+            Lambda = resLambda/Omega;
+
+            Matrix resPsi = P*m_task->Theta(1, 1, sigma, Upsilon);
+            for(int j = 1; j <= sizeI; j++) {
+                for(int ll = 1; ll <= sizeI; ll++) {
+                    if (j == 1 && ll == 1) {
+                        continue;
+                    } else {
+                        resPsi = resPsi + (P*m_task->Theta(j, ll, sigma, Upsilon));
+                    }
+                }
+            }
+            Psi = resPsi/Omega - Lambda*Lambda.transpose();
 
             m_sampleP[s] = Psi;
             m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());

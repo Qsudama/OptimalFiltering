@@ -62,7 +62,7 @@ double Cov(const Array<double> &sampleX, const Array<double> &sampleY, const Arr
 Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY);
 
 //! Возвращает матрицу ковариации двух случайных векторов для i-го режима (многорежимные фильтры).
-Vector Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Array<int> sampleI,
+Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Array<int> sampleI,
            int i);
 
 // Var (x) = Cov (x, x)

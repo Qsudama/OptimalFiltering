@@ -5,7 +5,7 @@
 FilterParametersWidget::FilterParametersWidget(QWidget *parent)
     : QGroupBox(parent)
     , m_updateOn(true)
-    , m_parameters(new Core::FilterParameters(200.0, 1.0, 1.0, 0.1, 500, 1))
+    , m_parameters(new Core::FilterParameters(100.0, 1.0, 1.0, 0.1, 200, 1))
     , m_currentFiltersFamily(0)
 {
     setTitle(tr("Параметры фильтрации"));
