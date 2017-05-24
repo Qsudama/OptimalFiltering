@@ -56,10 +56,11 @@ void AOF::algorithm()
     Mu = m_task->h(i, mx, Dxy);
     Psi = Dxy;
     Matrix r = Lambda * Mu.transpose();
-    Delta = m_task->G(i, mx, Dx) - r.transpose(); // This NOT TRANSPOSE!
-    Matrix fi =  m_task->F(i, mx, DxDxy
+    Delta = m_task->G(i, mx, Dxy) - r.transpose(); // This NOT TRANSPOSE!
+    Matrix fi =  m_task->F(i, mx, Dxy);
     Matrix muT = Mu*Mu.transpose();
     Phi = fi - muT;
+
 
     Matrix K = Delta*Pinv(Phi);
     Vector sigma = Lambda + K*(m_sampleY[0] - Mu);
