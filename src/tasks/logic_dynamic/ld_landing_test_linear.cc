@@ -1,6 +1,7 @@
 #include "ld_landing_test_linear.h"
 #include "src/math/convert.h"
 
+#include "iostream"
 
 namespace Tasks
 {
@@ -66,6 +67,7 @@ LandingTestLinear::LandingTestLinear()
 
 void LandingTestLinear::loadParams()
 {
+    countI = 4;
     m_turnTime = m_params->at("tau");
     m_p        = m_params->at("p");
 }
@@ -168,9 +170,12 @@ Vector LandingTestLinear::h(int i, const Vector &m, const Matrix & /* D*/) const
     return res;
 }
 
-Matrix LandingTestLinear::G(int i, const Vector &m, const Matrix & /*D*/) const
+Matrix LandingTestLinear::G(int i, const Vector &m, const Matrix &D) const
 {
-    return dbdx(i, m);
+    Matrix Bx = dbdx(i, m);
+    Vector b  = h(i, m, m_varW);
+
+    return D*Bx.transpose() + m*b.transpose();
 }
 
 Matrix LandingTestLinear::F(int i, const Vector &m, const Matrix &D) const
@@ -267,38 +272,64 @@ Matrix LandingTestLinear::dbdw(int i, const Vector &x) const
     return gamma * tmp;
 }
 
-Vector LandingTestLinear::Pr() const
+double LandingTestLinear::Pr(int i) const
 {
     double e = 0.4 * (1.0 - m_p);
-    Vector pr(4);
-
-    pr << m_p, e, e, 0.5 * e;
-
-    return pr;
+    if (i == 1) {
+        return m_p;
+    } else if (i == 2) {
+        return e;
+    } else if (i == 3) {
+        return e;
+    } else {
+        return 0.5*e;
+    }
 }
 
-int LandingTestLinear::nextI(int) const
+
+
+Array<int> LandingTestLinear::generateArrayI(int sizeS) const
 {
-#if defined(ARCHITECTURE_64)
-    std::mt19937_64 generator;
-#else
-    std::mt19937 generator;
-#endif
-
-    static std::uniform_real_distribution<double> uniform(0.0, 1.0);
-
-    double p = m_p;
-    double e = 0.4 * (1.0 - p);
-    double u = uniform(generator);
-    if (u < p) {
-        return 1;
-    } else if (u < p + e) {
-        return 2;
-    } else if (u < p + 2 * e) {
-        return 3;
-    } else {
-        return 4;
+    Array<int> array(sizeS);
+    double e = 0.4 * (1.0 - m_p);
+    int countI1, countI2, countI3;
+    countI1 = sizeS*m_p;
+    countI2 = sizeS*e + countI1;
+    countI3 = sizeS*e + countI2;
+    for (int i = 0; i < sizeS; i++) {
+        if (i < countI1) {
+            array[i] = 1;
+        } else if (i < countI2) {
+            array[i] = 2;
+        } else if (i < countI3) {
+            array[i] = 3;
+        } else {
+            array[i] = 4;
+        }
     }
+
+    for (int i = 0; i < sizeS; i++) {
+      std::swap(array[i], array[rand() % sizeS]);
+    }
+    return array;
+//#if defined(ARCHITECTURE_64)
+//    std::mt19937_64 generator;
+//#else
+//    std::mt19937 generator;
+//#endif
+//    static std::uniform_real_distribution<double> uniform(0.0, 1.0);
+//    double p = m_p;
+//    double e = 0.4 * (1.0 - p);
+//    double u = uniform(generator);
+//    if (u < p) {
+//        return 1;
+//    } else if (u < p + e) {
+//        return 2;
+//    } else if (u < p + 2 * e) {
+//        return 3;
+//    } else {
+//        return 4;
+//    }
 }
 
 

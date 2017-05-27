@@ -100,13 +100,14 @@ public:
     virtual Matrix F(int i, const Vector &m, const Matrix &D) const = 0;
 
     //! Возващает вектор вероятностей изменения режима.
-    virtual Vector Pr() const = 0;
+    virtual double Pr(int i) const = 0;
 
     //! Возвращает случайное значение режима по предыдущему значению.
-    virtual int nextI(int i) const = 0;
+    virtual Array<int> generateArrayI(int sizeS) const = 0;
 
     virtual double nu(int i, int l, const Vector &m, const Matrix &D) const = 0;
 
+    int countI;
 
 protected:
     //! Вспомогательная функция, вычисляет \f$\nabla_x a_k(x,v)\f$.

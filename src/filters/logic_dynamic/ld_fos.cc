@@ -37,7 +37,7 @@ void FOS::algorithm()
     for (size_t k = 1; k < m_result.size(); ++k) {
         Array<int> sampleI = m_sampleI;
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            m_sampleI[s] = m_task->nextI(sampleI[s]);
+//            m_sampleI[s] = m_task->nextI(sampleI[s]);
         }
         // Индекс s пробегает по всем элементам выборки:
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {

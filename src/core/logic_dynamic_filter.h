@@ -4,6 +4,7 @@
 #include "filter.h"
 #include "logic_dynamic_task.h"
 #include "src/math/linear_algebra.h"
+#include "src/math/constants.h"
 
 
 namespace Core
@@ -22,7 +23,6 @@ public:
     //! \brief Конструктор.
     LogicDynamicFilter(PtrFilterParameters params, PtrTask task);
 
-
 protected:
     void init() override;
 
@@ -38,16 +38,14 @@ protected:
     */
     void zeroIteration() override;
 
+    double probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D);
 
 protected:
     PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
     Array<int> m_sampleI; /*!< Массив для выборки режимов. */
-    double Omega;
-    Vector Lambda;
-    Vector Mu;
-    Matrix Psi;
-    Matrix Delta;
-    Matrix Phi;    
+
+    int countI;
+
 };
 
 

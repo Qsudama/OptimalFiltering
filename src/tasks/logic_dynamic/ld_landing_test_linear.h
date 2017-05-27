@@ -35,8 +35,9 @@ public:
 
     double nu(int i, int i0, const Vector &m, const Matrix &D) const override;
 
-    Vector Pr() const override;
-    int nextI(int i) const override;
+    double Pr(int i) const override;
+//    int generateI() const override;
+    Array<int> generateArrayI(int sizeS) const override;
 
 
 protected:
