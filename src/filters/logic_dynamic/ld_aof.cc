@@ -1,5 +1,8 @@
 #include "ld_aof.h"
 
+#include "iostream"
+
+
 namespace Filters
 {
 
@@ -93,7 +96,7 @@ void AOF::algorithm()
         resMx += mx[i];
     }
 
-    m_result[0].meanX = resMx;
+    m_result[0].meanX = resMx/m_task->countI;
     m_result[0].meanZ = Mean(m_sampleZ);
     m_result[0].meanE = Mean(m_sampleE);
     m_result[0].varX  = Var(m_sampleX, m_result[0].meanX);
