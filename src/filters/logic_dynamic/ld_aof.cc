@@ -24,14 +24,14 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
 
 void AOF::zeroIteration()
 {
-//    LogicDynamicFilter::zeroIteration();
+    LogicDynamicFilter::zeroIteration();
 
 //    Vector my0  = Math::Statistic::Mean(m_sampleY);
 //    Matrix Dy0  = Math::Statistic::Var(m_sampleY, my0);
 //    Matrix Dxy0 = Math::Statistic::Cov(m_sampleX, m_sampleY);
 //    Matrix H0   = Dxy0 * Pinv(Dy0);
 
-//    m_sampleP.resize(m_params->sampleSize());
+    m_sampleP.resize(m_params->sampleSize());
 //    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
 //        m_sampleP[s] = m_result[0].varX - H0 * Dxy0.transpose();
 //    }
@@ -84,6 +84,7 @@ void AOF::algorithm()
             res += P[i]*Sigma[i];
         }
         m_sampleZ[s] = res;
+        m_sampleP[s] = Matrix::Zero(6,6);
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
     }
 
