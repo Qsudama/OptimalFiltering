@@ -97,7 +97,8 @@ void AOF::algorithm()
     }
 
     m_result[0].meanX = resMx/m_task->countI;
-    m_result[0].meanZ = Mean(m_sampleZ);
+    Vector mez = Mean(m_sampleZ);
+    m_result[0].meanZ = mez;
     m_result[0].meanE = Mean(m_sampleE);
     m_result[0].varX  = Var(m_sampleX, m_result[0].meanX);
     m_result[0].varZ  = Var(m_sampleZ, m_result[0].meanZ);
@@ -175,7 +176,7 @@ void AOF::algorithm()
 
             m_sampleP[s] = resUpsilon;
         }
-        writeResult(k);
+        writeResult(k, true, false);
     }
 }
 

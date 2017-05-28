@@ -37,7 +37,11 @@ void LogicDynamicFilter::zeroIteration() {}
 double LogicDynamicFilter::probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D) {
     double pi = Math::Const::PI;
     Matrix det = 2* pi * D;
-    double n = exp((-1 * (u - m).transpose() * D * (u - m))(0, 0)) / sqrt(det.determinant());
+    double deter = det.determinant();
+    if (deter == 0.0) {
+        deter = 0.15825299580540; // This is hack!
+    }
+    double n = exp((-1 * (u - m).transpose() * D * (u - m))(0, 0)) / sqrt(deter);
     return n;
 }
 

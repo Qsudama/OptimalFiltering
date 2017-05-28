@@ -42,9 +42,6 @@ protected:
 
 protected:
     PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
-    Array<int> m_sampleI; /*!< Массив для выборки режимов. */
-
-    int countI;
 
 };
 

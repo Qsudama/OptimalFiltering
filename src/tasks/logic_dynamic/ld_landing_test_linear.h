@@ -27,13 +27,14 @@ public:
 
     Vector a(int i, const Vector &x) const override;
     Vector b(int i, const Vector &x) const override;
+    double nu(int i, int i0, const Vector &m, const Matrix &D) const override;
     Vector tau(int i, int i0, const Vector &z, const Matrix &P) const override;
     Matrix Theta(int i, int i0, const Vector &z, const Matrix &P) const override;
     Vector h(int i, const Vector &m, const Matrix &D) const override;
     Matrix G(int i, const Vector &m, const Matrix &D) const override;
     Matrix F(int i, const Vector &m, const Matrix &D) const override;
 
-    double nu(int i, int i0, const Vector &m, const Matrix &D) const override;
+    double A(int i, int i0, const Vector &m, const Matrix &D) const override;
 
     double Pr(int i) const override;
 //    int generateI() const override;
@@ -48,11 +49,13 @@ protected:
 
     void loadParams() override;
 
-    Matrix e(int i, const Vector &x) const;
+    double e(const Vector &x) const;
+    double d(const Vector &x) const;
+    double Ex(const Vector &x) const;
     double gammaX(int i) const;
     double gammaY(int i) const;
     double k(double t) const;
-
+    Vector bForZeroW(int i, const Vector &x) const;
 
 protected:
     double m_turnTime;

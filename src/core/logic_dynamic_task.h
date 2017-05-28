@@ -37,6 +37,14 @@ public:
     */
     virtual Vector b(int i, const Vector &x) const = 0;
 
+    /*! \brief Структурная функция прогноза \f$\nu_k(m, D)\f$.
+
+        Она имеет следующий вид для
+
+    */
+
+    virtual double nu(int i, int i0, const Vector &m, const Matrix &D) const = 0;
+
     /*! \brief Структурная функция прогноза \f$\tau_k(m, D)\f$.
 
         Она имеет следующий вид для
@@ -105,9 +113,9 @@ public:
     //! Возвращает случайное значение режима по предыдущему значению.
     virtual Array<int> generateArrayI(int sizeS) const = 0;
 
-    virtual double nu(int i, int l, const Vector &m, const Matrix &D) const = 0;
+    virtual double A(int i, int l, const Vector &m, const Matrix &D) const = 0;
 
-    int countI;
+    int countI; /*!< Количество режимов в конкретной задаче */
 
 protected:
     //! Вспомогательная функция, вычисляет \f$\nabla_x a_k(x,v)\f$.
