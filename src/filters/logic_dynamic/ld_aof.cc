@@ -119,7 +119,7 @@ void AOF::algorithm()
             m_sampleX[s] = m_task->a(m_sampleI[s], m_sampleX[s]);
             m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
 
-            Vector resZ = Vector::Zero(m_sampleZ[0].size());
+            Vector resZ = Vector::Zero(m_sampleZ[s].size());
             for (int i = 0; i < m_task->countI; i++) {
 
                 Mu[i] = m_task->h(i+1, Lambda[i], Psi[i]);
@@ -176,7 +176,7 @@ void AOF::algorithm()
 
             m_sampleP[s] = resUpsilon;
         }
-        writeResult(k, true, false);
+        writeResult(k, m_task->countI, false);
     }
 }
 

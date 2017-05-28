@@ -99,7 +99,7 @@ protected:
                    (опция для дискретных фильтров - "порожки" на графиках).
     */
     void writeResult(size_t n, bool copy = false);
-    void writeResult(size_t n, bool logicDynamic = false, bool copy = false);
+    void writeResult(size_t n, int countI, bool copy = false);
 #ifdef QT_ENABLED
 signals:
 #endif
