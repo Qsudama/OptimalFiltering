@@ -27,14 +27,14 @@ public:
 
     Vector a(int i, const Vector &x) const override;
     Vector b(int i, const Vector &x) const override;
-    double nu(int i, int i0, const Vector &m, const Matrix &D) const override;
-    Vector tau(int i, int i0, const Vector &z, const Matrix &P) const override;
-    Matrix Theta(int i, int i0, const Vector &z, const Matrix &P) const override;
+    double nu(int i, int l, const Vector &m, const Matrix &D) const override;
+    Vector tau(int i, int l, const Vector &z, const Matrix &P) const override;
+    Matrix Theta(int i, int l, const Vector &z, const Matrix &P) const override;
     Vector h(int i, const Vector &m, const Matrix &D) const override;
     Matrix G(int i, const Vector &m, const Matrix &D) const override;
     Matrix F(int i, const Vector &m, const Matrix &D) const override;
 
-    double A(int i, int i0, const Vector &m, const Matrix &D) const override;
+    double A(int i, int l) const override;
 
     double Pr(int i) const override;
 //    int generateI() const override;
@@ -49,26 +49,20 @@ protected:
 
     void loadParams() override;
 
-    double e(const Vector &x) const;
-    double d(const Vector &x) const;
-    double Ex(const Vector &x) const;
-    double Sk(double t) const;
-    double gammaX(int i) const;
-    double gammaY(int i) const;
+    double c(int i) const;
 
     Matrix BwdbdwBwt(int i, const Vector &x) const;
     Vector bForZeroW(int i, const Vector &x) const;
 
 protected:
     double m_turnTime;
-    double m_p;
+    double m_e;
 
-    static constexpr double KB = 0.3;
-    static constexpr double BB = 0.00009;
-    static constexpr double SX = 1.0 / 150.0;
-    static constexpr double R0 = 0.013;
-    static constexpr double GG = 3.711;
-    static constexpr double RR = 3390000.0;
+    static constexpr double A1 = 0.9;
+    static constexpr double A2 = 0.7071067812;
+//    static constexpr double R0 = 0.013;
+//    static constexpr double GG = 3.711;
+//    static constexpr double RR = 3390000.0;
 
 
 //    static constexpr double KB = 0.3;

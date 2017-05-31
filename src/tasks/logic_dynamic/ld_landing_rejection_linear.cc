@@ -161,7 +161,7 @@ Vector LandingRejectionLinear::bForZeroW(int i, const Vector &x) const
 }
 
 
-double LandingRejectionLinear::A(int i, int i0, const Vector &m, const Matrix &D) const
+double LandingRejectionLinear::A(int i, int l) const
 {
     double p = m_p;
     double e = 0.4 * (1.0 - p);
@@ -169,24 +169,24 @@ double LandingRejectionLinear::A(int i, int i0, const Vector &m, const Matrix &D
     Matrix A(4, 4);
     A << p, p, p, p, e, e, e, e, e, e, e, e, 0.5 * e, 0.5 * e, 0.5 * e, 0.5 * e;
 
-    return A(i - 1, i0 - 1);
+    return A(i - 1, l - 1);
 }
 
-double LandingRejectionLinear::nu(int i, int i0, const Vector &m, const Matrix &D) const {
-    return A(i, i0, m, D);
+double LandingRejectionLinear::nu(int i, int l, const Vector &m, const Matrix &D) const {
+    return A(i, l);
 }
 
-Vector LandingRejectionLinear::tau(int i, int i0, const Vector &z, const Matrix &P) const
+Vector LandingRejectionLinear::tau(int i, int l, const Vector &z, const Matrix &P) const
 {
-    return A(i, i0, z, P) * a(i, z);
+    return A(i, l) * a(i, z);
 }
 
-Matrix LandingRejectionLinear::Theta(int i, int i0, const Vector &z, const Matrix &P) const
+Matrix LandingRejectionLinear::Theta(int i, int l, const Vector &z, const Matrix &P) const
 {
     Matrix Ax = dadx(i, z);
     Vector a  = this->a(i, z);
 
-    return A(i, i0, z, P) * (Ax * P * Ax.transpose() + a * a.transpose());
+    return A(i, l) * (Ax * P * Ax.transpose() + a * a.transpose());
 }
 
 Vector LandingRejectionLinear::h(int i, const Vector &m, const Matrix & /* D*/) const
@@ -356,6 +356,27 @@ Array<int> LandingRejectionLinear::generateArrayI(int sizeS) const
       std::swap(array[i], array[rand() % sizeS]);
     }
     return array;
+
+    //#if defined(ARCHITECTURE_64)
+    //    std::mt19937_64 generator;
+    //#else
+    //    std::mt19937 generator;
+    //#endif
+    //    static std::uniform_real_distribution<double> uniform(0.0, 1.0);
+    //    double u = uniform(generator);
+
+    //    double p = m_p;
+    //    double e = 0.4 * (1.0 - p);
+    //
+    //    if (u < p) {
+    //        return 1;
+    //    } else if (u < p + e) {
+    //        return 2;
+    //    } else if (u < p + 2 * e) {
+    //        return 3;
+    //    } else {
+    //        return 4;
+    //    }
 }
 
 } // end Tasks::LogicDynamic

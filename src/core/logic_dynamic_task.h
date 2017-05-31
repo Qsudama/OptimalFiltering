@@ -113,13 +113,14 @@ public:
     //! Возвращает случайное значение режима по предыдущему значению.
     virtual Array<int> generateArrayI(int sizeS) const = 0;
 
-    virtual double A(int i, int l, const Vector &m, const Matrix &D) const = 0;
+    virtual double A(int i, int l) const = 0;
 
     int countI; /*!< Количество режимов в конкретной задаче */
 
-    double gamMinX;
-    double gamMinY;
+    double gamMinX; /*!< Для задачи со сбоями акселерометра */
+    double gamMinY; /*!< Для задачи со сбоями акселерометра */
 
+    double cI2; /*!< Для скалярной тестовой задачи*/
 protected:
     //! Вспомогательная функция, вычисляет \f$\nabla_x a_k(x,v)\f$.
     virtual Matrix dadx(int i, const Vector &x) const = 0;
