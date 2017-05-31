@@ -87,7 +87,7 @@ private:
     void initGraphWindow();
 
     //! \brief Преобразует результаты работы фильтра в нужный формат и отправляет в окно графиков.
-    void showData(Core::PtrFilter filter);
+    void showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype);
 
     //! \brief Добавляет новую таблицу и открывает ее окно.
     void addTable(const Core::FilterOutput &data, const std::string &label, const Vector &scale);

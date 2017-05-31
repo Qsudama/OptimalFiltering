@@ -205,13 +205,13 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filte
 
     filter->run(); // TODO сделать отдельный поток
 
-    showData(filter);
+    showData(filter, ftype);
     this->statusBar()->showMessage(tr("Состояние: ничего не выполняется"));
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
 }
 
-void MainWindow::showData(Core::PtrFilter filter)
+void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype)
 {
     QColor  color = m_colorManager.nextColor();
     QString fname = QString::fromStdString(filter->info()->name());
@@ -237,11 +237,8 @@ void MainWindow::showData(Core::PtrFilter filter)
     QString subTitle =
         tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize()) +
         tr(", шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
-        tr(", между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
-    for (int i = 0; i < dim; i++) {
-        m_graphWindow->sheet(i).setTitleLabel(title);
-        m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
-    }
+        tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+
     if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
@@ -261,7 +258,15 @@ void MainWindow::showData(Core::PtrFilter filter)
         m_graphWindow->sheet(4).setYLabel(tr("Качество"));
         m_graphWindow->sheet(5).setYLabel(tr("Ошибка гировертикали (°)"));
     }
-
+    if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
+        subTitle =
+                tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize()) +
+                tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+    }
+    for (int i = 0; i < dim; i++) {
+        m_graphWindow->sheet(i).setTitleLabel(title);
+        m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
+    }
     Math::Vector scale(dim);
     if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
         scale[0] = scale[2] = 1;// Было 1000.0;
