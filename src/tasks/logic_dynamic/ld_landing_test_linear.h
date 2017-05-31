@@ -52,9 +52,11 @@ protected:
     double e(const Vector &x) const;
     double d(const Vector &x) const;
     double Ex(const Vector &x) const;
+    double Sk(double t) const;
     double gammaX(int i) const;
     double gammaY(int i) const;
-    double k(double t) const;
+
+    Matrix BwdbdwBwt(int i, const Vector &x) const;
     Vector bForZeroW(int i, const Vector &x) const;
 
 protected:
@@ -62,11 +64,20 @@ protected:
     double m_p;
 
     static constexpr double KB = 0.3;
-    static constexpr double BB = 0.09;
+    static constexpr double BB = 0.00009;
     static constexpr double SX = 1.0 / 150.0;
     static constexpr double R0 = 0.013;
-    static constexpr double GG = 3.711E-3;
-    static constexpr double RR = 3390.0;
+    static constexpr double GG = 3.711;
+    static constexpr double RR = 3390000.0;
+
+
+//    static constexpr double KB = 0.3;
+//    static constexpr double BB = 0.09;
+//    static constexpr double SX = 1.0 / 150.0;
+//    static constexpr double R0 = 0.013;
+//    static constexpr double GG = 3.711E-3;
+//    static constexpr double RR = 3390.0;
+
 };
 
 

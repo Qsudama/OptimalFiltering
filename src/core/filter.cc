@@ -98,10 +98,10 @@ void Filter::writeResult(size_t n, int countI, bool copy)
 
     Array<Vector> mx(countI);
     Array<Matrix> varX(countI);
-    Array<Vector> mz(countI);
-    Array<Matrix> varZ(countI);
-    Array<Vector> me(countI);
-    Array<Matrix> varE(countI);
+    Vector mz;
+    Matrix varZ;
+    Vector me;
+    Matrix varE;
 
     for (int i = 0; i < countI; i++) {
         mx[i] = Mean(m_sampleX, m_sampleI, i+1);
@@ -115,38 +115,19 @@ void Filter::writeResult(size_t n, int countI, bool copy)
     }
     m_result[n].meanX = resMx/countI;
     m_result[n].varX  = resVarX/countI;
-
-    if (copy) {
-        m_result[n].meanZ = m_result[n - 1].meanZ;
-        m_result[n].meanE = m_result[n - 1].meanE;
-        m_result[n].varZ  = m_result[n - 1].varZ;
-        m_result[n].varE  = m_result[n - 1].varE;
-    } else {
-        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
-        }
-        for (int i = 0; i < countI; i++) {
-            mz[i] = Mean(m_sampleZ, m_sampleI, i+1);
-            me[i] = Mean(m_sampleE, m_sampleI, i+1);
-            varZ[i] = Var(m_sampleZ, mz[i], m_sampleI, i+1);
-            varE[i] = Var(m_sampleE, me[i], m_sampleI, i+1);
-        }
-        Vector resMz = Vector::Zero(mz[0].size());
-        Matrix resVarZ = Matrix::Zero(varZ[0].rows(), varZ[0].cols());
-        Vector resMe = Vector::Zero(me[0].size());
-        Matrix resVarE = Matrix::Zero(varZ[0].rows(), varZ[0].cols());
-        for (int i = 0; i < countI; i++) {
-            resMz += mz[i];
-            resVarZ += varZ[i];
-            resMe += me[i];
-            resVarE += varE[i];
-        }
-
-        m_result[n].meanZ = resMz/countI;
-        m_result[n].varZ  = resVarZ/countI;
-        m_result[n].meanE = resMe/countI;
-        m_result[n].varE  = resVarE/countI;
+    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+        m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
     }
+    mz = Mean(m_sampleZ);
+    varZ = Var(m_sampleZ, mz);
+    me = Mean(m_sampleE);
+    varE = Var(m_sampleE, me);
+
+    m_result[n].meanZ = mz;
+    m_result[n].varZ  = varZ;
+    m_result[n].meanE = me;
+    m_result[n].varE  = varE;
+
 
 #ifdef QT_ENABLED
     emit updatePercent(int(100 * n / m_result.size()));

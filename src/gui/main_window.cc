@@ -261,9 +261,9 @@ void MainWindow::showData(Core::PtrFilter filter)
 
     Math::Vector scale(dim);
     if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
-        scale[0] = scale[2] = 1000.0;
+        scale[0] = scale[2] = 1;// Было 1000.0;
         scale[1] = scale[5] = Math::Convert::RadToDeg(1.0);
-        scale[3]            = 1000.0;
+        scale[3]            = 1;// Было 1000.0;
         scale[4]            = 1.0;
     } else {
         for (int i = 0; i < dim; ++i) {
