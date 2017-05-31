@@ -2,6 +2,7 @@
 #define LOGIC_DYNAMIC_TASK_H
 
 #include "task.h"
+#include "src/math/linear_algebra.h"
 
 namespace Core
 {

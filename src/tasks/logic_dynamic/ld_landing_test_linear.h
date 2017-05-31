@@ -37,7 +37,7 @@ public:
     double A(int i, int l) const override;
 
     double Pr(int i) const override;
-//    int generateI() const override;
+
     Array<int> generateArrayI(int sizeS) const override;
 
 
@@ -49,10 +49,7 @@ protected:
 
     void loadParams() override;
 
-    double c(int i) const;
-
-    Matrix BwdbdwBwt(int i, const Vector &x) const;
-    Vector bForZeroW(int i, const Vector &x) const;
+    double C(int i) const;
 
 protected:
     double m_turnTime;

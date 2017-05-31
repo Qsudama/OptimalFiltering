@@ -172,11 +172,11 @@ double LandingRejectionLinear::A(int i, int l) const
     return A(i - 1, l - 1);
 }
 
-double LandingRejectionLinear::nu(int i, int l, const Vector &m, const Matrix &D) const {
+double LandingRejectionLinear::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
     return A(i, l);
 }
 
-Vector LandingRejectionLinear::tau(int i, int l, const Vector &z, const Matrix &P) const
+Vector LandingRejectionLinear::tau(int i, int l, const Vector &z, const Matrix &/*P*/) const
 {
     return A(i, l) * a(i, z);
 }

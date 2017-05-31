@@ -242,7 +242,7 @@ void MainWindow::showData(Core::PtrFilter filter)
         m_graphWindow->sheet(i).setTitleLabel(title);
         m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
@@ -251,6 +251,9 @@ void MainWindow::showData(Core::PtrFilter filter)
         m_graphWindow->sheet(2).setYLabel(tr("Высота (м)"));
     }
     if (m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
+        m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
+    }
+    if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
         m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
@@ -260,7 +263,7 @@ void MainWindow::showData(Core::PtrFilter filter)
     }
 
     Math::Vector scale(dim);
-    if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
         scale[0] = scale[2] = 1;// Было 1000.0;
         scale[1] = scale[5] = Math::Convert::RadToDeg(1.0);
         scale[3]            = 1;// Было 1000.0;

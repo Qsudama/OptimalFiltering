@@ -37,7 +37,7 @@ public:
     double A(int i, int l) const override;
 
     double Pr(int i) const override;
-//    int generateI() const override;
+
     Array<int> generateArrayI(int sizeS) const override;
 
 
