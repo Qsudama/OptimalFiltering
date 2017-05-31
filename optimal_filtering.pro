@@ -305,7 +305,8 @@ HEADERS += \
     src/tasks/logic_dynamic/ld_landing_test_linear.h \
     src/filters/logic_dynamic/ld_aof.h \
     src/filters/logic_dynamic/ld_fos.h \
-    src/tasks/logic_dynamic/ld_landing_rejection_linear.h
+    src/tasks/logic_dynamic/ld_landing_rejection_linear.h \
+    src/filters/logic_dynamic/ld_fkp.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -365,5 +366,6 @@ SOURCES += \
     src/tasks/logic_dynamic/ld_landing_test_linear.cc \
     src/filters/logic_dynamic/ld_aof.cc \
     src/filters/logic_dynamic/ld_fos.cc \
-    src/tasks/logic_dynamic/ld_landing_rejection_linear.cc
+    src/tasks/logic_dynamic/ld_landing_rejection_linear.cc \
+    src/filters/logic_dynamic/ld_fkp.cc
 

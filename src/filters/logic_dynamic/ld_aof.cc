@@ -64,10 +64,6 @@ void AOF::algorithm()
 
     Array<Vector> mx(m_task->countI);
     Array<Matrix> varX(m_task->countI);
-    Array<Vector> mz(m_task->countI);
-    Array<Matrix> varZ(m_task->countI);
-    Array<Vector> me(m_task->countI);
-    Array<Matrix> varE(m_task->countI);
 
     m_task->setStep(m_params->measurementStep());
 
@@ -103,27 +99,8 @@ void AOF::algorithm()
 
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             // Блок 1
-            Array<double> resP(m_task->countI);
-            for (int i = 0; i < m_task->countI; i++) {
+            computeProbabilityDensityN(P[s], Omega[s], m_sampleY[s], Mu[s], Phi[s]);
 
-                if (m_task->countI == 1 ) {
-                    P[s][i] = Omega[s][i];
-                } else {
-                    double N = probabilityDensityN(m_sampleY[s], Mu[s][i], Phi[s][i]);
-                    resP[i] = Omega[s][i]*N;
-                    double resNumerator = 0.0;
-                    for (int i = 0; i < m_task->countI; i++) {
-                        resNumerator += resP[i];
-                    }
-                    for (int i = 0; i < m_task->countI; i++) {
-                        P[s][i] = resP[i]/resNumerator;
-                    }
-                }
-
-//                if (std::isinf(N)) {
-//                     std::cout << "N = " << N << " k = " << k << " s = " << s << "\n";
-//                }
-            }
             for (int i = 0; i < m_task->countI; i++) {
                 K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
                 Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);
@@ -135,9 +112,19 @@ void AOF::algorithm()
                 resZ += P[s][i]*Sigma[s][i];
             }
             m_sampleZ[s] = resZ;
+        }
 
-            // Блок 4
-            m_task->setTime(m_result[k+1].time); // Время
+        // Блок 3
+        m_task->setTime(m_result[k].time); // Время
+
+        writeResult(k, m_task->countI);
+
+        m_task->setTime(m_result[k+1].time); // Время
+
+        // Блок 4
+        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+
+//            m_task->setTime(m_result[k+1].time); // Время
 
             Array<double> resOmega(m_task->countI);
             Array<Vector> resLambda(m_task->countI);
@@ -174,12 +161,6 @@ void AOF::algorithm()
             }
         }
 
-        m_task->setTime(m_result[k].time); // Время
-
-        // Блок 3
-        writeResult(k, m_task->countI);
-
-        m_task->setTime(m_result[k+1].time); // Время
         // Блок 6
         m_sampleI = m_task->generateArrayI(m_params->sampleSize());
         for (size_t s = 0; s < m_params->sampleSize(); s++) {
@@ -202,6 +183,25 @@ void AOF::algorithm()
     }
 }
 
+void AOF::computeProbabilityDensityN(Array<double> &resDouble, Array<double> omega,
+                                     Vector sampleVector, Array<Vector> mu, Array<Matrix> D) {
+    Array<double> resP(m_task->countI);
+    for (int i = 0; i < m_task->countI; i++) {
+        if (m_task->countI == 1 ) {
+            resDouble[i] = omega[i];
+        } else {
+            double N = probabilityDensityN(sampleVector, mu[i], D[i]);
+            resP[i] = omega[i]*N;
+            double resNumerator = 0.0;
+            for (int i = 0; i < m_task->countI; i++) {
+                resNumerator += resP[i];
+            }
+            for (int i = 0; i < m_task->countI; i++) {
+                resDouble[i] = resP[i]/resNumerator;
+            }
+        }
+    }
+}
 
 } // end LogicDynamic
 

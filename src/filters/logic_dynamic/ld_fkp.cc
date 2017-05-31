@@ -1,4 +1,4 @@
-#include "ld_fos.h"
+#include "ld_fkp.h"
 #include "src/math/statistic.h"
 
 
@@ -16,13 +16,13 @@ using Math::MakeBlockVector;
 using Math::MakeBlockMatrix;
 
 
-FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
+FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task)
     : LogicDynamicFilter(params, task)
 {
     m_info->setName(m_task->info()->type() + "ФМПлд (p=" + std::to_string(task->dimX()) + ")");
 }
 
-void FOS::algorithm()
+void FKP::algorithm()
 {
 
     Array<Array<double>> Omega(m_params->sampleSize());
@@ -179,7 +179,7 @@ void FOS::algorithm()
     }
 }
 
-void FOS::computeParams(Array<double> &Q, Array<Vector> &kappa,
+void FKP::computeParams(Array<double> &Q, Array<Vector> &kappa,
                         Array<Matrix> &T, Array<Vector> &meanZ,
                         Array<Matrix> &Dzz, Array<Matrix> &Gamma)
 {
@@ -201,7 +201,7 @@ void FOS::computeParams(Array<double> &Q, Array<Vector> &kappa,
     }
 }
 
-void FOS::computeProbabilityDensityN(Array<double> &resDouble, Array<double> omega,
+void FKP::computeProbabilityDensityN(Array<double> &resDouble, Array<double> omega,
                                      Vector sampleVector, Array<Vector> mu, Array<Matrix> D) {
     Array<double> resP(m_task->countI);
     for (int i = 0; i < m_task->countI; i++) {
@@ -220,7 +220,6 @@ void FOS::computeProbabilityDensityN(Array<double> &resDouble, Array<double> ome
         }
     }
 }
-
 
 } // end LogicDynamic
 

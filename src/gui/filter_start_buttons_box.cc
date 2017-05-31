@@ -279,7 +279,7 @@ void FilterStartButtonsBox::onBtnDiscreteGaussMfosClicked()
 }
 
 
-// лд фильтры
+// логико-динамические фильтры
 
 void FilterStartButtonsBox::onBtnLDAofClicked()
 {
@@ -293,5 +293,5 @@ void FilterStartButtonsBox::onBtnLDFosClicked()
 
 void FilterStartButtonsBox::onBtnLDFkpClicked()
 {
-//    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::MDFOS);
+    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::LDFKP);
 }
