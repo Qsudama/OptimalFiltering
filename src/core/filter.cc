@@ -92,7 +92,7 @@ void Filter::writeResult(size_t n, bool copy)
 #endif
 }
 
-void Filter::writeResult(size_t n, int countI, bool copy)
+void Filter::writeResult(size_t n, int countI)
 {
     assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
 

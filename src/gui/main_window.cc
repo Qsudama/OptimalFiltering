@@ -268,11 +268,15 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype)
         m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
     Math::Vector scale(dim);
-    if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
-        scale[0] = scale[2] = 1;// Было 1000.0;
+    if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+        scale[0] = scale[2] = 1;
         scale[1] = scale[5] = Math::Convert::RadToDeg(1.0);
-        scale[3]            = 1;// Было 1000.0;
+        scale[3]            = 1;
         scale[4]            = 1.0;
+    } else if (m_taskWidget->id() == Tasks::TASK_ID::Landing) {
+        scale[0] = 1000;
+        scale[1] = Math::Convert::RadToDeg(1.0);
+        scale[2] = 1000;
     } else {
         for (int i = 0; i < dim; ++i) {
             scale[i] = 1.0;

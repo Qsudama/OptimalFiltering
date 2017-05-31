@@ -177,7 +177,7 @@ void AOF::algorithm()
         m_task->setTime(m_result[k].time); // Время
 
         // Блок 3
-        writeResult(k, m_task->countI, false);
+        writeResult(k, m_task->countI);
 
         m_task->setTime(m_result[k+1].time); // Время
         // Блок 6
