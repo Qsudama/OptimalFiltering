@@ -63,6 +63,7 @@ LandingRejectionLinear::LandingRejectionLinear()
     (*m_consts)["rho0"]   = R0;
     (*m_consts)["g"]      = GG;
     (*m_consts)["R"]      = RR;
+    (*m_consts)["e"]   = 0.4 * (1.0 - m_p);
 
     (*m_params)["tau"] = m_turnTime;
     (*m_params)["p"]   = m_p;
@@ -73,11 +74,12 @@ LandingRejectionLinear::LandingRejectionLinear()
 
 void LandingRejectionLinear::loadParams()
 {
-    countI = m_params->at("Кол-во режимов I");
-    gamMinX = m_params->at("GammaX_min");
-    gamMinY = m_params->at("GammaY_min");
-    m_turnTime = m_params->at("tau");
-    m_p        = m_params->at("p");
+    countI              = m_params->at("Кол-во режимов I");
+    gamMinX             = m_params->at("GammaX_min");
+    gamMinY             = m_params->at("GammaY_min");
+    m_turnTime          = m_params->at("tau");
+    m_p                 = m_params->at("p");
+    (*m_consts)["e"]    = 0.4 * (1.0 - m_p);
 }
 
 double LandingRejectionLinear::Sk(double t) const

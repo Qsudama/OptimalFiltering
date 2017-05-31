@@ -201,6 +201,8 @@ Core::PtrFilterParameters FilterParametersWidget::parameters()
     return m_parameters;
 }
 
+
+
 void FilterParametersWidget::onMaxTimeChanged(double value)
 {
     if (!m_updateOn) {

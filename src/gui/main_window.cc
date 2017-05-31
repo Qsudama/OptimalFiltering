@@ -205,13 +205,13 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filte
 
     filter->run(); // TODO сделать отдельный поток
 
-    showData(filter, ftype);
+    showData(filter, ftype, task);
     this->statusBar()->showMessage(tr("Состояние: ничего не выполняется"));
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
 }
 
-void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype)
+void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
 {
     QColor  color = m_colorManager.nextColor();
     QString fname = QString::fromStdString(filter->info()->name());
@@ -234,11 +234,11 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype)
     }
 
     QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
-    QString subTitle =
-        tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize()) +
-        tr(", шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
-        tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
-
+    QString subTitle = subtitleForParametrs(ftype, task);
+    for (int i = 0; i < dim; i++) {
+        m_graphWindow->sheet(i).setTitleLabel(title);
+        m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
+    }
     if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
@@ -257,15 +257,6 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype)
         m_graphWindow->sheet(3).setYLabel(tr("Квазиплотность (1/км)"));
         m_graphWindow->sheet(4).setYLabel(tr("Качество"));
         m_graphWindow->sheet(5).setYLabel(tr("Ошибка гировертикали (°)"));
-    }
-    if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
-        subTitle =
-                tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize()) +
-                tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
-    }
-    for (int i = 0; i < dim; i++) {
-        m_graphWindow->sheet(i).setTitleLabel(title);
-        m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
     Math::Vector scale(dim);
     if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
@@ -303,6 +294,31 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype)
     m_graphWindow->updatePlotter();
 
     addTable(filter->result(), filter->info()->name(), scale);
+}
+
+QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {
+    QString subTitle =
+        tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
+
+    if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
+        if (m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
+            subTitle = subTitle +
+                tr(", вероятность сбоя ") + QString::number(task->params()->at("e")) +
+                tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
+        } else if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+            subTitle = subTitle +
+                tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
+                tr(", вероятность одного сбоя ") + QString::number(task->consts()->at("e"));
+        } else {
+          subTitle = subTitle +
+            tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+        }
+    } else {
+        subTitle = subTitle +
+                tr(", шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
+                tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+    }
+    return subTitle;
 }
 
 void MainWindow::addTable(const Core::FilterOutput &data, const std::string &label, const Math::Vector &scale)

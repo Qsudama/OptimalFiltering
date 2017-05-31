@@ -46,7 +46,7 @@ LandingTestLinear::LandingTestLinear()
 
     (*m_params)["tau"] = m_turnTime;
     (*m_params)["e"]   = m_e;
-    (*m_params)["c"]   = cI2;
+    (*m_params)["с(2)"]   = cI2;
     (*m_params)["Кол-во режимов I"] = countIInTask;
 }
 
@@ -55,7 +55,7 @@ void LandingTestLinear::loadParams()
     countI = m_params->at("Кол-во режимов I");
     m_turnTime = m_params->at("tau");
     m_e        = m_params->at("e");
-    cI2        = m_params->at("c");
+    cI2        = m_params->at("с(2)");
 }
 
 double LandingTestLinear::C(int i) const
