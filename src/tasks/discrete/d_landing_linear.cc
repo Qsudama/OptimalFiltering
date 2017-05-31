@@ -80,7 +80,19 @@ Vector LandingLinear::a(const Vector &x) const
 Vector LandingLinear::b(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
-    Vector w = m_normalRand(m_meanW, m_varW);
+    Vector w = m_normalRand(m_meanW, m_varW); // СКО, а не Дисперсия
+    Vector res(m_dimY);
+
+    res[0] = CC * (w[0] + 1.0) * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1])) + w[2];
+    res[1] = CC * (w[1] + 1.0) * x[0] * x[0] * e * (sin(x[1]) - k(m_time) * cos(x[1])) + w[3];
+
+    return res;
+}
+
+Vector LandingLinear::b_m(const Vector &x) const
+{
+    double e = exp(-BB * x[2]);
+    Vector w = m_meanW;
     Vector res(m_dimY);
 
     res[0] = CC * (w[0] + 1.0) * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1])) + w[2];

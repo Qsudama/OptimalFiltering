@@ -55,7 +55,7 @@ void AOF::algorithm()
             m_task->setTime(m_result[k].time);
 
             h = m_task->h(lambda, Psi);
-            G = m_task->G(lambda, Psi);
+            G = m_task->G(lambda, Psi); 
             F = m_task->F(lambda, Psi);
             H = Psi * G.transpose() * Pinv(F);
 

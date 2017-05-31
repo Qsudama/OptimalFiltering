@@ -12,6 +12,7 @@
 #include "src/tasks/continuous_discrete/cd_vanderpol_linear.h"
 #include "src/tasks/discrete/d_landing_gauss.h"
 #include "src/tasks/discrete/d_landing_linear.h"
+#include "src/tasks/discrete/d_scalar_linear.h"
 
 
 //! \brief Модуль, содержащий реализации конкретных задач для фильтров.
@@ -23,8 +24,9 @@ namespace Tasks
 //! \brief Набор идентификаторов имеющихся задач.
 
 enum class TASK_ID {
-    Landing,  ///< Спуска ЛА на планету.
-    VanDerPol ///< Осциллятор Ван-дер-Поля.
+    Landing,   ///< Спуска ЛА на планету.
+    VanDerPol, ///< Осциллятор Ван-дер-Поля.
+    Scalar     ///< Тестовый скалярный пример.
 };
 
 

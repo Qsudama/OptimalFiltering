@@ -34,6 +34,8 @@ PtrFilter FilterFactory::createContinuous(FILTER_ID id, PtrFilterParameters para
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::MDFOS:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
+    case FILTER_ID::DUOF:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
     }
     return PtrFilter(nullptr);
 };
@@ -50,6 +52,8 @@ PtrFilter FilterFactory::createContinuousDiscrete(FILTER_ID id, PtrFilterParamet
     case FILTER_ID::DFOSBO:
         return PtrFilter(new Filters::ContinuousDiscrete::DFOSBO(params, task));
     case FILTER_ID::MDFOS:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
+    case FILTER_ID::DUOF:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     }
     return PtrFilter(nullptr);
@@ -68,6 +72,8 @@ PtrFilter FilterFactory::createDiscrete(FILTER_ID id, PtrFilterParameters params
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::MDFOS:
         return PtrFilter(new Filters::Discrete::MFOS(params, task));
+    case FILTER_ID::DUOF:
+        return PtrFilter(new Filters::Discrete::DUOF(params, task));
     };
     return PtrFilter(nullptr);
 }

@@ -38,6 +38,7 @@ public:
         Шум \f$W_k\f$ генерируется внутри.
     */
     virtual Vector b(const Vector &x) const = 0;
+    virtual Vector b_m(const Vector &x) const = 0;
 
     /*! \brief Структурная функция прогноза \f$\tau_k(m, D)\f$.
 

@@ -25,6 +25,7 @@ void TaskWidget::initControls()
     m_cbTask = new QComboBox;
     m_cbTask->addItem(tr("Спуск ЛА на планету"));
     m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля"));
+    m_cbTask->addItem(tr("Тестовый скалярный пример"));
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
@@ -103,6 +104,8 @@ Tasks::TASK_ID TaskWidget::id() const
         return Tasks::TASK_ID::Landing;
     case 1:
         return Tasks::TASK_ID::VanDerPol;
+    case 2:
+        return Tasks::TASK_ID::Scalar;
     default:
         return Tasks::TASK_ID::Landing;
     }

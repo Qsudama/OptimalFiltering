@@ -1,5 +1,5 @@
-#ifndef DISCRETE_LANDING_LINEAR_H
-#define DISCRETE_LANDING_LINEAR_H
+#ifndef DISCRETE_SCALAR_LINEAR_H
+#define DISCRETE_SCALAR_LINEAR_H
 
 #include "src/core/discrete_task.h"
 #include "src/math/math.h"
@@ -15,15 +15,15 @@ namespace Discrete
 
 
 /*!
- * \brief Задача спуска ЛА на планету (дискретная, линеаризованная) для фильтров оптимальной структуры.
+ * \brief Тестовый скалярный пример (линеаризованный) для фильтров оптимальной структуры.
  */
 
-class LandingLinear : public Core::DiscreteTask
+class ScalarLinear : public Core::DiscreteTask
 {
 
 public:
     //! \brief Конструктор.
-    LandingLinear();
+    ScalarLinear();
 
     Vector a(const Vector &x) const override;
     Vector b(const Vector &x) const override;
@@ -43,17 +43,13 @@ protected:
 
     void loadParams() override;
 
-    double k(double t) const;
-
 
 protected:
-    double m_turnTime;
-
-    static constexpr double KB = 0.3;
-    static constexpr double BB = 0.09;
-    static constexpr double CC = 0.043333333333333333333333333333333333333333333333333;
-    static constexpr double GG = 3.711E-3;
-    static constexpr double RR = 3390.0;
+    static constexpr double aa = 1.05;
+    static constexpr double bb = 0.01;
+    static constexpr double cc = 1.02;
+    static constexpr double dd = 0.2;
+    static constexpr double ee = 1.0;
 };
 
 
@@ -61,5 +57,4 @@ protected:
 
 } // end Tasks
 
-
-#endif // DISCRETE_LANDING_LINEAR_H
+#endif // DISCRETE_SCALAR_LINEAR_H

@@ -29,6 +29,8 @@ PtrTask TaskFactory::createContinuous(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::Continuous::LandingLinear);
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::Continuous::VanDerPolLinear);
+        case TASK_ID::Scalar:
+            return PtrTask(new Tasks::Discrete::ScalarLinear); // WARNING
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
@@ -36,6 +38,8 @@ PtrTask TaskFactory::createContinuous(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::Continuous::LandingGauss);
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::Continuous::VanDerPolGauss);
+        case TASK_ID::Scalar:
+            return PtrTask(new Tasks::Discrete::ScalarLinear); // WARNING
         }
     }
     return PtrTask(nullptr);
@@ -50,6 +54,8 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::ContinuousDiscrete::LandingLinear);
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::ContinuousDiscrete::VanDerPolLinear);
+        case TASK_ID::Scalar:
+            return PtrTask(nullptr); // WARNING
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
@@ -57,6 +63,8 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::ContinuousDiscrete::LandingGauss);
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::ContinuousDiscrete::VanDerPolGauss);
+        case TASK_ID::Scalar:
+            return PtrTask(nullptr); // WARNING
         }
     }
     return PtrTask(nullptr);
@@ -71,6 +79,8 @@ PtrTask TaskFactory::createDiscrete(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::Discrete::LandingLinear);
         case TASK_ID::VanDerPol:
             return PtrTask(nullptr); // WARNING
+        case TASK_ID::Scalar:
+            return PtrTask(new Tasks::Discrete::ScalarLinear);
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
@@ -78,6 +88,8 @@ PtrTask TaskFactory::createDiscrete(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::Discrete::LandingGauss);
         case TASK_ID::VanDerPol:
             return PtrTask(nullptr); // WARNING
+        case TASK_ID::Scalar:
+            return PtrTask(new Tasks::Discrete::ScalarLinear); // WARNING
         }
     }
     return PtrTask(nullptr);
