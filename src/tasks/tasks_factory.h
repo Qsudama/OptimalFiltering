@@ -12,8 +12,8 @@
 #include "src/tasks/continuous_discrete/cd_vanderpol_linear.h"
 #include "src/tasks/discrete/d_landing_gauss.h"
 #include "src/tasks/discrete/d_landing_linear.h"
-#include "src/tasks/logic_dynamic/ld_landing_test_gauss.h"
 #include "src/tasks/logic_dynamic/ld_landing_test_linear.h"
+#include "src/tasks/logic_dynamic/ld_landing_rejection_linear.h"
 
 //! \brief Модуль, содержащий реализации конкретных задач для фильтров.
 
@@ -27,6 +27,7 @@ enum class TASK_ID {
     Landing,   ///< Спуска ЛА на планету.
     VanDerPol, ///< Осциллятор Ван-дер-Поля.
     LandingTest, ///< Спуск ЛА с неполной информацией. Тестовый пример
+    LandingRejection, ///< Спуск ЛА с отказами.
 };
 
 

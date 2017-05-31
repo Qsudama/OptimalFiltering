@@ -69,7 +69,7 @@ void TaskWidget::onCbTaskChanged(int)
 {
     Tasks::TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-    if (taskId == Tasks::TASK_ID::LandingTest) {
+    if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId,
                                              Core::APPROX_TYPE::Linear);
     } else {
@@ -116,6 +116,8 @@ Tasks::TASK_ID TaskWidget::id() const
         return Tasks::TASK_ID::VanDerPol;
     case 2:
         return Tasks::TASK_ID::LandingTest;
+    case 3:
+        return Tasks::TASK_ID::LandingRejection;
     default:
         return Tasks::TASK_ID::Landing;
     }
