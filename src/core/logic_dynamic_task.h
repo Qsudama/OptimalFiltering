@@ -118,10 +118,6 @@ public:
 
     int countI; /*!< Количество режимов в конкретной задаче */
 
-    double gamMinX; /*!< Для задачи со сбоями акселерометра */
-    double gamMinY; /*!< Для задачи со сбоями акселерометра */
-
-    double cI2; /*!< Для скалярной тестовой задачи*/
 protected:
     //! Вспомогательная функция, вычисляет \f$\nabla_x a_k(x,v)\f$.
     virtual Matrix dadx(int i, const Vector &x) const = 0;

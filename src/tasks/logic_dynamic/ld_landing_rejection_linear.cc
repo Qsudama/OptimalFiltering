@@ -17,6 +17,9 @@ LandingRejectionLinear::LandingRejectionLinear()
     : LogicDynamicTask()
     , m_turnTime(45.0)
     , m_p(1)
+    , countIInTask(1)
+    , gamMinX(0.5)
+    , gamMinY(0.5)
 {
     m_info->setName("Спуск ЛА с неполной информацией. Тестовый пример");
     m_info->setType("Л-");
@@ -63,12 +66,16 @@ LandingRejectionLinear::LandingRejectionLinear()
 
     (*m_params)["tau"] = m_turnTime;
     (*m_params)["p"]   = m_p;
+    (*m_params)["Кол-во режимов I"] = countIInTask;
+    (*m_params)["GammaX_min"]   = gamMinX;
+    (*m_params)["GammaY_min"]   = gamMinY;
 }
 
 void LandingRejectionLinear::loadParams()
 {
-    countI = 1;
-    gamMinX = gamMinY = 0.5;
+    countI = m_params->at("Кол-во режимов I");
+    gamMinX = m_params->at("GammaX_min");
+    gamMinY = m_params->at("GammaY_min");
     m_turnTime = m_params->at("tau");
     m_p        = m_params->at("p");
 }

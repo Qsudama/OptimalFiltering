@@ -17,7 +17,9 @@ using Math::Convert::DegToRad;
 LandingTestLinear::LandingTestLinear()
     : LogicDynamicTask()
     , m_turnTime(45.0)
-    , m_e(0.05)
+    , m_e(0.2)
+    , cI2(10)
+    , countIInTask(2)
 {
     m_info->setName("Спуск ЛА с неполной информацией. Тестовый пример");
     m_info->setType("Л-");
@@ -44,14 +46,16 @@ LandingTestLinear::LandingTestLinear()
 
     (*m_params)["tau"] = m_turnTime;
     (*m_params)["e"]   = m_e;
+    (*m_params)["c"]   = cI2;
+    (*m_params)["Кол-во режимов I"] = countIInTask;
 }
 
 void LandingTestLinear::loadParams()
 {
-    countI = 1;
-    cI2 = 3;
+    countI = m_params->at("Кол-во режимов I");
     m_turnTime = m_params->at("tau");
     m_e        = m_params->at("e");
+    cI2        = m_params->at("c");
 }
 
 double LandingTestLinear::C(int i) const

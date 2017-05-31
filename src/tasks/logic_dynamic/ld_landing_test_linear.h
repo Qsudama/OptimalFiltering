@@ -54,6 +54,8 @@ protected:
 protected:
     double m_turnTime;
     double m_e;
+    double cI2; /*!< Для скалярной тестовой задачи*/
+    int countIInTask; /*!< Количество режимов в задаче*/
 
     static constexpr double A1 = 0.9;
     static constexpr double A2 = 0.7071067812;

@@ -62,6 +62,9 @@ protected:
 protected:
     double m_turnTime;
     double m_p;
+    double gamMinX; /*!< Для задачи со сбоями акселерометра */
+    double gamMinY; /*!< Для задачи со сбоями акселерометра */
+    int countIInTask; /*!< Количество режимов в задаче*/
 
     static constexpr double KB = 0.3;
     static constexpr double BB = 0.00009;
