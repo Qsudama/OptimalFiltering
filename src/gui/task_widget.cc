@@ -73,6 +73,9 @@ void TaskWidget::onCbTaskChanged(int)
     if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId,
                                              Core::APPROX_TYPE::Linear);
+    } else if(taskId == Tasks::TASK_ID::Scalar) {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId,
+                                             Core::APPROX_TYPE::Linear);
     } else {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId,
                                              Core::APPROX_TYPE::Linear);
