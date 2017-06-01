@@ -16,6 +16,8 @@ PtrFilter FilterFactory::create(FILTER_TYPE type, FILTER_ID id, PtrFilterParamet
         return createContinuousDiscrete(id, params, task);
     case FILTER_TYPE::Discrete:
         return createDiscrete(id, params, task);
+    case FILTER_TYPE::LogicDynamic:
+        return createLogicDynamic(id, params, task);
     }
     return PtrFilter(nullptr);
 }
@@ -68,6 +70,23 @@ PtrFilter FilterFactory::createDiscrete(FILTER_ID id, PtrFilterParameters params
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::MDFOS:
         return PtrFilter(new Filters::Discrete::MFOS(params, task));
+    };
+    return PtrFilter(nullptr);
+}
+
+PtrFilter FilterFactory::createLogicDynamic(FILTER_ID id, PtrFilterParameters params, PtrTask task)
+{
+    switch (id) {
+    case FILTER_ID::AOF:
+        return PtrFilter(new Filters::LogicDynamic::AOF(params, task));
+    case FILTER_ID::FOS:
+        return PtrFilter(new Filters::LogicDynamic::FOS(params, task));
+    case FILTER_ID::DFOS:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
+    case FILTER_ID::DFOSBO:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
+    case FILTER_ID::MDFOS:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
     };
     return PtrFilter(nullptr);
 }

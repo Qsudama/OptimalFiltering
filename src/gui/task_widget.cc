@@ -25,6 +25,8 @@ void TaskWidget::initControls()
     m_cbTask = new QComboBox;
     m_cbTask->addItem(tr("Спуск ЛА на планету"));
     m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля"));
+    m_cbTask->addItem(tr("Спуск ЛА с неполной информацией. Тестовый пример"));
+    m_cbTask->addItem(tr("Спуск ЛА с неполной информацией"));
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
@@ -64,7 +66,13 @@ void TaskWidget::onBtnParametersClicked()
 
 void TaskWidget::onCbTaskChanged(int)
 {
-    Core::PtrTask tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, id(), Core::APPROX_TYPE::Linear);
+    Tasks::TASK_ID taskId = id();
+    Core::PtrTask  tmpTask;
+    if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId, Core::APPROX_TYPE::Linear);
+    } else {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId, Core::APPROX_TYPE::Linear);
+    }
 
     bool hidden = true;
     if (m_parametersWidget) {
@@ -103,6 +111,10 @@ Tasks::TASK_ID TaskWidget::id() const
         return Tasks::TASK_ID::Landing;
     case 1:
         return Tasks::TASK_ID::VanDerPol;
+    case 2:
+        return Tasks::TASK_ID::LandingTest;
+    case 3:
+        return Tasks::TASK_ID::LandingRejection;
     default:
         return Tasks::TASK_ID::Landing;
     }

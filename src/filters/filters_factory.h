@@ -11,6 +11,8 @@
 #include "src/filters/discrete/d_aof.h"
 #include "src/filters/discrete/d_fos.h"
 #include "src/filters/discrete/d_mfos.h"
+#include "src/filters/logic_dynamic/ld_aof.h"
+#include "src/filters/logic_dynamic/ld_fos.h"
 
 
 //! \brief Модуль, содержащий реализации конкретных алгоритмов фильтрации.
@@ -57,6 +59,9 @@ private:
 
     //! \brief Вспомогательный метод для создания дискретных фильтров оптимальной структуры.
     static Core::PtrFilter createDiscrete(FILTER_ID id, Core::PtrFilterParameters params, Core::PtrTask task);
+
+    //! \brief Вспомогательный метод для создания логико-динамических фильтров оптимальной структуры.
+    static Core::PtrFilter createLogicDynamic(FILTER_ID id, Core::PtrFilterParameters params, Core::PtrTask task);
 };
 
 
