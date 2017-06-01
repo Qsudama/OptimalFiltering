@@ -33,7 +33,7 @@ void LogicDynamicFilter::init()
 }
 
 void LogicDynamicFilter::zeroIteration() {
-
+    srand(1252);
 }
 
 double LogicDynamicFilter::probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D) {
