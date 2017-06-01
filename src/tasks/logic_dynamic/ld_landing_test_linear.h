@@ -52,7 +52,6 @@ protected:
     double C(int i) const;
 
 protected:
-    double m_turnTime;
     double m_e;
     double cI2; /*!< Для скалярной тестовой задачи*/
     int countIInTask; /*!< Количество режимов в задаче*/
