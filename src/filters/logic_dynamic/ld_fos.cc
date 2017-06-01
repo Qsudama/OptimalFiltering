@@ -117,8 +117,10 @@ void FOS::algorithm()
         m_task->setTime(m_result[k].time); // Время
 
         writeResult(k, m_task->countI);
-
+        // Блок 3б
         computeParams(Q, kappa, T, meanZ, Dzz, Gamma);
+
+        // Блок 3в
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             computeProbabilityDensityN(Xi[s], Q, m_sampleZ[s], meanZ, Dzz);
             for (int i = 0; i < m_task->countI; i++) {

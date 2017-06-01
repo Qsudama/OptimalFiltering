@@ -22,6 +22,14 @@ FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task)
     m_info->setName(m_task->info()->type() + "ФКПлд (p=" + std::to_string(task->dimX()) + ")");
 }
 
+void FKP::zeroIteration()
+{
+    LogicDynamicFilter::zeroIteration();
+
+    m_sampleS.resize(m_params->sampleSize());
+
+}
+
 void FKP::algorithm()
 {
 
@@ -82,7 +90,7 @@ void FKP::algorithm()
                 mx[i] = Mean(m_sampleX, m_sampleI, i+1);
                 varX[i] = Cov(m_sampleX, m_sampleX, m_sampleI, i+1);
             }
-
+            long p = long(m_task->dimY()) * long(m_params->orderMult());
             for (size_t s = 0; s < m_params->sampleSize(); s++) {
                 for (int i = 0; i < m_task->countI; i++) {
                     Omega[s][i] = m_task->Pr(i+1);
@@ -92,6 +100,11 @@ void FKP::algorithm()
 
                     Delta[s][i] = m_task->G(i+1, mx[i], varX[i]) - Lambda[s][i] * Mu[s][i].transpose();
                     Phi[s][i] =  m_task->F(i+1, mx[i], varX[i]) - Mu[s][i]*Mu[s][i].transpose();
+                }
+
+                m_sampleS[s] = Vector::Zero(p);
+                for (long i = 0; i < long(m_task->dimY()); ++i) {
+                    m_sampleS[s][i] = m_sampleY[s][i];
                 }
             }
         }
@@ -118,11 +131,25 @@ void FKP::algorithm()
 
         writeResult(k, m_task->countI);
 
-        computeParams(Q, kappa, T, meanZ, Dzz, Gamma);
+        // Блок 3а
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            computeProbabilityDensityN(Xi[s], Q, m_sampleZ[s], meanZ, Dzz);
+            long ny = long(m_task->dimY());
+            long p  = ny * long(m_params->orderMult());
+            for (long i = p - 1; i >= ny; --i) {
+                m_sampleS[s][i] = m_sampleS[s][i - ny];
+            }
+            for (long i = 0; i < long(ny); ++i) {
+                m_sampleS[s][i] = m_sampleY[s][i];
+            }
+        }
+        // Блок 3б
+        computeParams(Q, kappa, T, meanZ, Dzz, Gamma);
+
+        // Блок 3в
+        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+            computeProbabilityDensityN(Xi[s], Q, m_sampleS[s], meanZ, Dzz);
             for (int i = 0; i < m_task->countI; i++) {
-                u[s][i] = Gamma[i]*m_sampleZ[s] + kappa[i];
+                u[s][i] = Gamma[i]*m_sampleS[s] + kappa[i];
             }
         }
 
@@ -190,10 +217,10 @@ void FKP::computeParams(Array<double> &Q, Array<Vector> &kappa,
     for (int i = 0; i < m_task->countI; i++) {
         Q[i] = m_task->Pr(i+1);
         meanX[i] = Mean(m_sampleX, m_sampleI, i+1);
-        meanZ[i] = Mean(m_sampleZ, m_sampleI, i+1);
+        meanZ[i] = Mean(m_sampleS, m_sampleI, i+1);
         Dxx[i] = Cov(m_sampleX, m_sampleX, m_sampleI, i+1);
-        Dxz[i] = Cov(m_sampleX, m_sampleZ, m_sampleI, i+1);
-        Dzz[i] = Cov(m_sampleZ, m_sampleZ, m_sampleI, i+1);
+        Dxz[i] = Cov(m_sampleX, m_sampleS, m_sampleI, i+1);
+        Dzz[i] = Cov(m_sampleS, m_sampleS, m_sampleI, i+1);
 
         Gamma[i] = Dxz[i] * Pinv(Dzz[i]);
         kappa[i] = meanX[i] - Gamma[i]*meanZ[i];
