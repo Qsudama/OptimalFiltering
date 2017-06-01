@@ -15,7 +15,7 @@ LandingLinear::LandingLinear()
     : ContinuousTask()
     , m_turnTime(45.0)
 {
-    m_info->setName("Спуск ЛА на планету");
+    m_info->setName("3-мерный спуск ЛА на планету");
     m_info->setType("Л-");
 
     m_dimY = 2;

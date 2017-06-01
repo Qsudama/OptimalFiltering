@@ -15,7 +15,7 @@ using Math::Convert::DegToRad;
 ScalarLinear::ScalarLinear()
     : DiscreteTask()
 {
-    m_info->setName("Тестовый скалярный пример");
+    m_info->setName("Скалярный пример");
     m_info->setType("Л-");
 
     m_dimY = 1;

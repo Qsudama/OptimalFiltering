@@ -21,7 +21,7 @@ LandingRejectionLinear::LandingRejectionLinear()
     , gamMinX(0.5)
     , gamMinY(0.5)
 {
-    m_info->setName("Спуск ЛА с неполной информацией. Тестовый пример");
+    m_info->setName("6-мерный спуск ЛА со сбоями 2-х датчиков");
     m_info->setType("Л-");
 
     m_dimY = 2;
