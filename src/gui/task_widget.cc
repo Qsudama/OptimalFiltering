@@ -23,9 +23,11 @@ void TaskWidget::loadFonts()
 void TaskWidget::initControls()
 {
     m_cbTask = new QComboBox;
-    m_cbTask->addItem(tr("Спуск ЛА на планету"));
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету"));
     m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля"));
-    m_cbTask->addItem(tr("Тестовый скалярный пример"));
+    m_cbTask->addItem(tr("Дискретный тестовый скалярный пример"));
+    m_cbTask->addItem(tr("Скалярный пример со сбоями измерителя"));
+    m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков"));
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
@@ -48,7 +50,8 @@ void TaskWidget::initLayouts()
     lbl->setMinimumWidth(QFontMetrics(this->font()).width(lbl->text()));
     layout->addWidget(lbl);
     layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
-    m_btnParameters->setMinimumWidth(QFontMetrics(this->font()).width("    " + m_btnParameters->text()));
+    m_btnParameters->setMinimumWidth(
+        QFontMetrics(this->font()).width("    " + m_btnParameters->text()));
     layout->addWidget(m_btnParameters);
 
     mainLayout->addLayout(layout);
@@ -65,7 +68,15 @@ void TaskWidget::onBtnParametersClicked()
 
 void TaskWidget::onCbTaskChanged(int)
 {
-    Core::PtrTask tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, id(), Core::APPROX_TYPE::Linear);
+    Tasks::TASK_ID taskId = id();
+    Core::PtrTask  tmpTask;
+    if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId,
+                                             Core::APPROX_TYPE::Linear);
+    } else {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId,
+                                             Core::APPROX_TYPE::Linear);
+    }
 
     bool hidden = true;
     if (m_parametersWidget) {
@@ -106,6 +117,10 @@ Tasks::TASK_ID TaskWidget::id() const
         return Tasks::TASK_ID::VanDerPol;
     case 2:
         return Tasks::TASK_ID::Scalar;
+    case 3:
+        return Tasks::TASK_ID::LandingTest;
+    case 4:
+        return Tasks::TASK_ID::LandingRejection;
     default:
         return Tasks::TASK_ID::Landing;
     }

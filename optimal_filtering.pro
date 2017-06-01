@@ -2,6 +2,8 @@ QT             += core gui printsupport
 CONFIG         += c++11
 QMAKE_CXXFLAGS += -std=c++11
 
+#LIBS += -L/usr/local/lib
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = OptimalFiltering
@@ -301,7 +303,14 @@ HEADERS += \
     third_party/eigen/SVD \
     third_party/qcustomplot/qcustomplot.h \
     src/filters/discrete/d_duof.h \
-    src/tasks/discrete/d_scalar_linear.h
+    src/tasks/discrete/d_scalar_linear.h \
+    src/core/logic_dynamic_filter.h \
+    src/core/logic_dynamic_task.h \
+    src/tasks/logic_dynamic/ld_landing_test_linear.h \
+    src/filters/logic_dynamic/ld_aof.h \
+    src/filters/logic_dynamic/ld_fos.h \
+    src/tasks/logic_dynamic/ld_landing_rejection_linear.h \
+    src/filters/logic_dynamic/ld_fkp.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -357,5 +366,11 @@ SOURCES += \
     src/main.cc \
     third_party/qcustomplot/qcustomplot.cc \
     src/filters/discrete/d_duof.cc \
-    src/tasks/discrete/d_scalar_linear.cc
-
+    src/tasks/discrete/d_scalar_linear.cc \
+    src/core/logic_dynamic_filter.cc \
+    src/core/logic_dynamic_task.cc \
+    src/tasks/logic_dynamic/ld_landing_test_linear.cc \
+    src/filters/logic_dynamic/ld_aof.cc \
+    src/filters/logic_dynamic/ld_fos.cc \
+    src/tasks/logic_dynamic/ld_landing_rejection_linear.cc \
+    src/filters/logic_dynamic/ld_fkp.cc

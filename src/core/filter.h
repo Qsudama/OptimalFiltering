@@ -99,7 +99,7 @@ protected:
                    (опция для дискретных фильтров - "порожки" на графиках).
     */
     void writeResult(size_t n, bool copy = false);
-
+    void writeResult(size_t n, int countI);
 #ifdef QT_ENABLED
 signals:
 #endif
@@ -117,6 +117,7 @@ protected:
     Array<Vector> m_sampleY; /*!< Массив под выборку \f$Y\f$. */
     Array<Vector> m_sampleZ; /*!< Массив под выборку \f$Z\f$. */
     Array<Vector> m_sampleE; /*!< Массив под выборку \f$E\f$. */
+    Array<int>    m_sampleI; /*!< Массив для выборки режимов (Только для логик-динамических фильтров). */
 
     Math::MultivariateNormalDistribution m_normalRand; /*!< Генератор гауссовских случайных векторов. */
 };

@@ -96,6 +96,17 @@ void FilterStartButtonsBox::initControls()
 
     m_btnDiscreteGaussDuof = new QPushButton(tr("Г-ДУОФ"));
     connect(m_btnDiscreteGaussDuof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussDuofClicked()));
+
+    // лд фильтры
+
+    m_btnLDAof = new QPushButton(tr("лд-АОФ"));
+    connect(m_btnLDAof, SIGNAL(clicked()), this, SLOT(onBtnLDAofClicked()));
+
+    m_btnLDFos = new QPushButton(tr("лд-ФОС"));
+    connect(m_btnLDFos, SIGNAL(clicked()), this, SLOT(onBtnLDFosClicked()));
+
+    m_btnLDFkp = new QPushButton(tr("лд-ФКП"));
+    connect(m_btnLDFkp, SIGNAL(clicked()), this, SLOT(onBtnLDFkpClicked()));
 }
 
 void FilterStartButtonsBox::initLayouts()
@@ -105,10 +116,12 @@ void FilterStartButtonsBox::initLayouts()
     QWidget *tab1 = new QWidget;
     QWidget *tab2 = new QWidget;
     QWidget *tab3 = new QWidget;
+    QWidget *tab4 = new QWidget;
 
     tabWidget->addTab(tab1, tr("Дискретные"));
     tabWidget->addTab(tab2, tr("Непрерывные"));
     tabWidget->addTab(tab3, tr("Непрерывно-дискретные"));
+    tabWidget->addTab(tab4, tr("Логико-Динамические"));
 
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SIGNAL(filtersFamilyChanged(int)));
 
@@ -159,10 +172,19 @@ void FilterStartButtonsBox::initLayouts()
     tab3Layout->addWidget(m_btnContinuousDiscreteGaussDfosbo, 0, 3);
     tab3Layout->addWidget(m_btnContinuousDiscreteLinearDfosbo, 1, 3);
 
+    // лд фильтры:
+    QGridLayout *tab4Layout = new QGridLayout;
+    tab4Layout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    tab4Layout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
+
+    tab4Layout->addWidget(m_btnLDAof, 0, 0);
+    tab4Layout->addWidget(m_btnLDFos, 0, 1);
+    tab4Layout->addWidget(m_btnLDFkp, 0, 2);
 
     tab1->setLayout(tab1Layout);
     tab2->setLayout(tab2Layout);
     tab3->setLayout(tab3Layout);
+    tab4->setLayout(tab4Layout);
 }
 
 
@@ -272,4 +294,21 @@ void FilterStartButtonsBox::onBtnDiscreteLinearDuofClicked()
 void FilterStartButtonsBox::onBtnDiscreteGaussDuofClicked()
 {
     emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::DUOF);
+}
+
+// логико-динамические фильтры
+
+void FilterStartButtonsBox::onBtnLDAofClicked()
+{
+    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::AOF);
+}
+
+void FilterStartButtonsBox::onBtnLDFosClicked()
+{
+    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::FOS);
+}
+
+void FilterStartButtonsBox::onBtnLDFkpClicked()
+{
+    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::LDFKP);
 }

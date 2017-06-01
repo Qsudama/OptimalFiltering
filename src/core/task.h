@@ -133,6 +133,7 @@ protected:
     PtrTaskParameters m_consts; /*!< Спцифические константы задачи. */
     PtrInfo           m_info;   /*!< Информация о задаче. */
 
+
     long m_dimX; /*!< Размерность вектора \f$X\f$. */
     long m_dimY; /*!< Размерность вектора \f$Y\f$. */
     long m_dimV; /*!< Размерность вектора \f$V\f$. */
