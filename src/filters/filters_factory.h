@@ -13,6 +13,7 @@
 #include "src/filters/discrete/d_mfos.h"
 #include "src/filters/logic_dynamic/ld_aof.h"
 #include "src/filters/logic_dynamic/ld_fos.h"
+#include "src/filters/logic_dynamic/ld_fkp.h"
 
 
 //! \brief Модуль, содержащий реализации конкретных алгоритмов фильтрации.
@@ -26,6 +27,7 @@ namespace Filters
 enum class FILTER_ID {
     AOF,    /*!< АОФ - абсолютно оптимальный фильтр. */
     FOS,    /*!< ФМП - фильтр оптимальной структуры малого порядка. */
+    LDFKP,  /*!< ФКП - фильтр оптимальной структуры с конечной памятью логико-динамический. */
     DFOS,   /*!< ФМП с дискретными прогнозами. */
     DFOSBO, /*!< ФКП - фильтр оптимальной структуры с конечной памятью (повышенного порядка). */
     MDFOS   /*!< МФМП - модифицированный ФМП. */

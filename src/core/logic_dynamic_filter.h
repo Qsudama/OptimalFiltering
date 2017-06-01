@@ -1,9 +1,11 @@
 #ifndef LOGIC_DYNAMIC_FILTER_H
 #define LOGIC_DYNAMIC_FILTER_H
 
-#include "logic_dynamic_task.h"
 #include "filter.h"
+#include "logic_dynamic_task.h"
 #include "src/math/linear_algebra.h"
+#include "src/math/constants.h"
+
 
 namespace Core
 {
@@ -21,7 +23,6 @@ public:
     //! \brief Конструктор.
     LogicDynamicFilter(PtrFilterParameters params, PtrTask task);
 
-
 protected:
     void init() override;
 
@@ -37,9 +38,33 @@ protected:
     */
     void zeroIteration() override;
 
+    double probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D);
 
 protected:
-    PtrLDTask m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
+    PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
+
+//    Array<double>> Omega;
+//    Array<Array<Vector>> Lambda;
+//    Array<Array<Vector>> Mu;
+//    Array<Array<Matrix>> Psi;
+//    Array<Array<Matrix>> Delta;
+//    Array<Array<Matrix>> Phi;
+//    Array<Array<double>> P;
+//    Array<Array<Matrix>> K;
+//    Array<Array<Vector>> Sigma;
+//    Array<Array<Matrix>> Upsilon;
+
+//    Array<double> Xi;
+//    Array<double> Q;
+//    Array<Vector> kappa;
+//    Array<Matrix> T;
+//    Array<Vector> u;
+//    Array<Vector> meanX;
+//    Array<Vector> meanZ;
+//    Array<Matrix> Gamma;
+//    Array<Matrix> Dzz;
+//    Array<Matrix> Dxx;
+//    Array<Matrix> Dxz;
 };
 
 

@@ -92,6 +92,50 @@ void Filter::writeResult(size_t n, bool copy)
 #endif
 }
 
+void Filter::writeResult(size_t n, int countI)
+{
+    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
+
+    Array<Vector> mx(countI);
+    Array<Matrix> varX(countI);
+    Vector mz;
+    Matrix varZ;
+    Vector me;
+    Matrix varE;
+
+    for (int i = 0; i < countI; i++) {
+        mx[i] = Mean(m_sampleX, m_sampleI, i+1);
+        varX[i] = Var(m_sampleX, mx[i], m_sampleI, i+1);
+    }
+    Vector resMx = Vector::Zero(mx[0].size());
+    Matrix resVarX = Matrix::Zero(varX[0].rows(), varX[0].cols());
+    for (int i = 0; i < countI; i++) {
+        resMx += mx[i];
+        resVarX += varX[i];
+    }
+    m_result[n].meanX = resMx/countI;
+    m_result[n].varX  = resVarX/countI;
+    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+        m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
+    }
+    mz = Mean(m_sampleZ);
+    varZ = Var(m_sampleZ, mz);
+    me = Mean(m_sampleE);
+    varE = Var(m_sampleE, me);
+
+    m_result[n].meanZ = mz;
+    m_result[n].varZ  = varZ;
+    m_result[n].meanE = me;
+    m_result[n].varE  = varE;
+
+
+#ifdef QT_ENABLED
+    emit updatePercent(int(100 * n / m_result.size()));
+#else
+    updatePercent(int(100 * n / m_result.size()));
+#endif
+}
+
 #ifndef QT_ENABLED
 void Filter::updatePercent(int p) const
 {

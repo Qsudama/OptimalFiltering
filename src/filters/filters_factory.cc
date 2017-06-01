@@ -30,6 +30,8 @@ PtrFilter FilterFactory::createContinuous(FILTER_ID id, PtrFilterParameters para
         return PtrFilter(new Filters::Continuous::AOF(params, task));
     case FILTER_ID::FOS:
         return PtrFilter(new Filters::Continuous::FOS(params, task));
+    case FILTER_ID::LDFKP:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOS:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOSBO:
@@ -47,6 +49,8 @@ PtrFilter FilterFactory::createContinuousDiscrete(FILTER_ID id, PtrFilterParamet
         return PtrFilter(new Filters::ContinuousDiscrete::AOF(params, task));
     case FILTER_ID::FOS:
         return PtrFilter(new Filters::ContinuousDiscrete::FOS(params, task));
+    case FILTER_ID::LDFKP:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOS:
         return PtrFilter(new Filters::ContinuousDiscrete::DFOS(params, task));
     case FILTER_ID::DFOSBO:
@@ -64,6 +68,8 @@ PtrFilter FilterFactory::createDiscrete(FILTER_ID id, PtrFilterParameters params
         return PtrFilter(new Filters::Discrete::AOF(params, task));
     case FILTER_ID::FOS:
         return PtrFilter(new Filters::Discrete::FOS(params, task));
+    case FILTER_ID::LDFKP:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOS:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOSBO:
@@ -81,6 +87,8 @@ PtrFilter FilterFactory::createLogicDynamic(FILTER_ID id, PtrFilterParameters pa
         return PtrFilter(new Filters::LogicDynamic::AOF(params, task));
     case FILTER_ID::FOS:
         return PtrFilter(new Filters::LogicDynamic::FOS(params, task));
+    case FILTER_ID::LDFKP:
+        return PtrFilter(new Filters::LogicDynamic::FKP(params, task));
     case FILTER_ID::DFOS:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOSBO:

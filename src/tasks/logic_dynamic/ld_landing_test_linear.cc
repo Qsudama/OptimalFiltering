@@ -1,6 +1,10 @@
 #include "ld_landing_test_linear.h"
 #include "src/math/convert.h"
+#include "src/math/matrix.h"
+#include "iostream"
 
+using Math::MakeBlockVector;
+using Math::MakeBlockMatrix;
 
 namespace Tasks
 {
@@ -8,188 +12,203 @@ namespace Tasks
 namespace LogicDynamic
 {
 
-
 using Math::Convert::DegToRad;
-
 
 LandingTestLinear::LandingTestLinear()
     : LogicDynamicTask()
     , m_turnTime(45.0)
+    , m_e(0.2)
+    , cI2(10)
+    , countIInTask(2)
 {
     m_info->setName("Спуск ЛА с неполной информацией. Тестовый пример");
     m_info->setType("Л-");
 
-    m_dimY = 2;
+    m_dimY = 1;
+    m_dimX = 1;
+    m_dimV  = 1;
+    m_dimW  = 1;
 
-    m_dimX      = 3;
-    m_meanX0    = Vector(m_dimX);
-    m_meanX0[0] = 6.0;
-    m_meanX0[1] = DegToRad(-18.0);
-    m_meanX0[2] = 100.0;
-
-    m_dimV  = 3;
+    m_meanX0 = Vector(m_dimX);
     m_meanV = Vector::Zero(m_dimV);
-
-    m_dimW  = 4;
     m_meanW = Vector::Zero(m_dimW);
-
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
-    m_varX0(0, 0) = pow(15E-3, 2);
-    m_varX0(1, 1) = pow(DegToRad(1.0), 2);
-    m_varX0(2, 2) = pow(7.0, 2);
-
     m_varV = Matrix::Zero(m_dimV, m_dimV);
-
     m_varW = Matrix::Zero(m_dimW, m_dimW);
-    m_varW(0, 0) = pow(1E-2, 2);
-    m_varW(1, 1) = pow(1E-2, 2);
-    m_varW(2, 2) = pow(2E-7, 2);
-    m_varW(3, 3) = pow(2E-7, 2);
 
-    (*m_consts)["Kb"]   = KB;
-    (*m_consts)["Beta"] = BB;
-    (*m_consts)["c"]    = CC;
-    (*m_consts)["g"]    = GG;
-    (*m_consts)["R"]    = RR;
+    m_meanX0[0] = 10.0;
+    m_varX0(0, 0) = 25.0;
+    m_varV(0, 0) = 1.0;
+    m_varW(0, 0) = 1.0;
+
+    (*m_consts)["a1"]     = A1;
+    (*m_consts)["a2"]     = A2;
 
     (*m_params)["tau"] = m_turnTime;
+    (*m_params)["e"]   = m_e;
+    (*m_params)["с(2)"]   = cI2;
+    (*m_params)["Кол-во режимов I"] = countIInTask;
 }
 
 void LandingTestLinear::loadParams()
 {
+    countI = m_params->at("Кол-во режимов I");
     m_turnTime = m_params->at("tau");
+    m_e        = m_params->at("e");
+    cI2        = m_params->at("с(2)");
 }
 
-double LandingTestLinear::k(double t) const
+double LandingTestLinear::C(int i) const
 {
-    return KB * Math::sign(t - m_turnTime);
+    if (i == 1) {
+        return 1.0;
+    } else {
+        return cI2;
+    }
 }
 
-Vector LandingTestLinear::a(const Vector &x) const
+Vector LandingTestLinear::a(int /*i*/, const Vector &x) const
 {
-    double e = exp(-BB * x[2]);
     Vector dx(m_dimX);
+    Vector v  = m_normalRand(m_meanV, m_varV);
+    dx[0] = A1 * x[0] + A2 * v[0];
 
-    dx[0] = -CC * x[0] * x[0] * e - GG * sin(x[1]);
-    dx[1] = CC * k(m_time) * x[0] * e + cos(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
-    dx[2] = x[0] * sin(x[1]);
-
-    return x + m_step * dx;
+    return dx;
 }
 
-Vector LandingTestLinear::b(const Vector &x) const
+Vector LandingTestLinear::b(int i, const Vector &x) const
 {
-    double e = exp(-BB * x[2]);
-    Vector w = m_normalRand(m_meanW, m_varW);
+    Vector w  = m_normalRand(m_meanW, m_varW);
     Vector res(m_dimY);
+    double c2 = C(i);
 
-    res[0] = CC * (w[0] + 1.0) * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1])) + w[2];
-    res[1] = CC * (w[1] + 1.0) * x[0] * x[0] * e * (sin(x[1]) - k(m_time) * cos(x[1])) + w[3];
-
-    return res;
-}
-
-Vector LandingTestLinear::tau(const Vector &z, const Matrix & /*D*/) const
-{
-    return a(z);
-}
-
-Matrix LandingTestLinear::Theta(const Vector &z, const Matrix &P) const
-{
-    Matrix Ax = dadx(z);
-    Matrix Av = dadv(z);
-
-    return Ax * P * Ax.transpose() + Av * m_varV * Av.transpose();
-
-    // TODO V = 0 --> m_meanV = 0, m_varV = 0 --> Av = 0....
-}
-
-Vector LandingTestLinear::h(const Vector &m, const Matrix & /* D*/) const
-{
-    double e = exp(-BB * m[2]);
-    Vector res(m_dimY);
-
-    res[0] = CC * (m_meanW[0] + 1.0) * m[0] * m[0] * e * (cos(m[1]) - k(m_time) * sin(m[1])) + m_meanW[2];
-    res[1] = CC * (m_meanW[1] + 1.0) * m[0] * m[0] * e * (sin(m[1]) - k(m_time) * cos(m[1])) + m_meanW[3];
+    res[0] = x[0] + c2 * w[0];
 
     return res;
 }
 
-Matrix LandingTestLinear::G(const Vector &m, const Matrix & /*D*/) const
+double LandingTestLinear::A(int i, int l) const
 {
-    return dbdx(m);
+    double e = m_e;
+    double p = 1 - e;
+
+    Matrix A(2, 2);
+    A << p, p, e, e;
+
+    return A(i - 1, l - 1);
 }
 
-Matrix LandingTestLinear::F(const Vector &m, const Matrix &D) const
-{
-    Matrix Bx = dbdx(m);
-    Matrix Bw = dbdw(m);
-
-    return Bx * D * Bx.transpose() + Bw * m_varW * Bw.transpose();
+double LandingTestLinear::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
+    return A(i, l);
 }
 
-Matrix LandingTestLinear::dadx(const Vector &x) const
+Vector LandingTestLinear::tau(int i, int l, const Vector &z, const Matrix &/*P*/) const
 {
-    double e = exp(-BB * x[2]);
-    Matrix res(m_dimX, m_dimX);
+    Vector res = Vector::Zero(z.size());
+    res[0] = A(i, l) * A1 * z[0];
+    return res;
+}
 
-    res(0, 0) = 1.0 - 2.0 * m_step * CC * x[0] * e;
-    res(0, 1) = -m_step * GG * cos(x[1]);
-    res(0, 2) = m_step * BB * CC * x[0] * x[0] * e;
+Matrix LandingTestLinear::Theta(int i, int l, const Vector &z, const Matrix &P) const
+{
+    Matrix m = Matrix::Zero(P.rows(), P.cols());
+    m(0, 0) = z[0]*z[0];
+    Matrix aa2 = Matrix::Zero(P.rows(), P.cols());
+    aa2(0, 0) = A2*A2;
 
-    res(1, 0) = m_step * (CC * k(m_time) * e + (GG / (x[0] * x[0]) + 1.0 / (RR + x[2])) * cos(x[1]));
-    res(1, 1) = 1.0 + m_step * ((GG / x[0] - x[0] / (RR + x[2])) * sin(x[1]));
-    res(1, 2) = m_step * (-CC * BB * k(m_time) * x[0] * e - x[0] * cos(x[1]) / ((RR + x[2]) * (RR + x[2])));
+    Matrix res = Matrix::Zero(P.rows(), P.cols());
+    Matrix sum = P + m;
+    Matrix SSS = Matrix::Zero(P.rows(), P.cols());
+    SSS(0, 0) = A1 * sum(0, 0);
+    res = A(i, l) * (SSS + aa2);
+    return res;
+}
 
-    res(2, 0) = m_step * sin(x[1]);
-    res(2, 1) = m_step * x[0] * cos(x[1]);
-    res(2, 2) = 1.0;
+Vector LandingTestLinear::h(int /*i*/, const Vector &m, const Matrix & /* D*/) const
+{
+    return m;
+}
+
+Matrix LandingTestLinear::G(int /*i*/, const Vector &m, const Matrix &D) const
+{
+    Matrix mm = Matrix::Zero(D.rows(), D.cols());
+    mm(0, 0) = m[0]*m[0];
+    Matrix res = Matrix::Zero(D.rows(), D.cols());
+    res = mm + D;
+    return res;
+}
+
+Matrix LandingTestLinear::F(int i, const Vector &m, const Matrix &D) const
+{
+    Matrix mm = Matrix::Zero(D.rows(), D.cols());
+    mm(0, 0) = m[0]*m[0];
+    Matrix cPow2 = Matrix::Zero(D.rows(), D.cols());
+    double cc = C(i);
+    cPow2(0, 0) = cc*cc;
+
+    Matrix res = Matrix::Zero(D.rows(), D.cols());
+    res = D + mm + cPow2;
 
     return res;
 }
 
-Matrix LandingTestLinear::dadv(const Vector & /*x*/) const
+Matrix LandingTestLinear::dadx(int /*i*/, const Vector &/*x*/) const
 {
-    return Matrix::Zero(m_dimX, m_dimV);
-}
-
-Matrix LandingTestLinear::dbdx(const Vector &x) const
-{
-    double e0 = CC * x[0] * x[0] * exp(-BB * x[2]) * (cos(x[1]) - k(m_time) * sin(x[1]));
-    double e1 = CC * x[0] * x[0] * exp(-BB * x[2]) * (sin(x[1]) - k(m_time) * cos(x[1]));
-    Matrix res(m_dimY, m_dimX);
-
-    res(0, 0) = 2.0 * e0 * (1.0 + m_meanW[0]) / x[0];
-    res(0, 1) = -e1 * (1.0 + m_meanW[0]);
-    res(0, 2) = -BB * e0 * (1.0 + m_meanW[0]);
-
-    res(1, 0) = 2.0 * e1 * (1.0 + m_meanW[1]) / x[0];
-    res(1, 1) = e0 * (1.0 + m_meanW[1]);
-    res(1, 2) = -BB * e1 * (1.0 + m_meanW[1]);
-
+    Matrix res = Matrix::Zero(m_dimX, m_dimX);
+    res(0, 0) = A1;
     return res;
 }
 
-Matrix LandingTestLinear::dbdw(const Vector &x) const
+Matrix LandingTestLinear::dadv(int /*i*/, const Vector & /*x*/) const
 {
-    Matrix res(m_dimY, m_dimW);
-
-    res(0, 0) = CC * x[0] * x[0] * exp(-BB * x[2]) * (cos(x[1]) - k(m_time) * sin(x[1]));
-    res(0, 1) = 0.0;
-    res(0, 2) = 1.0;
-    res(0, 3) = 0.0;
-
-    res(1, 0) = 0.0;
-    res(1, 1) = CC * x[0] * x[0] * exp(-BB * x[2]) * (sin(x[1]) - k(m_time) * cos(x[1]));
-    res(1, 2) = 0.0;
-    res(1, 3) = 1.0;
-
+    Matrix res = Matrix::Zero(m_dimX, m_dimX);
+    res(0, 0) = A2;
     return res;
 }
 
+Matrix LandingTestLinear::dbdx(int /*i*/, const Vector &/*x*/) const
+{
+    Matrix res = Matrix::Zero(m_dimX, m_dimX);
+    res(0, 0) = 1;
+    return res;
+}
+
+Matrix LandingTestLinear::dbdw(int i, const Vector &/*x*/) const
+{
+    Matrix res = Matrix::Zero(m_dimX, m_dimX);
+    res(0, 0) = C(i);
+    return res;
+}
+
+double LandingTestLinear::Pr(int i) const
+{
+    if (i == 1) {
+        return 1 - m_e;
+    } else {
+        return m_e;
+    }
+}
+
+Array<int> LandingTestLinear::generateArrayI(int sizeS) const
+{
+    Array<int> array(sizeS);
+    double p = 1.0 - m_e;
+    int countI1;
+    countI1 = sizeS*p;
+    for (int i = 0; i < sizeS; i++) {
+        if (i < countI1) {
+            array[i] = 1;
+        } else {
+            array[i] = 2;
+        }
+    }
+
+    for (int i = 0; i < sizeS; i++) {
+      std::swap(array[i], array[rand() % sizeS]);
+    }
+    return array;
+}
 
 } // end Tasks::LogicDynamic
 
 } // end Tasks
-
-

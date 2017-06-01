@@ -131,7 +131,7 @@ PtrTask TaskFactory::createLogicDynamic(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::VanDerPol:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingTest:
-            return PtrTask(new Tasks::LogicDynamic::LandingTestGauss);
+            return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
             return PtrTask(nullptr); // WARNING
         }
