@@ -32,7 +32,7 @@ PtrTask TaskFactory::createContinuous(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::Continuous::VanDerPolLinear);
         case TASK_ID::Scalar:
-            return PtrTask(new Tasks::Discrete::ScalarLinear); // WARNING
+            return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingTest:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
@@ -45,7 +45,7 @@ PtrTask TaskFactory::createContinuous(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::Continuous::VanDerPolGauss);
         case TASK_ID::Scalar:
-            return PtrTask(new Tasks::Discrete::ScalarLinear); // WARNING
+            return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingTest:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
@@ -65,7 +65,7 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::ContinuousDiscrete::VanDerPolLinear);
         case TASK_ID::Scalar:
-            return PtrTask(nullptr);
+            return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingTest:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
@@ -78,7 +78,7 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::VanDerPol:
             return PtrTask(new Tasks::ContinuousDiscrete::VanDerPolGauss);
         case TASK_ID::Scalar:
-            return PtrTask(nullptr);
+            return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingTest:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
@@ -132,7 +132,7 @@ PtrTask TaskFactory::createLogicDynamic(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::VanDerPol:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::Scalar:
-            return PtrTask(nullptr);
+            return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingTest:
             return PtrTask(new Tasks::LogicDynamic::LandingTestLinear);
         case TASK_ID::LandingRejection:
@@ -145,7 +145,7 @@ PtrTask TaskFactory::createLogicDynamic(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::VanDerPol:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::Scalar:
-            return PtrTask(nullptr);
+            return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingTest:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
