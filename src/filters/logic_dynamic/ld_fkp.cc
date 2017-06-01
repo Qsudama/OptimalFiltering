@@ -19,7 +19,7 @@ using Math::MakeBlockMatrix;
 FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task)
     : LogicDynamicFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФМПлд (p=" + std::to_string(task->dimX()) + ")");
+    m_info->setName(m_task->info()->type() + "ФКПлд (p=" + std::to_string(task->dimX()) + ")");
 }
 
 void FKP::algorithm()
