@@ -27,15 +27,6 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
     m_info->setName(m_task->info()->type() + "AОФлд (p=" + std::to_string(n * (n + 3) / 2) + ")");
 }
 
-void AOF::zeroIteration()
-{
-    LogicDynamicFilter::zeroIteration();
-    m_sampleP.resize(m_params->sampleSize());
-//    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-//        m_sampleP[s] = m_result[0].varX - H0 * Dxy0.transpose();
-//    }
-}
-
 void AOF::algorithm()
 {
     Array<Array<double>> Omega(m_params->sampleSize());

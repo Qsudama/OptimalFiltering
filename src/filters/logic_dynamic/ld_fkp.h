@@ -21,6 +21,8 @@ public:
 
 
 protected:
+    void zeroIteration() override;
+
     /*!
      \brief Выполняет алгоритм.
 
@@ -39,6 +41,7 @@ protected:
     */
     void algorithm() override;
 
+    Array<Vector> m_sampleS; /*!< Массив для хранения расширенных векторов состояния \f$S_k\f$. */
 
 private:
     /*!

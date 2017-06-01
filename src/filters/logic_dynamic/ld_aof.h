@@ -23,7 +23,6 @@ public:
 
 
 protected:
-    void zeroIteration() override;
 
     /*!
      \brief Выполняет алгоритм.
