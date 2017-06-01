@@ -91,6 +91,12 @@ void FilterStartButtonsBox::initControls()
     m_btnDiscreteGaussMfos = new QPushButton(tr("Г-MФМП"));
     connect(m_btnDiscreteGaussMfos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussMfosClicked()));
 
+    m_btnDiscreteLinearDuof = new QPushButton(tr("Л-ДУОФ"));
+    connect(m_btnDiscreteLinearDuof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteLinearDuofClicked()));
+
+    m_btnDiscreteGaussDuof = new QPushButton(tr("Г-ДУОФ"));
+    connect(m_btnDiscreteGaussDuof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussDuofClicked()));
+
     // лд фильтры
 
     m_btnLDAof = new QPushButton(tr("лд-АОФ"));
@@ -137,6 +143,8 @@ void FilterStartButtonsBox::initLayouts()
     tab1Layout->addWidget(m_btnDiscreteLinearFos, 1, 1);
     tab1Layout->addWidget(m_btnDiscreteGaussMfos, 0, 2);
     tab1Layout->addWidget(m_btnDiscreteLinearMfos, 1, 2);
+    tab1Layout->addWidget(m_btnDiscreteGaussDuof, 0, 3);
+    tab1Layout->addWidget(m_btnDiscreteLinearDuof, 1, 3);
 
 
     // непрерывные фильтры:
@@ -278,6 +286,15 @@ void FilterStartButtonsBox::onBtnDiscreteGaussMfosClicked()
     emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::MDFOS);
 }
 
+void FilterStartButtonsBox::onBtnDiscreteLinearDuofClicked()
+{
+    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Linear, FILTER_ID::DUOF);
+}
+
+void FilterStartButtonsBox::onBtnDiscreteGaussDuofClicked()
+{
+    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::DUOF);
+}
 
 // логико-динамические фильтры
 

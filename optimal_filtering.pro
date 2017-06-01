@@ -302,6 +302,8 @@ HEADERS += \
     third_party/eigen/StdVector \
     third_party/eigen/SVD \
     third_party/qcustomplot/qcustomplot.h \
+    src/filters/discrete/d_duof.h \
+    src/tasks/discrete/d_scalar_linear.h \
     src/core/logic_dynamic_filter.h \
     src/core/logic_dynamic_task.h \
     src/tasks/logic_dynamic/ld_landing_test_linear.h \
@@ -363,6 +365,8 @@ SOURCES += \
     src/tasks/tasks_factory.cc \
     src/main.cc \
     third_party/qcustomplot/qcustomplot.cc \
+    src/filters/discrete/d_duof.cc \
+    src/tasks/discrete/d_scalar_linear.cc \
     src/core/logic_dynamic_filter.cc \
     src/core/logic_dynamic_task.cc \
     src/tasks/logic_dynamic/ld_landing_test_linear.cc \
@@ -370,4 +374,3 @@ SOURCES += \
     src/filters/logic_dynamic/ld_fos.cc \
     src/tasks/logic_dynamic/ld_landing_rejection_linear.cc \
     src/filters/logic_dynamic/ld_fkp.cc
-

@@ -11,6 +11,7 @@
 #include "src/filters/discrete/d_aof.h"
 #include "src/filters/discrete/d_fos.h"
 #include "src/filters/discrete/d_mfos.h"
+#include "src/filters/discrete/d_duof.h"
 #include "src/filters/logic_dynamic/ld_aof.h"
 #include "src/filters/logic_dynamic/ld_fos.h"
 #include "src/filters/logic_dynamic/ld_fkp.h"
@@ -30,7 +31,8 @@ enum class FILTER_ID {
     LDFKP,  /*!< ФКП - фильтр оптимальной структуры с конечной памятью логико-динамический. */
     DFOS,   /*!< ФМП с дискретными прогнозами. */
     DFOSBO, /*!< ФКП - фильтр оптимальной структуры с конечной памятью (повышенного порядка). */
-    MDFOS   /*!< МФМП - модифицированный ФМП. */
+    MDFOS,  /*!< МФМП - модифицированный ФМП. */
+    DUOF    /*!< ДУОФ - Двухшаговый условно-оптимальный фильтр. */
 };
 
 
