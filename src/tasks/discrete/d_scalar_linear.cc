@@ -15,7 +15,7 @@ using Math::Convert::DegToRad;
 ScalarLinear::ScalarLinear()
     : DiscreteTask()
 {
-    m_info->setName("Скалярный пример");
+    m_info->setName("Тестовый скалярный пример");
     m_info->setType("Л-");
 
     m_dimY = 1;
@@ -58,9 +58,37 @@ Vector ScalarLinear::a(const Vector &x) const
     return dx;
 }
 
+Vector ScalarLinear::a(const Vector &x, const Vector &v) const
+{
+    Vector dx(m_dimX);
+
+    dx[0] = aa * x[0] + bb * x[0] *  x[0] * v[0];
+
+    return dx;
+}
+
+Vector ScalarLinear::a_m(const Vector &x) const
+{
+    Vector dx(m_dimX);
+    Vector v = m_meanV;
+
+    dx[0] = aa * x[0] + bb * x[0] *  x[0] * v[0];
+
+    return dx;
+}
+
 Vector ScalarLinear::b(const Vector &x) const
 {
     Vector w = m_normalRand(m_meanW, m_varW); // СКО, а не Дисперсия
+    Vector res(m_dimY);
+
+    res[0] = cc * x[0] + dd * x[0] * x[0] + ee * w[0];
+
+    return res;
+}
+
+Vector ScalarLinear::b(const Vector &x, const Vector &w) const
+{
     Vector res(m_dimY);
 
     res[0] = cc * x[0] + dd * x[0] * x[0] + ee * w[0];

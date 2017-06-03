@@ -32,12 +32,15 @@ public:
         Шум \f$V_k\f$ генерируется внутри.
     */
     virtual Vector a(const Vector &x) const = 0;
+    virtual Vector a(const Vector &x, const Vector &v) const = 0;
+    virtual Vector a_m(const Vector &x) const = 0;
 
     /*! \brief Функция измерителя \f$b(X_k) = b_k(X_k, W_k)\f$.
 
         Шум \f$W_k\f$ генерируется внутри.
     */
     virtual Vector b(const Vector &x) const = 0;
+    virtual Vector b(const Vector &x, const Vector &w) const = 0;
     virtual Vector b_m(const Vector &x) const = 0;
 
     /*! \brief Структурная функция прогноза \f$\tau_k(m, D)\f$.

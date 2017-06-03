@@ -16,149 +16,107 @@ using Math::MakeBlockVector;
 using Math::MakeBlockMatrix;
 
 
-DUOF::DUOF(Core::PtrFilterParameters params, Core::PtrTask task)
-    : DiscreteFilter(params, task)
+DUOF::DUOF(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(params, task)
 {
     m_info->setName(m_task->info()->type() + "ДУОФд (p=" + std::to_string(task->dimX()) + ")");
 }
 
-/*
-void DUOF::zeroIteration()
-{
+void DUOF::zeroIteration() {
     DiscreteFilter::zeroIteration();
 
-    Vector my0  = Math::Statistic::Mean(m_sampleY);
-    Matrix Dy0  = Math::Statistic::Var(m_sampleY, my0);
-    Matrix Dxy0 = Math::Statistic::Cov(m_sampleX, m_sampleY);
-    Matrix H0   = Dxy0 * Pinv(Dy0);
-
-    m_sampleP.resize(m_params->sampleSize());
-    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        m_sampleP[s] = m_result[0].varX - H0 * Dxy0.transpose();
-    }
+    Lambda.resize(m_params->sampleSize());
+    deltaY.resize(m_params->sampleSize());
+    Omega.resize(m_params->sampleSize());
+    A.resize(m_params->sampleSize());
 }
-*/
 
-void DUOF::algorithm()
-{
-    /*
-    Vector        h, g, e;
-    Matrix        G, F, Psi, T, H;
-    Array<Vector> sampleLambda(m_params->sampleSize());
-    Array<Vector> sampleA(m_params->sampleSize());
-    Array<Vector> sampleOmega(m_params->sampleSize());
+void DUOF::algorithm() {
 
     m_task->setTime(m_result[0].time);
     m_task->setStep(m_params->measurementStep());
 
-    zeroIteration();
-
-    computeParams(0, sampleU, sampleS, T);
-    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        sampleLambda[s] = m_result[0].meanX;
-        Psi             = m_result[0].varX;
-        h               = m_task->h(sampleLambda[s], Psi);
-        G               = m_task->G(sampleLambda[s], Psi);
-//        F               = m_task->F(sampleLambda[s], Psi);
-        sampleOmega[s] =  m_task->b(1);
-        //sampleSigma[s]  = Psi * G.transpose() * Pinv(F) * (m_sampleY[s] - h);!!!
-    }
-    computeAdditionParams(sampleS, sampleLambda, sampleSigma, L, K, n, e);
-
-    // Индекс k соответствует моменту времени tk = t0 + k * delta_t  (delta_t - интервал между измерениями):
     for (size_t k = 1; k < m_result.size(); ++k) {
-        // Индекс s пробегает по всем элементам выборки:
-        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            m_task->setTime(m_result[k - 1].time);
-            // X_k = a(X_{k-1}); время t = t_{k-1}
-            m_sampleX[s] = m_task->a(m_sampleX[s]);
-            // вычисляем lambda, Psi;  время t = t_{k-1}:
-            sampleLambda[s] = L * sampleS[s] + n;
-            Psi             = m_task->Theta(sampleU[s], T);
 
-            //ставим время обратно и продолжаем:
-            m_task->setTime(m_result[k].time);
-
-            h = m_task->h(sampleLambda[s], Psi);
-            G = m_task->G(sampleLambda[s], Psi);
-            //F = m_task->F(sampleLambda[s], Psi);
-
-            m_sampleY[s]   = m_task->b(m_sampleX[s]);
-            //sampleSigma[s] = Psi * G.transpose() * Pinv(F) * (m_sampleY[s] - h);!!!!
+        for (size_t i = 0; i < m_params->sampleSize(); ++i) {
+            computeFirstStep(k, i);
         }
-        computeAdditionParams(sampleS, sampleLambda, sampleSigma, L, K, n, e);
-        // Индекс s пробегает по всем элементам выборки:
-        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            m_sampleZ[s] = sampleLambda[s] + K * sampleSigma[s] + e;
+
+        F = compute_F();
+        g = compute_g();
+
+        for (size_t i = 0; i < m_params->sampleSize(); ++i) {
+            computeSecondStep(k, i);
         }
+
+        H = compute_H();
+        e = compute_e();
+
+        for (size_t i = 0; i < m_params->sampleSize(); ++i) {
+            computeThirdStep(k, i);
+        }
+
         writeResult(k);
-        computeParams(k, sampleU, sampleS, T);
     }
-    */
 }
 
-void DUOF::computeParams(size_t k, Array<Vector> &sampleU, Array<Vector> &sampleS, Matrix &T)
-{
-    /*
-    Vector        my, chi;
-    Matrix        Gamma, GammaY, GammaZ, DxyDxz, Ddelta, Dxy, Dxz;
-    Array<Vector> sampleDelta(m_params->sampleSize());
-
-    // Индекс s пробегает по всем элементам выборки:
-    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        MakeBlockVector(m_sampleY[s], m_sampleZ[s], sampleDelta[s]);
-    }
-
-    Ddelta = Var(sampleDelta);
-    my     = Mean(m_sampleY);
-    Dxy    = Cov(m_sampleX, m_sampleY);
-    Dxz    = Cov(m_sampleX, m_sampleZ);
-    MakeBlockMatrix(Dxy, Dxz, DxyDxz);
-
-    Gamma  = DxyDxz * Pinv(Ddelta);
-    GammaY = Gamma.leftCols(m_task->dimY());
-    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
-
-    chi = m_result[k].meanX - GammaY * my - GammaZ * m_result[k].meanZ;
-    T   = m_result[k].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
-
-    m_task->setTime(m_result[k].time);
-    // Индекс s пробегает по всем элементам выборки:
-    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        sampleU[s] = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + chi;
-        sampleS[s] = m_task->tau(sampleU[s], T);
-    }
-    */
+#pragma mark - Main Steps Compution
+void DUOF::computeFirstStep(long k, long i) {
+    m_task->setTime(m_result[k - 1].time);
+    m_sampleX[i] = m_task->a(m_sampleX[i]);
+    A[i] = m_task->a_m(m_sampleZ[i]);
 }
 
-void DUOF::computeAdditionParams(const Array<Vector> &sampleS, const Array<Vector> &sampleLambda,
-                                 const Array<Vector> &sampleSigma, Matrix &L, Matrix &K, Vector &n, Vector &e)
-{
-    /*
-    Vector me, mx, msigma, ms;
-    Matrix Dsigma_e, Dsigma, Ds, Dxs;
-
-    Array<Vector> sampleE(m_params->sampleSize());
-
-    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        sampleE[s] = m_sampleX[s] - sampleLambda[s];
-    }
-    mx       = Mean(m_sampleX);
-    me       = Mean(sampleE);
-    msigma   = Mean(sampleSigma);
-    ms       = Mean(sampleS);
-    Dsigma   = Var(sampleSigma, msigma);
-    Dsigma_e = Cov(sampleE, sampleSigma);
-    Ds       = Var(sampleS, ms);
-    Dxs      = Cov(m_sampleX, sampleS);
-
-    K = Dsigma_e * Pinv(Dsigma);
-    e = me - K * msigma;
-
-    L = Dxs * Pinv(Ds);
-    n = mx - L * ms;
-    */
+void DUOF::computeSecondStep(long k, long i) {
+    m_task->setTime(m_result[k - 1].time);
+    Lambda[i] = compute_Lambda(i);
+    m_sampleE[i] = compute_E(i);
+    m_sampleY[i] = m_task->b(m_sampleX[i], Lambda[i]);
+    deltaY[i] = compute_DeltaY(i);
+    Omega[i] = compute_Omega(i);
 }
+
+void DUOF::computeThirdStep(long k, long i) {
+    m_task->setTime(m_result[k - 1].time);
+    m_sampleZ[i] = compute_Z(i);
+}
+
+#pragma mark - Parameters Compution
+Matrix DUOF::compute_F() {
+    return Cov(m_sampleX, A) * Pinv(Var(A));
+}
+
+Vector DUOF::compute_g() {
+    return Mean(m_sampleX) - F * Mean(A);
+}
+
+Matrix DUOF::compute_H() {
+    return Cov(m_sampleE, Omega) * Pinv(Var(Omega));
+}
+
+Vector DUOF::compute_e() {
+    return Mean(m_sampleE) - H * Mean(Omega);
+}
+
+Vector DUOF::compute_Lambda(long i) {
+    return F * A[i] + g;
+}
+
+Vector DUOF::compute_DeltaY(long i) {
+    return m_sampleY[i] - m_task->b_m(Lambda[i]);
+}
+
+Vector DUOF::compute_Omega(long i) {
+    return deltaY[i];
+}
+
+Vector DUOF::compute_E(long i) {
+    return m_sampleX[i] - Lambda[i];
+}
+
+Vector DUOF::compute_Z(long i) {
+    return Lambda[i] + H * deltaY[i] + e;
+}
+
 
 
 } // end Discrete

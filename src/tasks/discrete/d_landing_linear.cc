@@ -77,10 +77,45 @@ Vector LandingLinear::a(const Vector &x) const
     return x + m_step * dx;
 }
 
+Vector LandingLinear::a(const Vector &x, const Vector &v) const
+{
+    double e = exp(-BB * x[2]);
+    Vector dx(m_dimX);
+
+    dx[0] = -CC * x[0] * x[0] * e - GG * sin(x[1]);
+    dx[1] = CC * k(m_time) * x[0] * e + cos(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
+    dx[2] = x[0] * sin(x[1]);
+
+    return x + m_step * dx;
+}
+
+Vector LandingLinear::a_m(const Vector &x) const
+{
+    double e = exp(-BB * x[2]);
+    Vector dx(m_dimX);
+
+    dx[0] = -CC * x[0] * x[0] * e - GG * sin(x[1]);
+    dx[1] = CC * k(m_time) * x[0] * e + cos(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
+    dx[2] = x[0] * sin(x[1]);
+
+    return x + m_step * dx;
+}
+
 Vector LandingLinear::b(const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Vector w = m_normalRand(m_meanW, m_varW); // СКО, а не Дисперсия
+    Vector res(m_dimY);
+
+    res[0] = CC * (w[0] + 1.0) * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1])) + w[2];
+    res[1] = CC * (w[1] + 1.0) * x[0] * x[0] * e * (sin(x[1]) - k(m_time) * cos(x[1])) + w[3];
+
+    return res;
+}
+
+Vector LandingLinear::b(const Vector &x, const Vector &w) const
+{
+    double e = exp(-BB * x[2]);
     Vector res(m_dimY);
 
     res[0] = CC * (w[0] + 1.0) * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1])) + w[2];

@@ -26,7 +26,10 @@ public:
     LandingLinear();
 
     Vector a(const Vector &x) const override;
+    Vector a(const Vector &x, const Vector &v) const override;
+    Vector a_m(const Vector &x) const override;
     Vector b(const Vector &x) const override;
+    Vector b(const Vector &x, const Vector &w) const override;
     Vector b_m(const Vector &x) const override;
     Vector tau(const Vector &z, const Matrix &P) const override;
     Matrix Theta(const Vector &z, const Matrix &P) const override;
