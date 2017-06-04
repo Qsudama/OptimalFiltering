@@ -177,19 +177,19 @@ void AOF::algorithm()
 void AOF::computeProbabilityDensityN(Array<double> &resDouble, Array<double> omega,
                                      Vector sampleVector, Array<Vector> mu, Array<Matrix> D) {
     Array<double> resP(m_task->countI);
-    for (int i = 0; i < m_task->countI; i++) {
-        if (m_task->countI == 1 ) {
-            resDouble[i] = omega[i];
-        } else {
+    if (m_task->countI == 1 ) {
+        resDouble = omega;
+    } else {
+        for (int i = 0; i < m_task->countI; i++) {
             double N = probabilityDensityN(sampleVector, mu[i], D[i]);
             resP[i] = omega[i]*N;
-            double resNumerator = 0.0;
-            for (int i = 0; i < m_task->countI; i++) {
-                resNumerator += resP[i];
-            }
-            for (int i = 0; i < m_task->countI; i++) {
-                resDouble[i] = resP[i]/resNumerator;
-            }
+        }
+        double resNumerator = 0.0;
+        for (int i = 0; i < m_task->countI; i++) {
+            resNumerator += resP[i];
+        }
+        for (int i = 0; i < m_task->countI; i++) {
+            resDouble[i] = resP[i]/resNumerator;
         }
     }
 }
