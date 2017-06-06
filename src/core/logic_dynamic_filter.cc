@@ -60,6 +60,18 @@ void LogicDynamicFilter::zeroIteration() {
         Upsilon[s].resize(m_task->countI);
     }
 
+    m_sampleX.resize(m_params->sampleSize());
+    m_sampleY.resize(m_params->sampleSize());
+    m_sampleZ.resize(m_params->sampleSize());
+    m_sampleE.resize(m_params->sampleSize());
+    m_sampleI.resize(m_params->sampleSize());
+
+    size_t size = size_t(m_params->measurementCount());
+    m_result.resize(size);
+    for (size_t i = 0; i < size; ++i) {
+        m_result[i].time = m_params->measurementStep() * i;
+    }
+
     // Блок 0
     computeZeroVectors();
 

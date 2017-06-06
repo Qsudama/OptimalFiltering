@@ -39,8 +39,6 @@ protected:
     */
     void algorithm() override;
 
-
-protected:
     Array<Matrix> m_sampleP; /*!< Массив апостериорных ковариаций \f$P\f$. */
 
 private:

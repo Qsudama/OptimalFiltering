@@ -51,10 +51,6 @@ private:
     Array<Matrix> Gamma;
     Array<Matrix> Dzz;
 
-    void computeParams(Array<double> &Q, Array<Vector> &kappa,
-                       Array<Matrix> &T, Array<Vector> &meanZ,
-                       Array<Matrix> &Dzz, Array<Matrix> &Gamma);
-
     void computeBlock1(long s);
     void computeBlock2(long s);
     void computeBlock3b();

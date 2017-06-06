@@ -40,26 +40,27 @@ protected:
     void algorithm() override;
     void zeroIteration() override;
 
+private:
+
+    Array<Array<double>> Xi;
+    Array<Array<Vector>> u;
+    Array<double> Q;
+    Array<Vector> kappa;
+    Array<Matrix> T;
+    Array<Vector> meanZ;
+    Array<Matrix> Gamma;
+    Array<Matrix> Dzz;
+
     Array<Vector> m_sampleS; /*!< Массив для хранения расширенных векторов состояния \f$S_k\f$. */
 
-private:
-    /*!
-      \brief Вычисляет параметры и заполняет массив \f$U_k\f$.
-      \param[in] k - индекс, соответствующий времени \f$t = k \cdot \delta t\f$.
-      \param[out] u - масcив под выборку \f$U_k\f$.
-      \param[out] T - матрица \f$T_k\f$.
-
-     \f[D_k^\delta = cov([Y_k^T\ \ Z_k^T]^T),\f]
-     \f[[\Gamma_k^y\ \ \Gamma_k^z] = [D_{kk}^{xy}\ \ D_{kk}^{xz}] \cdot (D_k^\delta)^{-1},\f]
-     \f[\chi_k = m_k^x - \Gamma_k^y \cdot m_k^y - \Gamma_k^z \cdot m_k^z,\f]
-     \f[T_k = D_k^x - \Gamma_k^y \cdot (D_{kk}^{xy})^T - \Gamma_k^z \cdot (D_{kk}^{xz})^T.\f]
-     */
-    void computeParams(Array<double> &Q, Array<Vector> &kappa,
-                       Array<Matrix> &T, Array<Vector> &meanZ,
-                       Array<Matrix> &Dzz, Array<Matrix> &Gamma);
-
-    void computeProbabilityDensityN(Array<double> &resDouble, Array<double> omega,
-                                    Math::Vector sampleVector, Array<Vector> mu, Array<Matrix> D);
+    void computeBlock1(long s);
+    void computeBlock2(long s);
+    void computeBlock3a();
+    void computeBlock3b();
+    void computeBlock3c();
+    void computeBlock4(long s);
+    void computeBlock5(long s);
+    void computeBlock6();
 };
 
 
