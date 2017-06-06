@@ -44,8 +44,12 @@ protected:
     Array<Matrix> m_sampleP; /*!< Массив апостериорных ковариаций \f$P\f$. */
 
 private:
-    void computeProbabilityDensityN(Array<double> &resDouble, Array<double> omega,
-                                    Vector sampleVector, Array<Vector> mu, Array<Matrix> D);
+
+    void computeBlock1(long s);
+    void computeBlock2(long s);
+    void computeBlock4(long s);
+    void computeBlock5(long s);
+    void computeBlock6();
 };
 
 
