@@ -28,6 +28,8 @@ void FKP::zeroIteration()
 
     m_sampleS.resize(m_params->sampleSize());
 
+
+
 }
 
 void FKP::algorithm()

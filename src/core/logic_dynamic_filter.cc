@@ -101,7 +101,7 @@ double LogicDynamicFilter::probabilityDensityN(const Vector &u, const Vector &m,
     Matrix det = 2* pi * D;
     double deter = det.determinant();
     Matrix pin = Pinv(D);
-    double exponent = exp((-1 * (u - m).transpose() * pin * (u - m))(0, 0));
+    double exponent = exp(((-1 * (u - m).transpose()) * pin * (u - m))(0, 0));
     double n = exponent / sqrt(deter);
     return n;
 }
@@ -122,7 +122,11 @@ Array<double> LogicDynamicFilter::computeProbabilityDensityN(Array<double> omega
             resNumerator += resP[i];
         }
         for (int i = 0; i < m_task->countI; i++) {
-            resDouble[i] = resP[i]/resNumerator;
+            if(resNumerator == 0.0) {
+                resDouble[i] = resP[i];
+            } else {
+                resDouble[i] = resP[i]/resNumerator;
+            }
         }
     }
     return resDouble;

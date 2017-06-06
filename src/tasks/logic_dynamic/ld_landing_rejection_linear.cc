@@ -16,8 +16,8 @@ using Math::Convert::DegToRad;
 LandingRejectionLinear::LandingRejectionLinear()
     : LogicDynamicTask()
     , m_turnTime(45.0)
-    , m_p(1.0)
-    , countIInTask(1)
+    , m_p(0.8)
+    , countIInTask(4)
     , gamMinX(0.5)
     , gamMinY(0.5)
 {

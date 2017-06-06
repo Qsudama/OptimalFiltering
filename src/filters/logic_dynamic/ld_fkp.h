@@ -21,8 +21,6 @@ public:
 
 
 protected:
-    void zeroIteration() override;
-
     /*!
      \brief Выполняет алгоритм.
 
@@ -40,6 +38,7 @@ protected:
      \see Core::LogicDynamicTask
     */
     void algorithm() override;
+    void zeroIteration() override;
 
     Array<Vector> m_sampleS; /*!< Массив для хранения расширенных векторов состояния \f$S_k\f$. */
 
