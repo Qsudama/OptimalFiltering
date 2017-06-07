@@ -56,8 +56,8 @@ protected:
     double cI2; /*!< Для скалярной тестовой задачи*/
     int countIInTask; /*!< Количество режимов в задаче*/
 
-    static constexpr double A1 = 0.9;
-    static constexpr double A2 = 0.7071067812;
+    double A1 = 0.9;
+    double A2 = 0.7071067812;
 //    static constexpr double R0 = 0.013;
 //    static constexpr double GG = 3.711;
 //    static constexpr double RR = 3390000.0;
