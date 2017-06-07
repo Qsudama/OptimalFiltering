@@ -19,7 +19,9 @@ using Math::MakeBlockMatrix;
 FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task)
     : LogicDynamicFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФКПлд (p=" + std::to_string(task->dimX()) + ")");
+    long ny = long(m_task->dimY());
+    long p  = ny * long(m_params->orderMult());
+    m_info->setName(m_task->info()->type() + "ФКПлд (p=" + std::to_string(p) + ")");
 }
 
 void FKP::zeroIteration()
@@ -43,7 +45,7 @@ void FKP::zeroIteration()
         Xi[s].resize(m_task->countI);
         u[s].resize(m_task->countI);
 
-        m_sampleS[s] = Vector::Zero(p);
+        m_sampleS[s] = Vector::Zero(m_task->dimY());
         for (long i = 0; i < long(m_task->dimY()); i++) {
             m_sampleS[s][i] = m_sampleY[s][i];
         }
@@ -68,7 +70,7 @@ void FKP::algorithm()
         // Блок 3
         writeResult(k, m_task->countI);
         // Блок 3а
-        computeBlock3a();
+        computeBlock3a(k);
         // Блок 3б
         computeBlock3b();
         // Блок 3в
@@ -111,15 +113,33 @@ void FKP::computeBlock2(long s) {
     m_sampleZ[s] = resZ;
 }
 
-void FKP::computeBlock3a() {
-    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        long ny = long(m_task->dimY());
-        long p  = ny * long(m_params->orderMult());
-        for (long i = p - 1; i >= ny; i--) {
-            m_sampleS[s][i] = m_sampleS[s][i - ny];
-        }
-        for (long i = 0; i < long(ny); i++) {
-            m_sampleS[s][i] = m_sampleY[s][i];
+void FKP::computeBlock3a(long k) {
+    long m = long(m_task->dimY());
+    long l = long(m_params->orderMult());
+    long p = l*m;
+    if (k != 0) {
+        if (k <= l-1) {
+            for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+                int sizeS = m_sampleS[s].size();
+                Vector def = Vector(m_sampleS[s]);
+                m_sampleS[s] = Vector::Zero(sizeS+m);
+                for(long i = 0; i < sizeS+m; i++) {
+                    if (i < m) {
+                        m_sampleS[s][i] = m_sampleY[s][i];
+                    } else {
+                        m_sampleS[s][i] = def[i-m];
+                    }
+                }
+            }
+        } else {
+            for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+                for (long i = p - 1; i >= m; i--) {
+                    m_sampleS[s][i] = m_sampleS[s][i - m];
+                }
+                for (long i = 0; i < long(m); i++) {
+                    m_sampleS[s][i] = m_sampleY[s][i];
+                }
+            }
         }
     }
 }

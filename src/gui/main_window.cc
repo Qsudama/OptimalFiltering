@@ -260,9 +260,9 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     }
     Math::Vector scale(dim);
     if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
-        scale[0] = scale[2] = 1;
+        scale[0] = scale[2] = 1000;
         scale[1] = scale[5] = Math::Convert::RadToDeg(1.0);
-        scale[3]            = 1;
+        scale[3]            = 1000;
         scale[4]            = 1.0;
     } else if (m_taskWidget->id() == Tasks::TASK_ID::Landing) {
         scale[0] = 1000;
