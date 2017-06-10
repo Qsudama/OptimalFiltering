@@ -65,9 +65,9 @@ void FOS::algorithm()
         computeBlock3b();
         // Блок 3в
         computeBlock3c();
-//        if (k == 44) {
-//            computeBlock3c();
-//        }
+        if (k == 44) {
+            computeBlock3c();
+        }
 
         if (k <= m_result.size()) {
 

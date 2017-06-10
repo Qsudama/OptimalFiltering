@@ -56,8 +56,8 @@ LandingRejectionLinear::LandingRejectionLinear()
 
     m_varW(0, 0) = pow(1E-2, 2); // Sigma_U
     m_varW(1, 1) = pow(1E-2, 2); // Sigma_U
-    m_varW(2, 2) = pow(0.02E-7, 2); // Sigma_W
-    m_varW(3, 3) = pow(0.02E-7, 2); // Sigma_W
+    m_varW(2, 2) = pow(0.02E-4, 2); // Sigma_W
+    m_varW(3, 3) = pow(0.02E-4, 2); // Sigma_W
 
 
     (*m_consts)["Kb"]     = KB;
