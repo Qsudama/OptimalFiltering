@@ -37,6 +37,8 @@ PtrTask TaskFactory::createContinuous(TASK_ID id, APPROX_TYPE type)
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
             return PtrTask(nullptr); // WARNING
+        case TASK_ID::VanDerPolRejection:
+            return PtrTask(nullptr); // WARNING
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
@@ -49,6 +51,8 @@ PtrTask TaskFactory::createContinuous(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::LandingTest:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::VanDerPolRejection:
             return PtrTask(nullptr); // WARNING
         }
     }
@@ -70,6 +74,8 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id, APPROX_TYPE type)
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
             return PtrTask(nullptr); // WARNING
+        case TASK_ID::VanDerPolRejection:
+            return PtrTask(nullptr); // WARNING
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
@@ -82,6 +88,8 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::LandingTest:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::VanDerPolRejection:
             return PtrTask(nullptr); // WARNING
         }
     }
@@ -103,6 +111,8 @@ PtrTask TaskFactory::createDiscrete(TASK_ID id, APPROX_TYPE type)
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
             return PtrTask(nullptr); // WARNING
+        case TASK_ID::VanDerPolRejection:
+            return PtrTask(nullptr); // WARNING
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
@@ -115,6 +125,8 @@ PtrTask TaskFactory::createDiscrete(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::LandingTest:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::VanDerPolRejection:
             return PtrTask(nullptr); // WARNING
         }
     }
@@ -137,6 +149,8 @@ PtrTask TaskFactory::createLogicDynamic(TASK_ID id, APPROX_TYPE type)
             return PtrTask(new Tasks::LogicDynamic::LandingTestLinear);
         case TASK_ID::LandingRejection:
             return PtrTask(new Tasks::LogicDynamic::LandingRejectionLinear);
+        case TASK_ID::VanDerPolRejection:
+            return PtrTask(new Tasks::LogicDynamic::VanDerPolLinear);
         }
     case APPROX_TYPE::Gauss:
         switch (id) {
@@ -149,6 +163,8 @@ PtrTask TaskFactory::createLogicDynamic(TASK_ID id, APPROX_TYPE type)
         case TASK_ID::LandingTest:
             return PtrTask(nullptr); // WARNING
         case TASK_ID::LandingRejection:
+            return PtrTask(nullptr); // WARNING
+        case TASK_ID::VanDerPolRejection:
             return PtrTask(nullptr); // WARNING
         }
     }

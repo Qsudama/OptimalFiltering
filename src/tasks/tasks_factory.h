@@ -15,6 +15,7 @@
 #include "src/tasks/discrete/d_scalar_linear.h"
 #include "src/tasks/logic_dynamic/ld_landing_test_linear.h"
 #include "src/tasks/logic_dynamic/ld_landing_rejection_linear.h"
+#include "src/tasks/logic_dynamic/ld_vanderpol_linear.h"
 
 //! \brief Модуль, содержащий реализации конкретных задач для фильтров.
 
@@ -30,6 +31,7 @@ enum class TASK_ID {
     Scalar,     ///< Тестовый скалярный пример.
     LandingTest, ///< Спуск ЛА с неполной информацией. Тестовый пример
     LandingRejection, ///< Спуск ЛА с отказами.
+    VanDerPolRejection, ///< Осциллятор Ван-дер-Поля с отказами.
 };
 
 

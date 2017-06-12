@@ -23,11 +23,12 @@ void TaskWidget::loadFonts()
 void TaskWidget::initControls()
 {
     m_cbTask = new QComboBox;
-    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету"));
-    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля"));
-    m_cbTask->addItem(tr("Скалярный пример"));
-    m_cbTask->addItem(tr("Скалярный пример со сбоями измерителя"));
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету непрерывно-дискретный"));
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля непрерывно-дискретный"));
+    m_cbTask->addItem(tr("Скалярный пример нелинейный"));
+    m_cbTask->addItem(tr("Скалярный пример линейный со сбоями измерителя"));
     m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков"));
+    m_cbTask->addItem(tr("2-мерный осциллятор Ван-дер-Поля со сбоями"));
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
@@ -70,7 +71,8 @@ void TaskWidget::onCbTaskChanged(int)
 {
     Tasks::TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-    if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
+    if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection
+                                              || taskId == Tasks::TASK_ID::VanDerPolRejection) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId,
                                              Core::APPROX_TYPE::Linear);
     } else if(taskId == Tasks::TASK_ID::Scalar) {
@@ -124,6 +126,8 @@ Tasks::TASK_ID TaskWidget::id() const
         return Tasks::TASK_ID::LandingTest;
     case 4:
         return Tasks::TASK_ID::LandingRejection;
+    case 5:
+        return Tasks::TASK_ID::VanDerPolRejection;
     default:
         return Tasks::TASK_ID::Landing;
     }

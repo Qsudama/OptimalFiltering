@@ -29,11 +29,11 @@ void AdditionalSettingsWidget::loadFonts()
 
 void AdditionalSettingsWidget::initControls()
 {
-    m_radioPinvSvd = new QRadioButton(tr("Использовать метод SVD"));
+    m_radioPinvSvd = new QRadioButton(tr("Метод SVD"));
     m_radioPinvSvd->setChecked(true);
     connect(m_radioPinvSvd, SIGNAL(toggled(bool)), this, SLOT(onPinvSvdToggled(bool)));
 
-    m_radioPinvGreville = new QRadioButton(tr("Использовать метод Гревиля"));
+    m_radioPinvGreville = new QRadioButton(tr("Метод Гревиля"));
     m_radioPinvGreville->setChecked(false);
     connect(m_radioPinvGreville, SIGNAL(toggled(bool)), this, SLOT(onPinvGrevilleToggled(bool)));
 }
