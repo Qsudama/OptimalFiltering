@@ -30,7 +30,7 @@ public:
      \param atype - идентификатор типа приближения (аппроксимации).
      \return указатель на экземпляр задачи.
     */
-    Core::PtrTask task(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype);
+    Core::PtrTask task(Core::FILTER_TYPE ftype);
 
     //! \brief Возвращает идентификатор выбранной в данный момент задачи.
     Tasks::TASK_ID id() const;

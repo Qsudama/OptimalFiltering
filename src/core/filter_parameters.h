@@ -52,7 +52,7 @@ public:
      После автоматической коррекции значения могут несколько отличаться от заданных.
     */
     FilterParameters(double maxTime, double measurementStep, double predictionStep, double integrationStep,
-                     Uint sampleSize, Uint orderMult = 1);
+                     Uint sampleSize, Uint orderMult = 1, Uint argumentsCount = 2);
 
     //! \brief Возвращает время \f$T_{max}\f$ окончания фильтрации.
     const double &maxTime() const;
@@ -82,6 +82,9 @@ public:
     //! \brief Возвращает кратность порядка фильтра для ФКП (ФОСпп).
     const Uint &orderMult() const;
 
+    //! \brief Возвращает кол-во аргументов для ФМП, ДФМП, МФМП и МДФМП.
+    const Uint &argumentsCount() const;
+
     //! \brief Устанавливает время \f$T_{max}\f$ окончания фильтрации.
     void setMaxTime(double tmax);
 
@@ -99,6 +102,9 @@ public:
 
     //! \brief Устанавливает кратность порядка фильтра для ФКП (ФОСпп).
     void setOrderMult(Uint order);
+
+    //! \brief Устанавливает кол-во аргументов для ФМП, ДФМП, МФМП и МДФМП.
+    void setArgumentsCount(Uint order);
 
 
 private:
@@ -130,6 +136,7 @@ private:
     Uint m_integrationCount; /*!< Количество \f$N\f$ интегрирований между двумя прогнозами. */
     Uint m_sampleSize; /*!< Размер выборок. */
     Uint m_orderMult;  /*!< Кратность порядка фильтра. */
+    Uint m_argumentsCount;  /*!< Кол-фо аргументов фильтра. */
 };
 
 

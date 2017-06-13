@@ -310,7 +310,12 @@ HEADERS += \
     src/filters/logic_dynamic/ld_aof.h \
     src/filters/logic_dynamic/ld_fos.h \
     src/tasks/logic_dynamic/ld_landing_rejection_linear.h \
-    src/filters/logic_dynamic/ld_fkp.h
+    src/filters/logic_dynamic/ld_fkp.h \
+    src/filters/discrete/d_dfmp.h \
+    src/filters/discrete/d_fkp.h \
+    src/filters/discrete/d_dfkp.h \
+    src/filters/discrete/d_mdfmp.h \
+    src/tasks/discrete/d_scalar_gauss.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -373,4 +378,9 @@ SOURCES += \
     src/filters/logic_dynamic/ld_aof.cc \
     src/filters/logic_dynamic/ld_fos.cc \
     src/tasks/logic_dynamic/ld_landing_rejection_linear.cc \
-    src/filters/logic_dynamic/ld_fkp.cc
+    src/filters/logic_dynamic/ld_fkp.cc \
+    src/filters/discrete/d_dfkp.cc \
+    src/filters/discrete/d_dfmp.cc \
+    src/filters/discrete/d_fkp.cc \
+    src/filters/discrete/d_mdfmp.cc \
+    src/tasks/discrete/d_scalar_gauss.cc

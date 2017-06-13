@@ -53,26 +53,22 @@ private slots:
       c параметрами, соответсвующими кнопке, на которую кликнули.
     */
 
-    void onBtnContinuousDiscreteGaussAofClicked();
-    void onBtnContinuousDiscreteLinearAofClicked();
-    void onBtnContinuousDiscreteGaussFosClicked();
-    void onBtnContinuousDiscreteLinearFosClicked();
-    void onBtnContinuousDiscreteGaussDfosClicked();
-    void onBtnContinuousDiscreteLinearDfosClicked();
-    void onBtnContinuousDiscreteGaussDfosboClicked();
-    void onBtnContinuousDiscreteLinearDfosboClicked();
-    void onBtnContinuousGaussAofClicked();
-    void onBtnContinuousLinearAofClicked();
-    void onBtnContinuousGaussFosClicked();
-    void onBtnContinuousLinearFosClicked();
-    void onBtnDiscreteGaussAofClicked();
-    void onBtnDiscreteLinearAofClicked();
-    void onBtnDiscreteLinearFosClicked();
-    void onBtnDiscreteGaussFosClicked();
-    void onBtnDiscreteLinearMfosClicked();
-    void onBtnDiscreteGaussMfosClicked();
-    void onBtnDiscreteLinearDuofClicked();
-    void onBtnDiscreteGaussDuofClicked();
+    void onBtnContinuousDiscreteAofClicked();
+    void onBtnContinuousDiscreteFosClicked();
+    void onBtnContinuousDiscreteDfosClicked();
+    void onBtnContinuousDiscreteDfosboClicked();
+
+    void onBtnContinuousAofClicked();
+    void onBtnContinuousFosClicked();
+
+    void onBtnDiscreteAofClicked();
+    void onBtnDiscreteFosClicked();
+    void onBtnDiscreteMfosClicked();
+    void onBtnDiscreteDuofClicked();
+    void onBtnDiscreteDfmpClicked();
+    void onBtnDiscreteFkpClicked();
+    void onBtnDiscreteDfkpClicked();
+    void onBtnDiscreteMdfmpClicked();
 
     void onBtnLDAofClicked();
     void onBtnLDFosClicked();
@@ -95,26 +91,22 @@ private:
 
 
 private:
-    QPushButton *m_btnContinuousDiscreteGaussAof;
-    QPushButton *m_btnContinuousDiscreteLinearAof;
-    QPushButton *m_btnContinuousDiscreteGaussFos;
-    QPushButton *m_btnContinuousDiscreteLinearFos;
-    QPushButton *m_btnContinuousDiscreteGaussDfos;
-    QPushButton *m_btnContinuousDiscreteLinearDfos;
-    QPushButton *m_btnContinuousDiscreteGaussDfosbo;
-    QPushButton *m_btnContinuousDiscreteLinearDfosbo;
-    QPushButton *m_btnContinuousGaussAof;
-    QPushButton *m_btnContinuousLinearAof;
-    QPushButton *m_btnContinuousGaussFos;
-    QPushButton *m_btnContinuousLinearFos;
-    QPushButton *m_btnDiscreteGaussAof;
-    QPushButton *m_btnDiscreteLinearAof;
-    QPushButton *m_btnDiscreteLinearFos;
-    QPushButton *m_btnDiscreteGaussFos;
-    QPushButton *m_btnDiscreteLinearMfos;
-    QPushButton *m_btnDiscreteGaussMfos;
-    QPushButton *m_btnDiscreteLinearDuof;
-    QPushButton *m_btnDiscreteGaussDuof;
+    QPushButton *m_btnContinuousDiscreteAof;
+    QPushButton *m_btnContinuousDiscreteFos;
+    QPushButton *m_btnContinuousDiscreteDfos;
+    QPushButton *m_btnContinuousDiscreteDfosbo;
+
+    QPushButton *m_btnContinuousAof;
+    QPushButton *m_btnContinuousFos;
+
+    QPushButton *m_btnDiscreteAof;
+    QPushButton *m_btnDiscreteFos;
+    QPushButton *m_btnDiscreteMfos;
+    QPushButton *m_btnDiscreteDuof;
+    QPushButton *m_btnDiscreteDfmp;
+    QPushButton *m_btnDiscreteFkp;
+    QPushButton *m_btnDiscreteDfkp;
+    QPushButton *m_btnDiscreteMdfmp;
 
     QPushButton *m_btnLDAof;
     QPushButton *m_btnLDFos;

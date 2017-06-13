@@ -12,6 +12,10 @@
 #include "src/filters/discrete/d_fos.h"
 #include "src/filters/discrete/d_mfos.h"
 #include "src/filters/discrete/d_duof.h"
+#include "src/filters/discrete/d_dfmp.h"
+#include "src/filters/discrete/d_fkp.h"
+#include "src/filters/discrete/d_dfkp.h"
+#include "src/filters/discrete/d_mdfmp.h"
 #include "src/filters/logic_dynamic/ld_aof.h"
 #include "src/filters/logic_dynamic/ld_fos.h"
 #include "src/filters/logic_dynamic/ld_fkp.h"
@@ -32,7 +36,11 @@ enum class FILTER_ID {
     DFOS,   /*!< ФМП с дискретными прогнозами. */
     DFOSBO, /*!< ФКП - фильтр оптимальной структуры с конечной памятью (повышенного порядка). */
     MDFOS,  /*!< МФМП - модифицированный ФМП. */
-    DUOF    /*!< ДУОФ - Двухшаговый условно-оптимальный фильтр. */
+    DUOF,   /*!< ДУОФ - Двухшаговый условно-оптимальный фильтр. */
+    DFMP,   /*!< ДФМП - Двухшаговый ФМП. */
+    FKP,    /*!< ФКП - фильтр оптимальной структуры с конечной памятью. */
+    DFKP,   /*!< ДФКП - Двухшаговый ФКП. */
+    MDFMP   /*!< МДФМП - Модификация приближения к МДФМП. */
 };
 
 

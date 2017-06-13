@@ -23,11 +23,14 @@ void TaskWidget::loadFonts()
 void TaskWidget::initControls()
 {
     m_cbTask = new QComboBox;
-    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету"));
-    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля"));
-    m_cbTask->addItem(tr("Скалярный пример"));
-    m_cbTask->addItem(tr("Скалярный пример со сбоями измерителя"));
-    m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков"));
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (линеар)"));
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (гаусс)"));
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (линеар)"));
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (гаусс)"));
+    m_cbTask->addItem(tr("Скалярный пример (линеар)"));
+    m_cbTask->addItem(tr("Скалярный пример (гаусс)"));
+    m_cbTask->addItem(tr("Скалярный пример со сбоями измерителя (гаусс)"));
+    m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
@@ -71,14 +74,13 @@ void TaskWidget::onCbTaskChanged(int)
     Tasks::TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
     if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId,
-                                             Core::APPROX_TYPE::Linear);
-    } else if(taskId == Tasks::TASK_ID::Scalar) {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId,
-                                             Core::APPROX_TYPE::Linear);
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId);
+    } else if(taskId == Tasks::TASK_ID::ScalarLinear || taskId == Tasks::TASK_ID::ScalarGauss) {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
+    } else if (taskId == Tasks::TASK_ID::ScalarGauss) {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
     } else {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId,
-                                             Core::APPROX_TYPE::Linear);
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId);
     }
 
     bool hidden = true;
@@ -103,9 +105,9 @@ void TaskWidget::onCbTaskChanged(int)
     emit changed();
 }
 
-Core::PtrTask TaskWidget::task(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype)
+Core::PtrTask TaskWidget::task(Core::FILTER_TYPE ftype)
 {
-    Core::PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id(), atype);
+    Core::PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id());
     m_parametersWidget->loadParamsTo(tmpTask);
 
     return tmpTask;
@@ -115,17 +117,23 @@ Tasks::TASK_ID TaskWidget::id() const
 {
     switch (m_cbTask->currentIndex()) {
     case 0:
-        return Tasks::TASK_ID::Landing;
+        return Tasks::TASK_ID::LandingLinear;
     case 1:
-        return Tasks::TASK_ID::VanDerPol;
+        return Tasks::TASK_ID::LandingGauss;
     case 2:
-        return Tasks::TASK_ID::Scalar;
+        return Tasks::TASK_ID::VanDerPolLinear;
     case 3:
-        return Tasks::TASK_ID::LandingTest;
+        return Tasks::TASK_ID::VanDerPolGauss;
     case 4:
+        return Tasks::TASK_ID::ScalarLinear;
+    case 5:
+        return Tasks::TASK_ID::ScalarGauss;
+    case 6:
+        return Tasks::TASK_ID::LandingTest;
+    case 7:
         return Tasks::TASK_ID::LandingRejection;
     default:
-        return Tasks::TASK_ID::Landing;
+        return Tasks::TASK_ID::LandingLinear;
     }
 }
 
