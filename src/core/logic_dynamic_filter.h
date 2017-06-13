@@ -39,32 +39,27 @@ protected:
     void zeroIteration() override;
 
     double probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D);
+    Array<double> computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
+                                             Array<Vector> m, Array<Matrix> D);
 
 protected:
     PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
 
-//    Array<double>> Omega;
-//    Array<Array<Vector>> Lambda;
-//    Array<Array<Vector>> Mu;
-//    Array<Array<Matrix>> Psi;
-//    Array<Array<Matrix>> Delta;
-//    Array<Array<Matrix>> Phi;
-//    Array<Array<double>> P;
-//    Array<Array<Matrix>> K;
-//    Array<Array<Vector>> Sigma;
-//    Array<Array<Matrix>> Upsilon;
+    Array<Array<double>> Omega;
+    Array<Array<Vector>> Lambda;
+    Array<Array<Vector>> Mu;
+    Array<Array<Matrix>> Psi;
+    Array<Array<Matrix>> Delta;
+    Array<Array<Matrix>> Phi;
+    Array<Array<double>> P;
+    Array<Array<Matrix>> K;
+    Array<Array<Vector>> Sigma;
+    Array<Array<Matrix>> Upsilon;
 
-//    Array<double> Xi;
-//    Array<double> Q;
-//    Array<Vector> kappa;
-//    Array<Matrix> T;
-//    Array<Vector> u;
-//    Array<Vector> meanX;
-//    Array<Vector> meanZ;
-//    Array<Matrix> Gamma;
-//    Array<Matrix> Dzz;
-//    Array<Matrix> Dxx;
-//    Array<Matrix> Dxz;
+private:
+
+    void computeZeroVectors();
+    void computeBlock0();
 };
 
 

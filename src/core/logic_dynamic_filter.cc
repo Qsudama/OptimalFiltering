@@ -33,7 +33,67 @@ void LogicDynamicFilter::init()
 }
 
 void LogicDynamicFilter::zeroIteration() {
-    srand(1252);
+    srand(1252); // Для генерации массива I нужно!
+
+    // Инициализация
+    Omega.resize(m_params->sampleSize());
+    Lambda.resize(m_params->sampleSize());
+    Mu.resize(m_params->sampleSize());
+    Psi.resize(m_params->sampleSize());
+    Delta.resize(m_params->sampleSize());
+    Phi.resize(m_params->sampleSize());
+    P.resize(m_params->sampleSize());
+    K.resize(m_params->sampleSize());
+    Sigma.resize(m_params->sampleSize());
+    Upsilon.resize(m_params->sampleSize());
+
+    for (size_t s = 0; s < m_params->sampleSize(); s++) {
+        Omega[s].resize(m_task->countI);
+        Lambda[s].resize(m_task->countI);
+        Mu[s].resize(m_task->countI);
+        Psi[s].resize(m_task->countI);
+        Delta[s].resize(m_task->countI);
+        Phi[s].resize(m_task->countI);
+        P[s].resize(m_task->countI);
+        K[s].resize(m_task->countI);
+        Sigma[s].resize(m_task->countI);
+        Upsilon[s].resize(m_task->countI);
+    }
+
+    // Блок 0
+    computeZeroVectors();
+
+    computeBlock0();
+}
+
+void LogicDynamicFilter::computeZeroVectors() {
+    m_sampleI = m_task->generateArrayI(m_params->sampleSize());
+    for (size_t s = 0; s < m_params->sampleSize(); s++) {
+        m_sampleX[s] = m_task->x0();
+        m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
+    }
+}
+
+void LogicDynamicFilter::computeBlock0() {
+
+    Array<Vector> mx(m_task->countI);
+    Array<Matrix> varX(m_task->countI);
+
+    for (int i = 0; i < m_task->countI; i++) {
+        mx[i] = Mean(m_sampleX, m_sampleI, i+1);
+        varX[i] = Cov(m_sampleX, m_sampleX, m_sampleI, i+1);
+    }
+
+    for (size_t s = 0; s < m_params->sampleSize(); s++) {
+        for (int i = 0; i < m_task->countI; i++) {
+            Omega[s][i] = m_task->Pr(i+1);
+            Lambda[s][i] = mx[i];
+            Mu[s][i] = m_task->h(i+1, mx[i], varX[i]);
+            Psi[s][i] = varX[i];
+            Delta[s][i] = m_task->G(i+1, mx[i], varX[i]) - Lambda[s][i] * Mu[s][i].transpose();
+            Phi[s][i] =  m_task->F(i+1, mx[i], varX[i]) - Mu[s][i]*Mu[s][i].transpose();
+        }
+    }
 }
 
 double LogicDynamicFilter::probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D) {
@@ -41,8 +101,31 @@ double LogicDynamicFilter::probabilityDensityN(const Vector &u, const Vector &m,
     Matrix det = 2* pi * D;
     double deter = det.determinant();
     Matrix pin = Pinv(D);
-    double n = exp((-1 * (u - m).transpose() * pin * (u - m))(0, 0)) / sqrt(deter);
+    double exponent = exp((-1 * (u - m).transpose() * pin * (u - m))(0, 0));
+    double n = exponent / sqrt(deter);
     return n;
+}
+
+Array<double> LogicDynamicFilter::computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
+                                                             Array<Vector> m, Array<Matrix> D) {
+    Array<double> resDouble(m_task->countI);
+    Array<double> resP(m_task->countI);
+    if (m_task->countI == 1 ) {
+        resDouble = omega;
+    } else {
+        for (int i = 0; i < m_task->countI; i++) {
+            double N = probabilityDensityN(sampleVector, m[i], D[i]);
+            resP[i] = omega[i]*N;
+        }
+        double resNumerator = 0.0;
+        for (int i = 0; i < m_task->countI; i++) {
+            resNumerator += resP[i];
+        }
+        for (int i = 0; i < m_task->countI; i++) {
+            resDouble[i] = resP[i]/resNumerator;
+        }
+    }
+    return resDouble;
 }
 
 } // end Core
