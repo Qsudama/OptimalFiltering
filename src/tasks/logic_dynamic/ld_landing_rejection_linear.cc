@@ -16,10 +16,10 @@ using Math::Convert::DegToRad;
 LandingRejectionLinear::LandingRejectionLinear()
     : LogicDynamicTask()
     , m_turnTime(45.0) // Время t_y
-    , m_p(0.8) // Вероятность сбоя
-    , gamMinX(0.1)
-    , gamMinY(0.1)
-    , countIInTask(4) // Количество режимов
+    , m_p(1.0) // Вероятность сбоя
+    , gamMinX(0.5)
+    , gamMinY(0.5)
+    , countIInTask(1) // Количество режимов
 {
     m_info->setName("6-мерный спуск ЛА со сбоями 2-х датчиков");
     m_info->setType("Л-");
