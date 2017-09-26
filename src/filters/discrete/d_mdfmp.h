@@ -22,7 +22,7 @@ namespace Filters {
             Matrix L, Psi, G, F, T, Gamma, H;
             Vector o, h, chi, e;
 
-            Array <Vector> Lambda, Sigma, S, U, E;
+            Array <Vector> Lambda, Sigma, Delta, S, U, E;
 
             void computeFirstStep(long k, long i);
             void computeSecondStep(long k, long i);

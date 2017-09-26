@@ -30,11 +30,21 @@ void MDFMP::zeroIteration() {
     U.resize(m_params->sampleSize());
     E.resize(m_params->sampleSize());
     Sigma.resize(m_params->sampleSize());
+    Delta.resize(m_params->sampleSize());
     Lambda.resize(m_params->sampleSize());
 
     for (size_t i = 0; i < m_params->sampleSize(); ++i) {
         Lambda[i] = Mean(m_sampleX);
-        MakeBlockVector(m_sampleY[i], m_sampleZ[i], U[i]);
+        switch (m_params->argumentsCount()) {
+        case 2:
+            U[i] = m_sampleZ[i];
+            break;
+        case 3:
+            MakeBlockVector(m_sampleY[i], m_sampleZ[i], U[i]);
+            break;
+        default:
+            break;
+        }
     }
 
     Vector        my;
@@ -113,6 +123,7 @@ void MDFMP::computeSecondStep(long k, long i) {
     Lambda[i] = compute_Lambda(i);
     m_sampleY[i] = m_task->b(m_sampleX[i]);
     Sigma[i] = compute_Sigma(i);
+    Delta[i] = m_sampleX[i] - Lambda[i];
 }
 
 
@@ -142,7 +153,16 @@ Vector MDFMP::compute_E(long i) {
 }
 
 void MDFMP::compute_U(long i) {
-    MakeBlockVector(m_sampleY[i], m_sampleZ[i], U[i]);
+    switch (m_params->argumentsCount()) {
+    case 2:
+        U[i] = m_sampleZ[i];
+        break;
+    case 3:
+        MakeBlockVector(m_sampleY[i], m_sampleZ[i], U[i]);
+        break;
+    default:
+        break;
+    }
 }
 
 
@@ -178,7 +198,7 @@ Matrix MDFMP::compute_T() {
 }
 
 Matrix MDFMP::compute_H() {
-    return Cov(S, Sigma) * Pinv(Var(S));
+    return Cov(Delta, Sigma) * Pinv(Var(Delta));
 }
 
 
@@ -199,7 +219,7 @@ Vector MDFMP::compute_o() {
 }
 
 Vector MDFMP::compute_e() {
-    return Mean(S) - H * Mean(Sigma);
+    return Mean(Delta) - H * Mean(Sigma);
 }
 
 

@@ -72,13 +72,17 @@ void FOS::computeParams(size_t k, Array<Vector> &u, Matrix &T)
         MakeBlockVector(m_sampleY[s], m_sampleZ[s], sampleDelta[s]);
     }
 
-    Ddelta = Var(sampleDelta);
+    Ddelta = Var(m_sampleZ);
+    // для проверки посчитать определитель Ddelta
     my     = Mean(m_sampleY);
     Dxy    = Cov(m_sampleX, m_sampleY);
     Dxz    = Cov(m_sampleX, m_sampleZ);
     MakeBlockMatrix(Dxy, Dxz, DxyDxz);
 
-    Gamma  = DxyDxz * Pinv(Ddelta);
+    Matrix pinv = Pinv(Ddelta);
+
+    // ПРОБЛЕМА ЗДЕСЬ!!!
+    Gamma  = DxyDxz * pinv;
     GammaY = Gamma.leftCols(m_task->dimY());
     GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
 
