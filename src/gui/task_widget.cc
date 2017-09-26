@@ -142,7 +142,7 @@ Tasks::TASK_ID TaskWidget::id() const
         return Tasks::TASK_ID::LandingTest;
     case 7:
         return Tasks::TASK_ID::LandingRejection;
-    case 5:
+    case 8:
         return Tasks::TASK_ID::VanDerPolRejection;
     default:
         return Tasks::TASK_ID::LandingLinear;

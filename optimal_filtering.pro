@@ -311,7 +311,7 @@ HEADERS += \
     src/filters/logic_dynamic/ld_fos.h \
     src/tasks/logic_dynamic/ld_landing_rejection_linear.h \
     src/filters/logic_dynamic/ld_fkp.h \
-    src/tasks/logic_dynamic/ld_vanderpol_linear.h
+    src/tasks/logic_dynamic/ld_vanderpol_linear.h \
     src/filters/discrete/d_dfmp.h \
     src/filters/discrete/d_fkp.h \
     src/filters/discrete/d_dfkp.h \
@@ -380,7 +380,7 @@ SOURCES += \
     src/filters/logic_dynamic/ld_fos.cc \
     src/tasks/logic_dynamic/ld_landing_rejection_linear.cc \
     src/filters/logic_dynamic/ld_fkp.cc \
-    src/tasks/logic_dynamic/ld_vanderpol_linear.cc
+    src/tasks/logic_dynamic/ld_vanderpol_linear.cc \
     src/filters/discrete/d_dfkp.cc \
     src/filters/discrete/d_dfmp.cc \
     src/filters/discrete/d_fkp.cc \
