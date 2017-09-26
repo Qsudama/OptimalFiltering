@@ -28,6 +28,10 @@ void DUOF::zeroIteration() {
     deltaY.resize(m_params->sampleSize());
     Omega.resize(m_params->sampleSize());
     A.resize(m_params->sampleSize());
+
+    for (size_t i = 0; i < m_params->sampleSize(); ++i) {
+        Lambda[i] = Mean(m_sampleX);
+    }
 }
 
 void DUOF::algorithm() {

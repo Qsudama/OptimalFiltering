@@ -105,6 +105,14 @@ void FilterParametersWidget::initControls()
     m_sbOrderMultiplicity->setFont(m_monotypeFont);
     connect(m_sbOrderMultiplicity, SIGNAL(valueChanged(int)), this, SLOT(onOrderMultChanged(int)));
 
+    m_argumentsCount = new QSpinBox;
+    m_argumentsCount->setMinimum(2);
+    m_argumentsCount->setMaximum(3);
+    m_argumentsCount->setSingleStep(1);
+    m_argumentsCount->setValue(int(m_parameters->orderMult()));
+    m_argumentsCount->setFont(m_monotypeFont);
+    connect(m_argumentsCount, SIGNAL(valueChanged(int)), this, SLOT(onArgumentsCountChanged(int)));
+
     m_sbSampleSize = new QSpinBox;
     m_sbSampleSize->setMinimum(50);
     m_sbSampleSize->setMaximum(5000);
@@ -165,23 +173,27 @@ void FilterParametersWidget::initLayouts()
     mainLayout->addWidget(new QLabel("="), 4, 3);
     mainLayout->addWidget(m_dsbIntegrationStep, 4, 4);
 
-    mainLayout->addWidget(new QLabel(tr("Кратность порядка фильтра (для ФПП)")), 5, 0);
+    mainLayout->addWidget(new QLabel(tr("Время памяти ФКП")), 5, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 5, 1);
     mainLayout->addWidget(new QLabel(tr("l")), 5, 2);
     mainLayout->addWidget(new QLabel("="), 5, 3);
     mainLayout->addWidget(m_sbOrderMultiplicity, 5, 4);
 
-    mainLayout->addWidget(new QLabel(tr("Размер выборок")), 6, 0);
+    mainLayout->addWidget(new QLabel(tr("Количество аргументов оценки ФМП")), 6, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 6, 1);
-    mainLayout->addWidget(new QLabel(tr("S")), 6, 2);
-    mainLayout->addWidget(new QLabel("="), 6, 3);
-    mainLayout->addWidget(m_sbSampleSize, 6, 4);
+    mainLayout->addWidget(m_argumentsCount, 6, 4);
 
-    mainLayout->addWidget(m_checkFixAll, 7, 0);
+    mainLayout->addWidget(new QLabel(tr("Размер выборок")), 7, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 7, 1);
-    mainLayout->addWidget(new QLabel(" "), 7, 2);
-    mainLayout->addWidget(new QLabel(" "), 7, 3);
-    mainLayout->addWidget(m_btnUpdate, 7, 4);
+    mainLayout->addWidget(new QLabel(tr("S")), 7, 2);
+    mainLayout->addWidget(new QLabel("="), 7, 3);
+    mainLayout->addWidget(m_sbSampleSize, 7, 4);
+
+    mainLayout->addWidget(m_checkFixAll, 8, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 8, 1);
+    mainLayout->addWidget(new QLabel(" "), 8, 2);
+    mainLayout->addWidget(new QLabel(" "), 8, 3);
+    mainLayout->addWidget(m_btnUpdate, 8, 4);
 
     this->setLayout(mainLayout);
 
@@ -311,6 +323,11 @@ void FilterParametersWidget::onPredictionCountToggled(bool checked)
 void FilterParametersWidget::onOrderMultChanged(int value)
 {
     m_parameters->setOrderMult(Uint(value));
+}
+
+void FilterParametersWidget::onArgumentsCountChanged(int value)
+{
+    m_parameters->setArgumentsCount(Uint(value));
 }
 
 void FilterParametersWidget::onSampleSizeChanged(int value)

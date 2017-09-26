@@ -194,7 +194,7 @@ void MainWindow::onFilterUpdatePercent(int p)
 
 void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filters::FILTER_ID id)
 {
-    Core::PtrTask             task   = m_taskWidget->task(ftype, atype);
+    Core::PtrTask             task   = m_taskWidget->task(ftype);
     Core::PtrFilterParameters params = m_filterParamsWidget->parameters();
     Core::PtrFilter           filter = Filters::FilterFactory::create(ftype, id, params, task);
     connect(filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
@@ -239,7 +239,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(i).setTitleLabel(title);
         m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::Landing || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::LandingLinear || m_taskWidget->id() == Tasks::TASK_ID::LandingGauss || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
@@ -264,7 +264,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         scale[1] = scale[5] = Math::Convert::RadToDeg(1.0);
         scale[3]            = 10000;
         scale[4]            = 1.0;
-    } else if (m_taskWidget->id() == Tasks::TASK_ID::Landing) {
+    } else if (m_taskWidget->id() == Tasks::TASK_ID::LandingLinear || m_taskWidget->id() == Tasks::TASK_ID::LandingGauss) {
         scale[0] = 1000;
         scale[1] = Math::Convert::RadToDeg(1.0);
         scale[2] = 1000;

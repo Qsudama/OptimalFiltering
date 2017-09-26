@@ -29,73 +29,52 @@ void FilterStartButtonsBox::initControls()
 {
     // непрерывно-дискретные:
 
-    m_btnContinuousDiscreteGaussAof = new QPushButton(tr("Г-АОФ"));
-    connect(m_btnContinuousDiscreteGaussAof, SIGNAL(clicked()), this, SLOT(onBtnContinuousDiscreteGaussAofClicked()));
+    m_btnContinuousDiscreteAof = new QPushButton(tr("АОФ"));
+    connect(m_btnContinuousDiscreteAof, SIGNAL(clicked()), this, SLOT(onBtnContinuousDiscreteAofClicked()));
 
-    m_btnContinuousDiscreteLinearAof = new QPushButton(tr("Л-АОФ"));
-    connect(m_btnContinuousDiscreteLinearAof, SIGNAL(clicked()), this, SLOT(onBtnContinuousDiscreteLinearAofClicked()));
+    m_btnContinuousDiscreteFos = new QPushButton(tr("ФМП"));
+    connect(m_btnContinuousDiscreteFos, SIGNAL(clicked()), this, SLOT(onBtnContinuousDiscreteFosClicked()));
 
-    m_btnContinuousDiscreteGaussFos = new QPushButton(tr("Г-ФМП"));
-    connect(m_btnContinuousDiscreteGaussFos, SIGNAL(clicked()), this, SLOT(onBtnContinuousDiscreteGaussFosClicked()));
+    m_btnContinuousDiscreteDfos = new QPushButton(tr("ФМПд"));
+    connect(m_btnContinuousDiscreteDfos, SIGNAL(clicked()), this, SLOT(onBtnContinuousDiscreteDfosClicked()));
 
-    m_btnContinuousDiscreteLinearFos = new QPushButton(tr("Л-ФМП"));
-    connect(m_btnContinuousDiscreteLinearFos, SIGNAL(clicked()), this, SLOT(onBtnContinuousDiscreteLinearFosClicked()));
-
-    m_btnContinuousDiscreteGaussDfos = new QPushButton(tr("Г-ФМПд"));
-    connect(m_btnContinuousDiscreteGaussDfos, SIGNAL(clicked()), this, SLOT(onBtnContinuousDiscreteGaussDfosClicked()));
-
-    m_btnContinuousDiscreteLinearDfos = new QPushButton(tr("Л-ФМПд"));
-    connect(m_btnContinuousDiscreteLinearDfos, SIGNAL(clicked()), this,
-            SLOT(onBtnContinuousDiscreteLinearDfosClicked()));
-
-    m_btnContinuousDiscreteGaussDfosbo = new QPushButton(tr("Г-ФКП"));
-    connect(m_btnContinuousDiscreteGaussDfosbo, SIGNAL(clicked()), this,
-            SLOT(onBtnContinuousDiscreteGaussDfosboClicked()));
-
-    m_btnContinuousDiscreteLinearDfosbo = new QPushButton(tr("Л-ФКП"));
-    connect(m_btnContinuousDiscreteLinearDfosbo, SIGNAL(clicked()), this,
-            SLOT(onBtnContinuousDiscreteLinearDfosboClicked()));
+    m_btnContinuousDiscreteDfosbo = new QPushButton(tr("ФКП"));
+    connect(m_btnContinuousDiscreteDfosbo, SIGNAL(clicked()), this, SLOT(onBtnContinuousDiscreteDfosboClicked()));
 
     // непрерывные:
 
-    m_btnContinuousGaussAof = new QPushButton(tr("Г-АОФ"));
-    connect(m_btnContinuousGaussAof, SIGNAL(clicked()), this, SLOT(onBtnContinuousGaussAofClicked()));
+    m_btnContinuousAof = new QPushButton(tr("АОФ"));
+    connect(m_btnContinuousAof, SIGNAL(clicked()), this, SLOT(onBtnContinuousAofClicked()));
 
-    m_btnContinuousLinearAof = new QPushButton(tr("Л-АОФ"));
-    connect(m_btnContinuousLinearAof, SIGNAL(clicked()), this, SLOT(onBtnContinuousLinearAofClicked()));
-
-    m_btnContinuousGaussFos = new QPushButton(tr("Г-ФМП"));
-    connect(m_btnContinuousGaussFos, SIGNAL(clicked()), this, SLOT(onBtnContinuousGaussFosClicked()));
-
-    m_btnContinuousLinearFos = new QPushButton(tr("Л-ФМП"));
-    connect(m_btnContinuousLinearFos, SIGNAL(clicked()), this, SLOT(onBtnContinuousLinearFosClicked()));
+    m_btnContinuousFos = new QPushButton(tr("ФМП"));
+    connect(m_btnContinuousFos, SIGNAL(clicked()), this, SLOT(onBtnContinuousFosClicked()));
 
 
     //дискретные:
 
-    m_btnDiscreteLinearAof = new QPushButton(tr("Л-АОФ"));
-    connect(m_btnDiscreteLinearAof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteLinearAofClicked()));
+    m_btnDiscreteAof = new QPushButton(tr("АОФ"));
+    connect(m_btnDiscreteAof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteAofClicked()));
 
-    m_btnDiscreteGaussAof = new QPushButton(tr("Г-АОФ"));
-    connect(m_btnDiscreteGaussAof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussAofClicked()));
+    m_btnDiscreteFos = new QPushButton(tr("ФМП"));
+    connect(m_btnDiscreteFos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteFosClicked()));
 
-    m_btnDiscreteLinearFos = new QPushButton(tr("Л-ФМП"));
-    connect(m_btnDiscreteLinearFos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteLinearFosClicked()));
+    m_btnDiscreteMfos = new QPushButton(tr("MФМП"));
+    connect(m_btnDiscreteMfos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteMfosClicked()));
 
-    m_btnDiscreteGaussFos = new QPushButton(tr("Г-ФМП"));
-    connect(m_btnDiscreteGaussFos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussFosClicked()));
+    m_btnDiscreteDuof = new QPushButton(tr("ДУОФ"));
+    connect(m_btnDiscreteDuof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteDuofClicked()));
 
-    m_btnDiscreteLinearMfos = new QPushButton(tr("Л-MФМП"));
-    connect(m_btnDiscreteLinearMfos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteLinearMfosClicked()));
+    m_btnDiscreteDfmp = new QPushButton(tr("ДФМП"));
+    connect(m_btnDiscreteDfmp, SIGNAL(clicked()), this, SLOT(onBtnDiscreteDfmpClicked()));
 
-    m_btnDiscreteGaussMfos = new QPushButton(tr("Г-MФМП"));
-    connect(m_btnDiscreteGaussMfos, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussMfosClicked()));
+    m_btnDiscreteFkp = new QPushButton(tr("ФКП"));
+    connect(m_btnDiscreteFkp, SIGNAL(clicked()), this, SLOT(onBtnDiscreteFkpClicked()));
 
-    m_btnDiscreteLinearDuof = new QPushButton(tr("Л-ДУОФ"));
-    connect(m_btnDiscreteLinearDuof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteLinearDuofClicked()));
+    m_btnDiscreteDfkp = new QPushButton(tr("ДФКП"));
+    connect(m_btnDiscreteDfkp, SIGNAL(clicked()), this, SLOT(onBtnDiscreteDfkpClicked()));
 
-    m_btnDiscreteGaussDuof = new QPushButton(tr("Г-ДУОФ"));
-    connect(m_btnDiscreteGaussDuof, SIGNAL(clicked()), this, SLOT(onBtnDiscreteGaussDuofClicked()));
+    m_btnDiscreteMdfmp = new QPushButton(tr("МДФМП"));
+    connect(m_btnDiscreteMdfmp, SIGNAL(clicked()), this, SLOT(onBtnDiscreteMdfmpClicked()));
 
     // лд фильтры
 
@@ -137,14 +116,15 @@ void FilterStartButtonsBox::initLayouts()
     tab1Layout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
     tab1Layout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
-    tab1Layout->addWidget(m_btnDiscreteGaussAof, 0, 0);
-    tab1Layout->addWidget(m_btnDiscreteLinearAof, 1, 0);
-    tab1Layout->addWidget(m_btnDiscreteGaussFos, 0, 1);
-    tab1Layout->addWidget(m_btnDiscreteLinearFos, 1, 1);
-    tab1Layout->addWidget(m_btnDiscreteGaussMfos, 0, 2);
-    tab1Layout->addWidget(m_btnDiscreteLinearMfos, 1, 2);
-    tab1Layout->addWidget(m_btnDiscreteGaussDuof, 0, 3);
-    tab1Layout->addWidget(m_btnDiscreteLinearDuof, 1, 3);
+    tab1Layout->addWidget(m_btnDiscreteAof, 0, 0);
+    tab1Layout->addWidget(m_btnDiscreteFos, 0, 1);
+    tab1Layout->addWidget(m_btnDiscreteMfos, 0, 2);
+    tab1Layout->addWidget(m_btnDiscreteFkp, 0, 3);
+
+    tab1Layout->addWidget(m_btnDiscreteDuof, 1, 0);
+    tab1Layout->addWidget(m_btnDiscreteDfmp, 1, 1);
+    tab1Layout->addWidget(m_btnDiscreteMdfmp, 1, 2);
+    tab1Layout->addWidget(m_btnDiscreteDfkp, 1, 3);
 
 
     // непрерывные фильтры:
@@ -152,10 +132,8 @@ void FilterStartButtonsBox::initLayouts()
     tab2Layout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
     tab2Layout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
-    tab2Layout->addWidget(m_btnContinuousGaussAof, 0, 0);
-    tab2Layout->addWidget(m_btnContinuousLinearAof, 1, 0);
-    tab2Layout->addWidget(m_btnContinuousGaussFos, 0, 1);
-    tab2Layout->addWidget(m_btnContinuousLinearFos, 1, 1);
+    tab2Layout->addWidget(m_btnContinuousAof, 0, 0);
+    tab2Layout->addWidget(m_btnContinuousFos, 0, 1);
 
 
     // непрерывно-дискретные фильтры:
@@ -163,14 +141,10 @@ void FilterStartButtonsBox::initLayouts()
     tab3Layout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
     tab3Layout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
 
-    tab3Layout->addWidget(m_btnContinuousDiscreteGaussAof, 0, 0);
-    tab3Layout->addWidget(m_btnContinuousDiscreteLinearAof, 1, 0);
-    tab3Layout->addWidget(m_btnContinuousDiscreteGaussFos, 0, 1);
-    tab3Layout->addWidget(m_btnContinuousDiscreteLinearFos, 1, 1);
-    tab3Layout->addWidget(m_btnContinuousDiscreteGaussDfos, 0, 2);
-    tab3Layout->addWidget(m_btnContinuousDiscreteLinearDfos, 1, 2);
-    tab3Layout->addWidget(m_btnContinuousDiscreteGaussDfosbo, 0, 3);
-    tab3Layout->addWidget(m_btnContinuousDiscreteLinearDfosbo, 1, 3);
+    tab3Layout->addWidget(m_btnContinuousDiscreteAof, 0, 0);
+    tab3Layout->addWidget(m_btnContinuousDiscreteFos, 0, 1);
+    tab3Layout->addWidget(m_btnContinuousDiscreteDfos, 0, 2);
+    tab3Layout->addWidget(m_btnContinuousDiscreteDfosbo, 0, 3);
 
     // лд фильтры:
     QGridLayout *tab4Layout = new QGridLayout;
@@ -190,110 +164,81 @@ void FilterStartButtonsBox::initLayouts()
 
 // непрерывно-дискретные:
 
-void FilterStartButtonsBox::onBtnContinuousDiscreteGaussAofClicked()
+void FilterStartButtonsBox::onBtnContinuousDiscreteAofClicked()
 {
     emit start(FILTER_TYPE::ContinuousDiscrete, APPROX_TYPE::Gauss, FILTER_ID::AOF);
 }
 
-void FilterStartButtonsBox::onBtnContinuousDiscreteLinearAofClicked()
-{
-    emit start(FILTER_TYPE::ContinuousDiscrete, APPROX_TYPE::Linear, FILTER_ID::AOF);
-}
-
-void FilterStartButtonsBox::onBtnContinuousDiscreteGaussFosClicked()
+void FilterStartButtonsBox::onBtnContinuousDiscreteFosClicked()
 {
     emit start(FILTER_TYPE::ContinuousDiscrete, APPROX_TYPE::Gauss, FILTER_ID::FOS);
 }
 
-void FilterStartButtonsBox::onBtnContinuousDiscreteLinearFosClicked()
-{
-    emit start(FILTER_TYPE::ContinuousDiscrete, APPROX_TYPE::Linear, FILTER_ID::FOS);
-}
-
-void FilterStartButtonsBox::onBtnContinuousDiscreteGaussDfosClicked()
+void FilterStartButtonsBox::onBtnContinuousDiscreteDfosClicked()
 {
     emit start(FILTER_TYPE::ContinuousDiscrete, APPROX_TYPE::Gauss, FILTER_ID::DFOS);
 }
 
-void FilterStartButtonsBox::onBtnContinuousDiscreteLinearDfosClicked()
-{
-    emit start(FILTER_TYPE::ContinuousDiscrete, APPROX_TYPE::Linear, FILTER_ID::DFOS);
-}
-
-void FilterStartButtonsBox::onBtnContinuousDiscreteGaussDfosboClicked()
+void FilterStartButtonsBox::onBtnContinuousDiscreteDfosboClicked()
 {
     emit start(FILTER_TYPE::ContinuousDiscrete, APPROX_TYPE::Gauss, FILTER_ID::DFOSBO);
-}
-
-void FilterStartButtonsBox::onBtnContinuousDiscreteLinearDfosboClicked()
-{
-    emit start(FILTER_TYPE::ContinuousDiscrete, APPROX_TYPE::Linear, FILTER_ID::DFOSBO);
 }
 
 
 //  непрерывные:
 
-void FilterStartButtonsBox::onBtnContinuousGaussAofClicked()
+void FilterStartButtonsBox::onBtnContinuousAofClicked()
 {
     emit start(FILTER_TYPE::Continuous, APPROX_TYPE::Gauss, FILTER_ID::AOF);
 }
 
-void FilterStartButtonsBox::onBtnContinuousLinearAofClicked()
-{
-    emit start(FILTER_TYPE::Continuous, APPROX_TYPE::Linear, FILTER_ID::AOF);
-}
-
-void FilterStartButtonsBox::onBtnContinuousGaussFosClicked()
+void FilterStartButtonsBox::onBtnContinuousFosClicked()
 {
     emit start(FILTER_TYPE::Continuous, APPROX_TYPE::Gauss, FILTER_ID::FOS);
-}
-
-void FilterStartButtonsBox::onBtnContinuousLinearFosClicked()
-{
-    emit start(FILTER_TYPE::Continuous, APPROX_TYPE::Linear, FILTER_ID::FOS);
 }
 
 
 // дискретные:
 
-void FilterStartButtonsBox::onBtnDiscreteGaussAofClicked()
+void FilterStartButtonsBox::onBtnDiscreteAofClicked()
 {
     emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::AOF);
 }
 
-void FilterStartButtonsBox::onBtnDiscreteLinearAofClicked()
-{
-    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Linear, FILTER_ID::AOF);
-}
-
-void FilterStartButtonsBox::onBtnDiscreteGaussFosClicked()
+void FilterStartButtonsBox::onBtnDiscreteFosClicked()
 {
     emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::FOS);
 }
 
-void FilterStartButtonsBox::onBtnDiscreteLinearFosClicked()
-{
-    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Linear, FILTER_ID::FOS);
-}
-
-void FilterStartButtonsBox::onBtnDiscreteLinearMfosClicked()
-{
-    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Linear, FILTER_ID::MDFOS);
-}
-
-void FilterStartButtonsBox::onBtnDiscreteGaussMfosClicked()
+void FilterStartButtonsBox::onBtnDiscreteMfosClicked()
 {
     emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::MDFOS);
 }
 
-void FilterStartButtonsBox::onBtnDiscreteLinearDuofClicked()
-{
-    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Linear, FILTER_ID::DUOF);
-}
-
-void FilterStartButtonsBox::onBtnDiscreteGaussDuofClicked()
+void FilterStartButtonsBox::onBtnDiscreteDuofClicked()
 {
     emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::DUOF);
+}
+
+// NEW
+void FilterStartButtonsBox::onBtnDiscreteDfmpClicked()
+{
+    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::DFMP);
+}
+
+void FilterStartButtonsBox::onBtnDiscreteFkpClicked()
+{
+    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::FKP);
+}
+
+void FilterStartButtonsBox::onBtnDiscreteDfkpClicked()
+{
+    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::DFKP);
+}
+
+void FilterStartButtonsBox::onBtnDiscreteMdfmpClicked()
+{
+    emit start(FILTER_TYPE::Discrete, APPROX_TYPE::Gauss, FILTER_ID::MDFMP);
 }
 
 // логико-динамические фильтры

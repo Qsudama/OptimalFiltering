@@ -6,12 +6,13 @@ namespace Core
 
 
 FilterParameters::FilterParameters(double maxTime, double measurementStep, double predictionStep,
-                                   double integrationStep, Uint sampleSize, Uint orderMult)
+                                   double integrationStep, Uint sampleSize, Uint orderMult, Uint argumentsCount)
     : m_maxTime(maxTime)
     , m_predictionStep(predictionStep)
     , m_integrationStep(integrationStep)
     , m_sampleSize(sampleSize)
     , m_orderMult(orderMult)
+    , m_argumentsCount(argumentsCount)
 {
     setMeasurementStep(measurementStep);
 
@@ -62,6 +63,11 @@ const Uint &FilterParameters::sampleSize() const
 const Uint &FilterParameters::orderMult() const
 {
     return m_orderMult;
+}
+
+const Uint &FilterParameters::argumentsCount() const
+{
+    return m_argumentsCount;
 }
 
 void FilterParameters::setMaxTime(double tmax)
@@ -124,6 +130,13 @@ void FilterParameters::setOrderMult(Uint order)
     assert(order > 0 && "Core::FilterParameters::setOrderMult(order) : corrupt value of order");
 
     m_orderMult = order;
+}
+
+void FilterParameters::setArgumentsCount(Uint order)
+{
+    assert(order > 0 && "Core::FilterParameters::setArgumentsCount(order) : corrupt value of order");
+
+    m_argumentsCount = order;
 }
 
 void FilterParameters::correctStepAndCount(const double &intervalLength, double &step, Uint &count)

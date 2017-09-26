@@ -82,6 +82,14 @@ PtrFilter FilterFactory::createDiscrete(FILTER_ID id, PtrFilterParameters params
         return PtrFilter(new Filters::Discrete::MFOS(params, task));
     case FILTER_ID::DUOF:
         return PtrFilter(new Filters::Discrete::DUOF(params, task));
+    case FILTER_ID::DFMP:
+        return PtrFilter(new Filters::Discrete::DFMP(params, task));
+    case FILTER_ID::FKP:
+        return PtrFilter(new Filters::Discrete::FKP(params, task));
+    case FILTER_ID::DFKP:
+        return PtrFilter(new Filters::Discrete::DFKP(params, task));
+    case FILTER_ID::MDFMP:
+        return PtrFilter(new Filters::Discrete::MDFMP(params, task));
     };
     return PtrFilter(nullptr);
 }

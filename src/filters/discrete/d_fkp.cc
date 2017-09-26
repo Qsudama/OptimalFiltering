@@ -1,12 +1,12 @@
-#include "d_fos.h"
+#include "d_fkp.h"
 #include "src/math/statistic.h"
-
 
 namespace Filters
 {
 
 namespace Discrete
 {
+
 
 using Math::LinAlg::Pinv;
 using Math::Statistic::Mean;
@@ -16,22 +16,35 @@ using Math::MakeBlockVector;
 using Math::MakeBlockMatrix;
 
 
-FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
-    : DiscreteFilter(params, task)
+FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(params, task)
 {
-    std::string argsCount = std::to_string(params->argumentsCount());
-    std::string dimX = std::to_string(task->dimX());
-    m_info->setName(m_task->info()->type() + "ФМПд-" + argsCount + " (p=" + dimX + ")");
+
+    m_info->setName(m_task->info()->type() + "ФКПд (p=" + std::to_string(task->dimX()) + ")");
 }
 
-void FOS::algorithm()
-{
+void FKP::zeroIteration() {
+    DiscreteFilter::zeroIteration();
+
+    m_sampleS.resize(m_params->sampleSize());
+}
+
+void FKP::algorithm() {
+
     Vector h, lambda;
     Matrix G, F, Psi, T;
 
+    long ny = long(m_task->dimY());
+    long p = ny * long(m_params->orderMult());
     Array<Vector> sampleU(m_params->sampleSize());
 
     m_task->setStep(m_params->measurementStep());
+
+    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+        m_sampleS[s] = Vector::Zero(p);
+        for (size_t i = 0; i < ny; i++) {
+            m_sampleS[s][i] = m_sampleY[s][i];
+        }
+    }
 
     computeParams(0, sampleU, T);
 
@@ -55,45 +68,41 @@ void FOS::algorithm()
 
             m_sampleY[s] = m_task->b(m_sampleX[s]);
             m_sampleZ[s] = lambda + Psi * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
+
+            for (long i = p - 1; i >= ny; --i) {
+                m_sampleS[s][i] = m_sampleS[s][i - ny];
+            }
+            for (long i = 0; i < long(ny); ++i) {
+                m_sampleS[s][i] = m_sampleY[s][i];
+            }
         }
         writeResult(k);
         computeParams(k, sampleU, T);
     }
 }
 
-void FOS::computeParams(size_t k, Array<Vector> &u, Matrix &T)
+void FKP::computeParams(size_t k, Array<Vector> &u, Matrix &T)
 {
-    Vector        my, chi;
-    Matrix        Gamma, GammaY, GammaZ, DxyDxz, Ddelta, Dxy, Dxz;
-    Array<Vector> sampleDelta(m_params->sampleSize());
+    Vector        mx, mu, chi;
+    Matrix        Gamma, Du, Dx, DxDu;
+
+    Du   = Var(m_sampleS);
+    Dx   = Var(m_sampleX);
+    mx   = Mean(m_sampleX);
+    mu   = Mean(m_sampleS);
+    DxDu = Cov(m_sampleX, m_sampleS);
+
+    Gamma  = DxDu * Pinv(Du);
+
+    chi = m_result[k].meanX - Gamma * mu;
+    T   = m_result[k].varX - Gamma * DxDu.transpose();
 
     // Индекс s пробегает по всем элементам выборки:
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        MakeBlockVector(m_sampleY[s], m_sampleZ[s], sampleDelta[s]);
-    }
-
-    Ddelta = Var(m_sampleZ);
-    // для проверки посчитать определитель Ddelta
-    my     = Mean(m_sampleY);
-    Dxy    = Cov(m_sampleX, m_sampleY);
-    Dxz    = Cov(m_sampleX, m_sampleZ);
-    MakeBlockMatrix(Dxy, Dxz, DxyDxz);
-
-    Matrix pinv = Pinv(Ddelta);
-
-    // ПРОБЛЕМА ЗДЕСЬ!!!
-    Gamma  = DxyDxz * pinv;
-    GammaY = Gamma.leftCols(m_task->dimY());
-    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
-
-    chi = m_result[k].meanX - GammaY * my - GammaZ * m_result[k].meanZ;
-    T   = m_result[k].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
-
-    // Индекс s пробегает по всем элементам выборки:
-    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        u[s] = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + chi;
+        u[s] = Gamma * m_sampleS[s] + chi;
     }
 }
+
 
 
 } // end Discrete

@@ -108,6 +108,11 @@ private slots:
     void onOrderMultChanged(int value);
 
     /*!
+     \brief Устанавливает новое значение кол-ва аргументов фильтра.
+    */
+    void onArgumentsCountChanged(int value);
+
+    /*!
      \brief Устанавливает новый размер (объём) выборок для метода Монте-Карло.
      \param value - новое значение размера выборок.
      \details Слот. Реакция на сигнал valueChanged(int) элемента m_sbSampleSize.
@@ -178,6 +183,7 @@ private:
     QSpinBox *      m_sbPredictionCount;
     QDoubleSpinBox *m_dsbIntegrationStep;
     QSpinBox *      m_sbOrderMultiplicity;
+    QSpinBox *      m_argumentsCount;
     QSpinBox *      m_sbSampleSize;
     QRadioButton *  m_radioPredictionStep;
     QRadioButton *  m_radioPredictionCount;
