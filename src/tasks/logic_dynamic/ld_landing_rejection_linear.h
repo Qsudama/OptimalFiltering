@@ -66,20 +66,12 @@ protected:
     double gamMinY; /*!< Для задачи со сбоями акселерометра */
     int countIInTask; /*!< Количество режимов в задаче*/
 
-    static constexpr double KB = 0.3;
-    static constexpr double BB = 0.00009;
-    static constexpr double SX = 1.0 / 150.0;
-    static constexpr double R0 = 0.013;
-    static constexpr double GG = 3.711;
-    static constexpr double RR = 3390000.0;
 
-
-//    static constexpr double KB = 0.3;
-//    static constexpr double BB = 0.09;
-//    static constexpr double SX = 1.0 / 150.0;
-//    static constexpr double R0 = 0.013;
-//    static constexpr double GG = 3.711E-3;
-//    static constexpr double RR = 3390.0;
+    static constexpr double KB = 0.3; // b
+    static constexpr double BB = 0.9; // Beta
+    static constexpr double CC = 0.43333333333333333; // c = 0.5*pho_0*sigma_x
+    static constexpr double GG = 3.72E-4; // g
+    static constexpr double RR = 340.0; // R
 
 };
 

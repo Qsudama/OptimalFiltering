@@ -21,7 +21,7 @@ LandingTestLinear::LandingTestLinear()
     , countIInTask(2)
 {
     m_info->setName("Скалярный пример со сбоями измерителя");
-    m_info->setType("Л-");
+    m_info->setType("Г-");
 
     m_dimY = 1;
     m_dimX = 1;
@@ -40,8 +40,8 @@ LandingTestLinear::LandingTestLinear()
     m_varV(0, 0) = 1.0;
     m_varW(0, 0) = 1.0;
 
-    (*m_consts)["a1"]     = A1;
-    (*m_consts)["a2"]     = A2;
+    (*m_params)["a1"]     = A1;
+    (*m_params)["a2"]     = A2;
 
     (*m_params)["e"]   = m_e;
     (*m_params)["с(2)"]   = cI2;
@@ -50,7 +50,9 @@ LandingTestLinear::LandingTestLinear()
 
 void LandingTestLinear::loadParams()
 {
-    countI = m_params->at("Кол-во режимов I");
+    A1         = m_params->at("a1");
+    A2         = m_params->at("a2");
+    countI     = m_params->at("Кол-во режимов I");
     m_e        = m_params->at("e");
     cI2        = m_params->at("с(2)");
 }
