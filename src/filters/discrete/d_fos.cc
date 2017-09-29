@@ -64,35 +64,27 @@ void FOS::algorithm()
 void FOS::computeParams(size_t k, Array<Vector> &u, Matrix &T)
 {
     Vector        my, chi;
-    Matrix        Gamma, GammaY, GammaZ, DxyDxz, Ddelta, Dxy, Dxz;
+    Matrix        Gamma, Dxu;
     Array<Vector> sampleDelta(m_params->sampleSize());
 
     // Индекс s пробегает по всем элементам выборки:
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        MakeBlockVector(m_sampleY[s], m_sampleZ[s], sampleDelta[s]);
+        Uint argsCount = params->argumentsCount();
+        if (argsCount == 2) {
+            sampleDelta[s] = m_sampleZ[s];
+        } else if (argsCount == 3) {
+            MakeBlockVector(m_sampleY[s], m_sampleZ[s], sampleDelta[s]);
+        }
     }
 
-    Ddelta = Var(m_sampleZ);
-    // для проверки посчитать определитель Ddelta
-    my     = Mean(m_sampleY);
-    Dxy    = Cov(m_sampleX, m_sampleY);
-    Dxz    = Cov(m_sampleX, m_sampleZ);
-    MakeBlockMatrix(Dxy, Dxz, DxyDxz);
+    Dxu = Cov(m_sampleX, sampleDelta);
+    Gamma  = Dxu * Pinv(Var(sampleDelta));
 
-    Matrix pinv = Pinv(Ddelta);
-
-    // ПРОБЛЕМА ЗДЕСЬ!!!
-    Gamma  = DxyDxz * pinv;
-    GammaY = Gamma.leftCols(m_task->dimY());
-    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
-
-    chi = m_result[k].meanX - GammaY * my - GammaZ * m_result[k].meanZ;
-    T   = m_result[k].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
+    chi = m_result[k].meanX - Gamma * Mean(sampleDelta);
+    T   = m_result[k].varX - Gamma * Dxu.transpose();
 
     // Индекс s пробегает по всем элементам выборки:
-    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        u[s] = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + chi;
-    }
+    u = Gamma * sampleDelta + chi;
 }
 
 
