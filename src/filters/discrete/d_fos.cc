@@ -69,7 +69,7 @@ void FOS::computeParams(size_t k, Array<Vector> &u, Matrix &T)
 
     // Индекс s пробегает по всем элементам выборки:
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        Uint argsCount = params->argumentsCount();
+        Uint argsCount = m_params->argumentsCount();
         if (argsCount == 2) {
             sampleDelta[s] = m_sampleZ[s];
         } else if (argsCount == 3) {
@@ -84,7 +84,9 @@ void FOS::computeParams(size_t k, Array<Vector> &u, Matrix &T)
     T   = m_result[k].varX - Gamma * Dxu.transpose();
 
     // Индекс s пробегает по всем элементам выборки:
-    u = Gamma * sampleDelta + chi;
+    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+        u[s] = Gamma * sampleDelta[s] + chi;
+    }
 }
 
 
