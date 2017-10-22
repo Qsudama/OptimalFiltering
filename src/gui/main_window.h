@@ -95,6 +95,8 @@ private:
     void addTable(const Core::FilterOutput &data, const std::string &label, const Vector &scale);
 
 
+    void showErrorMessage (void);
+
 private:
     ColorManager m_colorManager;
     bool         m_tablesIsVisible;

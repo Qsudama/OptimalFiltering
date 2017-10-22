@@ -13,8 +13,7 @@ namespace LogicDynamic
 using Math::Convert::DegToRad;
 
 
-LandingRejectionLinear::LandingRejectionLinear()
-    : LogicDynamicTask()
+LandingRejectionLinear::LandingRejectionLinear() : LogicDynamicTask()
     , m_turnTime(45.0) // Время t_y
     , m_p(1.0) // Вероятность сбоя
     , gamMinX(0.5)
@@ -31,10 +30,10 @@ LandingRejectionLinear::LandingRejectionLinear()
     m_dimV = 3;
     m_dimW = 4;
 
-    m_meanX0    = Vector(m_dimX);
-    m_meanX0[0] = 0.6; //M_v_0
+    m_meanX0    =  Vector(m_dimX);
+    m_meanX0[0] = 6.0; //M_v_0
     m_meanX0[1] = -0.314;//DegToRad(-18.0); // M_theta_0
-    m_meanX0[2] = 10.0; // M_H_0
+    m_meanX0[2] = 100.0; // M_H_0
     m_meanX0[3] = CC; // M_c
     m_meanX0[4] = 0.3; // M_b
     m_meanX0[5] = 0.0; // M_varphi
@@ -43,22 +42,23 @@ LandingRejectionLinear::LandingRejectionLinear()
     m_meanV = Vector::Zero(m_dimV);
     m_meanW = Vector::Zero(m_dimW);
 
+    static double radian = 0.017453;
+
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
-    m_varX0(0, 0) = pow(0.0015, 2); // Sigma_V_0
-    m_varX0(1, 1) = pow(0.017, 2); // Sigma_theta_0
-    m_varX0(2, 2) = pow(0.7, 2); // Sigma_H_0
-    m_varX0(3, 3) = pow(0.1 * CC, 2); // Sigma_c
+    m_varX0(0, 0) = pow(0.015, 2); // Sigma_V_0
+    m_varX0(1, 1) = pow(radian, 2); // Sigma_theta_0
+    m_varX0(2, 2) = pow(1, 2); // Sigma_H_0
+    m_varX0(3, 3) = pow(CC, 2); // Sigma_c
     m_varX0(4, 4) = pow(0.02, 2); // Sigma_b
-    m_varX0(5, 5) = pow(0.017, 2); // Sigma_varphi
+    m_varX0(5, 5) = pow(radian, 2); // Sigma_varphi
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
     m_varW = Matrix::Zero(m_dimW, m_dimW);
 
-    m_varW(0, 0) = pow(1E-2, 2); // Sigma_U
-    m_varW(1, 1) = pow(1E-2, 2); // Sigma_U
-    m_varW(2, 2) = pow(0.02E-4, 2); // Sigma_W
-    m_varW(3, 3) = pow(0.02E-4, 2); // Sigma_W
-
+    m_varW(0, 0) = pow(0.01, 2); // Sigma_U
+    m_varW(1, 1) = pow(0.01, 2); // Sigma_U
+    m_varW(2, 2) = pow(0.00002, 2); // Sigma_W
+    m_varW(3, 3) = pow(0.00002, 2); // Sigma_W
 
     (*m_consts)["Kb"]     = KB;
     (*m_consts)["Beta"]   = BB;

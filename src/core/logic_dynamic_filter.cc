@@ -91,6 +91,20 @@ void LogicDynamicFilter::computeBlock0() {
     Array<Vector> mx(m_task->countI);
     Array<Matrix> varX(m_task->countI);
 
+//    int n = 2000;
+//    Array<Vector> test(n);
+
+//    for (int i = 0; i < n; i++) {
+//        test[i] = Vector::Zero(1);
+//        if (i == 100 || i == 200 ||  i == 300) {
+//            test[i][0] = 3.0;
+//        } else {
+//            test[i][0] = 2.0;
+//        }
+//    }
+
+//    Vector testMean = Mean(test);
+
     for (int i = 0; i < m_task->countI; i++) {
         mx[i] = Mean(m_sampleX, m_sampleI, i+1);
         varX[i] = Cov(m_sampleX, m_sampleX, m_sampleI, i+1);
