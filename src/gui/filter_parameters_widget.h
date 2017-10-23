@@ -152,6 +152,16 @@ private:
      \param dsb - указатель на элемент.
      \param min - минимальное значение.
      \param max - максимальное значение.
+     \param step - шаг.
+    */
+    void setRange(QDoubleSpinBox *dsb, double min, double max, double step);
+
+    /*!
+     \brief Изменяет диапозон значений QDoubleSpinBox.
+
+     \param dsb - указатель на элемент.
+     \param min - минимальное значение.
+     \param max - максимальное значение.
     */
     void setRange(QDoubleSpinBox *dsb, double min, double max);
 
