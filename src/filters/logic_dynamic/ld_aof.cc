@@ -30,6 +30,9 @@ void AOF::algorithm()
 
     for (size_t k = 0; k < m_result.size(); ++k) {
 
+        if (k == 49) {
+            qDebug() << "Пора";
+        }
         m_task->setTime(m_result[k].time);
 
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
