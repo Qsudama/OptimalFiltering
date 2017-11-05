@@ -15,7 +15,7 @@ using Math::Convert::DegToRad;
 
 LandingRejectionLinear::LandingRejectionLinear() : LogicDynamicTask()
     , m_turnTime(45.0) // Время t_y
-    , m_p(1.0) // Вероятность сбоя
+    , m_e(0.0) // Вероятность сбоя
     , gamMinX(0.5)
     , gamMinY(0.5)
     , countIInTask(1) // Количество режимов
@@ -64,10 +64,10 @@ LandingRejectionLinear::LandingRejectionLinear() : LogicDynamicTask()
     (*m_consts)["Beta"]   = BB;
     (*m_consts)["g"]      = GG;
     (*m_consts)["R"]      = RR;
-    (*m_consts)["e"]   = 0.4 * (1.0 - m_p);
+    (*m_consts)["p"]   = 1 - 2.5*m_e;
 
     (*m_params)["tau"] = m_turnTime;
-    (*m_params)["p"]   = m_p;
+    (*m_params)["e"]   = m_e;
     (*m_params)["Кол-во режимов I"] = countIInTask;
     (*m_params)["GammaX_min"]   = gamMinX;
     (*m_params)["GammaY_min"]   = gamMinY;
@@ -80,8 +80,8 @@ void LandingRejectionLinear::loadParams()
     gamMinX             = m_params->at("GammaX_min");
     gamMinY             = m_params->at("GammaY_min");
     m_turnTime          = m_params->at("tau");
-    m_p                 = m_params->at("p");
-    (*m_consts)["e"]    = 0.4 * (1.0 - m_p);
+    m_e                 = m_params->at("e");
+    (*m_consts)["p"]    = 1 - 2.5*m_e;
 }
 
 double LandingRejectionLinear::Sk(double t) const
@@ -174,8 +174,8 @@ Vector LandingRejectionLinear::bForZeroW(int i, const Vector &x) const
 
 double LandingRejectionLinear::A(int i, int l) const
 {
-    double p = m_p;
-    double e = 0.4 * (1.0 - p);
+    double p = 1 - 2.5*m_e;
+    double e = m_e;
 
     Matrix A(4, 4);
     A << p, p, p, p, e, e, e, e, e, e, e, e, 0.5 * e, 0.5 * e, 0.5 * e, 0.5 * e;
@@ -331,9 +331,10 @@ Matrix LandingRejectionLinear::BwdbdwBwt(int i, const Vector &x) const
 
 double LandingRejectionLinear::Pr(int i) const
 {
-    double e = 0.4 * (1.0 - m_p);
+    double p = 1 - 2.5*m_e;
+    double e = m_e;
     if (i == 1) {
-        return m_p;
+        return p;
     } else if (i == 2) {
         return e;
     } else if (i == 3) {
@@ -346,9 +347,10 @@ double LandingRejectionLinear::Pr(int i) const
 Array<int> LandingRejectionLinear::generateArrayI(int sizeS) const
 {
     Array<int> array(sizeS);
-    double e = 0.4 * (1.0 - m_p);
+    double p = 1 - 2.5*m_e;
+    double e = m_e;
     int countI1, countI2, countI3;
-    countI1 = sizeS*m_p;
+    countI1 = sizeS*p;
     countI2 = sizeS*e + countI1;
     countI3 = sizeS*e + countI2;
     for (int i = 0; i < sizeS; i++) {

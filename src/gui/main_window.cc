@@ -315,7 +315,7 @@ QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask 
         } else if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
             subTitle = subTitle +
                 tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
-                tr(", вероятность одного сбоя ") + QString::number(task->consts()->at("e"));
+                tr(", вероятность одного сбоя ") + QString::number(task->params()->at("e"));
         } else {
           subTitle = subTitle +
             tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());

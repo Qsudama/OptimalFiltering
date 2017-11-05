@@ -61,7 +61,7 @@ protected:
 
 protected:
     double m_turnTime;
-    double m_p;
+    double m_e;
     double gamMinX; /*!< Для задачи со сбоями акселерометра */
     double gamMinY; /*!< Для задачи со сбоями акселерометра */
     int countIInTask; /*!< Количество режимов в задаче*/
