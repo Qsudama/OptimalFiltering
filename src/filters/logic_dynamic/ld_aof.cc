@@ -28,11 +28,9 @@ void AOF::algorithm()
 {
     m_task->setStep(m_params->measurementStep());
 
-    for (size_t k = 0; k < m_result.size(); ++k) {
+    for (size_t k = 0; k < m_result.size(); ++k) { 
+       //qDebug() << "Пора";
 
-        if (k == 49) {
-            qDebug() << "Пора";
-        }
         m_task->setTime(m_result[k].time);
 
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {

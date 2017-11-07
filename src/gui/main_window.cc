@@ -38,7 +38,8 @@ void MainWindow::initControls()
     m_taskWidget               = new TaskWidget;
     m_filterParamsWidget       = new FilterParametersWidget;
     m_filterStartWidget        = new FilterStartButtonsBox;
-    m_additionalSettingsWidget = new AdditionalSettingsWidget;
+    m_pinvMethodSettingsWidget = new PinvMethodSettingWidget;
+    m_startConditionsFilterWidget = new StartConditionsFilterWidget;
     m_btnClear                 = new QPushButton(tr("Очистить"));
     m_btnShowHideTables        = new QPushButton(tr("Показать таблицы"));
 
@@ -83,12 +84,12 @@ void MainWindow::initLayouts()
     QVBoxLayout *page2Layout = new QVBoxLayout;
     page2Layout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
     page2Layout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
-    page2Layout->addWidget(m_additionalSettingsWidget);
+    page2Layout->addWidget(m_pinvMethodSettingsWidget);
+    page2Layout->addWidget(m_startConditionsFilterWidget);
     page2Layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     QWidget *page2 = new QWidget;
     page2->setLayout(page2Layout);
-
 
     QTabWidget *tabs = new QTabWidget;
     tabs->addTab(page1, tr("Основное"));
@@ -199,9 +200,14 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filte
         showErrorMessage();
         return;
     }
+
     Core::PtrTask             task   = m_taskWidget->task(ftype);
+
     Core::PtrFilterParameters params = m_filterParamsWidget->parameters();
+    params->setInitialCondition(m_startConditionsFilterWidget->initialConditionForFilter());
+
     Core::PtrFilter           filter = Filters::FilterFactory::create(ftype, id, params, task);
+
     connect(filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
 
     m_statusProgressBar->setEnabled(true);

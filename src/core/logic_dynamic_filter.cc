@@ -90,34 +90,37 @@ void LogicDynamicFilter::computeBlock0() {
 
     Array<Vector> mx(m_task->countI);
     Array<Matrix> varX(m_task->countI);
-
-//    int n = 2000;
-//    Array<Vector> test(n);
-
-//    for (int i = 0; i < n; i++) {
-//        test[i] = Vector::Zero(1);
-//        if (i == 100 || i == 200 ||  i == 300) {
-//            test[i][0] = 3.0;
-//        } else {
-//            test[i][0] = 2.0;
-//        }
-//    }
-
-//    Vector testMean = Mean(test);
+    Array<Vector> my(m_task->countI);
+    Array<Matrix> varY(m_task->countI);
+    Array<Matrix> covarXY(m_task->countI);
 
     for (int i = 0; i < m_task->countI; i++) {
         mx[i] = Mean(m_sampleX, m_sampleI, i+1);
-        varX[i] = Cov(m_sampleX, m_sampleX, m_sampleI, i+1);
+        varX[i] = Var(m_sampleX, mx[i],  m_sampleI, i+1);
+        if (m_params->initialCondition() == INITIAL_CONDITIONS::MonteCarlo) {
+            my[i] = Mean(m_sampleY, m_sampleI, i+1);
+            varY[i] = Var(m_sampleY, my[i], m_sampleI, i+1);
+            covarXY[i] = Cov(m_sampleX, m_sampleY, mx[i], my[i], m_sampleI, i+1);
+        }
     }
 
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         for (int i = 0; i < m_task->countI; i++) {
-            Omega[s][i] = m_task->Pr(i+1);
-            Lambda[s][i] = mx[i];
-            Mu[s][i] = m_task->h(i+1, mx[i], varX[i]);
-            Psi[s][i] = varX[i];
-            Delta[s][i] = m_task->G(i+1, mx[i], varX[i]) - Lambda[s][i] * Mu[s][i].transpose();
-            Phi[s][i] =  m_task->F(i+1, mx[i], varX[i]) - Mu[s][i]*Mu[s][i].transpose();
+            if (m_params->initialCondition() == INITIAL_CONDITIONS::GaussApproximation) {
+                Omega[s][i] = m_task->Pr(i+1);
+                Lambda[s][i] = m_task->meanX0();
+                Psi[s][i] = m_task->varX0();
+                Mu[s][i] = m_task->h(i+1, mx[i], varX[i]);
+                Delta[s][i] = m_task->G(i+1, mx[i], varX[i]) - Lambda[s][i] * Mu[s][i].transpose();
+                Phi[s][i] =  m_task->F(i+1, mx[i], varX[i]) - Mu[s][i]*Mu[s][i].transpose();
+            } else { // Монте-Карло
+                Omega[s][i] = m_task->Pr(i+1);
+                Lambda[s][i] = mx[i];
+                Psi[s][i] = varX[i];
+                Mu[s][i] = my[i];
+                Delta[s][i] = covarXY[i];
+                Phi[s][i] =  varY[i];
+            }
         }
     }
 }

@@ -1,27 +1,24 @@
-#ifndef ADDITIONAL_SETTINGS_WIDGET_H
-#define ADDITIONAL_SETTINGS_WIDGET_H
+#ifndef PINV_METHOD_SETTING_WIDGET_H
+#define PINV_METHOD_SETTING_WIDGET_H
 
 #include "src/math/linear_algebra.h"
 #include <QGroupBox>
 #include <QRadioButton>
 #include <QVBoxLayout>
 
-
 /*!
  \brief Класс виджета, предаставляющего дополнительные настройки для численных методов.
 */
 
-class AdditionalSettingsWidget : public QGroupBox
+class PinvMethodSettingWidget : public QGroupBox
 {
     Q_OBJECT
-
 public:
     //! \brief Конструктор.
-    explicit AdditionalSettingsWidget(QWidget *parent = nullptr);
+    explicit PinvMethodSettingWidget(QWidget *parent = nullptr);
 
     //! \brief Деструктор.
-    ~AdditionalSettingsWidget();
-
+    ~PinvMethodSettingWidget();
 
 private slots:
     /*!
@@ -35,7 +32,6 @@ private slots:
      \details Слот. Реакция на сигнал toggled(bool) элемента m_radioPinvGreville.
     */
     void onPinvGrevilleToggled(bool checked);
-
 
 private:
     /*!
@@ -56,4 +52,4 @@ private:
     QRadioButton *m_radioPinvGreville;
 };
 
-#endif // ADDITIONAL_SETTINGS_WIDGET_H
+#endif // PINV_METHOD_SETTING_WIDGET_H

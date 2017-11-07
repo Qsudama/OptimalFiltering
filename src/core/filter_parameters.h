@@ -2,6 +2,7 @@
 #define FILTER_PARAMETERS_H
 
 #include "src/config.h"
+#include "src/core/types_info.h"
 #include <cassert>
 #include <memory>
 
@@ -86,6 +87,9 @@ public:
     //! \brief Возвращает кол-во аргументов для ФМП, ДФМП, МФМП и МДФМП.
     const Uint &argumentsCount() const;
 
+    //! \brief Возвращает cпособ задания начальных данных.
+    const Core::INITIAL_CONDITIONS &initialCondition() const;
+
     //! \brief Устанавливает время \f$T_{max}\f$ окончания фильтрации.
     void setMaxTime(double tmax);
 
@@ -106,6 +110,9 @@ public:
 
     //! \brief Устанавливает кол-во аргументов для ФМП, ДФМП, МФМП и МДФМП.
     void setArgumentsCount(Uint order);
+
+    //! \brief Устанавливает cпособ задания начальных данных.
+    void setInitialCondition(Core::INITIAL_CONDITIONS condition);
 
 
 private:
@@ -138,6 +145,8 @@ private:
     Uint m_sampleSize; /*!< Размер выборок. */
     Uint m_orderMult;  /*!< Кратность порядка фильтра. */
     Uint m_argumentsCount;  /*!< Кол-фо аргументов фильтра. */
+
+    INITIAL_CONDITIONS m_initialCondition; /*! Cпособ задания начальных данных. */
 };
 
 
