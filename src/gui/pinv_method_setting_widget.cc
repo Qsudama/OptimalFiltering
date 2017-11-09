@@ -1,12 +1,10 @@
-#include "additional_settings_widget.h"
+#include "pinv_method_setting_widget.h"
 #include "src/gui/font_manager.h"
 #include "src/gui/gui_config.h"
 
-
 using namespace Math::LinAlg;
 
-
-AdditionalSettingsWidget::AdditionalSettingsWidget(QWidget *parent)
+PinvMethodSettingWidget::PinvMethodSettingWidget(QWidget *parent)
     : QGroupBox(parent)
 {
     setTitle(tr("Псевдообращение матриц"));
@@ -15,11 +13,11 @@ AdditionalSettingsWidget::AdditionalSettingsWidget(QWidget *parent)
     loadFonts();
 }
 
-AdditionalSettingsWidget::~AdditionalSettingsWidget()
+PinvMethodSettingWidget::~PinvMethodSettingWidget()
 {
 }
 
-void AdditionalSettingsWidget::loadFonts()
+void PinvMethodSettingWidget::loadFonts()
 {
     QFont font = FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL);
     setFont(font);
@@ -27,7 +25,7 @@ void AdditionalSettingsWidget::loadFonts()
     m_radioPinvSvd->setFont(font);
 }
 
-void AdditionalSettingsWidget::initControls()
+void PinvMethodSettingWidget::initControls()
 {
     m_radioPinvSvd = new QRadioButton(tr("Метод SVD"));
     m_radioPinvSvd->setChecked(true);
@@ -38,7 +36,7 @@ void AdditionalSettingsWidget::initControls()
     connect(m_radioPinvGreville, SIGNAL(toggled(bool)), this, SLOT(onPinvGrevilleToggled(bool)));
 }
 
-void AdditionalSettingsWidget::initLayouts()
+void PinvMethodSettingWidget::initLayouts()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
@@ -50,14 +48,14 @@ void AdditionalSettingsWidget::initLayouts()
     this->setLayout(mainLayout);
 }
 
-void AdditionalSettingsWidget::onPinvSvdToggled(bool checked)
+void PinvMethodSettingWidget::onPinvSvdToggled(bool checked)
 {
     if (checked) {
         CurrentPinvMethod::instance().set(PseudoinverseMethods::SVD);
     }
 }
 
-void AdditionalSettingsWidget::onPinvGrevilleToggled(bool checked)
+void PinvMethodSettingWidget::onPinvGrevilleToggled(bool checked)
 {
     if (checked) {
         CurrentPinvMethod::instance().set(PseudoinverseMethods::GREVILLE);

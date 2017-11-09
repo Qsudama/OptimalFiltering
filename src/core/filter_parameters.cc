@@ -16,6 +16,8 @@ FilterParameters::FilterParameters(double maxTime, double measurementStep, doubl
 {
     setMeasurementStep(measurementStep);
 
+    m_initialCondition = INITIAL_CONDITIONS::GaussApproximation;
+
     assert(sampleSize > 0 && "Core::FilterParameters::Constructor : corrupt value of sampleSize");
     assert(orderMult > 0 && "Core::FilterParameters::Constructor : corrupt value of orderMult");
 }
@@ -68,6 +70,11 @@ const Uint &FilterParameters::orderMult() const
 const Uint &FilterParameters::argumentsCount() const
 {
     return m_argumentsCount;
+}
+
+const Core::INITIAL_CONDITIONS &FilterParameters::initialCondition() const
+{
+    return m_initialCondition;
 }
 
 void FilterParameters::setMaxTime(double tmax)
@@ -137,6 +144,11 @@ void FilterParameters::setArgumentsCount(Uint order)
     assert(order > 0 && "Core::FilterParameters::setArgumentsCount(order) : corrupt value of order");
 
     m_argumentsCount = order;
+}
+
+void FilterParameters::setInitialCondition(Core::INITIAL_CONDITIONS condition)
+{
+    m_initialCondition = condition;
 }
 
 void FilterParameters::correctStepAndCount(const double &intervalLength, double &step, Uint &count)

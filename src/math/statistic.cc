@@ -18,6 +18,8 @@ double Mean(const Array<double> &sampleX)
     return sumX / sampleX.size();
 }
 
+// Логико - динамика
+
 double Mean(const Array<double> &sampleX, const Array<int> sampleI, int i)
 {
     assert(sampleX.size() == sampleI.size());
@@ -42,6 +44,8 @@ Vector Mean(const Array<Vector> &sampleX)
     return sumX / sampleX.size();
 }
 
+// Логико - динамика
+
 Vector Mean(const Array<Vector> &sampleX, const Array<int> sampleI, int i)
 {
     assert(sampleX.size() == sampleI.size());
@@ -65,6 +69,8 @@ double Var(const Array<double> &sampleX, double meanX)
     }
     return sum / (sampleX.size() - 1);
 }
+
+// Логико - динамика
 
 double Var(const Array<double> &sampleX, double meanXi, const Array<int> sampleI, int i)
 {
@@ -106,6 +112,8 @@ Matrix Var(const Array<Vector> &sampleX, const Vector &meanX)
     return sumXX / sampleX.size() - meanX * meanX.transpose();
 }
 
+// Логико - динамика
+
 Matrix Var(const Array<Vector> &sampleX, const Vector &meanX, const Array<int> sampleI, int i)
 {
     assert(sampleX.size() == sampleI.size());
@@ -127,6 +135,8 @@ Matrix Var(const Array<Vector> &sampleX)
     Vector meanX = Mean(sampleX);
     return Var(sampleX, meanX);
 }
+
+// Логико - динамика
 
 Matrix Var(const Array<Vector> &sampleX, const Array<int> sampleI, int i)
 {
@@ -150,21 +160,38 @@ double Cov(const Array<double> &sampleX, const Array<double> &sampleY)
     return sumXY / size - (sumX / size) * (sumY / size);
 }
 
+// Логико - динамика
+
 double Cov(const Array<double> &sampleX, const Array<double> &sampleY, const Array<int> sampleI,
            int i)
 {
     assert(sampleX.size() == sampleI.size());
     assert(sampleY.size() == sampleI.size());
 
-    Array<double> tmpX, tmpY;
+    double meanXi = Mean(sampleX, sampleI, i);
+    double meanYi = Mean(sampleY, sampleI, i);
+
+    return Cov(sampleX, sampleY, meanXi, meanYi, sampleI, i);
+}
+
+// Логико - динамика
+
+double Cov(const Array<double> &sampleX, const Array<double> &sampleY, const double &meanX,
+           const double &meanY, const Array<int> sampleI, int i)
+{
+    assert(sampleX.size() == sampleI.size());
+    assert(sampleY.size() == sampleI.size());
+
+    double res = 0.0;
+    int count = 0;
     for (size_t j = 0; j < sampleI.size(); ++j) {
         if (sampleI[j] == i) {
-            tmpX.push_back(sampleX[j]);
-            tmpY.push_back(sampleY[j]);
+            double cov = (sampleX[j] - meanX)*(sampleY[j] - meanY);
+            res += cov;
+            ++count;
         }
     }
-
-    return Cov(tmpX, tmpY);
+    return res/(count - 1);
 }
 
 Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
@@ -185,21 +212,40 @@ Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
     return sumXY / size - (sumX / size) * (sumY / size).transpose();
 }
 
+// Логико - динамика
+
 Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Array<int> sampleI,
            int i)
 {
     assert(sampleX.size() == sampleI.size());
     assert(sampleY.size() == sampleI.size());
 
-    Array<Vector> tmpX, tmpY;
+    Vector meanXi = Mean(sampleX, sampleI, i);
+    Vector meanYi = Mean(sampleY, sampleI, i);
+
+    return Cov(sampleX, sampleY, meanXi, meanYi, sampleI, i);
+}
+
+// Логико - динамика
+
+Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Vector &meanXi,
+           const Vector &meanYi,  const Array<int> sampleI, int i)
+{
+    assert(sampleX.size() == sampleI.size());
+    assert(sampleY.size() == sampleI.size());
+
+    long   dimX  = sampleX[0].size();
+    long   dimY  = sampleY[0].size();
+    Matrix sumXY = Matrix::Zero(dimX, dimY);
+    int count = 0;
     for (size_t j = 0; j < sampleI.size(); ++j) {
+
         if (sampleI[j] == i) {
-            tmpX.push_back(sampleX[j]);
-            tmpY.push_back(sampleY[j]);
+            sumXY += sampleX[j] * sampleY[j].transpose();
+            ++count;
         }
     }
-
-    return Cov(tmpX, tmpY);
+    return sumXY / count - meanXi * meanYi.transpose();
 }
 
 double Median(const Array<double> &sampleX)

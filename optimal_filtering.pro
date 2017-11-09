@@ -36,7 +36,6 @@ HEADERS += \
     src/filters/discrete/d_fos.h \
     src/filters/discrete/d_mfos.h \
     src/filters/filters_factory.h \
-    src/gui/additional_settings_widget.h \
     src/gui/color_manager.h \
     src/gui/filter_parameters_widget.h \
     src/gui/filter_results_table.h \
@@ -316,7 +315,9 @@ HEADERS += \
     src/filters/discrete/d_fkp.h \
     src/filters/discrete/d_dfkp.h \
     src/filters/discrete/d_mdfmp.h \
-    src/tasks/discrete/d_scalar_gauss.h
+    src/tasks/discrete/d_scalar_gauss.h \
+    src/gui/pinv_method_setting_widget.h \
+    src/gui/start_conditions_filter_widget.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -341,7 +342,6 @@ SOURCES += \
     src/filters/discrete/d_fos.cc \
     src/filters/discrete/d_mfos.cc \
     src/filters/filters_factory.cc \
-    src/gui/additional_settings_widget.cc \
     src/gui/color_manager.cc \
     src/gui/filter_parameters_widget.cc \
     src/gui/filter_results_table.cc \
@@ -385,4 +385,6 @@ SOURCES += \
     src/filters/discrete/d_dfmp.cc \
     src/filters/discrete/d_fkp.cc \
     src/filters/discrete/d_mdfmp.cc \
-    src/tasks/discrete/d_scalar_gauss.cc
+    src/tasks/discrete/d_scalar_gauss.cc \
+    src/gui/pinv_method_setting_widget.cc \
+    src/gui/start_conditions_filter_widget.cc

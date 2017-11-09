@@ -28,7 +28,7 @@ inline double DegToRad(double value)
 /*!
  * \brief Переводит радианы в градусы.
  * \param[in] value - величина в радианах.
- * \return значение value в градусах.
+ * \return значение value в градусах
  */
 
 inline double RadToDeg(double value)

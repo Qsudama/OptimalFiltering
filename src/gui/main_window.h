@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "src/gui/additional_settings_widget.h"
+
 #include "src/gui/color_manager.h"
 #include "src/gui/filter_parameters_widget.h"
 #include "src/gui/filter_results_table.h"
@@ -10,6 +10,8 @@
 #include "src/gui/graph_window.h"
 #include "src/gui/gui_config.h"
 #include "src/gui/task_widget.h"
+#include "src/gui/pinv_method_setting_widget.h"
+#include "src/gui/start_conditions_filter_widget.h"
 #include "src/math/convert.h"
 #include "src/math/random.h"
 #include <QApplication>
@@ -40,7 +42,6 @@ public:
 signals:
     //! Сигнал. Вызывает слоты onClear() всех связанных с ним виджетов.
     void clear();
-
 
 private slots:
     //! Удаляет все пользовательские данные и возвращает значения по-умолчанию.
@@ -95,6 +96,8 @@ private:
     void addTable(const Core::FilterOutput &data, const std::string &label, const Vector &scale);
 
 
+    void showErrorMessage (void);
+
 private:
     ColorManager m_colorManager;
     bool         m_tablesIsVisible;
@@ -104,7 +107,8 @@ private:
     TaskWidget *              m_taskWidget;
     FilterParametersWidget *  m_filterParamsWidget;
     FilterStartButtonsBox *   m_filterStartWidget;
-    AdditionalSettingsWidget *m_additionalSettingsWidget;
+    PinvMethodSettingWidget *m_pinvMethodSettingsWidget;
+    StartConditionsFilterWidget *m_startConditionsFilterWidget;
     QPushButton *             m_btnClear;
     QPushButton *             m_btnShowHideTables;
 
