@@ -6,6 +6,7 @@
 #include "src/math/linear_algebra.h"
 #include "src/math/constants.h"
 
+using namespace std;
 
 namespace Core
 {
@@ -41,6 +42,11 @@ protected:
     double probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D);
     Array<double> computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
                                              Array<Vector> m, Array<Matrix> D);
+
+
+    /*! \brief Функция возвращающая тип моделирования начальных условий фильтра для вывода на экран
+    */
+    string initialConditWithType();
 
 protected:
     PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */

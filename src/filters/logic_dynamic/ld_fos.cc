@@ -19,7 +19,9 @@ using Math::MakeBlockMatrix;
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : LogicDynamicFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФОСлд (p=" + std::to_string(task->dimX()) + ")");
+    long n = task->dimX()/2;
+    string condit = initialConditWithType();
+    m_info->setName(m_task->info()->type() + "ФОСлд (p=" + std::to_string(n) + condit + ")");
 }
 
 void FOS::zeroIteration()

@@ -4,6 +4,7 @@
 #include <limits>
 #include <cmath>
 
+using namespace Core;
 
 namespace Filters
 {
@@ -20,8 +21,9 @@ using Math::Statistic::Cov;
 AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
     : LogicDynamicFilter(params, task)
 {
-    long n = task->dimX();
-    m_info->setName(m_task->info()->type() + "AОФлд (p=" + std::to_string(n * (n + 3) / 2) + ")");
+    long n = task->dimX()/2;
+    string condit = initialConditWithType();
+    m_info->setName(m_task->info()->type() + "AОФлд (p=" + to_string(n * (n + 3) / 2) + condit + ")");
 }
 
 void AOF::algorithm()
@@ -35,7 +37,7 @@ void AOF::algorithm()
 
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             // Блок 1
-            computeBlock1(s);;
+            computeBlock1(s);
             // Блок 2
             computeBlock2(s);
         }
@@ -62,6 +64,7 @@ void AOF::algorithm()
 
 void AOF::computeBlock1(long s) {
     P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
+    //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];
     for (int i = 0; i < m_task->countI; i++) {
         K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
         Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);

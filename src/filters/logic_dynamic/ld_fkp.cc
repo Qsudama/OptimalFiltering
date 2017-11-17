@@ -21,7 +21,8 @@ FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task)
 {
     long ny = long(m_task->dimY());
     long p  = ny * long(m_params->orderMult());
-    m_info->setName(m_task->info()->type() + "ФКПлд (p=" + std::to_string(p) + ")");
+    string condit = initialConditWithType();
+    m_info->setName(m_task->info()->type() + "ФКПлд (p=" + std::to_string(p) + condit + ")");
 }
 
 void FKP::zeroIteration()

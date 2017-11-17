@@ -123,6 +123,7 @@ void LogicDynamicFilter::computeBlock0() {
             }
         }
     }
+    qDebug() << "Stop";
 }
 
 double LogicDynamicFilter::probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D) {
@@ -159,6 +160,17 @@ Array<double> LogicDynamicFilter::computeProbabilityDensityN(Array<double> omega
         }
     }
     return resDouble;
+}
+
+string LogicDynamicFilter::initialConditWithType()
+{
+    string condit = "";
+    if (m_params->initialCondition() == INITIAL_CONDITIONS::GaussApproximation) {
+            condit = ", 0-прибл";
+    } else {
+            condit = ", 0-точн";
+    }
+    return condit;
 }
 
 } // end Core
