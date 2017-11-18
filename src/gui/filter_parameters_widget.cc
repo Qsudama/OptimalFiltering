@@ -1,11 +1,14 @@
 #include "filter_parameters_widget.h"
 #include "src/gui/font_manager.h"
 
+static double const coeff = 0.5;
+static double const minMesStep = 0.25;
+static double const step = 1.0;
 
 FilterParametersWidget::FilterParametersWidget(QWidget *parent)
     : QGroupBox(parent)
     , m_updateOn(true)
-    , m_parameters(new Core::FilterParameters(100.0, 1.0, 1.0, 0.1, 200, 1))
+    , m_parameters(new Core::FilterParameters(50.0, 1.0, 1.0, 0.1, 200, 4, 2))
     , m_currentFiltersFamily(0)
 {
     setTitle(tr("Параметры фильтрации"));
@@ -46,6 +49,13 @@ int FilterParametersWidget::computeMinimumWidth()
     return w1 + w2 + w3 + w4;
 }
 
+void FilterParametersWidget::setRange(QDoubleSpinBox *dsb, double min, double max, double step)
+{
+    dsb->setMinimum(min);
+    dsb->setMaximum(max);
+    dsb->setSingleStep(step);
+}
+
 void FilterParametersWidget::setRange(QDoubleSpinBox *dsb, double min, double max)
 {
     dsb->setMinimum(min);
@@ -62,20 +72,23 @@ void FilterParametersWidget::setRange(QSpinBox *sb, int min, int max)
 
 void FilterParametersWidget::initControls()
 {
+    // Терминальное время - maxTime
     m_dsbMaxTime = new QDoubleSpinBox;
     m_dsbMaxTime->setDecimals(2);
-    setRange(m_dsbMaxTime, m_parameters->measurementStep(), 500.0);
+    setRange(m_dsbMaxTime, m_parameters->measurementStep(), 300.0, 1.0);
     m_dsbMaxTime->setValue(m_parameters->maxTime());
     m_dsbMaxTime->setFont(m_monotypeFont);
     connect(m_dsbMaxTime, SIGNAL(valueChanged(double)), this, SLOT(onMaxTimeChanged(double)));
 
+    // Интервал между измерениями - measurementStep
     m_dsbMeasurementStep = new QDoubleSpinBox;
     m_dsbMeasurementStep->setDecimals(4);
-    setRange(m_dsbMeasurementStep, m_parameters->predictionStep(), 0.25 * m_parameters->maxTime());
+    setRange(m_dsbMeasurementStep, minMesStep, coeff * m_parameters->maxTime(), step);
     m_dsbMeasurementStep->setValue(m_parameters->measurementStep());
     m_dsbMeasurementStep->setFont(m_monotypeFont);
     connect(m_dsbMeasurementStep, SIGNAL(valueChanged(double)), this, SLOT(onMeasurementStepChanged(double)));
 
+    // Интервал между прогнозами (для непрерывно-дискретных фильтров) - predictionStep
     m_dsbPredictionStep = new QDoubleSpinBox;
     m_dsbPredictionStep->setDecimals(4);
     setRange(m_dsbPredictionStep, m_parameters->integrationStep(), m_parameters->measurementStep());
@@ -83,6 +96,7 @@ void FilterParametersWidget::initControls()
     m_dsbPredictionStep->setFont(m_monotypeFont);
     connect(m_dsbPredictionStep, SIGNAL(valueChanged(double)), this, SLOT(onPredictionStepChanged(double)));
 
+    // Шаг интегрирования (для непрерывно-дискретных фильтров) - integrationStep
     m_dsbIntegrationStep = new QDoubleSpinBox;
     m_dsbIntegrationStep->setDecimals(4);
     setRange(m_dsbIntegrationStep, 0.0001, m_parameters->predictionStep());
@@ -90,33 +104,37 @@ void FilterParametersWidget::initControls()
     m_dsbIntegrationStep->setFont(m_monotypeFont);
     connect(m_dsbIntegrationStep, SIGNAL(valueChanged(double)), this, SLOT(onIntegrationStepChanged(double)));
 
+    // Кол-во прогнозов на интервале (для непрерывно-дискретных фильтров)
     m_sbPredictionCount = new QSpinBox;
     m_sbPredictionCount->setEnabled(false);
     setRange(m_sbPredictionCount, 0, int(m_dsbPredictionStep->maximum() / m_dsbIntegrationStep->minimum()) - 1);
     m_sbPredictionCount->setValue(int(m_parameters->predictionCount()) - 1);
     m_sbPredictionCount->setFont(m_monotypeFont);
     connect(m_sbPredictionCount, SIGNAL(valueChanged(int)), this, SLOT(onPredictionCountChanged(int)));
-
+    // Кратность фильтра (для ФКП) - orderMult
     m_sbOrderMultiplicity = new QSpinBox;
     m_sbOrderMultiplicity->setMinimum(1);
-    m_sbOrderMultiplicity->setMaximum(10);
+    m_sbOrderMultiplicity->setMaximum(50);
     m_sbOrderMultiplicity->setSingleStep(1);
     m_sbOrderMultiplicity->setValue(int(m_parameters->orderMult()));
     m_sbOrderMultiplicity->setFont(m_monotypeFont);
     connect(m_sbOrderMultiplicity, SIGNAL(valueChanged(int)), this, SLOT(onOrderMultChanged(int)));
 
+    // Количество аргументов в фильтре (дискретные фильтры) - argumentsCount
     m_argumentsCount = new QSpinBox;
     m_argumentsCount->setMinimum(2);
     m_argumentsCount->setMaximum(3);
     m_argumentsCount->setSingleStep(1);
-    m_argumentsCount->setValue(int(m_parameters->orderMult()));
+    m_argumentsCount->setValue(int(m_parameters->argumentsCount()));
     m_argumentsCount->setFont(m_monotypeFont);
     connect(m_argumentsCount, SIGNAL(valueChanged(int)), this, SLOT(onArgumentsCountChanged(int)));
 
+    // Размер выборки - sampleSize
     m_sbSampleSize = new QSpinBox;
-    m_sbSampleSize->setMinimum(50);
-    m_sbSampleSize->setMaximum(5000);
-    m_sbSampleSize->setSingleStep(50);
+    static int const singleStepSampleSize = 50;
+    m_sbSampleSize->setMinimum(singleStepSampleSize);
+    m_sbSampleSize->setMaximum(10000);
+    m_sbSampleSize->setSingleStep(singleStepSampleSize);
     m_sbSampleSize->setValue(int(m_parameters->sampleSize()));
     m_sbSampleSize->setFont(m_monotypeFont);
     connect(m_sbSampleSize, SIGNAL(valueChanged(int)), this, SLOT(onSampleSizeChanged(int)));
@@ -213,15 +231,13 @@ Core::PtrFilterParameters FilterParametersWidget::parameters()
     return m_parameters;
 }
 
-
-
 void FilterParametersWidget::onMaxTimeChanged(double value)
 {
     if (!m_updateOn) {
         return;
     }
     m_parameters->setMaxTime(value);
-    setRange(m_dsbMeasurementStep, m_dsbPredictionStep->value(), 0.25 * m_dsbMaxTime->value());
+    setRange(m_dsbMeasurementStep, minMesStep, coeff * m_parameters->maxTime(), step);
 }
 
 void FilterParametersWidget::onMeasurementStepChanged(double value)
@@ -259,7 +275,7 @@ void FilterParametersWidget::onPredictionStepChanged(double value)
     m_parameters->setPredictionStep(value);
     setRange(m_dsbIntegrationStep, 0.0001, m_dsbPredictionStep->value());
     setRange(m_dsbPredictionStep, m_dsbIntegrationStep->value(), m_dsbMeasurementStep->value());
-    setRange(m_dsbMeasurementStep, m_dsbPredictionStep->value(), 0.25 * m_dsbMaxTime->value());
+//    setRange(m_dsbMeasurementStep, m_dsbPredictionStep->value(), 0.25 * m_dsbMaxTime->value());
     setRange(m_sbPredictionCount, 0, int(m_dsbPredictionStep->maximum() / m_dsbIntegrationStep->minimum()) - 1);
 
     //вместе с stepPrediction корректируется maxTime:

@@ -20,6 +20,11 @@ enum class APPROX_TYPE {
     Gauss   /*!< Гауссовское приближение. */
 };
 
+//! \brief Набор возможных способов задания начальных данных для фильтров.
+enum class INITIAL_CONDITIONS {
+    GaussApproximation,  /*!< Гауссовское приближение */
+    MonteCarlo  /*!< Метод Монте–Карло. */
+};
 
 } // end Core
 

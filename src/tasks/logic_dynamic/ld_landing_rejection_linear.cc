@@ -13,17 +13,15 @@ namespace LogicDynamic
 using Math::Convert::DegToRad;
 
 
-LandingRejectionLinear::LandingRejectionLinear()
-    : LogicDynamicTask()
+LandingRejectionLinear::LandingRejectionLinear() : LogicDynamicTask()
     , m_turnTime(45.0) // Время t_y
-    , m_p(1.0) // Вероятность сбоя
-    , gamMinX(0.5)
-    , gamMinY(0.5)
+    , m_e(0.0) // Вероятность сбоя
+    , gamMinX(0.1)
+    , gamMinY(0.1)
     , countIInTask(1) // Количество режимов
 {
     m_info->setName("6-мерный спуск ЛА со сбоями 2-х датчиков");
     m_info->setType("Л-");
-
 
     m_dimY = 2;
     m_dimX = 6;
@@ -31,10 +29,10 @@ LandingRejectionLinear::LandingRejectionLinear()
     m_dimV = 3;
     m_dimW = 4;
 
-    m_meanX0    = Vector(m_dimX);
-    m_meanX0[0] = 0.6; //M_v_0
+    m_meanX0    =  Vector(m_dimX);
+    m_meanX0[0] = 6.0; //M_v_0
     m_meanX0[1] = -0.314;//DegToRad(-18.0); // M_theta_0
-    m_meanX0[2] = 10.0; // M_H_0
+    m_meanX0[2] = 100.0; // M_H_0
     m_meanX0[3] = CC; // M_c
     m_meanX0[4] = 0.3; // M_b
     m_meanX0[5] = 0.0; // M_varphi
@@ -43,31 +41,41 @@ LandingRejectionLinear::LandingRejectionLinear()
     m_meanV = Vector::Zero(m_dimV);
     m_meanW = Vector::Zero(m_dimW);
 
+    static double radian = 0.017453;
+
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
-    m_varX0(0, 0) = pow(0.0015, 2); // Sigma_V_0
-    m_varX0(1, 1) = pow(0.017, 2); // Sigma_theta_0
-    m_varX0(2, 2) = pow(0.7, 2); // Sigma_H_0
-    m_varX0(3, 3) = pow(0.1 * CC, 2); // Sigma_c
-    m_varX0(4, 4) = pow(0.02, 2); // Sigma_b
-    m_varX0(5, 5) = pow(0.017, 2); // Sigma_varphi
+    m_varX0(0, 0) = pow(0.015, 2); // Sigma_V_0
+    m_varX0(1, 1) = pow(radian, 2); // Sigma_theta_0
+    m_varX0(2, 2) = pow(7, 2); // Sigma_H_0
+
+// Фильтр работает только по 3-м координатам
+    //    m_varX0(3, 3) = pow(CC, 2); // Sigma_c
+    //    m_varX0(4, 4) = pow(0.02, 2); // Sigma_b
+    //    m_varX0(5, 5) = pow(radian, 2); // Sigma_varphi
+
+    m_varX0(3, 3) = pow(0.0, 2); // Sigma_c
+    m_varX0(4, 4) = pow(0.0, 2); // Sigma_b
+    m_varX0(5, 5) = pow(0.0, 2); // Sigma_varphi
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
     m_varW = Matrix::Zero(m_dimW, m_dimW);
 
-    m_varW(0, 0) = pow(1E-2, 2); // Sigma_U
-    m_varW(1, 1) = pow(1E-2, 2); // Sigma_U
-    m_varW(2, 2) = pow(0.02E-4, 2); // Sigma_W
-    m_varW(3, 3) = pow(0.02E-4, 2); // Sigma_W
-
+    m_varW(0, 0) = pow(0.01, 2); // Sigma_U
+    m_varW(1, 1) = pow(0.01, 2); // Sigma_U
+    m_varW(2, 2) = pow(0.00002, 2); // Sigma_W
+    m_varW(3, 3) = pow(0.00002, 2); // Sigma_W
 
     (*m_consts)["Kb"]     = KB;
     (*m_consts)["Beta"]   = BB;
     (*m_consts)["g"]      = GG;
     (*m_consts)["R"]      = RR;
-    (*m_consts)["e"]   = 0.4 * (1.0 - m_p);
+
+    (*m_consts)["p"]   = 1 - m_e;
+// 4-х режимность
+//    (*m_consts)["p"]   = 1 - 2.5*m_e;
 
     (*m_params)["tau"] = m_turnTime;
-    (*m_params)["p"]   = m_p;
+    (*m_params)["e"]   = m_e;
     (*m_params)["Кол-во режимов I"] = countIInTask;
     (*m_params)["GammaX_min"]   = gamMinX;
     (*m_params)["GammaY_min"]   = gamMinY;
@@ -80,8 +88,11 @@ void LandingRejectionLinear::loadParams()
     gamMinX             = m_params->at("GammaX_min");
     gamMinY             = m_params->at("GammaY_min");
     m_turnTime          = m_params->at("tau");
-    m_p                 = m_params->at("p");
-    (*m_consts)["e"]    = 0.4 * (1.0 - m_p);
+    m_e                 = m_params->at("e");
+
+    (*m_consts)["p"]    = 1 - m_e;
+// 4-х режимность
+//    (*m_consts)["p"]    = 1 - 2.5*m_e;
 }
 
 double LandingRejectionLinear::Sk(double t) const
@@ -109,20 +120,32 @@ double LandingRejectionLinear::e(const Vector &x) const
 
 double LandingRejectionLinear::gammaX(int i) const
 {
-    if (i == 1 || i == 3) {
+    if (i == 1) {
         return 1.0;
-    } else {
-        return gamMinX;
     }
+    return gamMinX;
+
+// 4-х режимность
+//    if (i == 1 || i == 2) {
+//        return 1.0;
+//    } else {
+//        return gamMinX;
+//    }
 }
 
 double LandingRejectionLinear::gammaY(int i) const
 {
-    if (i == 1 || i == 2) {
+    if (i == 1) {
         return 1.0;
-    } else {
-        return gamMinY;
     }
+    return gamMinY;
+
+// 4-х режимность
+//    if (i == 1 || i == 3) {
+//        return 1.0;
+//    } else {
+//        return gamMinY;
+//    }
 }
 
 Vector LandingRejectionLinear::a(int /*i*/, const Vector &x) const
@@ -174,11 +197,16 @@ Vector LandingRejectionLinear::bForZeroW(int i, const Vector &x) const
 
 double LandingRejectionLinear::A(int i, int l) const
 {
-    double p = m_p;
-    double e = 0.4 * (1.0 - p);
+    double e = m_e;
 
-    Matrix A(4, 4);
-    A << p, p, p, p, e, e, e, e, e, e, e, e, 0.5 * e, 0.5 * e, 0.5 * e, 0.5 * e;
+    double p = 1 - m_e;
+    Matrix A(2, 2);
+    A << p, p, e, e;
+
+// 4-х режимность
+//    double p = 1 - 2.5*m_e;
+//    Matrix A(4, 4);
+//    A << p, p, p, p, e, e, e, e, e, e, e, e, 0.5 * e, 0.5 * e, 0.5 * e, 0.5 * e;
 
     return A(i - 1, l - 1);
 }
@@ -331,63 +359,69 @@ Matrix LandingRejectionLinear::BwdbdwBwt(int i, const Vector &x) const
 
 double LandingRejectionLinear::Pr(int i) const
 {
-    double e = 0.4 * (1.0 - m_p);
+    double e = m_e;
+
+    double p = 1 - m_e;
     if (i == 1) {
-        return m_p;
-    } else if (i == 2) {
-        return e;
-    } else if (i == 3) {
-        return e;
+        return p;
     } else {
-        return 0.5*e;
+        return e;
     }
+
+// 4-х режимность
+//    double p = 1 - 2.5*m_e;
+//    if (i == 1) {
+//        return p;
+//    } else if (i == 2) {
+//        return e;
+//    } else if (i == 3) {
+//        return e;
+//    } else {
+//        return 0.5*e;
+//    }
 }
 
 Array<int> LandingRejectionLinear::generateArrayI(int sizeS) const
 {
     Array<int> array(sizeS);
-    double e = 0.4 * (1.0 - m_p);
-    int countI1, countI2, countI3;
-    countI1 = sizeS*m_p;
+    double e = m_e;
+
+    double p = 1 - m_e;
+    int countI1, countI2;
+    countI1 = sizeS*p;
     countI2 = sizeS*e + countI1;
-    countI3 = sizeS*e + countI2;
     for (int i = 0; i < sizeS; i++) {
         if (i < countI1) {
             array[i] = 1;
-        } else if (i < countI2) {
-            array[i] = 2;
-        } else if (i < countI3) {
-            array[i] = 3;
         } else {
-            array[i] = 4;
+            array[i] = 2;
         }
     }
+
+// 4-х режимность
+//    double p = 1 - 2.5*m_e;
+//    int countI1, countI2, countI3;
+//    countI1 = sizeS*p;
+//    countI2 = sizeS*e + countI1;
+//    countI3 = sizeS*e + countI2;
+//    for (int i = 0; i < sizeS; i++) {
+//        if (i < countI1) {
+//            array[i] = 1;
+//        } else if (i < countI2) {
+//            array[i] = 2;
+//        } else if (i < countI3) {
+//            array[i] = 3;
+//        } else {
+//            array[i] = 4;
+//        }
+//    }
+
+
 
     for (int i = 0; i < sizeS; i++) {
       std::swap(array[i], array[rand() % sizeS]);
     }
     return array;
-
-    //#if defined(ARCHITECTURE_64)
-    //    std::mt19937_64 generator;
-    //#else
-    //    std::mt19937 generator;
-    //#endif
-    //    static std::uniform_real_distribution<double> uniform(0.0, 1.0);
-    //    double u = uniform(generator);
-
-    //    double p = m_p;
-    //    double e = 0.4 * (1.0 - p);
-    //
-    //    if (u < p) {
-    //        return 1;
-    //    } else if (u < p + e) {
-    //        return 2;
-    //    } else if (u < p + 2 * e) {
-    //        return 3;
-    //    } else {
-    //        return 4;
-    //    }
 }
 
 } // end Tasks::LogicDynamic

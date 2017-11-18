@@ -73,22 +73,12 @@ void TaskWidget::onCbTaskChanged(int)
 {
     Tasks::TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-//<<<<<<< HEAD
-//    if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection
-//                                              || taskId == Tasks::TASK_ID::VanDerPolRejection) {
-//        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId,
-//                                             Core::APPROX_TYPE::Linear);
-//    } else if(taskId == Tasks::TASK_ID::Scalar) {
-//        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId,
-//                                             Core::APPROX_TYPE::Linear);
-//=======
     if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId);
     } else if(taskId == Tasks::TASK_ID::ScalarLinear || taskId == Tasks::TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
     } else if (taskId == Tasks::TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
-//>>>>>>> master
     } else {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId);
     }
@@ -119,9 +109,18 @@ Core::PtrTask TaskWidget::task(Core::FILTER_TYPE ftype)
 {
     Core::PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id());
     m_parametersWidget->loadParamsTo(tmpTask);
-
     return tmpTask;
 }
+
+bool TaskWidget::taskIsNull(Core::FILTER_TYPE ftype)
+{
+    Core::PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id());
+    if (tmpTask == nullptr) {
+        return false;
+    }
+    return true;
+}
+
 
 Tasks::TASK_ID TaskWidget::id() const
 {
