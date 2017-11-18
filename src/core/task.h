@@ -93,7 +93,6 @@ public:
     //! \brief Возвращает дисперсию \f$D[W]\f$ вектора шума \f$W\f$.
     const Math::Matrix &varW() const;
 
-
     //! \brief Устанавливает начальное математическое ожидание \f$M[X_0]\f$ вектора состояния объекта \f$X_0\f$.
     void setMeanX0(const Math::Vector &m);
 

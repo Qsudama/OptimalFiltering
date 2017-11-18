@@ -21,6 +21,8 @@ using Math::Statistic::Cov;
 AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
     : LogicDynamicFilter(params, task)
 {
+//    Неправильно считает для скалярного примера
+//    из-за того что таск 6-ти мерный а надо чтобы показывало 3-х мерный
     long n = task->dimX()/2;
     string condit = initialConditWithType();
     m_info->setName(m_task->info()->type() + "AОФлд (p=" + to_string(n * (n + 3) / 2) + condit + ")");
@@ -31,7 +33,7 @@ void AOF::algorithm()
     m_task->setStep(m_params->measurementStep());
 
     for (size_t k = 0; k < m_result.size(); ++k) { 
-       //qDebug() << "Пора";
+      // qDebug() << "\n\nK = " << k;
 
         m_task->setTime(m_result[k].time);
 
@@ -63,6 +65,7 @@ void AOF::algorithm()
 }
 
 void AOF::computeBlock1(long s) {
+    //qDebug() << "SS = " << s;
     P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
     //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];
     for (int i = 0; i < m_task->countI; i++) {

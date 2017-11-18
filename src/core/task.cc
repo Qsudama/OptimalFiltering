@@ -147,5 +147,4 @@ void Task::loadParams()
 {
 }
 
-
 } // end Core

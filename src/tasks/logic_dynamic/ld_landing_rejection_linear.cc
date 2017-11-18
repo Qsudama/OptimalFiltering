@@ -31,7 +31,7 @@ LandingRejectionLinear::LandingRejectionLinear() : LogicDynamicTask()
 
     m_meanX0    =  Vector(m_dimX);
     m_meanX0[0] = 6.0; //M_v_0
-    m_meanX0[1] = -0.314;//DegToRad(-18.0); // M_theta_0
+    m_meanX0[1] = -0.314;//DegToRad(-18.0); // M_theta_0    
     m_meanX0[2] = 100.0; // M_H_0
     m_meanX0[3] = CC; // M_c
     m_meanX0[4] = 0.3; // M_b

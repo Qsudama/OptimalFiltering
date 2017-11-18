@@ -123,43 +123,104 @@ void LogicDynamicFilter::computeBlock0() {
             }
         }
     }
-    qDebug() << "Stop";
 }
 
-double LogicDynamicFilter::probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D) {
+double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {
     double pi = Math::Const::PI;
     Matrix det = 2* pi * D;
     double deter = det.determinant();
+    double d = sqrt(deter);
     Matrix pin = Pinv(D);
-    double exponent = exp(((-1 * (u - m).transpose()) * pin * (u - m))(0, 0));
-    double n = exponent / sqrt(deter);
+    double powerE = ((-1 * (u - m).transpose()) * pin * (u - m))(0, 0);
+    double resExp = exp(powerE/2);
+    double n = (Omega * resExp) / d;
     return n;
 }
 
+double LogicDynamicFilter::calculate_d(const Matrix &D) {
+    double pi = Math::Const::PI;
+    Matrix det = 2* pi * D;
+    double deter = det.determinant();
+    double d = sqrt(deter);
+    return d;
+}
+
+double LogicDynamicFilter::calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {
+    Matrix pinD = Pinv(D);
+    double powerE = (((u - m).transpose()) * pinD * (u - m))(0, 0);
+    double resExp = exp((-1 * powerE)/2);
+    double res = Omega * resExp;
+    return res;
+}
+
+//double LogicDynamicFilter::probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D) {
+//    double pi = Math::Const::PI;
+//    Matrix det = 2* pi * D;
+//    double deter = det.determinant();
+//    Matrix pin = Pinv(D);
+//    double exponent = exp(((-1 * (u - m).transpose()) * pin * (u - m))(0, 0));
+//    double n = exponent / sqrt(deter);
+//    return n;
+//}
+
 Array<double> LogicDynamicFilter::computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
                                                              Array<Vector> m, Array<Matrix> D) {
-    Array<double> resDouble(m_task->countI);
+//    Array<double> resDouble(m_task->countI);
     Array<double> resP(m_task->countI);
+
     if (m_task->countI == 1 ) {
-        resDouble = omega;
+        resP[0] = 1;
     } else {
+        Array<double> q(m_task->countI);
+        double sumQ = 0;
+        Array<double> e(m_task->countI);
+        Array<double> d(m_task->countI);
+
         for (int i = 0; i < m_task->countI; i++) {
-            double N = probabilityDensityN(sampleVector, m[i], D[i]);
-            resP[i] = omega[i]*N;
-        }
-        double resNumerator = 0.0;
-        for (int i = 0; i < m_task->countI; i++) {
-            resNumerator += resP[i];
-        }
-        for (int i = 0; i < m_task->countI; i++) {
-            if(resNumerator == 0.0) {
-                resDouble[i] = resP[i];
-            } else {
-                resDouble[i] = resP[i]/resNumerator;
+            q[i] = 1;
+            e[i] = calculate_e(omega[i], sampleVector, m[i], D[i]);
+            d[i] = calculate_d(D[i]);
+            for (int j = 0; j < m_task->countI; j++) {
+                if (j == i) {
+                    q[i] = q[i]*e[i];
+                } else {
+                    q[i] = q[i]*d[i];
+                }
             }
+            sumQ = sumQ + q[i];
+        }
+
+        double SumP = 0;
+        for (int i = 0; i < m_task->countI; i++) {
+            double res = q[i] / sumQ;
+            resP[i] = res;
+            if (res <= 0.0) {
+                //qDebug() << "Allert! < 0! P[" << i << "] = " << res;
+            }
+            SumP = SumP + resP[i];
         }
     }
-    return resDouble;
+
+//    if (m_task->countI == 1 ) {
+//        resDouble = omega;
+//    } else {
+//        for (int i = 0; i < m_task->countI; i++) {
+//            resP[i] = probabilityDensityN(omega[i], sampleVector, m[i], D[i]);
+//        }
+//        double resNumerator = 0.0;
+//        for (int i = 0; i < m_task->countI; i++) {
+//            resNumerator += resP[i];
+//        }
+//        for (int i = 0; i < m_task->countI; i++) {
+//            if(resNumerator == 0.0) {
+//                resDouble[i] = resP[i];
+//            } else {
+//                resDouble[i] = resP[i]/resNumerator;
+//            }
+//        }
+//    }
+//    return resDouble;
+    return resP;
 }
 
 string LogicDynamicFilter::initialConditWithType()

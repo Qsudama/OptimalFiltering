@@ -3,7 +3,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-
 MatrixWidget::MatrixWidget(const Math::Matrix &matrix, bool onlyPositive, bool symmetric, QWidget *parent)
     : QWidget(parent)
     , m_onlyPositive(onlyPositive)
@@ -47,7 +46,7 @@ void MatrixWidget::initControls()
     QDoubleSpinBox *dsbTemp = new QDoubleSpinBox(this);
     dsbTemp->setFont(font);
     int height = dsbTemp->height();
-    int width  = int(QFontMetricsF(font).width("-000000.000000") + height);
+    int width  = int(QFontMetricsF(font).width("-0000.00000000") + height);
     delete dsbTemp;
 
     m_boxes.resize(rows);
@@ -59,7 +58,7 @@ void MatrixWidget::initControls()
                 m_boxes[i][j] = nullptr;
             }
             m_boxes[i][j] = new QDoubleSpinBox;
-            m_boxes[i][j]->setDecimals(6);
+            m_boxes[i][j]->setDecimals(12);
             m_boxes[i][j]->setMinimum(m_onlyPositive ? 0.0 : -999999.0);
             m_boxes[i][j]->setMaximum(999999.0);
             m_boxes[i][j]->setSingleStep(0.01);

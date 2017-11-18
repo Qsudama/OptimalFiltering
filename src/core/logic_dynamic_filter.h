@@ -39,7 +39,10 @@ protected:
     */
     void zeroIteration() override;
 
-    double probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D);
+    double calculate_d(const Matrix &D);
+    double calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
+
+    double probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
     Array<double> computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
                                              Array<Vector> m, Array<Matrix> D);
 
