@@ -243,9 +243,9 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(0).setYLabel(tr("Скорость (м/c)"));
+        m_graphWindow->sheet(0).setYLabel(tr("Скорость (км/c)"));
         m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
-        m_graphWindow->sheet(2).setYLabel(tr("Высота (м)"));
+        m_graphWindow->sheet(2).setYLabel(tr("Высота (км)"));
     }
     if (m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
@@ -265,9 +265,9 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         scale[3]            = 10000;
         scale[4]            = 1.0;
     } else if (m_taskWidget->id() == Tasks::TASK_ID::LandingLinear || m_taskWidget->id() == Tasks::TASK_ID::LandingGauss) {
-        scale[0] = 1000;
+        scale[0] = 1;
         scale[1] = Math::Convert::RadToDeg(1.0);
-        scale[2] = 1000;
+        scale[2] = 1;
     } else {
         for (int i = 0; i < dim; ++i) {
             scale[i] = 1.0;
