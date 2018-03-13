@@ -69,6 +69,8 @@ private:
 
     void computeZeroVectors();
     void computeBlock0();
+
+    bool m_bad;
 };
 
 

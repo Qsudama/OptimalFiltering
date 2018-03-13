@@ -114,7 +114,7 @@ void Filter::writeResult(size_t n, int countI)
     }
     m_result[n].meanX = resMx/countI;
     m_result[n].varX  = resVarX/countI;
-   // qDebug() << "\n\nn = " << n;
+    //qDebug() << "\n\nn = " << n;
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
         Vector rE = m_sampleX[s] - m_sampleZ[s];
         //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];

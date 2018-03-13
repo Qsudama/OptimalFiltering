@@ -36,7 +36,9 @@ void AOF::algorithm()
       // qDebug() << "\n\nK = " << k;
 
         m_task->setTime(m_result[k].time);
-
+        if (k == 1) {
+            qDebug() << "K = 1";
+        }
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             // Блок 1
             computeBlock1(s);
@@ -82,10 +84,16 @@ void AOF::computeBlock2(long s) {
         mult = P[s][i]*Sigma[s][i];
         resZ += mult;
     }
+    if (std::isnan(resZ[0])) {
+        qDebug() << "Nan!";
+    }
     m_sampleZ[s] = resZ;
 }
 
 void AOF::computeBlock4(long s) {
+    if (s == 107) {
+        qDebug() << "S = 107";
+    }
     Array<double> resOmega(m_task->countI);
     Array<Vector> resLambda(m_task->countI);
     Array<Matrix> resPsi(m_task->countI);
@@ -109,6 +117,9 @@ void AOF::computeBlock4(long s) {
             sumPsi += resPsi[i];
         }
         Omega[s][l] = sumOmega;
+        if (Omega[s][l] == 0.0) {
+            qDebug() << "Divided 0!!!";
+        }
         Lambda[s][l] = sumLambda/Omega[s][l];
         Psi[s][l] = sumPsi/Omega[s][l] - Lambda[s][l]*Lambda[s][l].transpose();
     }

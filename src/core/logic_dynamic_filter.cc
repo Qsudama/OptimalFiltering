@@ -141,6 +141,12 @@ double LogicDynamicFilter::calculate_d(const Matrix &D) {
     double pi = Math::Const::PI;
     Matrix det = 2* pi * D;
     double deter = det.determinant();
+    if (deter <= 0.0000000001) {
+        m_bad = true;
+    }
+    if (deter < 0.0) {
+        deter = abs(deter);
+    }
     double d = sqrt(deter);
     return d;
 }
@@ -148,25 +154,19 @@ double LogicDynamicFilter::calculate_d(const Matrix &D) {
 double LogicDynamicFilter::calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {
     Matrix pinD = Pinv(D);
     double powerE = (((u - m).transpose()) * pinD * (u - m))(0, 0);
+    if (powerE < 0.0) {
+        powerE = abs(powerE);
+    }
     double resExp = exp((-1 * powerE)/2);
     double res = Omega * resExp;
     return res;
 }
 
-//double LogicDynamicFilter::probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D) {
-//    double pi = Math::Const::PI;
-//    Matrix det = 2* pi * D;
-//    double deter = det.determinant();
-//    Matrix pin = Pinv(D);
-//    double exponent = exp(((-1 * (u - m).transpose()) * pin * (u - m))(0, 0));
-//    double n = exponent / sqrt(deter);
-//    return n;
-//}
-
 Array<double> LogicDynamicFilter::computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
                                                              Array<Vector> m, Array<Matrix> D) {
-//    Array<double> resDouble(m_task->countI);
     Array<double> resP(m_task->countI);
+
+    m_bad = false;
 
     if (m_task->countI == 1 ) {
         resP[0] = 1;
@@ -192,12 +192,21 @@ Array<double> LogicDynamicFilter::computeProbabilityDensityN(Array<double> omega
 
         double SumP = 0;
         for (int i = 0; i < m_task->countI; i++) {
-            double res = q[i] / sumQ;
-            resP[i] = res;
-            if (res <= 0.0) {
-                //qDebug() << "Allert! < 0! P[" << i << "] = " << res;
+            if (sumQ <= 0.000000000000001) {
+                resP[i] = omega[i];
+            } else if (std::isnan(sumQ)) {
+                resP[i] = omega[i];
+            } else if (m_bad) {
+                resP[i] = omega[i];
+            } else {
+                double res = q[i] / sumQ;
+                resP[i] = res;
+                SumP = SumP + resP[i];
             }
-            SumP = SumP + resP[i];
+
+            if (std::isnan(resP[i])) {
+                qDebug() << "Nan!";
+            }
         }
     }
 
