@@ -44,13 +44,16 @@ void LogManager::SettingLogFileNameString() {
     qDebug() << "Path for log file = " << QString::fromStdString(this->logFileName);
 }
 
+LogManager::LogManager () {}
+LogManager::~LogManager() {}
+
 void LogManager::initLog()
 {
     SettingLogFileNameString();
 
     ofstream stream;
     stream.open(this->logFileName, ios::out);
-    stream << "Log started\n";
+    stream << "Log started" << "\n";
     stream.close();
 }
 
@@ -62,3 +65,61 @@ void LogManager::logInFileString(string str)
     stream.close();
 }
 
+void LogManager::logInFileVector(Vector vector, string str)
+{
+    ofstream stream;
+    stream.open(this->logFileName, ios::app);
+    for (int i = 0; i < vector.rows(); i++) {
+        stream << str << vector[i] << "\n";
+    }
+    stream.close();
+}
+
+void LogManager::logInFileVector(Vector vector, string name, string str)
+{
+    ofstream stream;
+    stream.open(this->logFileName, ios::app);
+    stream << name + "\n";
+    stream.close();
+    logInFileVector(vector, str);
+}
+
+void LogManager::logInFileArrayVectors(Array<Array<Vector>> array, int number_i, string name, string str)
+{
+    ofstream stream;
+    stream.open(this->logFileName, ios::app);
+    stream << name << "\n";
+    int size = array.size();
+    stream << name << str;
+    for (int i = 0; i < size; i++) {
+        stream << (i+1) << str << str;
+    }
+    stream << "\n";
+    Vector first_v = array[0][0];
+    for (int size_vector = 0; size_vector < first_v.rows(); size_vector++) {
+        for (int i = 0; i < size; i++) {
+            stream << array[i][number_i][size_vector] << str;
+        }
+    }
+    stream.close();
+}
+
+
+
+
+
+//void LogManager::logInFileMatrix(Matrix matrix, string str) {
+
+//}
+
+
+
+//Файл может быть открыт в одном из следующих режимов:
+
+//ios::in — открыть файл в режиме чтения данных; режим является режимом по умолчанию для потоков ifstream;
+//ios::out — открыть файл в режиме записи данных (при этом информация о существующем файле уничтожается); режим является режимом по умолчанию для потоков ofstream;
+//ios::app — открыть файл в режиме записи данных в конец файла;
+//ios::ate — передвинуться в конец уже открытого файла;
+//ios::trunc — очистить файл, это же происходит в режиме ios::out;
+//ios::nocreate — не выполнять операцию открытия файла, если он не существует;
+//ios::noreplace — не открывать существующий файл.

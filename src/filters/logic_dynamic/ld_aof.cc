@@ -64,6 +64,10 @@ void AOF::algorithm()
             computeBlock6();
         }
     }
+
+    LogManager& logInstance = LogManager::Instance();
+    logInstance.logInFileArrayVectors(Lambda, 0, "Lambda", "\t");
+//    logInstance.logInFileArrayVectors(Lambda[0], "Lambda", "\t");
 }
 
 void AOF::computeBlock1(long s) {

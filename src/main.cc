@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
     a.setApplicationDisplayName(a.applicationName() + "  " + a.applicationVersion());
 
     // По умолчанию закоментированно
-//    LogManager& logInstance = LogManager::Instance();
-//    logInstance.initLog();
+    LogManager& logInstance = LogManager::Instance();
+    logInstance.initLog();
 
     MainWindow window;
     window.show();
