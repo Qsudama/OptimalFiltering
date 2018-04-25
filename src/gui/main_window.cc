@@ -3,6 +3,8 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 
+#include "src/helpers/log_manager.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_tablesIsVisible(false)

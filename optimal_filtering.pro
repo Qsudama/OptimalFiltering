@@ -317,7 +317,8 @@ HEADERS += \
     src/filters/discrete/d_mdfmp.h \
     src/tasks/discrete/d_scalar_gauss.h \
     src/gui/pinv_method_setting_widget.h \
-    src/gui/start_conditions_filter_widget.h
+    src/gui/start_conditions_filter_widget.h \
+    src/helpers/log_manager.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -387,4 +388,5 @@ SOURCES += \
     src/filters/discrete/d_mdfmp.cc \
     src/tasks/discrete/d_scalar_gauss.cc \
     src/gui/pinv_method_setting_widget.cc \
-    src/gui/start_conditions_filter_widget.cc
+    src/gui/start_conditions_filter_widget.cc \
+    src/helpers/log_manager.cc
