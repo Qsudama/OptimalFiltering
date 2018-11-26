@@ -36,9 +36,9 @@ void AOF::algorithm()
       // qDebug() << "\n\nK = " << k;
 
         m_task->setTime(m_result[k].time);
-        if (k == 1) {
-            qDebug() << "K = 1";
-        }
+//        if (k == 1) {
+//            qDebug() << "K = 1";
+//        }
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             // Блок 1
             computeBlock1(s);
@@ -95,9 +95,9 @@ void AOF::computeBlock2(long s) {
 }
 
 void AOF::computeBlock4(long s) {
-    if (s == 107) {
-        qDebug() << "S = 107";
-    }
+//    if (s == 107) {
+//        qDebug() << "S = 107";
+//    }
     Array<double> resOmega(m_task->countI);
     Array<Vector> resLambda(m_task->countI);
     Array<Matrix> resPsi(m_task->countI);
