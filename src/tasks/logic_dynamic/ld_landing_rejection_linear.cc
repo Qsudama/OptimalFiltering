@@ -3,12 +3,15 @@
 
 #include "iostream"
 
+#include <QDebug>
+
 namespace Tasks
 {
 
 namespace LogicDynamic
 {
 
+int count_k = 0;
 
 using Math::Convert::DegToRad;
 
@@ -247,7 +250,8 @@ Matrix LandingRejectionLinear::F(int i, const Vector &m, const Matrix &D) const
     Matrix Bx = dbdx(i, m);
     Vector b  = h(i, m, m_varW);
     Matrix BwDBwT = BwdbdwBwt(i, m);
-    return b * b.transpose() + Bx * D * Bx.transpose() +  BwDBwT;
+    Matrix result =  b * b.transpose() + Bx * D * Bx.transpose() +  BwDBwT;
+    return result;
 }
 
 Matrix LandingRejectionLinear::dadx(int /*i*/, const Vector &x) const

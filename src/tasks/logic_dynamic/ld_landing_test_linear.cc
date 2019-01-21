@@ -3,6 +3,8 @@
 #include "src/math/matrix.h"
 #include "iostream"
 
+#include <QDebug>
+
 using Math::MakeBlockVector;
 using Math::MakeBlockMatrix;
 
@@ -11,6 +13,8 @@ namespace Tasks
 
 namespace LogicDynamic
 {
+
+int d = 0;
 
 using Math::Convert::DegToRad;
 
@@ -205,6 +209,18 @@ Array<int> LandingTestLinear::generateArrayI(int sizeS) const
     for (int i = 0; i < sizeS; i++) {
       std::swap(array[i], array[rand() % sizeS]);
     }
+    d++;
+    QString str;
+    for (int i = 0; i < array.size(); ++i) {
+        if (i > 0) {
+            str += " ";
+        }
+        str += QString::number(array[i]);
+    }
+    qDebug() <<  "НОМЕР: " << d;
+    qDebug() <<  str;
+    qDebug() <<  "\n";
+
     return array;
 }
 

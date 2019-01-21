@@ -205,7 +205,7 @@ Array<double> LogicDynamicFilter::computeProbabilityDensityN(Array<double> omega
             }
 
             if (std::isnan(resP[i])) {
-                qDebug() << "Nan!";
+//                qDebug() << "Nan!";
             }
         }
     }
