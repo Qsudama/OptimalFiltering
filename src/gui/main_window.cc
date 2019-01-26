@@ -252,7 +252,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(i).setTitleLabel(title);
         m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::LandingLinear || m_taskWidget->id() == Tasks::TASK_ID::LandingGauss || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::LandingLinear || m_taskWidget->id() == Tasks::TASK_ID::LandingGauss || m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejectionLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
@@ -260,10 +260,10 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
         m_graphWindow->sheet(2).setYLabel(tr("Высота (м)"));
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::LDScalarRejectionGauss) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejectionLinear) {
         m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
@@ -274,7 +274,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(5).setYLabel(tr("Ошибка гировертикали (°)"));
     }
     Math::Vector scale(dim);
-    if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejectionLinear) {
         scale[0] = scale[2]    = 1.0;
         scale[1] = scale[5]     = Math::Convert::RadToDeg(1.0);
         scale[3]                      = 1.0;
@@ -316,11 +316,11 @@ QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask 
         tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
 
     if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
-        if (m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
+        if (m_taskWidget->id() == Tasks::TASK_ID::LDScalarRejectionGauss) {
             subTitle = subTitle +
                 tr(", вероятность сбоя ") + QString::number(task->params()->at("e")) +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
-        } else if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+        } else if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejectionLinear) {
             subTitle = subTitle +
                 tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
                 tr(", вероятность одного сбоя ") + QString::number(task->params()->at("e"));

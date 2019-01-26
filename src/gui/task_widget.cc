@@ -73,7 +73,7 @@ void TaskWidget::onCbTaskChanged(int)
 {
     Tasks::TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-    if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
+    if (taskId == Tasks::TASK_ID::LDScalarRejectionGauss || taskId == Tasks::TASK_ID::LDLandingRejectionLinear) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId);
     } else if(taskId == Tasks::TASK_ID::ScalarLinear || taskId == Tasks::TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
@@ -138,11 +138,11 @@ Tasks::TASK_ID TaskWidget::id() const
     case 5:
         return Tasks::TASK_ID::ScalarGauss;
     case 6:
-        return Tasks::TASK_ID::LandingTest;
+        return Tasks::TASK_ID::LDScalarRejectionGauss;
     case 7:
-        return Tasks::TASK_ID::LandingRejection;
+        return Tasks::TASK_ID::LDLandingRejectionLinear;
     case 8:
-        return Tasks::TASK_ID::VanDerPolRejection;
+        return Tasks::TASK_ID::VanDerPolRejectionLinear;
     default:
         return Tasks::TASK_ID::LandingLinear;
     }

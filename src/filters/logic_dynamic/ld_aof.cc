@@ -143,8 +143,10 @@ void AOF::computeBlock5(long s, size_t k) {
 
         Phi[s][i] =  m_task->F(i+1, Lambda[s][i], Psi[s][i]) - Mu[s][i]*Mu[s][i].transpose();
         Matrix phi = Phi[s][i];
-        if (std::isnan(phi(0, 0)) || std::isnan(phi(1, 1))) {
-            qDebug() << "Phi - Nan. k = " << k << "s = " << s;
+        if (phi.cols() > 1) {
+            if (std::isnan(phi(0, 0)) || std::isnan(phi(1, 1))) {
+                qDebug() << "Phi - Nan. k = " << k << "s = " << s;
+            }
         }
     }
 }

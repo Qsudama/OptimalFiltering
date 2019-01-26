@@ -1,5 +1,5 @@
-#ifndef LD_VANDERPOL_LINEAR_H
-#define LD_VANDERPOL_LINEAR_H
+#ifndef LD_VANDERPOL_REJECTION_LINEAR_H
+#define LD_VANDERPOL_REJECTION_LINEAR_H
 
 #include "src/core/logic_dynamic_task.h"
 #include "src/math/math.h"
@@ -16,12 +16,12 @@ namespace LogicDynamic
  * \brief Осциллятор Ван-дер-Поля (непрерывно-дискретный, линеаризованный) для фильтров оптимальной структуры.
  */
 
-class VanDerPolLinear : public Core::LogicDynamicTask
+class VanDerPolRejectionLinear : public Core::LogicDynamicTask
 {
 
 public:
     //! \brief Конструктор.
-    VanDerPolLinear();
+    VanDerPolRejectionLinear();
 
     Vector a(int i, const Vector &x) const override;
     Vector b(int i, const Vector &x) const override;
@@ -60,4 +60,4 @@ protected:
 
 } // end Tasks
 
-#endif // LD_VANDERPOL_LINEAR_H
+#endif // LD_VANDERPOL_REJECTION_LINEAR_H

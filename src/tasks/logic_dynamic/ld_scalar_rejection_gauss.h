@@ -1,5 +1,5 @@
-#ifndef LD_LANDING_TEST_LINEAR_H
-#define LD_LANDING_TEST_LINEAR_H
+#ifndef LD_SCALAR_REJECTION_GAUSS_H
+#define LD_SCALAR_REJECTION_GAUSS_H
 
 #include "src/core/logic_dynamic_task.h"
 #include "src/math/math.h"
@@ -18,12 +18,12 @@ namespace LogicDynamic
  * оптимальной структуры.
  */
 
-class LandingTestLinear : public Core::LogicDynamicTask
+class ScalarRejectionGauss : public Core::LogicDynamicTask
 {
 
 public:
     //! \brief Конструктор.
-    LandingTestLinear();
+    ScalarRejectionGauss();
 
     Vector a(int i, const Vector &x) const override;
     Vector b(int i, const Vector &x) const override;
@@ -78,4 +78,4 @@ protected:
 } // end Tasks
 
 
-#endif // LD_LANDING_TEST_LINEAR_H
+#endif // LD_SCALAR_REJECTION_GAUSS_H

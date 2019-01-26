@@ -1,4 +1,4 @@
-#include "ld_landing_test_linear.h"
+#include "ld_scalar_rejection_gauss.h"
 #include "src/math/convert.h"
 #include "src/math/matrix.h"
 #include "iostream"
@@ -18,7 +18,7 @@ int d = 0;
 
 using Math::Convert::DegToRad;
 
-LandingTestLinear::LandingTestLinear()
+ScalarRejectionGauss::ScalarRejectionGauss()
     : LogicDynamicTask()
     , m_e(0.2)
     , cI2(10)
@@ -52,7 +52,7 @@ LandingTestLinear::LandingTestLinear()
     (*m_params)["Кол-во режимов I"] = countIInTask;
 }
 
-void LandingTestLinear::loadParams()
+void ScalarRejectionGauss::loadParams()
 {
     A1         = m_params->at("a1");
     A2         = m_params->at("a2");
@@ -61,7 +61,7 @@ void LandingTestLinear::loadParams()
     cI2        = m_params->at("с(2)");
 }
 
-double LandingTestLinear::C(int i) const
+double ScalarRejectionGauss::C(int i) const
 {
     if (i == 1) {
         return 1.0;
@@ -70,7 +70,7 @@ double LandingTestLinear::C(int i) const
     }
 }
 
-Vector LandingTestLinear::a(int /*i*/, const Vector &x) const
+Vector ScalarRejectionGauss::a(int /*i*/, const Vector &x) const
 {
     Vector dx(m_dimX);
     Vector v  = m_normalRand(m_meanV, m_varV);
@@ -79,7 +79,7 @@ Vector LandingTestLinear::a(int /*i*/, const Vector &x) const
     return dx;
 }
 
-Vector LandingTestLinear::b(int i, const Vector &x) const
+Vector ScalarRejectionGauss::b(int i, const Vector &x) const
 {
     Vector w  = m_normalRand(m_meanW, m_varW);
     Vector res(m_dimY);
@@ -90,7 +90,7 @@ Vector LandingTestLinear::b(int i, const Vector &x) const
     return res;
 }
 
-double LandingTestLinear::A(int i, int l) const
+double ScalarRejectionGauss::A(int i, int l) const
 {
     double e = m_e;
     double p = 1 - e;
@@ -101,18 +101,18 @@ double LandingTestLinear::A(int i, int l) const
     return A(i - 1, l - 1);
 }
 
-double LandingTestLinear::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
+double ScalarRejectionGauss::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
     return A(i, l);
 }
 
-Vector LandingTestLinear::tau(int i, int l, const Vector &z, const Matrix &/*P*/) const
+Vector ScalarRejectionGauss::tau(int i, int l, const Vector &z, const Matrix &/*P*/) const
 {
     Vector res = Vector::Zero(z.size());
     res[0] = A(i, l) * A1 * z[0];
     return res;
 }
 
-Matrix LandingTestLinear::Theta(int i, int l, const Vector &z, const Matrix &P) const
+Matrix ScalarRejectionGauss::Theta(int i, int l, const Vector &z, const Matrix &P) const
 {
     Matrix m = Matrix::Zero(P.rows(), P.cols());
     m(0, 0) = z[0]*z[0];
@@ -127,12 +127,12 @@ Matrix LandingTestLinear::Theta(int i, int l, const Vector &z, const Matrix &P) 
     return res;
 }
 
-Vector LandingTestLinear::h(int /*i*/, const Vector &m, const Matrix & /* D*/) const
+Vector ScalarRejectionGauss::h(int /*i*/, const Vector &m, const Matrix & /* D*/) const
 {
     return m;
 }
 
-Matrix LandingTestLinear::G(int /*i*/, const Vector &m, const Matrix &D) const
+Matrix ScalarRejectionGauss::G(int /*i*/, const Vector &m, const Matrix &D) const
 {
     Matrix mm = Matrix::Zero(D.rows(), D.cols());
     mm(0, 0) = m[0]*m[0];
@@ -141,7 +141,7 @@ Matrix LandingTestLinear::G(int /*i*/, const Vector &m, const Matrix &D) const
     return res;
 }
 
-Matrix LandingTestLinear::F(int i, const Vector &m, const Matrix &D) const
+Matrix ScalarRejectionGauss::F(int i, const Vector &m, const Matrix &D) const
 {
     Matrix mm = Matrix::Zero(D.rows(), D.cols());
     mm(0, 0) = m[0]*m[0];
@@ -155,35 +155,35 @@ Matrix LandingTestLinear::F(int i, const Vector &m, const Matrix &D) const
     return res;
 }
 
-Matrix LandingTestLinear::dadx(int /*i*/, const Vector &/*x*/) const
+Matrix ScalarRejectionGauss::dadx(int /*i*/, const Vector &/*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
     res(0, 0) = A1;
     return res;
 }
 
-Matrix LandingTestLinear::dadv(int /*i*/, const Vector & /*x*/) const
+Matrix ScalarRejectionGauss::dadv(int /*i*/, const Vector & /*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
     res(0, 0) = A2;
     return res;
 }
 
-Matrix LandingTestLinear::dbdx(int /*i*/, const Vector &/*x*/) const
+Matrix ScalarRejectionGauss::dbdx(int /*i*/, const Vector &/*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
     res(0, 0) = 1;
     return res;
 }
 
-Matrix LandingTestLinear::dbdw(int i, const Vector &/*x*/) const
+Matrix ScalarRejectionGauss::dbdw(int i, const Vector &/*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
     res(0, 0) = C(i);
     return res;
 }
 
-double LandingTestLinear::Pr(int i) const
+double ScalarRejectionGauss::Pr(int i) const
 {
     if (i == 1) {
         return 1 - m_e;
@@ -192,7 +192,7 @@ double LandingTestLinear::Pr(int i) const
     }
 }
 
-Array<int> LandingTestLinear::generateArrayI(int sizeS) const
+Array<int> ScalarRejectionGauss::generateArrayI(int sizeS) const
 {
     Array<int> array(sizeS);
     double p = 1.0 - m_e;

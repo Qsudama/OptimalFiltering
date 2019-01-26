@@ -37,9 +37,9 @@ PtrTask TaskFactory::createContinuous(TASK_ID id)
         return PtrTask(nullptr); // WARNING
     case TASK_ID::ScalarGauss:
         return PtrTask(nullptr); // WARNING
-    case TASK_ID::LandingTest:
+    case TASK_ID::LDScalarRejectionGauss:
         return PtrTask(nullptr); // WARNING
-    case TASK_ID::LandingRejection:
+    case TASK_ID::LDLandingRejectionLinear:
         return PtrTask(nullptr); // WARNING
     }
     return PtrTask(nullptr);
@@ -60,9 +60,9 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id)
         return PtrTask(nullptr); // WARNING
     case TASK_ID::ScalarGauss:
         return PtrTask(nullptr); // WARNING
-    case TASK_ID::LandingTest:
+    case TASK_ID::LDScalarRejectionGauss:
         return PtrTask(nullptr); // WARNING
-    case TASK_ID::LandingRejection:
+    case TASK_ID::LDLandingRejectionLinear:
         return PtrTask(nullptr); // WARNING
     }
     return PtrTask(nullptr);
@@ -83,9 +83,9 @@ PtrTask TaskFactory::createDiscrete(TASK_ID id)
         return PtrTask(new Tasks::Discrete::ScalarLinear);
     case TASK_ID::ScalarGauss:
         return PtrTask(new Tasks::Discrete::ScalarGauss);
-    case TASK_ID::LandingTest:
+    case TASK_ID::LDScalarRejectionGauss:
         return PtrTask(nullptr); // WARNING
-    case TASK_ID::LandingRejection:
+    case TASK_ID::LDLandingRejectionLinear:
         return PtrTask(nullptr); // WARNING
     }
     return PtrTask(nullptr);
@@ -107,9 +107,9 @@ PtrTask TaskFactory::createLogicDynamic(TASK_ID id)
         return PtrTask(nullptr); // WARNING
     case TASK_ID::ScalarGauss:
         return PtrTask(nullptr); // WARNING
-    case TASK_ID::LandingTest:
-        return PtrTask(new Tasks::LogicDynamic::LandingTestLinear);
-    case TASK_ID::LandingRejection:
+    case TASK_ID::LDScalarRejectionGauss:
+        return PtrTask(new Tasks::LogicDynamic::ScalarRejectionGauss);
+    case TASK_ID::LDLandingRejectionLinear:
         return PtrTask(new Tasks::LogicDynamic::LandingRejectionLinear);
     }
     return PtrTask(nullptr);
