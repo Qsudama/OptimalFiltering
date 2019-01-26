@@ -3,7 +3,7 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 
-#include "src/helpers/log_manager.h"
+#include "src/helpers/log_in_file_manager.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

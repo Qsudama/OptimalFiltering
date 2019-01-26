@@ -1,4 +1,4 @@
-#include "log_manager.h"
+#include "log_in_file_manager.h"
 
 #include <QDebug>
 
@@ -29,7 +29,7 @@ string localTimeForFileName() {
     return result;
 }
 
-void LogManager::SettingLogFileNameString() {
+void LogInFileManager::SettingLogFileNameString() {
     string pathFile;
 #ifdef Q_OS_MAC
     pathFile = LOCAL_PATH_FILE_MACOS;
@@ -44,10 +44,10 @@ void LogManager::SettingLogFileNameString() {
     qDebug() << "Path for log file = " << QString::fromStdString(this->logFileName);
 }
 
-LogManager::LogManager () {}
-LogManager::~LogManager() {}
+LogInFileManager::LogInFileManager () {}
+LogInFileManager::~LogInFileManager() {}
 
-void LogManager::initLog()
+void LogInFileManager::initLog()
 {
     SettingLogFileNameString();
 
@@ -57,7 +57,7 @@ void LogManager::initLog()
     stream.close();
 }
 
-void LogManager::logInFileString(string str)
+void LogInFileManager::logInFileString(string str)
 {
     ofstream stream;
     stream.open(this->logFileName, ios::app);
@@ -65,7 +65,7 @@ void LogManager::logInFileString(string str)
     stream.close();
 }
 
-void LogManager::logInFileVector(Vector vector, string str)
+void LogInFileManager::logInFileVector(Vector vector, string str)
 {
     ofstream stream;
     stream.open(this->logFileName, ios::app);
@@ -75,7 +75,7 @@ void LogManager::logInFileVector(Vector vector, string str)
     stream.close();
 }
 
-void LogManager::logInFileVector(Vector vector, string name, string str)
+void LogInFileManager::logInFileVector(Vector vector, string name, string str)
 {
     ofstream stream;
     stream.open(this->logFileName, ios::app);
@@ -84,7 +84,7 @@ void LogManager::logInFileVector(Vector vector, string name, string str)
     logInFileVector(vector, str);
 }
 
-void LogManager::logInFileArrayVectors(Array<Array<Vector>> array, int number_i, string name, string str)
+void LogInFileManager::logInFileArrayVectors(Array<Array<Vector>> array, int number_i, string name, string str)
 {
     ofstream stream;
     stream.open(this->logFileName, ios::app);
@@ -108,7 +108,7 @@ void LogManager::logInFileArrayVectors(Array<Array<Vector>> array, int number_i,
 
 
 
-//void LogManager::logInFileMatrix(Matrix matrix, string str) {
+//void LogInFileManager::logInFileMatrix(Matrix matrix, string str) {
 
 //}
 

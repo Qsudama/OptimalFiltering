@@ -5,7 +5,6 @@
 #include "logic_dynamic_task.h"
 #include "src/math/linear_algebra.h"
 #include "src/math/constants.h"
-#include "src/helpers/log_manager.h"
 
 using namespace std;
 

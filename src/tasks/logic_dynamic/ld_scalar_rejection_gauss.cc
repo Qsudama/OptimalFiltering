@@ -2,8 +2,7 @@
 #include "src/math/convert.h"
 #include "src/math/matrix.h"
 #include "iostream"
-
-#include <QDebug>
+#include "random"
 
 using Math::MakeBlockVector;
 using Math::MakeBlockMatrix;
@@ -14,7 +13,7 @@ namespace Tasks
 namespace LogicDynamic
 {
 
-int d = 0;
+int count_k = 0;
 
 using Math::Convert::DegToRad;
 
@@ -192,34 +191,49 @@ double ScalarRejectionGauss::Pr(int i) const
     }
 }
 
-Array<int> ScalarRejectionGauss::generateArrayI(int sizeS) const
+//Array<int> ScalarRejectionGauss::generateArrayI(int sizeS) const
+//{
+//    Array<int> array(sizeS);
+//    double p = 1.0 - m_e;
+//    int countI1;
+//    countI1 = sizeS*p;
+//    for (int i = 0; i < sizeS; i++) {
+//        if (i < countI1) {
+//            array[i] = 1;
+//        } else {
+//            array[i] = 2;
+//        }
+//    }
+//    for (int i = 0; i < array.size(); i++) {
+//        std::swap(array[i], array[rand() % sizeS]);
+//    }
+
+//    count_k++;
+//    logInstance.logStringWithQDebug("НОМЕР: " + std::to_string(count_k));
+//    logInstance.logArrayWithQDebug(array);
+
+//    return array;
+//}
+
+Array<int> ScalarRejectionGauss::generateArrayI(int sizeS, int k) const
 {
     Array<int> array(sizeS);
     double p = 1.0 - m_e;
-    int countI1;
-    countI1 = sizeS*p;
-    for (int i = 0; i < sizeS; i++) {
-        if (i < countI1) {
+
+    std::default_random_engine generator;
+    generator.seed(k);
+    std::bernoulli_distribution distribution(p);
+
+    for (int i = 0; i < sizeS; ++i) {
+        if (distribution(generator)) {
             array[i] = 1;
         } else {
-            array[i] = 2;
+           array[i] = 2;
         }
     }
 
-    for (int i = 0; i < sizeS; i++) {
-      std::swap(array[i], array[rand() % sizeS]);
-    }
-    d++;
-    QString str;
-    for (int i = 0; i < array.size(); ++i) {
-        if (i > 0) {
-            str += " ";
-        }
-        str += QString::number(array[i]);
-    }
-    qDebug() <<  "НОМЕР: " << d;
-    qDebug() <<  str;
-    qDebug() <<  "\n";
+    logInstance.logStringWithQDebug("НОМЕР: " + std::to_string(k));
+    logInstance.logArrayWithQDebug(array);
 
     return array;
 }

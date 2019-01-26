@@ -38,8 +38,7 @@ public:
 
     double Pr(int i) const override;
 
-    Array<int> generateArrayI(int sizeS) const override;
-
+    Array<int> generateArrayI(int sizeS, int k) const override;
 
 protected:
     Matrix dadx(int i, const Vector &x) const override;

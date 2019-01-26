@@ -2,7 +2,7 @@
 #include "src/gui/main_window.h"
 #include <QApplication>
 
-#include "src/helpers/log_manager.h"
+#include "src/helpers/log_in_file_manager.h"
 
 int main(int argc, char *argv[])
 {

@@ -1,5 +1,5 @@
-#ifndef LOG_MANAGER_H
-#define LOG_MANAGER_H
+#ifndef LOG_IN_FILE_MANAGER_H
+#define LOG_IN_FILE_MANAGER_H
 
 #include <time.h>
 #include <string>
@@ -16,15 +16,15 @@ using Math::Matrix;
  Для использования, файл инициализируется в main.m, а затем из любого места в коде вызываются функции с параметрами для логирования.
 */
 
-class LogManager
+class LogInFileManager
 {
 public:
     /*!
     \brief Instance метод синглтона.
     */
-    static LogManager& Instance()
+    static LogInFileManager& Instance()
     {
-        static LogManager manager;
+        static LogInFileManager manager;
         return manager;
     }
 
@@ -55,16 +55,16 @@ public:
 private:
 
     //! \brief Конструктор.
-    LogManager();
+    LogInFileManager();
 
     //! \brief Деструктор.
-    ~LogManager();
+    ~LogInFileManager();
 
     //! \brief Переопределение конструктора = так как работаем с синглтоном.
-    LogManager(const LogManager&) = delete;
+    LogInFileManager(const LogInFileManager&) = delete;
 
     //! \brief Переопределение оператора = так как работаем с синглтоном.
-    LogManager& operator= (LogManager&) = delete;
+    LogInFileManager& operator= (LogInFileManager&) = delete;
 
     //! \brief Создает logFileName.
     void SettingLogFileNameString();
@@ -73,4 +73,4 @@ private:
     std::string logFileName;
 };
 
-#endif // LOG_MANAGER_H
+#endif // LOG_IN_FILE_MANAGER_H

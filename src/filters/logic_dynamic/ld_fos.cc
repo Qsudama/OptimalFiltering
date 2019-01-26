@@ -83,7 +83,7 @@ void FOS::algorithm()
             }
 
             // Блок 6
-            m_sampleI = m_task->generateArrayI(m_params->sampleSize());
+            m_sampleI = m_task->generateArrayI(m_params->sampleSize(), k+1);
             computeBlock6();
         }
     }

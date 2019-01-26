@@ -60,12 +60,12 @@ void AOF::algorithm()
             }
 
             // Блок 6
-            m_sampleI = m_task->generateArrayI(m_params->sampleSize());
+            m_sampleI = m_task->generateArrayI(m_params->sampleSize(), k+1);
             computeBlock6();
         }
     }
 
-    LogManager& logInstance = LogManager::Instance();
+    LogInFileManager& logInstance = LogInFileManager::Instance();
     logInstance.logInFileArrayVectors(Lambda, 0, "Lambda", "\t");
 //    logInstance.logInFileArrayVectors(Lambda[0], "Lambda", "\t");
 }

@@ -11,8 +11,6 @@ namespace Tasks
 namespace LogicDynamic
 {
 
-int count_k = 0;
-
 using Math::Convert::DegToRad;
 
 
@@ -385,7 +383,7 @@ double LandingRejectionLinear::Pr(int i) const
 //    }
 }
 
-Array<int> LandingRejectionLinear::generateArrayI(int sizeS) const
+Array<int> LandingRejectionLinear::generateArrayI(int sizeS, int /*k*/) const
 {
     Array<int> array(sizeS);
     double e = m_e;
@@ -419,8 +417,6 @@ Array<int> LandingRejectionLinear::generateArrayI(int sizeS) const
 //            array[i] = 4;
 //        }
 //    }
-
-
 
     for (int i = 0; i < sizeS; i++) {
       std::swap(array[i], array[rand() % sizeS]);

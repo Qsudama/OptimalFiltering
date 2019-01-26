@@ -79,7 +79,7 @@ void LogicDynamicFilter::zeroIteration() {
 }
 
 void LogicDynamicFilter::computeZeroVectors() {
-    m_sampleI = m_task->generateArrayI(m_params->sampleSize());
+    m_sampleI = m_task->generateArrayI(m_params->sampleSize(), 0);
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         m_sampleX[s] = m_task->x0();
         m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);

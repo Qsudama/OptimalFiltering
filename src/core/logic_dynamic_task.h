@@ -112,7 +112,7 @@ public:
     virtual double Pr(int i) const = 0;
 
     //! Возвращает случайное значение режима по предыдущему значению.
-    virtual Array<int> generateArrayI(int sizeS) const = 0;
+    virtual Array<int> generateArrayI(int sizeS, int k) const = 0;
 
     virtual double A(int i, int l) const = 0;
 

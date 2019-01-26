@@ -8,6 +8,7 @@ namespace Tasks
 namespace LogicDynamic
 {
 
+//int count_k = 0;
 
 VanDerPolRejectionLinear::VanDerPolRejectionLinear()
     : LogicDynamicTask()
@@ -195,8 +196,11 @@ double VanDerPolRejectionLinear::Pr(int /*i*/) const
     return 1;
 }
 
-Array<int> VanDerPolRejectionLinear::generateArrayI(int sizeS) const
+Array<int> VanDerPolRejectionLinear::generateArrayI(int sizeS, int /*k*/) const
 {
+//    if (firstRand == true) {
+//        count_k = 0;
+//    }
     Array<int> array(sizeS);
     for (int i = 0; i < sizeS; i++) {
         array[i] = 1;
