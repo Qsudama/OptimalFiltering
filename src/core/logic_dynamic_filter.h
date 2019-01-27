@@ -47,6 +47,11 @@ protected:
                                              Array<Vector> m, Array<Matrix> D);
 
 
+    double test_calculate_d(const Matrix &D);
+    double test_calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
+    double test_computeProbabilityDensityN(long s, double omega, Vector sampleVector, Vector m, Matrix D);
+
+
     /*! \brief Функция возвращающая тип моделирования начальных условий фильтра для вывода на экран
     */
     string initialConditWithType();
@@ -54,16 +59,27 @@ protected:
 protected:
     PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
 
-    Array<Array<double>> Omega;
-    Array<Array<Vector>> Lambda;
-    Array<Array<Vector>> Mu;
-    Array<Array<Matrix>> Psi;
-    Array<Array<Matrix>> Delta;
-    Array<Array<Matrix>> Phi;
-    Array<Array<double>> P;
-    Array<Array<Matrix>> K;
-    Array<Array<Vector>> Sigma;
-    Array<Array<Matrix>> Upsilon;
+//    Array<Array<double>> Omega;
+//    Array<Array<Vector>> Lambda;
+//    Array<Array<Vector>> Mu;
+//    Array<Array<Matrix>> Psi;
+//    Array<Array<Matrix>> Delta;
+//    Array<Array<Matrix>> Phi;
+//    Array<Array<double>> P;
+//    Array<Array<Matrix>> K;
+//    Array<Array<Vector>> Sigma;
+//    Array<Array<Matrix>> Upsilon;
+
+    Array<double> Omega;
+    Array<Vector> Lambda;
+    Array<Vector> Mu;
+    Array<Matrix> Psi;
+    Array<Matrix> Delta;
+    Array<Matrix> Phi;
+    Array<double> P;
+    Array<Matrix> K;
+    Array<Vector> Sigma;
+    Array<Matrix> Upsilon;
 
 private:
 
