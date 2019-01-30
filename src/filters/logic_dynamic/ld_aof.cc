@@ -111,7 +111,7 @@ void AOF::computeBlock4(long s, size_t k) {
             resOmega[i] = P[s][i]*m_task->nu(l+1,i+1, Sigma[s][i], Upsilon[s][i]);
         }
         for (int i = 0; i < m_task->countI; i++) {
-            resLambda[i] = P[s][i]*m_task->tau(l+1,i+1, Sigma[s][i], Upsilon[s][i]); // при к=0 на 125 выборке при i=1 (2-ой режим) беда
+            resLambda[i] = P[s][i]*m_task->tau(l+1,i+1, Sigma[s][i], Upsilon[s][i]); // при к = 0 на 125 выборке при i=1 (2-ой режим) беда
         }
         for (int i = 0; i < m_task->countI; i++) {
             resPsi[i] = P[s][i]*m_task->Theta(l+1,i+1, Sigma[s][i], Upsilon[s][i]);
@@ -135,7 +135,7 @@ void AOF::computeBlock4(long s, size_t k) {
 
 void AOF::computeBlock5(long s, size_t k) {
     for (int i = 0; i < m_task->countI; i++) {
-        if (k == 1 && s == 125) {
+        if (k == 0 && s == 125) {
             qDebug() << "Внимание в блоке 5";
         }
         Mu[s][i] = m_task->h(i+1, Lambda[s][i], Psi[s][i]);
