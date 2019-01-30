@@ -70,104 +70,24 @@ void AOF::algorithm()
 //    logInstance.logInFileArrayVectors(Lambda[0], "Lambda", "\t");
 }
 
-//void AOF::computeBlock1(long s, size_t k) {
-//    if (k == 1 && s == 125) {
-//        // все ноги растут отсюда. Очень плохая сигма в последствии дает inf при вычислении Mu
-//        // Плохая из за очень больших значений Lambda. Нужно смотреть ее подсчет на k = 0
-//        qDebug() << "Внимание в блоке 1";
-//    }
-//    P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
-//    //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];
-//    for (int i = 0; i < m_task->countI; i++) {
-//        K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
-//        Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);
-//        Upsilon[s][i] = Psi[s][i] - K[s][i]*Delta[s][i].transpose();
-//    }
-//}
-
-//void AOF::computeBlock2(long s, size_t k) {
-//    Vector resZ = Vector::Zero(Sigma[s][0].size());
-//    Vector mult = Vector::Zero(Sigma[s][0].size());
-//    for (int i = 0; i < m_task->countI; i++) {
-//        mult = P[s][i]*Sigma[s][i];
-//        resZ += mult;
-//    }
-//    if (std::isnan(resZ[0])) {
-//        qDebug() << "Nan! s = " << s << "k = " << k;
-//    }
-//    m_sampleZ[s] = resZ;
-//}
-
-//void AOF::computeBlock4(long s, size_t k) {
-//    if (k == 0 && s == 125) {
-//        qDebug() << "Внимание в блоке 4";
-//    }
-//    Array<double> resOmega(m_task->countI);
-//    Array<Vector> resLambda(m_task->countI);
-//    Array<Matrix> resPsi(m_task->countI);
-
-//    for (int l = 0; l < m_task->countI; l++) {
-//        for (int i = 0; i < m_task->countI; i++) {
-//            resOmega[i] = P[s][i]*m_task->nu(l+1,i+1, Sigma[s][i], Upsilon[s][i]);
-//        }
-//        for (int i = 0; i < m_task->countI; i++) {
-//            resLambda[i] = P[s][i]*m_task->tau(l+1,i+1, Sigma[s][i], Upsilon[s][i]); // при к=0 на 125 выборке при i=1 (2-ой режим) беда
-//        }
-//        for (int i = 0; i < m_task->countI; i++) {
-//            resPsi[i] = P[s][i]*m_task->Theta(l+1,i+1, Sigma[s][i], Upsilon[s][i]);
-//        }
-//        double sumOmega = 0.0;
-//        Vector sumLambda = Vector::Zero(Lambda[s][l].size());
-//        Matrix sumPsi = Matrix::Zero(Psi[s][l].rows(), Psi[s][l].cols());
-//        for (int i = 0; i < m_task->countI; i++) {
-//            sumOmega += resOmega[i];
-//            sumLambda += resLambda[i];
-//            sumPsi += resPsi[i];
-//        }
-//        Omega[s][l] = sumOmega;
-//        if (Omega[s][l] == 0.0) {
-//            qDebug() << "Divided 0!!!";
-//        }
-//        Lambda[s][l] = sumLambda/Omega[s][l];
-//        Psi[s][l] = sumPsi/Omega[s][l] - Lambda[s][l]*Lambda[s][l].transpose();
-//    }
-//}
-
-//void AOF::computeBlock5(long s, size_t k) {
-//    for (int i = 0; i < m_task->countI; i++) {
-//        if (k == 0&& s == 125) {
-//            qDebug() << "Внимание в блоке 5";
-//        }
-//        Mu[s][i] = m_task->h(i+1, Lambda[s][i], Psi[s][i]);
-//        Delta[s][i] = m_task->G(i+1, Lambda[s][i], Psi[s][i]) - Lambda[s][i] * Mu[s][i].transpose();
-
-//        Phi[s][i] =  m_task->F(i+1, Lambda[s][i], Psi[s][i]) - Mu[s][i]*Mu[s][i].transpose();
-//        Matrix phi = Phi[s][i];
-//        if (phi.cols() > 1) {
-//            if (std::isnan(phi(0, 0)) || std::isnan(phi(1, 1))) {
-//                qDebug() << "Phi - Nan. k = " << k << "s = " << s;
-//            }
-//        }
-//    }
-//}
-
-//void AOF::computeBlock6() {
-//    for (size_t s = 0; s < m_params->sampleSize(); s++) {
-//        m_sampleX[s] = m_task->a(m_sampleI[s], m_sampleX[s]);
-//        m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
-//    }
-//}
-
 void AOF::computeBlock1(long s, size_t k) {
-    P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]); // НАДО ПОПРАВИТЬ!
-    K[s] = Delta[s]*Pinv(Phi[s]);
-    Sigma[s] = Lambda[s] + K[s]*(m_sampleY[s] - Mu[s]);
-    Upsilon[s] = Psi[s] - K[s]*Delta[s].transpose();
+    if (k == 1 && s == 125) {
+        // все ноги растут отсюда. Очень плохая сигма в последствии дает inf при вычислении Mu
+        // Плохая из за очень больших значений Lambda. Нужно смотреть ее подсчет на k = 0
+        qDebug() << "Внимание в блоке 1";
+    }
+    P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
+    //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];
+    for (int i = 0; i < m_task->countI; i++) {
+        K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
+        Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);
+        Upsilon[s][i] = Psi[s][i] - K[s][i]*Delta[s][i].transpose();
+    }
 }
 
 void AOF::computeBlock2(long s, size_t k) {
-    Vector resZ = Vector::Zero(Sigma[s].size());
-    Vector mult = Vector::Zero(Sigma[s].size());
+    Vector resZ = Vector::Zero(Sigma[s][0].size());
+    Vector mult = Vector::Zero(Sigma[s][0].size());
     for (int i = 0; i < m_task->countI; i++) {
         mult = P[s][i]*Sigma[s][i];
         resZ += mult;
@@ -215,7 +135,7 @@ void AOF::computeBlock4(long s, size_t k) {
 
 void AOF::computeBlock5(long s, size_t k) {
     for (int i = 0; i < m_task->countI; i++) {
-        if (k == 0&& s == 125) {
+        if (k == 1 && s == 125) {
             qDebug() << "Внимание в блоке 5";
         }
         Mu[s][i] = m_task->h(i+1, Lambda[s][i], Psi[s][i]);
@@ -237,7 +157,6 @@ void AOF::computeBlock6() {
         m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
     }
 }
-
 
 } // end LogicDynamic
 

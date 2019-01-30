@@ -47,18 +47,18 @@ void LogicDynamicFilter::zeroIteration() {
     Sigma.resize(m_params->sampleSize());
     Upsilon.resize(m_params->sampleSize());
 
-//    for (size_t s = 0; s < m_params->sampleSize(); s++) {
-//        Omega[s].resize(m_task->countI);
-//        Lambda[s].resize(m_task->countI);
-//        Mu[s].resize(m_task->countI);
-//        Psi[s].resize(m_task->countI);
-//        Delta[s].resize(m_task->countI);
-//        Phi[s].resize(m_task->countI);
-//        P[s].resize(m_task->countI);
-//        K[s].resize(m_task->countI);
-//        Sigma[s].resize(m_task->countI);
-//        Upsilon[s].resize(m_task->countI);
-//    }
+    for (size_t s = 0; s < m_params->sampleSize(); s++) {
+        Omega[s].resize(m_task->countI);
+        Lambda[s].resize(m_task->countI);
+        Mu[s].resize(m_task->countI);
+        Psi[s].resize(m_task->countI);
+        Delta[s].resize(m_task->countI);
+        Phi[s].resize(m_task->countI);
+        P[s].resize(m_task->countI);
+        K[s].resize(m_task->countI);
+        Sigma[s].resize(m_task->countI);
+        Upsilon[s].resize(m_task->countI);
+    }
 
     m_sampleX.resize(m_params->sampleSize());
     m_sampleY.resize(m_params->sampleSize());
@@ -86,45 +86,44 @@ void LogicDynamicFilter::computeZeroVectors() {
     }
 }
 
-//void LogicDynamicFilter::computeBlock0() {
+void LogicDynamicFilter::computeBlock0() {
 
-//    Array<Vector> mx(m_task->countI);
-//    Array<Matrix> varX(m_task->countI);
-//    Array<Vector> my(m_task->countI);
-//    Array<Matrix> varY(m_task->countI);
-//    Array<Matrix> covarXY(m_task->countI);
+    Array<Vector> mx(m_task->countI);
+    Array<Matrix> varX(m_task->countI);
+    Array<Vector> my(m_task->countI);
+    Array<Matrix> varY(m_task->countI);
+    Array<Matrix> covarXY(m_task->countI);
 
-//    for (int i = 0; i < m_task->countI; i++) {
-//        mx[i] = Mean(m_sampleX, m_sampleI, i+1);
-//        varX[i] = Var(m_sampleX, mx[i],  m_sampleI, i+1);
-//        if (m_params->initialCondition() == INITIAL_CONDITIONS::MonteCarlo) {
-//            my[i] = Mean(m_sampleY, m_sampleI, i+1);
-//            varY[i] = Var(m_sampleY, my[i], m_sampleI, i+1);
-//            covarXY[i] = Cov(m_sampleX, m_sampleY, mx[i], my[i], m_sampleI, i+1);
-//        }
-//    }
+    for (int i = 0; i < m_task->countI; i++) {
+        mx[i] = Mean(m_sampleX, m_sampleI, i+1);
+        varX[i] = Var(m_sampleX, mx[i],  m_sampleI, i+1);
+        if (m_params->initialCondition() == INITIAL_CONDITIONS::MonteCarlo) {
+            my[i] = Mean(m_sampleY, m_sampleI, i+1);
+            varY[i] = Var(m_sampleY, my[i], m_sampleI, i+1);
+            covarXY[i] = Cov(m_sampleX, m_sampleY, mx[i], my[i], m_sampleI, i+1);
+        }
+    }
 
-//    for (size_t s = 0; s < m_params->sampleSize(); s++) {
-//        for (int i = 0; i < m_task->countI; i++) {
-//            if (m_params->initialCondition() == INITIAL_CONDITIONS::GaussApproximation) {
-//                Omega[s][i] = m_task->Pr(i+1);
-//                Lambda[s][i] = m_task->meanX0();
-//                Psi[s][i] = m_task->varX0();
-//                Mu[s][i] = m_task->h(i+1, mx[i], varX[i]);
-//                Delta[s][i] = m_task->G(i+1, mx[i], varX[i]) - Lambda[s][i] * Mu[s][i].transpose();
-//                Phi[s][i] =  m_task->F(i+1, mx[i], varX[i]) - Mu[s][i]*Mu[s][i].transpose();
-//            } else { // Монте-Карло
-//                Omega[s][i] = m_task->Pr(i+1);
-//                Lambda[s][i] = mx[i];
-//                Psi[s][i] = varX[i];
-//                Mu[s][i] = my[i];
-//                Delta[s][i] = covarXY[i];
-//                Phi[s][i] =  varY[i];
-//            }
-//        }
-//    }
-//}
-
+    for (size_t s = 0; s < m_params->sampleSize(); s++) {
+        for (int i = 0; i < m_task->countI; i++) {
+            if (m_params->initialCondition() == INITIAL_CONDITIONS::GaussApproximation) {
+                Omega[s][i] = m_task->Pr(i+1);
+                Lambda[s][i] = m_task->meanX0();
+                Psi[s][i] = m_task->varX0();
+                Mu[s][i] = m_task->h(i+1, mx[i], varX[i]);
+                Delta[s][i] = m_task->G(i+1, mx[i], varX[i]) - Lambda[s][i] * Mu[s][i].transpose();
+                Phi[s][i] =  m_task->F(i+1, mx[i], varX[i]) - Mu[s][i]*Mu[s][i].transpose();
+            } else { // Монте-Карло
+                Omega[s][i] = m_task->Pr(i+1);
+                Lambda[s][i] = mx[i];
+                Psi[s][i] = varX[i];
+                Mu[s][i] = my[i];
+                Delta[s][i] = covarXY[i];
+                Phi[s][i] =  varY[i];
+            }
+        }
+    }
+}
 
 double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {
     double pi = Math::Const::PI;
@@ -231,128 +230,6 @@ Array<double> LogicDynamicFilter::computeProbabilityDensityN(Array<double> omega
 //    }
 //    return resDouble;
     return resP;
-}
-
-
-
-
-
-/// ТУТ НОВОЕ!
-///
-///
-
-void LogicDynamicFilter::computeBlock0() {
-
-    Array<Vector> mx(m_task->countI);
-    Array<Matrix> varX(m_task->countI);
-    Array<Vector> my(m_task->countI);
-    Array<Matrix> varY(m_task->countI);
-    Array<Matrix> covarXY(m_task->countI);
-
-    for (int i = 0; i < m_task->countI; i++) {
-        mx[i] = Mean(m_sampleX, m_sampleI, i+1);
-        varX[i] = Var(m_sampleX, mx[i],  m_sampleI, i+1);
-        if (m_params->initialCondition() == INITIAL_CONDITIONS::MonteCarlo) {
-            my[i] = Mean(m_sampleY, m_sampleI, i+1);
-            varY[i] = Var(m_sampleY, my[i], m_sampleI, i+1);
-            covarXY[i] = Cov(m_sampleX, m_sampleY, mx[i], my[i], m_sampleI, i+1);
-        }
-    }
-
-    for (size_t s = 0; s < m_params->sampleSize(); s++) {
-        int cur_I = m_sampleI[s];
-        for (int i = 0; i < m_task->countI; i++) {
-            if (m_params->initialCondition() == INITIAL_CONDITIONS::GaussApproximation) {
-                if (i + 1 == cur_I) {
-                    Omega[s]= m_task->Pr(i+1);
-                    Lambda[s] = m_task->meanX0();
-                    Psi[s] = m_task->varX0();
-                    Mu[s] = m_task->h(i+1, mx[i], varX[i]);
-                    Delta[s] = m_task->G(i+1, mx[i], varX[i]) - Lambda[s][i] * Mu[s][i].transpose();
-                    Phi[s] =  m_task->F(i+1, mx[i], varX[i]) - Mu[s][i]*Mu[s][i].transpose();
-                }
-            } else { // Монте-Карло
-                if (i + 1 == cur_I) {
-                    Omega[s] = m_task->Pr(i+1);
-                    Lambda[s] = mx[i];
-                    Psi[s] = varX[i];
-                    Mu[s] = my[i];
-                    Delta[s] = covarXY[i];
-                    Phi[s] =  varY[i];
-                }
-            }
-        }
-    }
-}
-
-double LogicDynamicFilter::test_computeProbabilityDensityN(long s, double omega, Vector sampleVector, Vector m, Matrix D) {
-    Array<double> resP(m_task->countI);
-
-    m_bad = false;
-
-    if (m_task->countI == 1 ) {
-        resP[0] = 1;
-    } else {
-        Array<double> q(m_task->countI);
-        double sumQ = 0;
-        Array<double> e(m_task->countI);
-        Array<double> d(m_task->countI);
-
-        for (int i = 0; i < m_task->countI; i++) {
-            q[i] = 1;
-            e[i] = test_calculate_e(omega[i], sampleVector, m[i], D[i]);
-            d[i] = test_calculate_d(D[i]);
-            for (int j = 0; j < m_task->countI; j++) {
-                if (j == i) {
-                    q[i] = q[i]*e[i];
-                } else {
-                    q[i] = q[i]*d[i];
-                }
-            }
-            sumQ = sumQ + q[i];
-        }
-
-        double SumP = 0;
-        for (int i = 0; i < m_task->countI; i++) {
-            if (sumQ <= 0.000000000000001) {
-                resP[i] = omega[i];
-            } else if (std::isnan(sumQ)) {
-                resP[i] = omega[i];
-            } else if (m_bad) {
-                resP[i] = omega[i];
-            } else {
-                double res = q[i] / sumQ;
-                resP[i] = res;
-                SumP = SumP + resP[i];
-            }
-        }
-    }
-    return resP;
-}
-
-double LogicDynamicFilter::test_calculate_d(const Matrix &D) {
-    double pi = Math::Const::PI;
-    Matrix det = 2* pi * D;
-    double deter = det.determinant();
-    if (deter <= 0.0000000001) {
-        m_bad = true;
-    }
-    if (deter < 0.0) {
-        deter = abs(deter);
-    }
-    double d = sqrt(deter);
-    return d;
-}
-
-double LogicDynamicFilter::test_calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {
-    Matrix pinD = Pinv(D);
-    double powerE = (((u - m).transpose()) * pinD * (u - m))(0, 0);
-    if (powerE < 0.0) {
-        powerE = abs(powerE);
-    }
-    double resExp = exp((-1 * powerE)/2);
-    double res = Omega * resExp;
-    return res;
 }
 
 string LogicDynamicFilter::initialConditWithType()

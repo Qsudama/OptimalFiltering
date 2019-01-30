@@ -232,8 +232,8 @@ Array<int> ScalarRejectionGauss::generateArrayI(int sizeS, int k) const
         }
     }
 
-//    logInstance.logStringWithQDebug("НОМЕР: " + std::to_string(k));
-//    logInstance.logArrayWithQDebug(array);
+    logInstance.logStringWithQDebug("НОМЕР: " + std::to_string(k));
+    logInstance.logArrayWithQDebug(array);
 
     return array;
 }

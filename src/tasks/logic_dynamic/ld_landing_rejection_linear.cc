@@ -383,67 +383,44 @@ double LandingRejectionLinear::Pr(int i) const
 //    }
 }
 
-//Array<int> LandingRejectionLinear::generateArrayI(int sizeS, int /*k*/) const
-//{
-//    Array<int> array(sizeS);
-//    double e = m_e;
-
-//    double p = 1 - m_e;
-//    int countI1, countI2;
-//    countI1 = sizeS*p;
-//    countI2 = sizeS*e + countI1;
-//    for (int i = 0; i < sizeS; i++) {
-//        if (i < countI1) {
-//            array[i] = 1;
-//        } else {
-//            array[i] = 2;
-//        }
-//    }
-
-//// 4-х режимность
-////    double p = 1 - 2.5*m_e;
-////    int countI1, countI2, countI3;
-////    countI1 = sizeS*p;
-////    countI2 = sizeS*e + countI1;
-////    countI3 = sizeS*e + countI2;
-////    for (int i = 0; i < sizeS; i++) {
-////        if (i < countI1) {
-////            array[i] = 1;
-////        } else if (i < countI2) {
-////            array[i] = 2;
-////        } else if (i < countI3) {
-////            array[i] = 3;
-////        } else {
-////            array[i] = 4;
-////        }
-////    }
-
-//    for (int i = 0; i < sizeS; i++) {
-//      std::swap(array[i], array[rand() % sizeS]);
-//    }
-//    return array;
-//}
-
-Array<int> LandingRejectionLinear::generateArrayI(int sizeS, int k) const
+Array<int> LandingRejectionLinear::generateArrayI(int sizeS, int /*k*/) const
 {
     Array<int> array(sizeS);
-    double p = 1.0 - m_e;
+    double e = m_e;
 
-    std::default_random_engine generator;
-    generator.seed(k);
-    std::bernoulli_distribution distribution(p);
-
-    for (int i = 0; i < sizeS; ++i) {
-        if (distribution(generator)) {
+    double p = 1 - m_e;
+    int countI1, countI2;
+    countI1 = sizeS*p;
+    countI2 = sizeS*e + countI1;
+    for (int i = 0; i < sizeS; i++) {
+        if (i < countI1) {
             array[i] = 1;
         } else {
-           array[i] = 2;
+            array[i] = 2;
         }
     }
 
-//    logInstance.logStringWithQDebug("НОМЕР: " + std::to_string(k));
-//    logInstance.logArrayWithQDebug(array);
+// 4-х режимность
+//    double p = 1 - 2.5*m_e;
+//    int countI1, countI2, countI3;
+//    countI1 = sizeS*p;
+//    countI2 = sizeS*e + countI1;
+//    countI3 = sizeS*e + countI2;
+//    for (int i = 0; i < sizeS; i++) {
+//        if (i < countI1) {
+//            array[i] = 1;
+//        } else if (i < countI2) {
+//            array[i] = 2;
+//        } else if (i < countI3) {
+//            array[i] = 3;
+//        } else {
+//            array[i] = 4;
+//        }
+//    }
 
+    for (int i = 0; i < sizeS; i++) {
+      std::swap(array[i], array[rand() % sizeS]);
+    }
     return array;
 }
 
