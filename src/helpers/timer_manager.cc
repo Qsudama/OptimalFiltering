@@ -2,8 +2,6 @@
 
 #include <QDebug>
 
-#include <iostream>
-
 using namespace std;
 
 static QString LOG_HEADER = "TimerManager: ";
@@ -23,6 +21,7 @@ TimerManager::~TimerManager() {}
 void TimerManager::start_timer()
 {
     sum_pause = 0.0;
+    result_execute_time = 0.0;
     start_time = clock();
 }
 
@@ -30,10 +29,8 @@ void TimerManager::stop_timer()
 {
     end_time = clock();
     double duration_sec = this->calculate_per_sek_for_times(start_time, end_time);
-    double result = duration_sec - sum_pause;
-    qDebug() <<  LOG_HEADER << TITLE_TIME_MODELS << duration_sec;
-    qDebug() <<  LOG_HEADER << TITLE_TIME_PAUSE << sum_pause;
-    qDebug() <<  LOG_HEADER << TITLE_TIME_RESULT << result;
+    result_execute_time = duration_sec - sum_pause;
+    qDebug() <<  LOG_HEADER << TITLE_TIME_RESULT << result_execute_time;
 }
 
 void TimerManager::interrupt_timer()
@@ -46,6 +43,11 @@ void TimerManager::continue_timer()
     end_pause = clock();
     double duration_pause_sec = this->calculate_per_sek_for_times(start_pause, end_pause);
     sum_pause += duration_pause_sec;
+}
+
+string TimerManager::execute_time_string()
+{
+    return " " + to_string(result_execute_time) + " c";
 }
 
 double TimerManager::calculate_per_sek_for_times(clock_t start_time, clock_t end_time)

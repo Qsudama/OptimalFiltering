@@ -1,6 +1,8 @@
 #ifndef TIMER_MANAGER_H
 #define TIMER_MANAGER_H
 
+#include <iostream>
+
 #include <time.h> // includes clock_t and CLOCKS_PER_SEC
 
 class TimerManager
@@ -20,6 +22,10 @@ public:
 
     void interrupt_timer();
     void continue_timer();
+
+    std::string execute_time_string();
+
+    double result_execute_time;
 
 private:
 
