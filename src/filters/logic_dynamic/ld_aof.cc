@@ -47,7 +47,9 @@ void AOF::algorithm()
         }
 
         // Блок 3
+
         writeResult(k, m_task->countI);
+
         if (k <= m_result.size()) {
 
             m_task->setTime(m_result[k+1].time); // Время
@@ -64,10 +66,8 @@ void AOF::algorithm()
             computeBlock6();
         }
     }
-
-    LogInFileManager& logInstance = LogInFileManager::Instance();
-    logInstance.logInFileArrayVectors(Lambda, 0, "Lambda", "\t");
-//    logInstance.logInFileArrayVectors(Lambda[0], "Lambda", "\t");
+//    LogInFileManager& logInstance = LogInFileManager::Instance();
+//    logInstance.logInFileArrayVectors(Lambda, 0, "Lambda", "\t");
 }
 
 void AOF::computeBlock1(long s, size_t k) {

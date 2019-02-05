@@ -320,7 +320,8 @@ HEADERS += \
     src/tasks/logic_dynamic/ld_scalar_rejection_gauss.h \
     src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.h \
     src/helpers/log_in_file_manager.h \
-    src/helpers/log_in_console_manager.h
+    src/helpers/log_in_console_manager.h \
+    src/helpers/timer_manager.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -392,4 +393,5 @@ SOURCES += \
     src/tasks/logic_dynamic/ld_scalar_rejection_gauss.cc \
     src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.cc \
     src/helpers/log_in_file_manager.cc \
-    src/helpers/log_in_console_manager.cc
+    src/helpers/log_in_console_manager.cc \
+    src/helpers/timer_manager.cc

@@ -11,10 +11,10 @@ namespace Core
 Filter::Filter(PtrFilterParameters params)
     :
 #ifdef QT_ENABLED
-    QObject(nullptr)
-    ,
+     QObject(nullptr)
 #endif
-    m_params(params)
+    , timerInstance(TimerManager::Instance())
+    , m_params(params)
     , m_info(std::make_shared<Info>())
 {
     m_normalRand.setSeed(Math::RandomProperties::defaultSeed());
@@ -24,13 +24,13 @@ Filter::~Filter()
 {
 }
 
-double Filter::run()
+void Filter::run()
 {
     init();
-    std::clock_t timeStart = std::clock();
+    timerInstance.start_timer();
     zeroIteration();
     algorithm();
-    return double((std::clock() - timeStart) / double(CLOCKS_PER_SEC));
+    timerInstance.stop_timer();
 }
 
 const FilterOutput &Filter::result() const
@@ -66,6 +66,8 @@ void Filter::writeResult(size_t n, bool copy)
 {
     assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
 
+    timerInstance.interrupt_timer();
+
     m_result[n].meanX = Mean(m_sampleX);
     m_result[n].varX  = Var(m_sampleX, m_result[n].meanX);
 
@@ -89,11 +91,14 @@ void Filter::writeResult(size_t n, bool copy)
 #else
     updatePercent(int(100 * n / m_result.size()));
 #endif
+    timerInstance.continue_timer();
 }
 
 void Filter::writeResult(size_t n, int countI)
 {
     assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
+
+    timerInstance.interrupt_timer();
 
     Array<Vector> mx(countI);
     Array<Matrix> varX(countI);
@@ -136,6 +141,7 @@ void Filter::writeResult(size_t n, int countI)
 #else
     updatePercent(int(100 * n / m_result.size()));
 #endif
+    timerInstance.continue_timer();
 }
 
 #ifndef QT_ENABLED

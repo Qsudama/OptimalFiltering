@@ -18,6 +18,8 @@
 #include "src/math/statistic.h"
 #include <memory>
 
+#include "src/helpers/timer_manager.h"
+
 
 using Math::Matrix;
 using Math::Vector;
@@ -68,7 +70,7 @@ public:
      algorithm();
      \endcode
     */
-    double run();
+    void run();
 
     //! \brief Возвращает результат работы (не имеет смысла до вызова run()).
     const FilterOutput &result() const;
@@ -79,6 +81,8 @@ public:
     //! \brief Возвращает информацию о фильтре (имя, тип).
     PtrInfo info() const;
 
+    //! \brief Менеджер таймера работы фильтра.
+    TimerManager& timerInstance;
 
 protected:
     //! \brief Инициализирует массивы по входным данным.

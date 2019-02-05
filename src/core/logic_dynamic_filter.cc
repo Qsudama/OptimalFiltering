@@ -74,8 +74,9 @@ void LogicDynamicFilter::zeroIteration() {
 
     // Блок 0
     computeZeroVectors();
-
+    timerInstance.interrupt_timer();
     computeBlock0();
+    timerInstance.continue_timer();
 }
 
 void LogicDynamicFilter::computeZeroVectors() {
