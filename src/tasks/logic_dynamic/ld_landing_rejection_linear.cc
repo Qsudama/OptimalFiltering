@@ -269,7 +269,7 @@ Matrix LandingRejectionLinear::dadx(int /*i*/, const Vector &x) const
 
     res(1, 0) = h * (sk1 * x[4] * _E / pow(x[0], 2) + cos(x[1]) * (1/(RR + x[2]) + GG / pow(x[0], 2)));
     res(1, 1) = 1.0 - h * sin(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
-    res(1, 2) = -1*h * ((BB * sk1 * x[4] * _E/x[0]) + x[1] * cos(x[1]) / pow(RR + x[2], 2));
+    res(1, 2) = -1*h * ((BB * sk1 * x[4] * _E/x[0]) + x[0] * cos(x[1]) / pow(RR + x[2], 2));
     res(1, 3) = h * sk1 * x[4] * _E / (x[0] * x[3]);
     res(1, 4) = h * sk1 * _E/x[0];
     res(1, 5) = 0.0;
@@ -312,7 +312,7 @@ Matrix LandingRejectionLinear::dbdx(int i, const Vector &x) const
     tmp(1, 1) = _d;
     tmp(1, 2) = -1 * BB * _e;
     tmp(1, 3) = _e / x[3];
-    tmp(1, 4) = sk1 * sin(x[1] - x[5]);
+    tmp(1, 4) = sk1 * cos(x[1] - x[5]);
     tmp(1, 5) = -1 * _d;
 
     return _E * gamma * tmp;
