@@ -42,6 +42,8 @@ private:
     TimerManager& operator= (TimerManager&) = delete;
 
     double calculate_per_sek_for_times(clock_t start_time, clock_t end_time);
+
+    void test_log_core_name();
 };
 
 #endif // TIMER_MANAGER_H

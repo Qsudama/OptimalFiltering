@@ -1,6 +1,7 @@
 #include "timer_manager.h"
 
 #include <QDebug>
+#include <QSysInfo>
 
 using namespace std;
 
@@ -31,6 +32,7 @@ void TimerManager::stop_timer()
     double duration_sec = this->calculate_per_sek_for_times(start_time, end_time);
     result_execute_time = duration_sec - sum_pause;
     qDebug() <<  LOG_HEADER << TITLE_TIME_RESULT << result_execute_time;
+//    test_log_core_name();
 }
 
 void TimerManager::interrupt_timer()
@@ -48,6 +50,20 @@ void TimerManager::continue_timer()
 string TimerManager::execute_time_string()
 {
     return " " + to_string(result_execute_time) + " c";
+}
+
+void TimerManager::test_log_core_name()
+{
+    QSysInfo *info = new QSysInfo();
+    qDebug() <<  LOG_HEADER << "buildAbi" << info->buildAbi();
+    qDebug() <<  LOG_HEADER << "buildCpuArchitecture" << info->buildCpuArchitecture();
+    qDebug() <<  LOG_HEADER << "currentCpuArchitecture" << info->currentCpuArchitecture();
+    qDebug() <<  LOG_HEADER << "kernelType" << info->kernelType();
+    qDebug() <<  LOG_HEADER << "kernelVersion" << info->kernelVersion();
+    qDebug() <<  LOG_HEADER << "machineHostName" << info->machineHostName();
+    qDebug() <<  LOG_HEADER << "prettyProductName" << info->prettyProductName();
+    qDebug() <<  LOG_HEADER << "productType" << info->productType();
+    qDebug() <<  LOG_HEADER << "productVersion" << info->productVersion();
 }
 
 double TimerManager::calculate_per_sek_for_times(clock_t start_time, clock_t end_time)
