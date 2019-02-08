@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QSysInfo>
 
+#include <iostream>
+
 using namespace std;
 
 static QString LOG_HEADER = "TimerManager: ";
@@ -31,7 +33,10 @@ void TimerManager::stop_timer()
     end_time = clock();
     double duration_sec = this->calculate_per_sek_for_times(start_time, end_time);
     result_execute_time = duration_sec - sum_pause;
-    qDebug() <<  LOG_HEADER << TITLE_TIME_RESULT << result_execute_time;
+    qDebug() <<  LOG_HEADER
+                 + TITLE_TIME_MODELS + QString::number(duration_sec) + "   "
+                 + TITLE_TIME_PAUSE + QString::number(sum_pause) + "   "
+                 + TITLE_TIME_RESULT + QString::number(result_execute_time);
 //    test_log_core_name();
 }
 
@@ -45,11 +50,6 @@ void TimerManager::continue_timer()
     end_pause = clock();
     double duration_pause_sec = this->calculate_per_sek_for_times(start_pause, end_pause);
     sum_pause += duration_pause_sec;
-}
-
-string TimerManager::execute_time_string()
-{
-    return " " + to_string(result_execute_time) + " c";
 }
 
 void TimerManager::test_log_core_name()

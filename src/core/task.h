@@ -11,6 +11,8 @@
 #include <map>
 #include <memory>
 
+#include "src/helpers/log_in_file_manager.h"
+#include "src/helpers/log_in_console_manager.h"
 
 using Math::Matrix;
 using Math::Vector;
@@ -121,6 +123,8 @@ public:
     */
     void changeParameter(const std::string &key, double value);
 
+    //! \brief Менеджер для логирования в консоль.
+    LogInConsoleManager& logInstance;
 
 protected:
     //! \brief Загружает данные в локальные переменные после изменения параметров.

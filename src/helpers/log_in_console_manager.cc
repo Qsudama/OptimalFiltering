@@ -19,6 +19,22 @@ void LogInConsoleManager::logStringWithQDebug(string str)
     qDebug() <<  LOG_HEADER << QString::fromStdString(str);
 }
 
+void LogInConsoleManager::logDoubleValueWithQDebug(double value)
+{
+    qDebug() <<  LOG_HEADER << QString::number(value);
+}
+
+void LogInConsoleManager::logSizeTValueWithQDebug(size_t value)
+{
+    qDebug() <<  LOG_HEADER << QString::number(value);
+}
+
+//template <class T>
+//void LogInConsoleManager::logNumericValueWithQDebug(T value)
+//{
+//    qDebug() <<  LOG_HEADER << QString::number(value);
+//}
+
 void LogInConsoleManager::logArrayWithQDebug(Array<int> array)
 {
     QString str;

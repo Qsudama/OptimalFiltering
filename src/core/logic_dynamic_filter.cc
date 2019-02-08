@@ -17,6 +17,12 @@ LogicDynamicFilter::LogicDynamicFilter(PtrFilterParameters params, PtrTask task)
     m_info->setType("лд");
 }
 
+double LogicDynamicFilter::execute_time_filter()
+{
+    double result = timerInstance.result_execute_time / (m_params->measurementCount() * m_params->sampleSize());
+    return result;
+}
+
 void LogicDynamicFilter::init()
 {
     m_sampleX.resize(m_params->sampleSize());

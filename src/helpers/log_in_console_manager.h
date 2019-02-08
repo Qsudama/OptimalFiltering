@@ -19,6 +19,7 @@ using Math::Matrix;
 
 class LogInConsoleManager
 {
+
 public:
     /*!
     \brief Instance метод синглтона.
@@ -31,7 +32,11 @@ public:
 
     void logQStringWithQDebug(QString str);
     void logStringWithQDebug(std::string str);
-//    void logArrayWithQDebug(Array);
+
+    void logDoubleValueWithQDebug(double value);
+    void logSizeTValueWithQDebug(size_t value);
+    // Да мне известно про существование template. Но это г...но не захотело линковаться!
+//    template <class T> void logNumericValueWithQDebug(T value);
 
     void logArrayWithQDebug(Array<int> array);
 

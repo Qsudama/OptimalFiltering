@@ -73,7 +73,9 @@ void FKP::algorithm()
         // Блок 3а
         computeBlock3a(k);
         // Блок 3б
+        timerInstance.interrupt_timer();
         computeBlock3b();
+        timerInstance.continue_timer();
         // Блок 3в
         computeBlock3c();
 

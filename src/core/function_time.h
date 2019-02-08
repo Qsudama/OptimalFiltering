@@ -1,9 +1,6 @@
 #ifndef FUNCTION_TIME_H
 #define FUNCTION_TIME_H
 
-#include "src/helpers/log_in_file_manager.h"
-#include "src/helpers/log_in_console_manager.h"
-
 namespace Core
 {
 
@@ -64,9 +61,6 @@ public:
      Этот шаг задается в конструкторе и может быть изменен вызовом setStep(double newStep).
     */
     void advanceTime();
-
-    //! \brief Менеджер для логирования в консоль.
-    LogInConsoleManager& logInstance;
 
 protected:
     double m_time; /*!< Время. */

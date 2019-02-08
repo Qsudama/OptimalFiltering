@@ -18,6 +18,12 @@ DiscreteFilter::DiscreteFilter(PtrFilterParameters params, PtrTask task)
     m_info->setType("д");
 }
 
+double DiscreteFilter::execute_time_filter()
+{
+    double result = timerInstance.result_execute_time / (m_params->measurementCount() * m_params->sampleSize());
+    return result;
+}
+
 void DiscreteFilter::init()
 {
     m_sampleX.resize(m_params->sampleSize());

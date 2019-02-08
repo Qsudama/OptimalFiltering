@@ -64,12 +64,11 @@ void FOS::algorithm()
         writeResult(k, m_task->countI);
         // Блок 3а смотри в Блок 2
         // Блок 3б
+        timerInstance.interrupt_timer(); // Время больше чем у АОФ потому что есть еще 3с блок
         computeBlock3b();
+        timerInstance.continue_timer();
         // Блок 3в
         computeBlock3c();
-        if (k == 44) {
-            computeBlock3c();
-        }
 
         if (k <= m_result.size()) {
 

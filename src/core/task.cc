@@ -7,6 +7,7 @@ namespace Core
 
 Task::Task()
     : FunctionTime(0.0)
+    , logInstance(LogInConsoleManager::Instance())
     , m_params(std::make_shared<TaskParameters>())
     , m_consts(std::make_shared<TaskParameters>())
     , m_info(std::make_shared<Info>())

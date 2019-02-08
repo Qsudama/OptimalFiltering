@@ -33,6 +33,11 @@ void Filter::run()
     timerInstance.stop_timer();
 }
 
+double Filter::execute_time()
+{
+    return execute_time_filter();
+}
+
 const FilterOutput &Filter::result() const
 {
     return m_result;
@@ -151,5 +156,9 @@ void Filter::updatePercent(int p) const
 }
 #endif
 
+double Filter::execute_time_filter()
+{
+    return 0.0;
+}
 
 } // end Core

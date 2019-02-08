@@ -6,8 +6,7 @@ namespace Core
 
 
 FunctionTime::FunctionTime(double initialTime, double initialStep)
-    : logInstance(LogInConsoleManager::Instance())
-    , m_time(initialTime)
+    : m_time(initialTime)
     , m_step(initialStep)
 {
 }
