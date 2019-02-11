@@ -321,7 +321,8 @@ HEADERS += \
     src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.h \
     src/helpers/log_in_file_manager.h \
     src/helpers/log_in_console_manager.h \
-    src/helpers/timer_manager.h
+    src/helpers/timer_manager.h \
+    src/tasks/logic_dynamic/ld_lopped_landing_rejection_linear.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -394,4 +395,5 @@ SOURCES += \
     src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.cc \
     src/helpers/log_in_file_manager.cc \
     src/helpers/log_in_console_manager.cc \
-    src/helpers/timer_manager.cc
+    src/helpers/timer_manager.cc \
+    src/tasks/logic_dynamic/ld_lopped_landing_rejection_linear.cc

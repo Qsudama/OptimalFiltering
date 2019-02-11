@@ -110,7 +110,8 @@ PtrTask TaskFactory::createLogicDynamic(TASK_ID id)
     case TASK_ID::LDScalarRejectionGauss:
         return PtrTask(new Tasks::LogicDynamic::ScalarRejectionGauss);
     case TASK_ID::LDLandingRejectionLinear:
-        return PtrTask(new Tasks::LogicDynamic::LandingRejectionLinear);
+        return PtrTask(new Tasks::LogicDynamic::LoppedLandingRejectionLinear);
+//        return PtrTask(new Tasks::LogicDynamic::LandingRejectionLinear);
     }
     return PtrTask(nullptr);
 }

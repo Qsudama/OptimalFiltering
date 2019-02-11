@@ -16,6 +16,7 @@
 #include "src/tasks/discrete/d_scalar_gauss.h"
 #include "src/tasks/logic_dynamic/ld_scalar_rejection_gauss.h"
 #include "src/tasks/logic_dynamic/ld_landing_rejection_linear.h"
+#include "src/tasks/logic_dynamic/ld_lopped_landing_rejection_linear.h"
 #include "src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.h"
 
 //! \brief Модуль, содержащий реализации конкретных задач для фильтров.
