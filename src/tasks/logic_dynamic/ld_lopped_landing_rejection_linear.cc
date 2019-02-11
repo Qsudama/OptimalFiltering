@@ -23,7 +23,7 @@ LoppedLandingRejectionLinear::LoppedLandingRejectionLinear() : LogicDynamicTask(
     m_info->setType("Л-");
 
     m_dimY = 2;
-    m_dimX = 6;
+    m_dimX = 3;
 
     m_dimV = 3;
     m_dimW = 4;
@@ -32,9 +32,9 @@ LoppedLandingRejectionLinear::LoppedLandingRejectionLinear() : LogicDynamicTask(
     m_meanX0[0] = 6.0; //M_v_0
     m_meanX0[1] = -0.314;//DegToRad(-18.0); // M_theta_0
     m_meanX0[2] = 100.0; // M_H_0
-    m_meanX0[3] = CC; // M_c
-    m_meanX0[4] = 0.3; // M_b
-    m_meanX0[5] = 0.0; // M_varphi
+//    m_meanX0[3] = CC; // M_c
+//    m_meanX0[4] = 0.3; // M_b
+//    m_meanX0[5] = 0.0; // M_varphi
 
 
     m_meanV = Vector::Zero(m_dimV);
@@ -52,9 +52,9 @@ LoppedLandingRejectionLinear::LoppedLandingRejectionLinear() : LogicDynamicTask(
     //    m_varX0(4, 4) = pow(0.02, 2); // Sigma_b
     //    m_varX0(5, 5) = pow(radian, 2); // Sigma_varphi
 
-    m_varX0(3, 3) = pow(0.0, 2); // Sigma_c
-    m_varX0(4, 4) = pow(0.0, 2); // Sigma_b
-    m_varX0(5, 5) = pow(0.0, 2); // Sigma_varphi
+//    m_varX0(3, 3) = pow(0.0, 2); // Sigma_c
+//    m_varX0(4, 4) = pow(0.0, 2); // Sigma_b
+//    m_varX0(5, 5) = pow(0.0, 2); // Sigma_varphi
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
     m_varW = Matrix::Zero(m_dimW, m_dimW);
