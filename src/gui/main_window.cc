@@ -253,7 +253,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(i).setTitleLabel(title);
         m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::LandingLinear || m_taskWidget->id() == Tasks::TASK_ID::LandingGauss || m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejectionLinear) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::LandingLinear || m_taskWidget->id() == Tasks::TASK_ID::LandingGauss || m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejection3DLinear  || m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejection6DLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
@@ -264,7 +264,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     if (m_taskWidget->id() == Tasks::TASK_ID::LDScalarRejectionGauss) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejectionLinear) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejection6DLinear) { // потому что первый if уже сработал как надо
         m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
@@ -275,7 +275,10 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(5).setYLabel(tr("Ошибка гировертикали (°)"));
     }
     Math::Vector scale(dim);
-    if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejectionLinear) {
+    if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejection3DLinear) {
+        scale[0] = scale[2] = 1.0;
+        scale[1] = Math::Convert::RadToDeg(1.0);
+    } else if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejection6DLinear) {
         scale[0] = scale[2]    = 1.0;
         scale[1] = scale[5]     = Math::Convert::RadToDeg(1.0);
         scale[3]                      = 1.0;
@@ -321,7 +324,7 @@ QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask 
             subTitle = subTitle +
                 tr(", вероятность сбоя ") + QString::number(task->params()->at("e")) +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
-        } else if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejectionLinear) {
+        } else if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejection3DLinear || m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejection6DLinear) {
             subTitle = subTitle +
                 tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
                 tr(", вероятность одного сбоя ") + QString::number(task->params()->at("e"));

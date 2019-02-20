@@ -1,4 +1,4 @@
-#include "ld_lopped_landing_rejection_linear.h"
+#include "ld_landing_rejection_3d_linear.h"
 #include "src/math/convert.h"
 
 #include "iostream"
@@ -12,7 +12,7 @@ namespace LogicDynamic
 using Math::Convert::DegToRad;
 
 
-LoppedLandingRejectionLinear::LoppedLandingRejectionLinear() : LogicDynamicTask()
+LandingRejection3DLinear::LandingRejection3DLinear() : LogicDynamicTask()
     , m_turnTime(45.0) // Время t_y
     , m_e(0.0) // Вероятность сбоя
     , gamMinX(0.1)
@@ -32,10 +32,6 @@ LoppedLandingRejectionLinear::LoppedLandingRejectionLinear() : LogicDynamicTask(
     m_meanX0[0] = 6.0; //M_v_0
     m_meanX0[1] = -0.314;//DegToRad(-18.0); // M_theta_0
     m_meanX0[2] = 100.0; // M_H_0
-//    m_meanX0[3] = CC; // M_c
-//    m_meanX0[4] = 0.3; // M_b
-//    m_meanX0[5] = 0.0; // M_varphi
-
 
     m_meanV = Vector::Zero(m_dimV);
     m_meanW = Vector::Zero(m_dimW);
@@ -46,15 +42,6 @@ LoppedLandingRejectionLinear::LoppedLandingRejectionLinear() : LogicDynamicTask(
     m_varX0(0, 0) = pow(0.015, 2); // Sigma_V_0
     m_varX0(1, 1) = pow(radian, 2); // Sigma_theta_0
     m_varX0(2, 2) = pow(7, 2); // Sigma_H_0
-
-// Фильтр работает только по 3-м координатам
-    //    m_varX0(3, 3) = pow(CC, 2); // Sigma_c
-    //    m_varX0(4, 4) = pow(0.02, 2); // Sigma_b
-    //    m_varX0(5, 5) = pow(radian, 2); // Sigma_varphi
-
-//    m_varX0(3, 3) = pow(0.0, 2); // Sigma_c
-//    m_varX0(4, 4) = pow(0.0, 2); // Sigma_b
-//    m_varX0(5, 5) = pow(0.0, 2); // Sigma_varphi
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
     m_varW = Matrix::Zero(m_dimW, m_dimW);
@@ -81,7 +68,7 @@ LoppedLandingRejectionLinear::LoppedLandingRejectionLinear() : LogicDynamicTask(
 
 }
 
-void LoppedLandingRejectionLinear::loadParams()
+void LandingRejection3DLinear::loadParams()
 {
     countI              = m_params->at("Кол-во режимов I");
     gamMinX             = m_params->at("GammaX_min");
@@ -94,30 +81,30 @@ void LoppedLandingRejectionLinear::loadParams()
 //    (*m_consts)["p"]    = 1 - 2.5*m_e;
 }
 
-double LoppedLandingRejectionLinear::Sk(double t) const
+double LandingRejection3DLinear::Sk(double t) const
 {
     return Math::sign(t - m_turnTime);
 }
 
-double LoppedLandingRejectionLinear::Ex(const Vector &x) const
+double LandingRejection3DLinear::Ex(const Vector &x) const
 {
-    double E = x[0] * x[0] * x[3] * exp(-BB * x[2]);
+    double E = x[0] * x[0] * CC * exp(-BB * x[2]);
     return E;
 }
 
-double LoppedLandingRejectionLinear::d(const Vector &x) const
+double LandingRejection3DLinear::d(const Vector &x) const
 {
-    double d = cos(x[1]-x[5]) - x[4] * Sk(m_step*m_time) * sin(x[1]-x[5]);
+    double d = cos(x[1]) - KB * Sk(m_step*m_time) * sin(x[1]);
     return d;
 }
 
-double LoppedLandingRejectionLinear::e(const Vector &x) const
+double LandingRejection3DLinear::e(const Vector &x) const
 {
-    double e = sin(x[1]-x[5]) + x[4] * Sk(m_step*m_time) * cos(x[1]-x[5]);
+    double e = sin(x[1]) + KB * Sk(m_step*m_time) * cos(x[1]);
     return e;
 }
 
-double LoppedLandingRejectionLinear::gammaX(int i) const
+double LandingRejection3DLinear::gammaX(int i) const
 {
     if (i == 1) {
         return 1.0;
@@ -132,7 +119,7 @@ double LoppedLandingRejectionLinear::gammaX(int i) const
 //    }
 }
 
-double LoppedLandingRejectionLinear::gammaY(int i) const
+double LandingRejection3DLinear::gammaY(int i) const
 {
     if (i == 1) {
         return 1.0;
@@ -147,22 +134,19 @@ double LoppedLandingRejectionLinear::gammaY(int i) const
 //    }
 }
 
-Vector LoppedLandingRejectionLinear::a(int /*i*/, const Vector &x) const
+Vector LandingRejection3DLinear::a(int /*i*/, const Vector &x) const
 {
     double e = exp(-BB * x[2]);
     Vector dx(m_dimX);
 
-    dx[0] = x[0] - m_step * x[0] * x[0] * x[3] * e - m_step * GG * sin(x[1]);
-    dx[1] = x[1] + m_step * Sk(m_step*m_time) * x[0] * x[3] * x[4] * e + m_step * cos(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
+    dx[0] = x[0] - m_step * x[0] * x[0] * CC * e - m_step * GG * sin(x[1]);
+    dx[1] = x[1] + m_step * Sk(m_step*m_time) * x[0] * CC * KB * e + m_step * cos(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
     dx[2] = x[2] + m_step * x[0] * sin(x[1]);
-    dx[3] = x[3];
-    dx[4] = x[4];
-    dx[5] = x[5];
 
     return dx;
 }
 
-Vector LoppedLandingRejectionLinear::b(int i, const Vector &x) const
+Vector LandingRejection3DLinear::b(int i, const Vector &x) const
 {
     double _e = e(x);
     double _d = d(x);
@@ -178,7 +162,7 @@ Vector LoppedLandingRejectionLinear::b(int i, const Vector &x) const
     return res;
 }
 
-Vector LoppedLandingRejectionLinear::bForZeroW(int i, const Vector &x) const
+Vector LandingRejection3DLinear::bForZeroW(int i, const Vector &x) const
 {
     double _e = e(x);
     double _d = d(x);
@@ -194,7 +178,7 @@ Vector LoppedLandingRejectionLinear::bForZeroW(int i, const Vector &x) const
 }
 
 
-double LoppedLandingRejectionLinear::A(int i, int l) const
+double LandingRejection3DLinear::A(int i, int l) const
 {
     double e = m_e;
 
@@ -210,16 +194,16 @@ double LoppedLandingRejectionLinear::A(int i, int l) const
     return A(i - 1, l - 1);
 }
 
-double LoppedLandingRejectionLinear::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
+double LandingRejection3DLinear::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
     return A(i, l);
 }
 
-Vector LoppedLandingRejectionLinear::tau(int i, int l, const Vector &z, const Matrix &/*P*/) const
+Vector LandingRejection3DLinear::tau(int i, int l, const Vector &z, const Matrix &/*P*/) const
 {
     return A(i, l) * a(i, z);
 }
 
-Matrix LoppedLandingRejectionLinear::Theta(int i, int l, const Vector &z, const Matrix &P) const
+Matrix LandingRejection3DLinear::Theta(int i, int l, const Vector &z, const Matrix &P) const
 {
     Matrix Ax = dadx(i, z);
     Vector a  = this->a(i, z);
@@ -227,13 +211,13 @@ Matrix LoppedLandingRejectionLinear::Theta(int i, int l, const Vector &z, const 
     return A(i, l) * (Ax * P * Ax.transpose() + a * a.transpose());
 }
 
-Vector LoppedLandingRejectionLinear::h(int i, const Vector &m, const Matrix & /* D*/) const
+Vector LandingRejection3DLinear::h(int i, const Vector &m, const Matrix & /* D*/) const
 {
     Vector b = bForZeroW(i, m);
     return b;
 }
 
-Matrix LoppedLandingRejectionLinear::G(int i, const Vector &m, const Matrix &D) const
+Matrix LandingRejection3DLinear::G(int i, const Vector &m, const Matrix &D) const
 {
     Matrix Bx = dbdx(i, m);
     Vector b  = h(i, m, m_varW);
@@ -241,7 +225,7 @@ Matrix LoppedLandingRejectionLinear::G(int i, const Vector &m, const Matrix &D) 
     return D*Bx.transpose() + m*b.transpose();
 }
 
-Matrix LoppedLandingRejectionLinear::F(int i, const Vector &m, const Matrix &D) const
+Matrix LandingRejection3DLinear::F(int i, const Vector &m, const Matrix &D) const
 {
     Matrix Bx = dbdx(i, m);
     Vector b  = h(i, m, m_varW);
@@ -250,7 +234,7 @@ Matrix LoppedLandingRejectionLinear::F(int i, const Vector &m, const Matrix &D) 
     return result;
 }
 
-Matrix LoppedLandingRejectionLinear::dadx(int /*i*/, const Vector &x) const
+Matrix LandingRejection3DLinear::dadx(int /*i*/, const Vector &x) const
 {
     double _E = Ex(x);
     double h   = m_step;
@@ -261,31 +245,25 @@ Matrix LoppedLandingRejectionLinear::dadx(int /*i*/, const Vector &x) const
     res(0, 0) = 1.0 - 2.0 * h * _E / x[0];
     res(0, 1) = -1 * h * GG * cos(x[1]);
     res(0, 2) = h * BB * _E;
-    res(0, 3) = -1 * h * _E / x[3];
-    res(0, 4) = 0.0;
-    res(0, 5) = 0.0;
 
-    res(1, 0) = h * (sk1 * x[4] * _E / pow(x[0], 2) + cos(x[1]) * (1/(RR + x[2]) + GG / pow(x[0], 2)));
+    res(1, 0) = h * (sk1 * KB * _E / pow(x[0], 2) + cos(x[1]) * (1/(RR + x[2]) + GG / pow(x[0], 2)));
     res(1, 1) = 1.0 - h * sin(x[1]) * (x[0] / (RR + x[2]) - GG / x[0]);
-    res(1, 2) = -1*h * ((BB * sk1 * x[4] * _E/x[0]) + x[0] * cos(x[1]) / pow(RR + x[2], 2));
-    res(1, 3) = h * sk1 * x[4] * _E / (x[0] * x[3]);
-    res(1, 4) = h * sk1 * _E/x[0];
-    res(1, 5) = 0.0;
+    res(1, 2) = -1*h * ((BB * sk1 * KB * _E/x[0]) + x[0] * cos(x[1]) / pow(RR + x[2], 2));
 
     res(2, 0) = h * sin(x[1]);
     res(2, 1) = h * x[0] * cos(x[1]);
 
-    res(2, 2) = res(3, 3) = res(4, 4) = res(5, 5) = 1.0;
+    res(2, 2) = 1.0;
 
     return res;
 }
 
-Matrix LoppedLandingRejectionLinear::dadv(int /*i*/, const Vector & /*x*/) const
+Matrix LandingRejection3DLinear::dadv(int /*i*/, const Vector & /*x*/) const
 {
     return Matrix::Zero(m_dimX, m_dimV);
 }
 
-Matrix LoppedLandingRejectionLinear::dbdx(int i, const Vector &x) const
+Matrix LandingRejection3DLinear::dbdx(int i, const Vector &x) const
 {
     double _e = e(x);
     double _d = d(x);
@@ -295,28 +273,20 @@ Matrix LoppedLandingRejectionLinear::dbdx(int i, const Vector &x) const
     gamma(0,0) = gammaX(i);
     gamma(1,1) = gammaY(i);
 
-    double sk1 = Sk(m_step*m_time);
-
     Matrix tmp(m_dimY, m_dimX);
 
     tmp(0, 0) = 2.0 * _d / x[0];
     tmp(0, 1) = -1 * _e;
     tmp(0, 2) = -1 * BB * _d;
-    tmp(0, 3) = _d / x[3];
-    tmp(0, 4) = -1 * sk1 * sin(x[1] - x[5]);
-    tmp(0, 5) = _e;
 
     tmp(1, 0) = 2.0 * _e / x[0];
     tmp(1, 1) = _d;
     tmp(1, 2) = -1 * BB * _e;
-    tmp(1, 3) = _e / x[3];
-    tmp(1, 4) = sk1 * cos(x[1] - x[5]);
-    tmp(1, 5) = -1 * _d;
 
     return _E * gamma * tmp;
 }
 
-Matrix LoppedLandingRejectionLinear::dbdw(int i, const Vector &x) const
+Matrix LandingRejection3DLinear::dbdw(int i, const Vector &x) const
 {
     double _e = e(x);
     double _d = d(x);
@@ -338,7 +308,7 @@ Matrix LoppedLandingRejectionLinear::dbdw(int i, const Vector &x) const
     return tmp;
 }
 
-Matrix LoppedLandingRejectionLinear::BwdbdwBwt(int i, const Vector &x) const
+Matrix LandingRejection3DLinear::BwdbdwBwt(int i, const Vector &x) const
 {
     double _e = e(x);
     double _d = d(x);
@@ -357,7 +327,7 @@ Matrix LoppedLandingRejectionLinear::BwdbdwBwt(int i, const Vector &x) const
     return tmp;
 }
 
-double LoppedLandingRejectionLinear::Pr(int i) const
+double LandingRejection3DLinear::Pr(int i) const
 {
     double e = m_e;
 
@@ -381,48 +351,7 @@ double LoppedLandingRejectionLinear::Pr(int i) const
 //    }
 }
 
-//Array<int> LoppedLandingRejectionLinear::generateArrayI(int sizeS, int /*k*/) const
-//{
-//    Array<int> array(sizeS);
-//    double e = m_e;
-
-//    double p = 1 - m_e;
-//    int countI1, countI2;
-//    countI1 = sizeS*p;
-//    countI2 = sizeS*e + countI1;
-//    for (int i = 0; i < sizeS; i++) {
-//        if (i < countI1) {
-//            array[i] = 1;
-//        } else {
-//            array[i] = 2;
-//        }
-//    }
-
-//// 4-х режимность
-////    double p = 1 - 2.5*m_e;
-////    int countI1, countI2, countI3;
-////    countI1 = sizeS*p;
-////    countI2 = sizeS*e + countI1;
-////    countI3 = sizeS*e + countI2;
-////    for (int i = 0; i < sizeS; i++) {
-////        if (i < countI1) {
-////            array[i] = 1;
-////        } else if (i < countI2) {
-////            array[i] = 2;
-////        } else if (i < countI3) {
-////            array[i] = 3;
-////        } else {
-////            array[i] = 4;
-////        }
-////    }
-
-//    for (int i = 0; i < sizeS; i++) {
-//      std::swap(array[i], array[rand() % sizeS]);
-//    }
-//    return array;
-//}
-
-Array<int> LoppedLandingRejectionLinear::generateArrayI(int sizeS, int k) const // только для 2-х режимов!
+Array<int> LandingRejection3DLinear::generateArrayI(int sizeS, int k) const // только для 2-х режимов!
 {
     Array<int> array(sizeS);
     double p = 1.0 - m_e;
@@ -438,9 +367,6 @@ Array<int> LoppedLandingRejectionLinear::generateArrayI(int sizeS, int k) const 
            array[i] = 2;
         }
     }
-
-//    logInstance.logStringWithQDebug("НОМЕР: " + std::to_string(k));
-//    logInstance.logArrayWithQDebug(array);
 
     return array;
 }

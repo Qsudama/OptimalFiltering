@@ -1,5 +1,5 @@
-#ifndef LD_LANDING_REJECTION_LINEAR_H
-#define LD_LANDING_REJECTION_LINEAR_H
+#ifndef LD_LANDING_REJECTION_3D_LINEAR_H
+#define LD_LANDING_REJECTION_3D_LINEAR_H
 
 #include "src/core/logic_dynamic_task.h"
 #include "src/math/math.h"
@@ -18,12 +18,12 @@ namespace LogicDynamic
  * оптимальной структуры.
  */
 
-class LandingRejectionLinear : public Core::LogicDynamicTask
+class LandingRejection3DLinear : public Core::LogicDynamicTask
 {
 
 public:
     //! \brief Конструктор.
-    LandingRejectionLinear();
+    LandingRejection3DLinear();
 
     Vector a(int i, const Vector &x) const override;
     Vector b(int i, const Vector &x) const override;
@@ -80,4 +80,4 @@ protected:
 
 } // end Tasks
 
-#endif // LD_LANDING_REJECTION_LINEAR_H
+#endif // LD_LANDING_REJECTION_3D_LINEAR_H

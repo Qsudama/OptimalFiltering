@@ -1,5 +1,5 @@
-#ifndef LD_LOPPED_LANDING_REJECTION_LINEAR_H
-#define LD_LOPPED_LANDING_REJECTION_LINEAR_H
+#ifndef LD_LANDING_REJECTION_6D_LINEAR_H
+#define LD_LANDING_REJECTION_6D_LINEAR_H
 
 #include "src/core/logic_dynamic_task.h"
 #include "src/math/math.h"
@@ -18,12 +18,12 @@ namespace LogicDynamic
  * оптимальной структуры.
  */
 
-class LoppedLandingRejectionLinear : public Core::LogicDynamicTask
+class LandingRejection6DLinear : public Core::LogicDynamicTask
 {
 
 public:
     //! \brief Конструктор.
-    LoppedLandingRejectionLinear();
+    LandingRejection6DLinear();
 
     Vector a(int i, const Vector &x) const override;
     Vector b(int i, const Vector &x) const override;
@@ -80,4 +80,4 @@ protected:
 
 } // end Tasks
 
-#endif // LD_LOPPED_LANDING_REJECTION_LINEAR_H
+#endif // LD_LANDING_REJECTION_6D_LINEAR_H

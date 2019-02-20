@@ -23,14 +23,17 @@ void TaskWidget::loadFonts()
 void TaskWidget::initControls()
 {
     m_cbTask = new QComboBox;
-    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (линеар)"));
-    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (гаусс)"));
-    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (линеар)"));
-    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (гаусс)"));
-    m_cbTask->addItem(tr("Скалярный пример (линеар)"));
-    m_cbTask->addItem(tr("Скалярный пример (гаусс)"));
-    m_cbTask->addItem(tr("Скалярный пример со сбоями измерителя (гаусс)"));
-    m_cbTask->addItem(tr("3-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));
+    // Нужно отслеживать соответсвие названия задачи и сопостовляемого таска в TaskWidget::id()
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (линеар)"));                                     // 0
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (гаусс)"));                                        // 1
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (линеар)"));                                            // 2
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (гаусс)"));                                               // 3
+    m_cbTask->addItem(tr("Скалярный пример (линеар)"));                                                         // 4
+    m_cbTask->addItem(tr("Скалярный пример (гаусс)"));                                                            // 5
+    m_cbTask->addItem(tr("Скалярный пример со сбоями измерителя (гаусс)"));                   // 6
+    m_cbTask->addItem(tr("3-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));             // 7
+    m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));             // 8
+//    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля  со сбоями 2-х датчиков (линеар)"));             // 9
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
@@ -73,7 +76,7 @@ void TaskWidget::onCbTaskChanged(int)
 {
     Tasks::TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-    if (taskId == Tasks::TASK_ID::LDScalarRejectionGauss || taskId == Tasks::TASK_ID::LDLandingRejectionLinear) {
+    if (taskId == Tasks::TASK_ID::LDScalarRejectionGauss || taskId == Tasks::TASK_ID::LDLandingRejection3DLinear || taskId == Tasks::TASK_ID::LDLandingRejection6DLinear || taskId == Tasks::TASK_ID::LDVanDerPolRejectionLinear) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId);
     } else if(taskId == Tasks::TASK_ID::ScalarLinear || taskId == Tasks::TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
@@ -140,9 +143,11 @@ Tasks::TASK_ID TaskWidget::id() const
     case 6:
         return Tasks::TASK_ID::LDScalarRejectionGauss;
     case 7:
-        return Tasks::TASK_ID::LDLandingRejectionLinear;
+        return Tasks::TASK_ID::LDLandingRejection3DLinear;
     case 8:
-        return Tasks::TASK_ID::VanDerPolRejectionLinear;
+        return Tasks::TASK_ID::LDLandingRejection6DLinear;
+    case 9:
+        return Tasks::TASK_ID::LDVanDerPolRejectionLinear;
     default:
         return Tasks::TASK_ID::LandingLinear;
     }

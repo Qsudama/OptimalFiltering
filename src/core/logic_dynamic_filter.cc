@@ -243,9 +243,9 @@ string LogicDynamicFilter::initialConditWithType()
 {
     string condit = "";
     if (m_params->initialCondition() == INITIAL_CONDITIONS::GaussApproximation) {
-            condit = ", 0-прибл";
+            condit = ", Оц0-прибл";
     } else {
-            condit = ", 0-точн";
+            condit = ", Оц0-точн";
     }
     return condit;
 }
