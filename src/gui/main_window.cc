@@ -227,8 +227,8 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filte
 void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
 {
     QColor  color = m_colorManager.nextColor();
-    string filter_execute_time = " " + to_string(filter->execute_time()) + " сек.";
-    QString fname = QString::fromStdString(filter->info()->name() + filter_execute_time);
+    QString execute_time = " " + QString("%1").arg(filter->execute_time(), 0, 'f', 4) + " мсек.";
+    QString fname = QString::fromStdString(filter->info()->name()) + execute_time;
 
     QPen mxPen, mePen, sxPen, sePen;
     mxPen.setWidthF(2.0);

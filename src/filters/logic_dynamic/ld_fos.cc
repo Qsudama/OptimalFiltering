@@ -61,14 +61,14 @@ void FOS::algorithm()
         }
 
         // Блок 3
-        writeResult(k, m_task->countI);
+        writeResult(k, m_task->countI); // таймер паузится внутри
         // Блок 3а смотри в Блок 2
         // Блок 3б
-        timerInstance.interrupt_timer(); // Время больше чем у АОФ потому что есть еще 3с блок
+        timerInstance.interrupt_timer();
         computeBlock3b();
-        timerInstance.continue_timer();
         // Блок 3в
         computeBlock3c();
+        timerInstance.continue_timer();
 
         if (k <= m_result.size()) {
 
@@ -82,8 +82,10 @@ void FOS::algorithm()
             }
 
             // Блок 6
+            timerInstance.interrupt_timer();
             m_sampleI = m_task->generateArrayI(m_params->sampleSize(), k+1);
             computeBlock6();
+            timerInstance.continue_timer();
         }
     }
 }

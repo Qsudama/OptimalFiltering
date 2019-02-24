@@ -32,12 +32,12 @@ void TimerManager::stop_timer()
 {
     end_time = clock();
     double duration_sec = this->calculate_per_sek_for_times(start_time, end_time);
-    result_execute_time = duration_sec - sum_pause;
+    double result_execute = duration_sec - sum_pause;
+    result_execute_time = this->convert_sek_to_msek(result_execute);
     qDebug() <<  LOG_HEADER
                  + TITLE_TIME_MODELS + QString::number(duration_sec) + "   "
                  + TITLE_TIME_PAUSE + QString::number(sum_pause) + "   "
-                 + TITLE_TIME_RESULT + QString::number(result_execute_time);
-//    test_log_core_name();
+                 + TITLE_TIME_RESULT + QString::number(result_execute);
 }
 
 void TimerManager::interrupt_timer()
@@ -52,18 +52,9 @@ void TimerManager::continue_timer()
     sum_pause += duration_pause_sec;
 }
 
-void TimerManager::test_log_core_name()
+double TimerManager::convert_sek_to_msek(double time)
 {
-    QSysInfo *info = new QSysInfo();
-    qDebug() <<  LOG_HEADER << "buildAbi" << info->buildAbi();
-    qDebug() <<  LOG_HEADER << "buildCpuArchitecture" << info->buildCpuArchitecture();
-    qDebug() <<  LOG_HEADER << "currentCpuArchitecture" << info->currentCpuArchitecture();
-    qDebug() <<  LOG_HEADER << "kernelType" << info->kernelType();
-    qDebug() <<  LOG_HEADER << "kernelVersion" << info->kernelVersion();
-    qDebug() <<  LOG_HEADER << "machineHostName" << info->machineHostName();
-    qDebug() <<  LOG_HEADER << "prettyProductName" << info->prettyProductName();
-    qDebug() <<  LOG_HEADER << "productType" << info->productType();
-    qDebug() <<  LOG_HEADER << "productVersion" << info->productVersion();
+    return time * 1000;
 }
 
 double TimerManager::calculate_per_sek_for_times(clock_t start_time, clock_t end_time)

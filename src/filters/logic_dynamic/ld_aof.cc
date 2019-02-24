@@ -48,7 +48,7 @@ void AOF::algorithm()
 
         // Блок 3
 
-        writeResult(k, m_task->countI);
+        writeResult(k, m_task->countI); // таймер паузится внутри
 
         if (k <= m_result.size()) {
 
@@ -62,8 +62,10 @@ void AOF::algorithm()
             }
 
             // Блок 6
+            timerInstance.interrupt_timer();
             m_sampleI = m_task->generateArrayI(m_params->sampleSize(), k+1);
             computeBlock6();
+            timerInstance.continue_timer();
         }
     }
 //    LogInFileManager& logInstance = LogInFileManager::Instance();
@@ -93,7 +95,7 @@ void AOF::computeBlock2(long s, size_t k) {
         resZ += mult;
     }
     if (std::isnan(resZ[0])) {
-        qDebug() << "Nan! s = " << s << "k = " << k;
+//        qDebug() << "Nan! s = " << s << "k = " << k;
     }
     m_sampleZ[s] = resZ;
 }
@@ -126,7 +128,7 @@ void AOF::computeBlock4(long s, size_t k) {
         }
         Omega[s][l] = sumOmega;
         if (Omega[s][l] == 0.0) {
-            qDebug() << "Divided 0!!!";
+//            qDebug() << "Divided 0!!!";
         }
         Lambda[s][l] = sumLambda/Omega[s][l];
         Psi[s][l] = sumPsi/Omega[s][l] - Lambda[s][l]*Lambda[s][l].transpose();
@@ -145,7 +147,7 @@ void AOF::computeBlock5(long s, size_t k) {
         Matrix phi = Phi[s][i];
         if (phi.cols() > 1) {
             if (std::isnan(phi(0, 0)) || std::isnan(phi(1, 1))) {
-                qDebug() << "Phi - Nan. k = " << k << "s = " << s;
+//                qDebug() << "Phi - Nan. k = " << k << "s = " << s;
             }
         }
     }

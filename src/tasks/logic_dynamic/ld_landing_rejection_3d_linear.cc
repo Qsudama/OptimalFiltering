@@ -19,7 +19,7 @@ LandingRejection3DLinear::LandingRejection3DLinear() : LogicDynamicTask()
     , gamMinY(0.1)
     , countIInTask(1) // Количество режимов
 {
-    m_info->setName("6-мерный спуск ЛА со сбоями 2-х датчиков");
+    m_info->setName("3-мерный спуск ЛА со сбоями 2-х датчиков");
     m_info->setType("Л-");
 
     m_dimY = 2;
