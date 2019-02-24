@@ -27,8 +27,8 @@ Filter::~Filter()
 void Filter::run()
 {
     init();
-    timerInstance.start_timer();
     zeroIteration();
+    timerInstance.start_timer();
     algorithm();
     timerInstance.stop_timer();
 }

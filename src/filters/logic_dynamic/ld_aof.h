@@ -19,7 +19,7 @@ class AOF : public Core::LogicDynamicFilter
 
 public:
     //! \brief Конструктор.
-    AOF(Core::PtrFilterParameters params, Core::PtrTask task);
+    AOF(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id);
 
 
 protected:

@@ -22,7 +22,7 @@ class LogicDynamicFilter : public Filter
 
 public:
     //! \brief Конструктор.
-    LogicDynamicFilter(PtrFilterParameters params, PtrTask task);
+    LogicDynamicFilter(PtrFilterParameters params, PtrTask task, FILTER_ID id);
 
 protected:
     void init() override;
@@ -66,6 +66,8 @@ protected:
     Array<Array<Matrix>> K;
     Array<Array<Vector>> Sigma;
     Array<Array<Matrix>> Upsilon;
+
+    FILTER_ID m_identifier;
 
 private:
 

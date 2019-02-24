@@ -12,6 +12,7 @@
 
 #include "filter_output.h"
 #include "filter_parameters.h"
+#include "src/filters/filters_identifiers.h"
 #include "info.h"
 #include "src/array.h"
 #include "src/math/random.h"

@@ -16,8 +16,8 @@ using Math::MakeBlockVector;
 using Math::MakeBlockMatrix;
 
 
-FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task)
-    : LogicDynamicFilter(params, task)
+FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
+    : LogicDynamicFilter(params, task, id)
 {
     long ny = long(m_task->dimY());
     long p  = ny * long(m_params->orderMult());

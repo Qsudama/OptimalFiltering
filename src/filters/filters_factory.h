@@ -1,6 +1,7 @@
 #ifndef FILTERS_H
 #define FILTERS_H
 
+#include "filters_identifiers.h"
 #include "src/core/types_info.h"
 #include "src/filters/continuous/c_aof.h"
 #include "src/filters/continuous/c_fos.h"
@@ -19,30 +20,13 @@
 #include "src/filters/logic_dynamic/ld_aof.h"
 #include "src/filters/logic_dynamic/ld_fos.h"
 #include "src/filters/logic_dynamic/ld_fkp.h"
+#include "src/filters/logic_dynamic/ld_fkp_fbp.h"
 
 
 //! \brief Модуль, содержащий реализации конкретных алгоритмов фильтрации.
 
 namespace Filters
 {
-
-
-//! \brief Набор идентификаторов фильтров.
-
-enum class FILTER_ID {
-    AOF,    /*!< АОФ - абсолютно оптимальный фильтр. */
-    FOS,    /*!< ФМП - фильтр оптимальной структуры малого порядка. */
-    LDFKP,  /*!< ФКП - фильтр оптимальной структуры с конечной памятью логико-динамический. */
-    DFOS,   /*!< ФМП с дискретными прогнозами. */
-    DFOSBO, /*!< ФКП - фильтр оптимальной структуры с конечной памятью (повышенного порядка). */
-    MDFOS,  /*!< МФМП - модифицированный ФМП. */
-    DUOF,   /*!< ДУОФ - Двухшаговый условно-оптимальный фильтр. */
-    DFMP,   /*!< ДФМП - Двухшаговый ФМП. */
-    FKP,    /*!< ФКП - фильтр оптимальной структуры с конечной памятью. */
-    DFKP,   /*!< ДФКП - Двухшаговый ФКП. */
-    MDFMP   /*!< МДФМП - Модификация приближения к МДФМП. */
-};
-
 
 //! \brief Фабричный класс для создания экземпляров классов фильтров.
 

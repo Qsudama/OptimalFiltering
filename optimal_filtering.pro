@@ -322,7 +322,10 @@ HEADERS += \
     src/helpers/log_in_console_manager.h \
     src/helpers/timer_manager.h \
     src/tasks/logic_dynamic/ld_landing_rejection_3d_linear.h \
-    src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.h
+    src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.h \
+    src/filters/logic_dynamic/ld_fkp_fbp.h \
+    src/filters/filters_identifiers.h \
+    src/tasks/tasks_identifiers.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -396,4 +399,5 @@ SOURCES += \
     src/helpers/log_in_console_manager.cc \
     src/helpers/timer_manager.cc \
     src/tasks/logic_dynamic/ld_landing_rejection_3d_linear.cc \
-    src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.cc
+    src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.cc \
+    src/filters/logic_dynamic/ld_fkp_fbp.cc

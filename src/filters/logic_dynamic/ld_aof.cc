@@ -18,8 +18,8 @@ using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
 
-AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
-    : LogicDynamicFilter(params, task)
+AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
+    : LogicDynamicFilter(params, task, id)
 {
 //    Неправильно считает для скалярного примера
 //    из-за того что таск 6-ти мерный а надо чтобы показывало 3-х мерный

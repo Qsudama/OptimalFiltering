@@ -1,6 +1,7 @@
 #ifndef TASKS_H
 #define TASKS_H
 
+#include "tasks_identifiers.h"
 #include "src/core/types_info.h"
 #include "src/tasks/continuous/c_landing_gauss.h"
 #include "src/tasks/continuous/c_landing_linear.h"
@@ -23,23 +24,6 @@
 
 namespace Tasks
 {
-
-
-//! \brief Набор идентификаторов имеющихся задач.
-
-enum class TASK_ID {
-    LandingLinear,    ///< Спуска ЛА на планету (линеаризованный).
-    LandingGauss,     ///< Спуска ЛА на планету (гауссовский).
-    VanDerPolLinear,  ///< Осциллятор Ван-дер-Поля (линеаризованный).
-    VanDerPolGauss,   ///< Осциллятор Ван-дер-Поля (гауссовский).
-    ScalarLinear,     ///< Тестовый скалярный пример (линеаризованный).
-    ScalarGauss,      ///< Тестовый скалярный пример (гауссовский).
-    LDScalarRejectionGauss,  ///< Тестовый скалярный логико-динамический пример с отказами (гауссовский).
-    LDLandingRejection3DLinear, ///< Спуск ЛА 3-мерный логико-динамический с отказами (линеаризованный).
-    LDLandingRejection6DLinear, ///< Спуск ЛА 6-мерный логико-динамический с отказами (линеаризованный).
-    LDVanDerPolRejectionLinear, ///< Осциллятор Ван-дер-Поля логико-динамический с отказами (линеаризованный).
-};
-
 
 //! \brief Фабричный класс для создания экземпляров классов задач.
 

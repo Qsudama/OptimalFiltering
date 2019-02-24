@@ -10,9 +10,10 @@ namespace Core
 {
 
 
-LogicDynamicFilter::LogicDynamicFilter(PtrFilterParameters params, PtrTask task)
+LogicDynamicFilter::LogicDynamicFilter(PtrFilterParameters params, PtrTask task, FILTER_ID id)
     : Filter(params)
     , m_task(std::dynamic_pointer_cast<LogicDynamicTask>(task))
+    , m_identifier(id)
 {
     m_info->setType("лд");
 }
@@ -80,9 +81,7 @@ void LogicDynamicFilter::zeroIteration() {
 
     // Блок 0
     computeZeroVectors();
-    timerInstance.interrupt_timer();
     computeBlock0();
-    timerInstance.continue_timer();
 }
 
 void LogicDynamicFilter::computeZeroVectors() {

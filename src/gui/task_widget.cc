@@ -74,13 +74,13 @@ void TaskWidget::onBtnParametersClicked()
 
 void TaskWidget::onCbTaskChanged(int)
 {
-    Tasks::TASK_ID taskId = id();
+    TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-    if (taskId == Tasks::TASK_ID::LDScalarRejectionGauss || taskId == Tasks::TASK_ID::LDLandingRejection3DLinear || taskId == Tasks::TASK_ID::LDLandingRejection6DLinear || taskId == Tasks::TASK_ID::LDVanDerPolRejectionLinear) {
+    if (taskId == TASK_ID::LDScalarRejectionGauss || taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear || taskId == TASK_ID::LDVanDerPolRejectionLinear) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId);
-    } else if(taskId == Tasks::TASK_ID::ScalarLinear || taskId == Tasks::TASK_ID::ScalarGauss) {
+    } else if(taskId == TASK_ID::ScalarLinear || taskId == TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
-    } else if (taskId == Tasks::TASK_ID::ScalarGauss) {
+    } else if (taskId == TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
     } else {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId);
@@ -125,31 +125,31 @@ bool TaskWidget::taskIsNull(Core::FILTER_TYPE ftype)
 }
 
 
-Tasks::TASK_ID TaskWidget::id() const
+TASK_ID TaskWidget::id() const
 {
     switch (m_cbTask->currentIndex()) {
     case 0:
-        return Tasks::TASK_ID::LandingLinear;
+        return TASK_ID::LandingLinear;
     case 1:
-        return Tasks::TASK_ID::LandingGauss;
+        return TASK_ID::LandingGauss;
     case 2:
-        return Tasks::TASK_ID::VanDerPolLinear;
+        return TASK_ID::VanDerPolLinear;
     case 3:
-        return Tasks::TASK_ID::VanDerPolGauss;
+        return TASK_ID::VanDerPolGauss;
     case 4:
-        return Tasks::TASK_ID::ScalarLinear;
+        return TASK_ID::ScalarLinear;
     case 5:
-        return Tasks::TASK_ID::ScalarGauss;
+        return TASK_ID::ScalarGauss;
     case 6:
-        return Tasks::TASK_ID::LDScalarRejectionGauss;
+        return TASK_ID::LDScalarRejectionGauss;
     case 7:
-        return Tasks::TASK_ID::LDLandingRejection3DLinear;
+        return TASK_ID::LDLandingRejection3DLinear;
     case 8:
-        return Tasks::TASK_ID::LDLandingRejection6DLinear;
+        return TASK_ID::LDLandingRejection6DLinear;
     case 9:
-        return Tasks::TASK_ID::LDVanDerPolRejectionLinear;
+        return TASK_ID::LDVanDerPolRejectionLinear;
     default:
-        return Tasks::TASK_ID::LandingLinear;
+        return TASK_ID::LandingLinear;
     }
 }
 
