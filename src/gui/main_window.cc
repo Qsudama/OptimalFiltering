@@ -227,8 +227,9 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filte
 void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
 {
     QColor  color = m_colorManager.nextColor();
-    QString execute_time = " " + QString("%1").arg(filter->execute_time(), 0, 'f', 4) + " мсек.";
-    QString fname = QString::fromStdString(filter->info()->name()) + execute_time;
+    QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
+    QString execute_time = tr(" ") + QString("%1").arg(filter->execute_time(), 0, 'f', 4) + tr(" мсек.; ");
+    QString fname = QString::fromStdString(filter->info()->name()) + tr(";") + execute_time + ss_filter;
 
     QPen mxPen, mePen, sxPen, sePen;
     mxPen.setWidthF(2.0);
@@ -316,25 +317,25 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 }
 
 QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {
-    QString subTitle =
-        tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
+    QString subTitle = "";
+        //tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
 
     if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
         if (m_taskWidget->id() == Tasks::TASK_ID::LDScalarRejectionGauss) {
             subTitle = subTitle +
-                tr(", вероятность сбоя ") + QString::number(task->params()->at("e")) +
+                tr("Вероятность сбоя ") + QString::number(task->params()->at("e")) +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
         } else if (m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejection3DLinear || m_taskWidget->id() == Tasks::TASK_ID::LDLandingRejection6DLinear) {
             subTitle = subTitle +
-                tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
+                tr("Шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
                 tr(", вероятность одного сбоя ") + QString::number(task->params()->at("e"));
         } else {
           subTitle = subTitle +
-            tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+            tr("Шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
         }
     } else {
         subTitle = subTitle +
-                tr(", шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
+                tr("Шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
                 tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
     }
     return subTitle;
