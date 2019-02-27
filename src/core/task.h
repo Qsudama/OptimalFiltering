@@ -11,6 +11,8 @@
 #include <map>
 #include <memory>
 
+#include "src/helpers/log_in_file_manager.h"
+#include "src/helpers/log_in_console_manager.h"
 
 using Math::Matrix;
 using Math::Vector;
@@ -93,7 +95,6 @@ public:
     //! \brief Возвращает дисперсию \f$D[W]\f$ вектора шума \f$W\f$.
     const Math::Matrix &varW() const;
 
-
     //! \brief Устанавливает начальное математическое ожидание \f$M[X_0]\f$ вектора состояния объекта \f$X_0\f$.
     void setMeanX0(const Math::Vector &m);
 
@@ -122,6 +123,8 @@ public:
     */
     void changeParameter(const std::string &key, double value);
 
+    //! \brief Менеджер для логирования в консоль.
+    LogInConsoleManager& logInstance;
 
 protected:
     //! \brief Загружает данные в локальные переменные после изменения параметров.

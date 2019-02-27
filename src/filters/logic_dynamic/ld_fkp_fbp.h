@@ -1,5 +1,5 @@
-#ifndef LOGIC_DYNAMIC_FKP_H
-#define LOGIC_DYNAMIC_FKP_H
+#ifndef LOGIC_DYNAMIC_FKP_FBP_H
+#define LOGIC_DYNAMIC_FKP_FBP_H
 
 #include "src/core/logic_dynamic_filter.h"
 
@@ -12,12 +12,12 @@ namespace LogicDynamic
 
 //! \brief Класс, реализующий дискретный фильтр оптимальной структуры.
 
-class FKP : public Core::LogicDynamicFilter
+class FKP_FBP : public Core::LogicDynamicFilter
 {
 
 public:
     //! \brief Конструктор.
-    FKP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id);
+    FKP_FBP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id);
 
 
 protected:
@@ -68,4 +68,4 @@ private:
 
 } // end Filters
 
-#endif // LOGIC_DYNAMIC_FKP_H
+#endif // LOGIC_DYNAMIC_FKP_FBP_H

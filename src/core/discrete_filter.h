@@ -38,6 +38,7 @@ protected:
     */
     void zeroIteration() override;
 
+    double execute_time_filter() override;
 
 protected:
     PtrDTask m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */

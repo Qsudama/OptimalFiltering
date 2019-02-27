@@ -1,4 +1,4 @@
-#include "ld_vanderpol_linear.h"
+#include "ld_vanderpol_rejection_linear.h"
 #include "src/math/constants.h"
 
 
@@ -8,8 +8,9 @@ namespace Tasks
 namespace LogicDynamic
 {
 
+//int count_k = 0;
 
-VanDerPolLinear::VanDerPolLinear()
+VanDerPolRejectionLinear::VanDerPolRejectionLinear()
     : LogicDynamicTask()
     , m_omega(0.1 * Math::Const::PI)
     , m_alpha(2.0)
@@ -61,7 +62,7 @@ VanDerPolLinear::VanDerPolLinear()
     (*m_params)["Кол-во режимов I"] = countIInTask;
 }
 
-void VanDerPolLinear::loadParams()
+void VanDerPolRejectionLinear::loadParams()
 {
     m_omega  = m_params->at("Omega");
     m_alpha  = m_params->at("Alpha");
@@ -72,7 +73,7 @@ void VanDerPolLinear::loadParams()
 }
 
 
-Vector VanDerPolLinear::a(int /*i*/, const Vector &x) const
+Vector VanDerPolRejectionLinear::a(int /*i*/, const Vector &x) const
 {
     Vector dx(m_dimX);
 
@@ -86,7 +87,7 @@ Vector VanDerPolLinear::a(int /*i*/, const Vector &x) const
     return dx;
 }
 
-Vector VanDerPolLinear::b(int /*i*/, const Vector &x) const
+Vector VanDerPolRejectionLinear::b(int /*i*/, const Vector &x) const
 {
 
     Vector w  = m_normalRand(m_meanW, m_E);
@@ -99,7 +100,7 @@ Vector VanDerPolLinear::b(int /*i*/, const Vector &x) const
 }
 
 
-double VanDerPolLinear::A(int /*i*/, int /*l*/) const
+double VanDerPolRejectionLinear::A(int /*i*/, int /*l*/) const
 {
     Matrix A(1, 1);
     A << 1;
@@ -107,16 +108,16 @@ double VanDerPolLinear::A(int /*i*/, int /*l*/) const
     return A(0, 0);
 }
 
-double VanDerPolLinear::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
+double VanDerPolRejectionLinear::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
     return A(i, l);
 }
 
-Vector VanDerPolLinear::tau(int i, int l, const Vector &m, const Matrix &/*D*/) const
+Vector VanDerPolRejectionLinear::tau(int i, int l, const Vector &m, const Matrix &/*D*/) const
 {
     return A(i, l) * a(i, m);
 }
 
-Matrix VanDerPolLinear::Theta(int i, int l, const Vector &m, const Matrix &D) const
+Matrix VanDerPolRejectionLinear::Theta(int i, int l, const Vector &m, const Matrix &D) const
 {
     Matrix Ax = dadx(i, m);
     Matrix Av = dadv(i, m);
@@ -125,12 +126,12 @@ Matrix VanDerPolLinear::Theta(int i, int l, const Vector &m, const Matrix &D) co
     return A(i, l) * (Ax * D * Ax.transpose() + Av * m_varV * Av.transpose() + a * a.transpose());
 }
 
-Vector VanDerPolLinear::h(int i, const Vector &m, const Matrix & /* D*/) const
+Vector VanDerPolRejectionLinear::h(int i, const Vector &m, const Matrix & /* D*/) const
 {
     return b(i, m);
 }
 
-Matrix VanDerPolLinear::G(int i, const Vector &m, const Matrix &D) const
+Matrix VanDerPolRejectionLinear::G(int i, const Vector &m, const Matrix &D) const
 {
     Matrix Bx = dbdx(i, m);
     Vector b  = this->b(i, m);
@@ -138,7 +139,7 @@ Matrix VanDerPolLinear::G(int i, const Vector &m, const Matrix &D) const
     return Bx * D * Bx.transpose() + m * b.transpose();
 }
 
-Matrix VanDerPolLinear::F(int i, const Vector &m, const Matrix &D) const
+Matrix VanDerPolRejectionLinear::F(int i, const Vector &m, const Matrix &D) const
 {
     Matrix Bx = dbdx(i, m);
     Matrix Bw = dbdw(i, m);
@@ -147,7 +148,7 @@ Matrix VanDerPolLinear::F(int i, const Vector &m, const Matrix &D) const
     return Bx * D * Bx.transpose() + Bw * m_varW * Bw.transpose() + b * b.transpose();
 }
 
-Matrix VanDerPolLinear::dadx(int /*i*/, const Vector &x) const
+Matrix VanDerPolRejectionLinear::dadx(int /*i*/, const Vector &x) const
 {
 
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
@@ -161,14 +162,14 @@ Matrix VanDerPolLinear::dadx(int /*i*/, const Vector &x) const
     return res;
 }
 
-Matrix VanDerPolLinear::dadv(int /*i*/, const Vector &x) const
+Matrix VanDerPolRejectionLinear::dadv(int /*i*/, const Vector &x) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimV);
     res(1, 0) = m_gamma * x[0];
     return res;
 }
 
-Matrix VanDerPolLinear::dbdx(int /*i*/, const Vector &x) const
+Matrix VanDerPolRejectionLinear::dbdx(int /*i*/, const Vector &x) const
 {
 
     Matrix res = Matrix::Zero(m_dimY, m_dimX);
@@ -179,7 +180,7 @@ Matrix VanDerPolLinear::dbdx(int /*i*/, const Vector &x) const
     return res;
 }
 
-Matrix VanDerPolLinear::dbdw(int /*i*/, const Vector &/*x*/) const
+Matrix VanDerPolRejectionLinear::dbdw(int /*i*/, const Vector &/*x*/) const
 {
 
     Matrix res = Matrix::Zero(m_dimY, m_dimW);
@@ -190,13 +191,16 @@ Matrix VanDerPolLinear::dbdw(int /*i*/, const Vector &/*x*/) const
     return res;
 }
 
-double VanDerPolLinear::Pr(int /*i*/) const
+double VanDerPolRejectionLinear::Pr(int /*i*/) const
 {
     return 1;
 }
 
-Array<int> VanDerPolLinear::generateArrayI(int sizeS) const
+Array<int> VanDerPolRejectionLinear::generateArrayI(int sizeS, int /*k*/) const
 {
+//    if (firstRand == true) {
+//        count_k = 0;
+//    }
     Array<int> array(sizeS);
     for (int i = 0; i < sizeS; i++) {
         array[i] = 1;

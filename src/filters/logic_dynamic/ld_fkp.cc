@@ -16,12 +16,13 @@ using Math::MakeBlockVector;
 using Math::MakeBlockMatrix;
 
 
-FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task)
-    : LogicDynamicFilter(params, task)
+FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
+    : LogicDynamicFilter(params, task, id)
 {
     long ny = long(m_task->dimY());
     long p  = ny * long(m_params->orderMult());
-    m_info->setName(m_task->info()->type() + "ФКПлд (p=" + std::to_string(p) + ")");
+    string condit = initialConditWithType();
+    m_info->setName(m_task->info()->type() + "ФКПлд (p=" + std::to_string(p) + condit + ")");
 }
 
 void FKP::zeroIteration()
@@ -68,13 +69,15 @@ void FKP::algorithm()
         }
 
         // Блок 3
-        writeResult(k, m_task->countI);
+        writeResult(k, m_task->countI); // таймер паузится внутри
         // Блок 3а
         computeBlock3a(k);
         // Блок 3б
-        computeBlock3b();
+        timerInstance.interrupt_timer();
+        computeBlock3b();    
         // Блок 3в
         computeBlock3c();
+        timerInstance.continue_timer();
 
         if (k <= m_result.size()) {
 
@@ -88,8 +91,10 @@ void FKP::algorithm()
             }
 
             // Блок 6
-            m_sampleI = m_task->generateArrayI(m_params->sampleSize());
+            timerInstance.interrupt_timer();
+            m_sampleI = m_task->generateArrayI(m_params->sampleSize(), k+1);
             computeBlock6();
+            timerInstance.continue_timer();
         }
     }
 }

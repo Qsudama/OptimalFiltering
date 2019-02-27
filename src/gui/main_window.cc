@@ -3,6 +3,8 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 
+#include "src/helpers/log_in_file_manager.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_tablesIsVisible(false)
@@ -49,8 +51,8 @@ void MainWindow::initControls()
     connect(m_btnShowHideTables, SIGNAL(clicked()), this, SLOT(onShowHideTables()));
     connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
-    connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, Filters::FILTER_ID)), this,
-            SLOT(onStart(Core::FILTER_TYPE, Core::APPROX_TYPE, Filters::FILTER_ID)));
+    connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)), this,
+            SLOT(onStart(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)));
     connect(m_filterStartWidget, SIGNAL(filtersFamilyChanged(int)), m_filterParamsWidget,
             SLOT(onFiltersFamilyChanged(int)));
 }
@@ -193,7 +195,7 @@ void MainWindow::onFilterUpdatePercent(int p)
     m_statusProgressBar->setValue(p);
 }
 
-void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filters::FILTER_ID id)
+void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTER_ID id)
 {
     bool normalTask   = m_taskWidget->taskIsNull(ftype);
     if (!normalTask) {
@@ -225,7 +227,9 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filte
 void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
 {
     QColor  color = m_colorManager.nextColor();
-    QString fname = QString::fromStdString(filter->info()->name());
+    QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
+    QString execute_time = tr(" ") + QString("%1").arg(filter->execute_time(), 0, 'f', 4) + tr(" мсек.; ");
+    QString fname = QString::fromStdString(filter->info()->name()) + tr(";") + execute_time + ss_filter;
 
     QPen mxPen, mePen, sxPen, sePen;
     mxPen.setWidthF(2.0);
@@ -250,7 +254,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(i).setTitleLabel(title);
         m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::LandingLinear || m_taskWidget->id() == Tasks::TASK_ID::LandingGauss || m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+    if (m_taskWidget->id() == TASK_ID::LandingLinear || m_taskWidget->id() == TASK_ID::LandingGauss || m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear  || m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
@@ -258,10 +262,10 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
         m_graphWindow->sheet(2).setYLabel(tr("Высота (м)"));
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
+    if (m_taskWidget->id() == TASK_ID::LDScalarRejectionGauss) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
     }
-    if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+    if (m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) { // потому что первый if уже сработал как надо
         m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
@@ -272,12 +276,15 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(5).setYLabel(tr("Ошибка гировертикали (°)"));
     }
     Math::Vector scale(dim);
-    if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+    if (m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear) {
+        scale[0] = scale[2] = 1.0;
+        scale[1] = Math::Convert::RadToDeg(1.0);
+    } else if (m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
         scale[0] = scale[2]    = 1.0;
         scale[1] = scale[5]     = Math::Convert::RadToDeg(1.0);
         scale[3]                      = 1.0;
         scale[4]                      = 1.0;
-    } else if (m_taskWidget->id() == Tasks::TASK_ID::LandingLinear || m_taskWidget->id() == Tasks::TASK_ID::LandingGauss) {
+    } else if (m_taskWidget->id() == TASK_ID::LandingLinear || m_taskWidget->id() == TASK_ID::LandingGauss) {
         scale[0] = 1000;
         scale[1] = Math::Convert::RadToDeg(1.0);
         scale[2] = 1000;
@@ -310,25 +317,25 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 }
 
 QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {
-    QString subTitle =
-        tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
+    QString subTitle = "";
+        //tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
 
     if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
-        if (m_taskWidget->id() == Tasks::TASK_ID::LandingTest) {
+        if (m_taskWidget->id() == TASK_ID::LDScalarRejectionGauss) {
             subTitle = subTitle +
-                tr(", вероятность сбоя ") + QString::number(task->params()->at("e")) +
+                tr("Вероятность сбоя ") + QString::number(task->params()->at("e")) +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
-        } else if (m_taskWidget->id() == Tasks::TASK_ID::LandingRejection) {
+        } else if (m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear || m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
             subTitle = subTitle +
-                tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
+                tr("Шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
                 tr(", вероятность одного сбоя ") + QString::number(task->params()->at("e"));
         } else {
           subTitle = subTitle +
-            tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+            tr("Шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
         }
     } else {
         subTitle = subTitle +
-                tr(", шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
+                tr("Шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
                 tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
     }
     return subTitle;

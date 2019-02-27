@@ -32,6 +32,8 @@ PtrFilter FilterFactory::createContinuous(FILTER_ID id, PtrFilterParameters para
         return PtrFilter(new Filters::Continuous::FOS(params, task));
     case FILTER_ID::LDFKP:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
+    case FILTER_ID::LDFBP:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOS:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOSBO:
@@ -53,6 +55,8 @@ PtrFilter FilterFactory::createContinuousDiscrete(FILTER_ID id, PtrFilterParamet
         return PtrFilter(new Filters::ContinuousDiscrete::FOS(params, task));
     case FILTER_ID::LDFKP:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
+    case FILTER_ID::LDFBP:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOS:
         return PtrFilter(new Filters::ContinuousDiscrete::DFOS(params, task));
     case FILTER_ID::DFOSBO:
@@ -73,6 +77,8 @@ PtrFilter FilterFactory::createDiscrete(FILTER_ID id, PtrFilterParameters params
     case FILTER_ID::FOS:
         return PtrFilter(new Filters::Discrete::FOS(params, task));
     case FILTER_ID::LDFKP:
+        return PtrFilter(nullptr); // WARNING: такого фильтра нет
+    case FILTER_ID::LDFBP:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOS:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
@@ -98,11 +104,13 @@ PtrFilter FilterFactory::createLogicDynamic(FILTER_ID id, PtrFilterParameters pa
 {
     switch (id) {
     case FILTER_ID::AOF:
-        return PtrFilter(new Filters::LogicDynamic::AOF(params, task));
+        return PtrFilter(new Filters::LogicDynamic::AOF(params, task, id));
     case FILTER_ID::FOS:
-        return PtrFilter(new Filters::LogicDynamic::FOS(params, task));
+        return PtrFilter(new Filters::LogicDynamic::FOS(params, task, id));
     case FILTER_ID::LDFKP:
-        return PtrFilter(new Filters::LogicDynamic::FKP(params, task));
+        return PtrFilter(new Filters::LogicDynamic::FKP(params, task, id));
+    case FILTER_ID::LDFBP:
+            return PtrFilter(new Filters::LogicDynamic::FKP_FBP(params, task, id));
     case FILTER_ID::DFOS:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     case FILTER_ID::DFOSBO:

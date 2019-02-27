@@ -1,6 +1,7 @@
 QT             += core gui printsupport
 CONFIG         += c++11
 QMAKE_CXXFLAGS += -std=c++11
+QMAKE_MAC_SDK = macosx10.14
 
 #LIBS += -L/usr/local/lib
 
@@ -305,19 +306,26 @@ HEADERS += \
     src/tasks/discrete/d_scalar_linear.h \
     src/core/logic_dynamic_filter.h \
     src/core/logic_dynamic_task.h \
-    src/tasks/logic_dynamic/ld_landing_test_linear.h \
     src/filters/logic_dynamic/ld_aof.h \
     src/filters/logic_dynamic/ld_fos.h \
-    src/tasks/logic_dynamic/ld_landing_rejection_linear.h \
     src/filters/logic_dynamic/ld_fkp.h \
-    src/tasks/logic_dynamic/ld_vanderpol_linear.h \
     src/filters/discrete/d_dfmp.h \
     src/filters/discrete/d_fkp.h \
     src/filters/discrete/d_dfkp.h \
     src/filters/discrete/d_mdfmp.h \
     src/tasks/discrete/d_scalar_gauss.h \
     src/gui/pinv_method_setting_widget.h \
-    src/gui/start_conditions_filter_widget.h
+    src/gui/start_conditions_filter_widget.h \
+    src/tasks/logic_dynamic/ld_scalar_rejection_gauss.h \
+    src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.h \
+    src/helpers/log_in_file_manager.h \
+    src/helpers/log_in_console_manager.h \
+    src/helpers/timer_manager.h \
+    src/tasks/logic_dynamic/ld_landing_rejection_3d_linear.h \
+    src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.h \
+    src/filters/logic_dynamic/ld_fkp_fbp.h \
+    src/filters/filters_identifiers.h \
+    src/tasks/tasks_identifiers.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -375,16 +383,21 @@ SOURCES += \
     src/tasks/discrete/d_scalar_linear.cc \
     src/core/logic_dynamic_filter.cc \
     src/core/logic_dynamic_task.cc \
-    src/tasks/logic_dynamic/ld_landing_test_linear.cc \
     src/filters/logic_dynamic/ld_aof.cc \
     src/filters/logic_dynamic/ld_fos.cc \
-    src/tasks/logic_dynamic/ld_landing_rejection_linear.cc \
     src/filters/logic_dynamic/ld_fkp.cc \
-    src/tasks/logic_dynamic/ld_vanderpol_linear.cc \
     src/filters/discrete/d_dfkp.cc \
     src/filters/discrete/d_dfmp.cc \
     src/filters/discrete/d_fkp.cc \
     src/filters/discrete/d_mdfmp.cc \
     src/tasks/discrete/d_scalar_gauss.cc \
     src/gui/pinv_method_setting_widget.cc \
-    src/gui/start_conditions_filter_widget.cc
+    src/gui/start_conditions_filter_widget.cc \
+    src/tasks/logic_dynamic/ld_scalar_rejection_gauss.cc \
+    src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.cc \
+    src/helpers/log_in_file_manager.cc \
+    src/helpers/log_in_console_manager.cc \
+    src/helpers/timer_manager.cc \
+    src/tasks/logic_dynamic/ld_landing_rejection_3d_linear.cc \
+    src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.cc \
+    src/filters/logic_dynamic/ld_fkp_fbp.cc

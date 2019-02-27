@@ -60,7 +60,7 @@ private slots:
      \param atype - идентификатор метода приближения (аппроксимации).
      \param id    - идентификатор алгоритма.
     */
-    void onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filters::FILTER_ID id);
+    void onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTER_ID id);
 
 
 protected:

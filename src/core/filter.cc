@@ -1,7 +1,6 @@
 #include "filter.h"
 #include <ctime>
 
-
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
 
@@ -12,10 +11,10 @@ namespace Core
 Filter::Filter(PtrFilterParameters params)
     :
 #ifdef QT_ENABLED
-    QObject(nullptr)
-    ,
+     QObject(nullptr)
 #endif
-    m_params(params)
+    , timerInstance(TimerManager::Instance())
+    , m_params(params)
     , m_info(std::make_shared<Info>())
 {
     m_normalRand.setSeed(Math::RandomProperties::defaultSeed());
@@ -25,13 +24,18 @@ Filter::~Filter()
 {
 }
 
-double Filter::run()
+void Filter::run()
 {
     init();
-    std::clock_t timeStart = std::clock();
     zeroIteration();
+    timerInstance.start_timer();
     algorithm();
-    return double((std::clock() - timeStart) / double(CLOCKS_PER_SEC));
+    timerInstance.stop_timer();
+}
+
+double Filter::execute_time()
+{
+    return execute_time_filter();
 }
 
 const FilterOutput &Filter::result() const
@@ -67,6 +71,8 @@ void Filter::writeResult(size_t n, bool copy)
 {
     assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
 
+    timerInstance.interrupt_timer();
+
     m_result[n].meanX = Mean(m_sampleX);
     m_result[n].varX  = Var(m_sampleX, m_result[n].meanX);
 
@@ -90,11 +96,14 @@ void Filter::writeResult(size_t n, bool copy)
 #else
     updatePercent(int(100 * n / m_result.size()));
 #endif
+    timerInstance.continue_timer();
 }
 
 void Filter::writeResult(size_t n, int countI)
 {
     assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
+
+    timerInstance.interrupt_timer();
 
     Array<Vector> mx(countI);
     Array<Matrix> varX(countI);
@@ -115,8 +124,11 @@ void Filter::writeResult(size_t n, int countI)
     }
     m_result[n].meanX = resMx/countI;
     m_result[n].varX  = resVarX/countI;
+    //qDebug() << "\n\nn = " << n;
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
+        Vector rE = m_sampleX[s] - m_sampleZ[s];
+        //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];
+        m_sampleE[s] = rE;
     }
     mz = Mean(m_sampleZ);
     varZ = Var(m_sampleZ, mz);
@@ -134,6 +146,7 @@ void Filter::writeResult(size_t n, int countI)
 #else
     updatePercent(int(100 * n / m_result.size()));
 #endif
+    timerInstance.continue_timer();
 }
 
 #ifndef QT_ENABLED
@@ -143,5 +156,9 @@ void Filter::updatePercent(int p) const
 }
 #endif
 
+double Filter::execute_time_filter()
+{
+    return 0.0;
+}
 
 } // end Core

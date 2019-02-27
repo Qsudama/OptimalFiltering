@@ -1,4 +1,4 @@
-#include "ld_fos.h"
+#include "ld_fkp_fbp.h"
 #include "src/math/statistic.h"
 
 
@@ -16,15 +16,22 @@ using Math::MakeBlockVector;
 using Math::MakeBlockMatrix;
 
 
-FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
+FKP_FBP::FKP_FBP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
     : LogicDynamicFilter(params, task, id)
 {
-    long n = task->dimX()/2;
+    long ny = long(m_task->dimY());
+    long p  = ny * long(m_params->orderMult());
     string condit = initialConditWithType();
-    m_info->setName(m_task->info()->type() + "ФОСлд (p=" + std::to_string(n) + condit + ")");
+    string filter_identifier = "";
+    if (m_identifier == FILTER_ID::LDFBP) {
+        filter_identifier = "ФБПлд";
+    } else if (m_identifier == FILTER_ID::LDFKP) {
+        filter_identifier = "ФКПлд";
+    }
+    m_info->setName(m_task->info()->type() + filter_identifier + " (p=" + to_string(p) + condit + ")");
 }
 
-void FOS::zeroIteration()
+void FKP_FBP::zeroIteration()
 {
     LogicDynamicFilter::zeroIteration();
 
@@ -38,14 +45,21 @@ void FOS::zeroIteration()
     Gamma.resize(m_task->countI);
     Dzz.resize(m_task->countI);
 
+    m_sampleS.resize(m_params->sampleSize());
+    long p = long(m_task->dimY()) * long(m_params->orderMult());
+
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         Xi[s].resize(m_task->countI);
         u[s].resize(m_task->countI);
+
+        m_sampleS[s] = Vector::Zero(m_task->dimY());
+        for (long i = 0; i < long(m_task->dimY()); i++) {
+            m_sampleS[s][i] = m_sampleY[s][i];
+        }
     }
 }
 
-
-void FOS::algorithm()
+void FKP_FBP::algorithm()
 {
     m_task->setStep(m_params->measurementStep());
 
@@ -62,7 +76,8 @@ void FOS::algorithm()
 
         // Блок 3
         writeResult(k, m_task->countI); // таймер паузится внутри
-        // Блок 3а смотри в Блок 2
+        // Блок 3а
+        computeBlock3a(k);
         // Блок 3б
         timerInstance.interrupt_timer();
         computeBlock3b();
@@ -90,7 +105,7 @@ void FOS::algorithm()
     }
 }
 
-void FOS::computeBlock1(long s) {
+void FKP_FBP::computeBlock1(long s) {
     P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
     for (int i = 0; i < m_task->countI; i++) {
         K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
@@ -99,7 +114,7 @@ void FOS::computeBlock1(long s) {
     }
 }
 
-void FOS::computeBlock2(long s) {
+void FKP_FBP::computeBlock2(long s) {
     Vector resZ = Vector::Zero(Sigma[s][0].size());
     Vector mult = Vector::Zero(Sigma[s][0].size());
     for (int i = 0; i < m_task->countI; i++) {
@@ -109,7 +124,38 @@ void FOS::computeBlock2(long s) {
     m_sampleZ[s] = resZ;
 }
 
-void FOS::computeBlock3b() {
+void FKP_FBP::computeBlock3a(long k) {
+    long m = long(m_task->dimY());
+    long l = long(m_params->orderMult());
+    long p = l*m;
+    if (k != 0) {
+        if (k <= l-1) {
+            for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+                int sizeS = m_sampleS[s].size();
+                Vector def = Vector(m_sampleS[s]);
+                m_sampleS[s] = Vector::Zero(sizeS+m);
+                for(long i = 0; i < sizeS+m; i++) {
+                    if (i < m) {
+                        m_sampleS[s][i] = m_sampleY[s][i];
+                    } else {
+                        m_sampleS[s][i] = def[i-m];
+                    }
+                }
+            }
+        } else {
+            for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+                for (long i = p - 1; i >= m; i--) {
+                    m_sampleS[s][i] = m_sampleS[s][i - m];
+                }
+                for (long i = 0; i < long(m); i++) {
+                    m_sampleS[s][i] = m_sampleY[s][i];
+                }
+            }
+        }
+    }
+}
+
+void FKP_FBP::computeBlock3b() {
     Array<Vector> meanX(m_task->countI);
     Array<Matrix> Dxx(m_task->countI);
     Array<Matrix> Dxz(m_task->countI);
@@ -117,10 +163,10 @@ void FOS::computeBlock3b() {
     for (int i = 0; i < m_task->countI; i++) {
         Q[i] = m_task->Pr(i+1);
         meanX[i] = Mean(m_sampleX, m_sampleI, i+1);
-        meanZ[i] = Mean(m_sampleZ, m_sampleI, i+1);
+        meanZ[i] = Mean(m_sampleS, m_sampleI, i+1);
         Dxx[i] = Cov(m_sampleX, m_sampleX, m_sampleI, i+1);
-        Dxz[i] = Cov(m_sampleX, m_sampleZ, m_sampleI, i+1);
-        Dzz[i] = Cov(m_sampleZ, m_sampleZ, m_sampleI, i+1);
+        Dxz[i] = Cov(m_sampleX, m_sampleS, m_sampleI, i+1);
+        Dzz[i] = Cov(m_sampleS, m_sampleS, m_sampleI, i+1);
 
         Gamma[i] = Dxz[i] * Pinv(Dzz[i]);
         kappa[i] = meanX[i] - Gamma[i]*meanZ[i];
@@ -128,16 +174,16 @@ void FOS::computeBlock3b() {
     }
 }
 
-void FOS::computeBlock3c() {
+void FKP_FBP::computeBlock3c() {
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
-        Xi[s] = computeProbabilityDensityN(Q, m_sampleZ[s], meanZ, Dzz);
+        Xi[s] = computeProbabilityDensityN(Q, m_sampleS[s], meanZ, Dzz);
         for (int i = 0; i < m_task->countI; i++) {
-            u[s][i] = Gamma[i]*m_sampleZ[s] + kappa[i];
+            u[s][i] = Gamma[i]*m_sampleS[s] + kappa[i];
         }
     }
 }
 
-void FOS::computeBlock4(long s) {
+void FKP_FBP::computeBlock4(long s) {
     Array<double> resOmega(m_task->countI);
     Array<Vector> resLambda(m_task->countI);
     Array<Matrix> resPsi(m_task->countI);
@@ -166,7 +212,7 @@ void FOS::computeBlock4(long s) {
     }
 }
 
-void FOS::computeBlock5(long s) {
+void FKP_FBP::computeBlock5(long s) {
     for (int i = 0; i < m_task->countI; i++) {
         Mu[s][i] = m_task->h(i+1, Lambda[s][i], Psi[s][i]);
         Delta[s][i] = m_task->G(i+1, Lambda[s][i], Psi[s][i]) - Lambda[s][i] * Mu[s][i].transpose();
@@ -174,7 +220,7 @@ void FOS::computeBlock5(long s) {
     }
 }
 
-void FOS::computeBlock6() {
+void FKP_FBP::computeBlock6() {
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         m_sampleX[s] = m_task->a(m_sampleI[s], m_sampleX[s]);
         m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
@@ -184,3 +230,4 @@ void FOS::computeBlock6() {
 } // end LogicDynamic
 
 } // end Filters
+
