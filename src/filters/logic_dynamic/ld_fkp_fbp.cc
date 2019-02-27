@@ -19,15 +19,18 @@ using Math::MakeBlockMatrix;
 FKP_FBP::FKP_FBP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
     : LogicDynamicFilter(params, task, id)
 {
-    long ny = long(m_task->dimY());
-    long p  = ny * long(m_params->orderMult());
-    string condit = initialConditWithType();
     string filter_identifier = "";
+    long ny;
     if (m_identifier == FILTER_ID::LDFBP) {
+        ny = long(m_task->dimX());
         filter_identifier = "ФБПлд";
-    } else if (m_identifier == FILTER_ID::LDFKP) {
+    } else {
+        ny = long(m_task->dimY());
         filter_identifier = "ФКПлд";
     }
+
+    long p  = ny * long(m_params->orderMult());
+    string condit = initialConditWithType();
     m_info->setName(m_task->info()->type() + filter_identifier + " (p=" + to_string(p) + condit + ")");
 }
 
@@ -46,15 +49,29 @@ void FKP_FBP::zeroIteration()
     Dzz.resize(m_task->countI);
 
     m_sampleS.resize(m_params->sampleSize());
-    long p = long(m_task->dimY()) * long(m_params->orderMult());
 
+    long p;
+    if (m_identifier == FILTER_ID::LDFBP) {
+        p = long(m_task->dimX()) * long(m_params->orderMult());
+    } else if (m_identifier == FILTER_ID::LDFKP) {
+        p = long(m_task->dimY()) * long(m_params->orderMult());
+    }
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         Xi[s].resize(m_task->countI);
         u[s].resize(m_task->countI);
-
-        m_sampleS[s] = Vector::Zero(m_task->dimY());
-        for (long i = 0; i < long(m_task->dimY()); i++) {
-            m_sampleS[s][i] = m_sampleY[s][i];
+        if (m_identifier == FILTER_ID::LDFBP) {
+            m_sampleS[s] = Vector::Zero(m_task->dimX());
+        } else {
+            m_sampleS[s] = Vector::Zero(m_task->dimY());
+        }
+        if (m_identifier == FILTER_ID::LDFBP) {
+            for (long i = 0; i < long(m_task->dimX()); i++) {
+                m_sampleS[s][i] = m_sampleX[s][i];
+            }
+        } else {
+            for (long i = 0; i < long(m_task->dimY()); i++) {
+                m_sampleS[s][i] = m_sampleY[s][i];
+            }
         }
     }
 }
@@ -125,7 +142,12 @@ void FKP_FBP::computeBlock2(long s) {
 }
 
 void FKP_FBP::computeBlock3a(long k) {
-    long m = long(m_task->dimY());
+    long m;
+    if (m_identifier == FILTER_ID::LDFBP) {
+        m = long(m_task->dimX());
+    } else {
+        m = long(m_task->dimY());
+    }
     long l = long(m_params->orderMult());
     long p = l*m;
     if (k != 0) {
@@ -136,7 +158,11 @@ void FKP_FBP::computeBlock3a(long k) {
                 m_sampleS[s] = Vector::Zero(sizeS+m);
                 for(long i = 0; i < sizeS+m; i++) {
                     if (i < m) {
-                        m_sampleS[s][i] = m_sampleY[s][i];
+                        if (m_identifier == FILTER_ID::LDFBP) {
+                            m_sampleS[s][i] = m_sampleX[s][i];
+                        } else if (m_identifier == FILTER_ID::LDFKP) {
+                            m_sampleS[s][i] = m_sampleY[s][i];
+                        }
                     } else {
                         m_sampleS[s][i] = def[i-m];
                     }
@@ -148,7 +174,11 @@ void FKP_FBP::computeBlock3a(long k) {
                     m_sampleS[s][i] = m_sampleS[s][i - m];
                 }
                 for (long i = 0; i < long(m); i++) {
-                    m_sampleS[s][i] = m_sampleY[s][i];
+                    if (m_identifier == FILTER_ID::LDFBP) {
+                        m_sampleS[s][i] = m_sampleX[s][i];
+                    } else if (m_identifier == FILTER_ID::LDFKP) {
+                        m_sampleS[s][i] = m_sampleY[s][i];
+                    }
                 }
             }
         }
