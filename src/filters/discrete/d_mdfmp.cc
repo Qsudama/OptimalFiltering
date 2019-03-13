@@ -50,22 +50,16 @@ void MDFMP::zeroIteration() {
     Vector        my;
     Matrix        Gamma, GammaY, GammaZ, DxyDxz, Ddelta, Dxy, Dxz;
 
-    Ddelta = Var(U);
-    my     = Mean(m_sampleY);
-    Dxy    = Cov(m_sampleX, m_sampleY);
-    Dxz    = Cov(m_sampleX, m_sampleZ);
-    MakeBlockMatrix(Dxy, Dxz, DxyDxz);
+    Gamma  = Cov(m_sampleX, U) * Pinv(Var(U));
+//    GammaY = Gamma.leftCols(m_task->dimY());
+//    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
 
-    Gamma  = DxyDxz * Pinv(Ddelta);
-    GammaY = Gamma.leftCols(m_task->dimY());
-    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
-
-    chi = m_result[0].meanX - GammaY * my - GammaZ * m_result[0].meanZ;
-    T   = m_result[0].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
+    chi = m_result[0].meanX - Gamma * Mean(U);
+    T   = m_result[0].varX - Gamma * Cov(m_sampleX, U).transpose();
 
     // Индекс s пробегает по всем элементам выборки:
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        E[s] = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + chi;
+        E[s] = Gamma * U[s] + chi;
     }
 }
 
@@ -144,12 +138,7 @@ Vector MDFMP::compute_Z(long i) {
 }
 
 Vector MDFMP::compute_E(long i) {
-    Matrix GammaY, GammaZ;
-
-    GammaY = Gamma.leftCols(m_task->dimY());
-    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
-
-    return GammaY * m_sampleY[i] + GammaZ * m_sampleZ[i] + chi;
+    return Gamma * U[i] + chi;
 }
 
 void MDFMP::compute_U(long i) {
@@ -167,13 +156,7 @@ void MDFMP::compute_U(long i) {
 
 
 Matrix MDFMP::compute_Gamma() {
-    Matrix Ddelta, Dxy, Dxz, DxyDxz;
-    Ddelta = Var(U);
-    Dxy    = Cov(m_sampleX, m_sampleY);
-    Dxz    = Cov(m_sampleX, m_sampleZ);
-    MakeBlockMatrix(Dxy, Dxz, DxyDxz);
-
-    return DxyDxz * Pinv(Ddelta);
+    return Cov(m_sampleX, U) * Pinv(Var(U));
 }
 
 Matrix MDFMP::compute_Psi() {
@@ -185,16 +168,8 @@ Matrix MDFMP::compute_L() {
 }
 
 Matrix MDFMP::compute_T() {
-    Matrix GammaY, GammaZ, Dxy, Dxz;
 
-    Dxy    = Cov(m_sampleX, m_sampleY);
-    Dxz    = Cov(m_sampleX, m_sampleZ);
-
-    GammaY = Gamma.leftCols(m_task->dimY());
-    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
-
-
-    return Var(m_sampleX) - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
+    return Var(m_sampleX) - Gamma * Cov(m_sampleX, U).transpose();
 }
 
 Matrix MDFMP::compute_H() {
@@ -203,15 +178,7 @@ Matrix MDFMP::compute_H() {
 
 
 Vector MDFMP::compute_chi() {
-    Matrix GammaY, GammaZ;
-    GammaY = Gamma.leftCols(m_task->dimY());
-    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
-
-    Vector mx = Mean(m_sampleX);
-    Vector gy = GammaY * Mean(m_sampleY);
-    Vector gz = GammaZ * Mean(m_sampleZ);
-
-    return mx - gy - gz;
+    return Mean(m_sampleX) - Gamma * Mean(U);
 }
 
 Vector MDFMP::compute_o() {

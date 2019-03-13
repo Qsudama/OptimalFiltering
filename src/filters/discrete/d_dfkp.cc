@@ -18,7 +18,9 @@ using Math::MakeBlockMatrix;
 
 DFKP::DFKP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ДФКПд (p=" + std::to_string(task->dimX()) + ")");
+    long ny = long(m_task->dimY());
+    long p = ny * long(m_params->orderMult());
+    m_info->setName(m_task->info()->type() + "ДФКПд (p=" + std::to_string(p) + ")");
 }
 
 void DFKP::zeroIteration() {
