@@ -15,9 +15,6 @@ LandingGauss::LandingGauss()
 }
 
 
-// TODO
-
-
 } // end Tasks::Discrete
 
 } // end Tasks
