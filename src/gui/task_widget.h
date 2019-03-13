@@ -40,7 +40,7 @@ public:
     bool taskIsNull(Core::FILTER_TYPE ftype);
 
     //! \brief Возвращает идентификатор выбранной в данный момент задачи.
-    Tasks::TASK_ID id() const;
+    TASK_ID id() const;
 
     //! \brief Возвращает название выбранной в данный момент задачи.
     const QString name() const;

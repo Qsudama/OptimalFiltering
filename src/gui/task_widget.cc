@@ -23,14 +23,17 @@ void TaskWidget::loadFonts()
 void TaskWidget::initControls()
 {
     m_cbTask = new QComboBox;
-    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (линеар)"));
-    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (гаусс)"));
-    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (линеар)"));
-    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (гаусс)"));
-    m_cbTask->addItem(tr("Скалярный пример (линеар)"));
-    m_cbTask->addItem(tr("Скалярный пример (гаусс)"));
-    m_cbTask->addItem(tr("Скалярный пример со сбоями измерителя (гаусс)"));
-    m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));
+    // Нужно отслеживать соответсвие названия задачи и сопостовляемого таска в TaskWidget::id()
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (линеар)"));                                     // 0
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (гаусс)"));                                        // 1
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (линеар)"));                                            // 2
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (гаусс)"));                                               // 3
+    m_cbTask->addItem(tr("Скалярный пример (линеар)"));                                                         // 4
+    m_cbTask->addItem(tr("Скалярный пример (гаусс)"));                                                            // 5
+    m_cbTask->addItem(tr("Скалярный пример со сбоями измерителя (гаусс)"));                   // 6
+    m_cbTask->addItem(tr("3-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));             // 7
+    m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));             // 8
+//    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля  со сбоями 2-х датчиков (линеар)"));             // 9
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
@@ -71,13 +74,13 @@ void TaskWidget::onBtnParametersClicked()
 
 void TaskWidget::onCbTaskChanged(int)
 {
-    Tasks::TASK_ID taskId = id();
+    TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-    if (taskId == Tasks::TASK_ID::LandingTest || taskId == Tasks::TASK_ID::LandingRejection) {
+    if (taskId == TASK_ID::LDScalarRejectionGauss || taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear || taskId == TASK_ID::LDVanDerPolRejectionLinear) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId);
-    } else if(taskId == Tasks::TASK_ID::ScalarLinear || taskId == Tasks::TASK_ID::ScalarGauss) {
+    } else if(taskId == TASK_ID::ScalarLinear || taskId == TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
-    } else if (taskId == Tasks::TASK_ID::ScalarGauss) {
+    } else if (taskId == TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
     } else {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId);
@@ -122,29 +125,31 @@ bool TaskWidget::taskIsNull(Core::FILTER_TYPE ftype)
 }
 
 
-Tasks::TASK_ID TaskWidget::id() const
+TASK_ID TaskWidget::id() const
 {
     switch (m_cbTask->currentIndex()) {
     case 0:
-        return Tasks::TASK_ID::LandingLinear;
+        return TASK_ID::LandingLinear;
     case 1:
-        return Tasks::TASK_ID::LandingGauss;
+        return TASK_ID::LandingGauss;
     case 2:
-        return Tasks::TASK_ID::VanDerPolLinear;
+        return TASK_ID::VanDerPolLinear;
     case 3:
-        return Tasks::TASK_ID::VanDerPolGauss;
+        return TASK_ID::VanDerPolGauss;
     case 4:
-        return Tasks::TASK_ID::ScalarLinear;
+        return TASK_ID::ScalarLinear;
     case 5:
-        return Tasks::TASK_ID::ScalarGauss;
+        return TASK_ID::ScalarGauss;
     case 6:
-        return Tasks::TASK_ID::LandingTest;
+        return TASK_ID::LDScalarRejectionGauss;
     case 7:
-        return Tasks::TASK_ID::LandingRejection;
+        return TASK_ID::LDLandingRejection3DLinear;
     case 8:
-        return Tasks::TASK_ID::VanDerPolRejection;
+        return TASK_ID::LDLandingRejection6DLinear;
+    case 9:
+        return TASK_ID::LDVanDerPolRejectionLinear;
     default:
-        return Tasks::TASK_ID::LandingLinear;
+        return TASK_ID::LandingLinear;
     }
 }
 

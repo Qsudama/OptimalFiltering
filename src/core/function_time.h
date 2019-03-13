@@ -1,7 +1,6 @@
 #ifndef FUNCTION_TIME_H
 #define FUNCTION_TIME_H
 
-
 namespace Core
 {
 
@@ -62,7 +61,6 @@ public:
      Этот шаг задается в конструкторе и может быть изменен вызовом setStep(double newStep).
     */
     void advanceTime();
-
 
 protected:
     double m_time; /*!< Время. */

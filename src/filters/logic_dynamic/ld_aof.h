@@ -19,7 +19,7 @@ class AOF : public Core::LogicDynamicFilter
 
 public:
     //! \brief Конструктор.
-    AOF(Core::PtrFilterParameters params, Core::PtrTask task);
+    AOF(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id);
 
 
 protected:
@@ -43,10 +43,10 @@ protected:
 
 private:
 
-    void computeBlock1(long s);
-    void computeBlock2(long s);
-    void computeBlock4(long s);
-    void computeBlock5(long s);
+    void computeBlock1(long s, size_t k);
+    void computeBlock2(long s, size_t k);
+    void computeBlock4(long s, size_t k);
+    void computeBlock5(long s, size_t k);
     void computeBlock6();
 };
 

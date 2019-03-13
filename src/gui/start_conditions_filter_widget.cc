@@ -25,8 +25,8 @@ void StartConditionsFilterWidget::loadFonts()
 void StartConditionsFilterWidget::initControls()
 {
     m_InitialConditionsFilter = new QComboBox;
-    m_InitialConditionsFilter->addItem(tr("Метод гауссовского приближения"));
-    m_InitialConditionsFilter->addItem(tr("Метод Монте – Карло"));
+    m_InitialConditionsFilter->addItem(tr("Гауссовского приближения"));
+    m_InitialConditionsFilter->addItem(tr("Монте – Карло"));
     m_InitialConditionsFilter->setCurrentIndex(0);
 }
 

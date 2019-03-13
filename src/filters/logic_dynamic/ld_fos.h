@@ -17,7 +17,7 @@ class FOS : public Core::LogicDynamicFilter
 
 public:
     //! \brief Конструктор.
-    FOS(Core::PtrFilterParameters params, Core::PtrTask task);
+    FOS(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id);
 
 
 protected:

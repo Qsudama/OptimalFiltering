@@ -1,5 +1,5 @@
-#ifndef LD_LANDING_REJECTION_LINEAR_H
-#define LD_LANDING_REJECTION_LINEAR_H
+#ifndef LD_SCALAR_REJECTION_GAUSS_H
+#define LD_SCALAR_REJECTION_GAUSS_H
 
 #include "src/core/logic_dynamic_task.h"
 #include "src/math/math.h"
@@ -18,12 +18,12 @@ namespace LogicDynamic
  * оптимальной структуры.
  */
 
-class LandingRejectionLinear : public Core::LogicDynamicTask
+class ScalarRejectionGauss : public Core::LogicDynamicTask
 {
 
 public:
     //! \brief Конструктор.
-    LandingRejectionLinear();
+    ScalarRejectionGauss();
 
     Vector a(int i, const Vector &x) const override;
     Vector b(int i, const Vector &x) const override;
@@ -38,8 +38,7 @@ public:
 
     double Pr(int i) const override;
 
-    Array<int> generateArrayI(int sizeS) const override;
-
+    Array<int> generateArrayI(int sizeS, int k) const override;
 
 protected:
     Matrix dadx(int i, const Vector &x) const override;
@@ -49,29 +48,26 @@ protected:
 
     void loadParams() override;
 
-    double e(const Vector &x) const;
-    double d(const Vector &x) const;
-    double Ex(const Vector &x) const;
-    double Sk(double t) const;
-    double gammaX(int i) const;
-    double gammaY(int i) const;
-
-    Matrix BwdbdwBwt(int i, const Vector &x) const;
-    Vector bForZeroW(int i, const Vector &x) const;
+    double C(int i) const;
 
 protected:
-    double m_turnTime;
     double m_e;
-    double gamMinX; /*!< Для задачи со сбоями акселерометра */
-    double gamMinY; /*!< Для задачи со сбоями акселерометра */
+    double cI2; /*!< Для скалярной тестовой задачи*/
     int countIInTask; /*!< Количество режимов в задаче*/
 
+    double A1 = 0.9;
+    double A2 = 0.7071067812;
+//    static constexpr double R0 = 0.013;
+//    static constexpr double GG = 3.711;
+//    static constexpr double RR = 3390000.0;
 
-    static constexpr double KB = 0.3; // b
-    static constexpr double BB = 0.09; // Beta
-    static constexpr double  CC = 0.043333333333333333; // c = 0.5*pho_0*sigma_x
-    static constexpr double GG = 0.00372; // g
-    static constexpr double RR = 3400.0; // R
+
+//    static constexpr double KB = 0.3;
+//    static constexpr double BB = 0.09;
+//    static constexpr double SX = 1.0 / 150.0;
+//    static constexpr double R0 = 0.013;
+//    static constexpr double GG = 3.711E-3;
+//    static constexpr double RR = 3390.0;
 
 };
 
@@ -80,4 +76,5 @@ protected:
 
 } // end Tasks
 
-#endif // LD_LANDING_REJECTION_LINEAR_H
+
+#endif // LD_SCALAR_REJECTION_GAUSS_H

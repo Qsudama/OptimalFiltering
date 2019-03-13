@@ -35,7 +35,7 @@ signals:
      \param atype - идентификатор метода приближения (аппроксимации).
      \param id    - идентификатор алгоритма.
     */
-    void start(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, Filters::FILTER_ID id);
+    void start(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTER_ID id);
 
     /*!
      \brief Сигнал. Отправляет сообщение о том, что текущая вкладка с кнопками изменилась.
@@ -73,6 +73,7 @@ private slots:
     void onBtnLDAofClicked();
     void onBtnLDFosClicked();
     void onBtnLDFkpClicked();
+    void onBtnLDFbpClicked();
     //@}
 
 
@@ -111,6 +112,7 @@ private:
     QPushButton *m_btnLDAof;
     QPushButton *m_btnLDFos;
     QPushButton *m_btnLDFkp;
+    QPushButton *m_btnLDFbp;
 };
 
 

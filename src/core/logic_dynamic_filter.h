@@ -6,6 +6,7 @@
 #include "src/math/linear_algebra.h"
 #include "src/math/constants.h"
 
+using namespace std;
 
 namespace Core
 {
@@ -21,7 +22,7 @@ class LogicDynamicFilter : public Filter
 
 public:
     //! \brief Конструктор.
-    LogicDynamicFilter(PtrFilterParameters params, PtrTask task);
+    LogicDynamicFilter(PtrFilterParameters params, PtrTask task, FILTER_ID id);
 
 protected:
     void init() override;
@@ -38,9 +39,19 @@ protected:
     */
     void zeroIteration() override;
 
-    double probabilityDensityN(const Vector &u, const Vector &m, const Matrix &D);
+    double execute_time_filter() override;
+
+    double calculate_d(const Matrix &D);
+    double calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
+
+    double probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
     Array<double> computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
                                              Array<Vector> m, Array<Matrix> D);
+
+
+    /*! \brief Функция возвращающая тип моделирования начальных условий фильтра для вывода на экран
+    */
+    string initialConditWithType();
 
 protected:
     PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
@@ -56,10 +67,14 @@ protected:
     Array<Array<Vector>> Sigma;
     Array<Array<Matrix>> Upsilon;
 
+    FILTER_ID m_identifier;
+
 private:
 
     void computeZeroVectors();
     void computeBlock0();
+
+    bool m_bad;
 };
 
 

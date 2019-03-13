@@ -1,6 +1,7 @@
 #ifndef TASKS_H
 #define TASKS_H
 
+#include "tasks_identifiers.h"
 #include "src/core/types_info.h"
 #include "src/tasks/continuous/c_landing_gauss.h"
 #include "src/tasks/continuous/c_landing_linear.h"
@@ -14,30 +15,15 @@
 #include "src/tasks/discrete/d_landing_linear.h"
 #include "src/tasks/discrete/d_scalar_linear.h"
 #include "src/tasks/discrete/d_scalar_gauss.h"
-#include "src/tasks/logic_dynamic/ld_landing_test_linear.h"
-#include "src/tasks/logic_dynamic/ld_landing_rejection_linear.h"
-#include "src/tasks/logic_dynamic/ld_vanderpol_linear.h"
+#include "src/tasks/logic_dynamic/ld_scalar_rejection_gauss.h"
+#include "src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.h"
+#include "src/tasks/logic_dynamic/ld_landing_rejection_3d_linear.h"
+#include "src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.h"
 
 //! \brief Модуль, содержащий реализации конкретных задач для фильтров.
 
 namespace Tasks
 {
-
-
-//! \brief Набор идентификаторов имеющихся задач.
-
-enum class TASK_ID {
-    LandingLinear,    ///< Спуска ЛА на планету (линеаризованный).
-    LandingGauss,     ///< Спуска ЛА на планету (гауссовский).
-    VanDerPolLinear,  ///< Осциллятор Ван-дер-Поля (линеаризованный).
-    VanDerPolGauss,   ///< Осциллятор Ван-дер-Поля (гауссовский).
-    ScalarLinear,     ///< Тестовый скалярный пример (линеаризованный).
-    ScalarGauss,      ///< Тестовый скалярный пример (гауссовский).
-    LandingTest,      ///< Спуск ЛА с неполной информацией. Тестовый пример
-    LandingRejection, ///< Спуск ЛА с отказами.
-    VanDerPolRejection, ///< Осциллятор Ван-дер-Поля с отказами.
-};
-
 
 //! \brief Фабричный класс для создания экземпляров классов задач.
 

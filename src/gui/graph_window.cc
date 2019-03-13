@@ -131,7 +131,7 @@ void GraphWindow::initPlotter()
     connect(m_plotter->yAxis, SIGNAL(rangeChanged(QCPRange)), m_plotter->yAxis2, SLOT(setRange(QCPRange)));
 
     QFontMetrics *metric    = new QFontMetrics(m_plotterSubTitleFont);
-    int           minWidth  = metric->width(tr("размер выборки 99999, шаг интегрирования 0.0001, между измерениями 9999.9999"));
+    int           minWidth  = metric->width(tr("шаг интегрирования 0.0001, между измерениями 9999.9999"));
     int           minHeight = int(0.6 * minWidth);
 
     m_plotter->setMinimumWidth(minWidth);
@@ -454,7 +454,8 @@ void GraphWindow::updatePlotter()
     }
     QString subTitle = m_currentSheet->subTitleLabel();
     if (subTitle.length() == 0) {
-        subTitle = tr("размер выборки <...>, шаг интегрирования <...>, между измерениями <...>");
+//        subTitle = tr("размер выборки <...>, шаг интегрирования <...>, между измерениями <...>");
+        subTitle = tr("Шаг интегрирования <...>, между измерениями <...>");
     }
 
     QCPTextElement *plotTitle = new QCPTextElement(m_plotter, title);
