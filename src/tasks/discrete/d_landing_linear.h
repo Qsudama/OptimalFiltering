@@ -56,7 +56,7 @@ protected:
     static constexpr double BB = 0.09;
     static constexpr double CC = 0.043333333333333333333333333333333333333333333333333;
     static constexpr double GG = 3.711E-3;
-    static constexpr double RR = 3390.0;
+    static constexpr double RR = 3400.0;
 };
 
 

@@ -84,26 +84,25 @@ void MFOS::computeParams(size_t k, Array<Vector> &sampleU, Array<Vector> &sample
 
     // Индекс s пробегает по всем элементам выборки:
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        MakeBlockVector(m_sampleY[s], m_sampleZ[s], sampleDelta[s]);
+        Uint argsCount = m_params->argumentsCount();
+        if (argsCount == 2) {
+            sampleDelta[s] = m_sampleZ[s];
+        } else if (argsCount == 3) {
+            MakeBlockVector(m_sampleY[s], m_sampleZ[s], sampleDelta[s]);
+        }
     }
 
-    Ddelta = Var(sampleDelta);
-    my     = Mean(m_sampleY);
-    Dxy    = Cov(m_sampleX, m_sampleY);
-    Dxz    = Cov(m_sampleX, m_sampleZ);
-    MakeBlockMatrix(Dxy, Dxz, DxyDxz);
+    Gamma  = Cov(m_sampleX, sampleDelta) * Pinv(Var(sampleDelta));
+//    GammaY = Gamma.leftCols(m_task->dimY());
+//    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
 
-    Gamma  = DxyDxz * Pinv(Ddelta);
-    GammaY = Gamma.leftCols(m_task->dimY());
-    GammaZ = Gamma.rightCols(m_task->dimX()); // dimZ = dimX
-
-    chi = m_result[k].meanX - GammaY * my - GammaZ * m_result[k].meanZ;
-    T   = m_result[k].varX - GammaY * Dxy.transpose() - GammaZ * Dxz.transpose();
+    chi = m_result[0].meanX - Gamma * Mean(sampleDelta);
+    T   = m_result[0].varX - Gamma * Cov(m_sampleX, sampleDelta).transpose();
 
     m_task->setTime(m_result[k].time);
     // Индекс s пробегает по всем элементам выборки:
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        sampleU[s] = GammaY * m_sampleY[s] + GammaZ * m_sampleZ[s] + chi;
+        sampleU[s] = Gamma * sampleDelta[s] + chi;
         sampleS[s] = m_task->tau(sampleU[s], T);
     }
 }
