@@ -15,6 +15,8 @@
 #include "src/tasks/discrete/d_landing_linear.h"
 #include "src/tasks/discrete/d_scalar_linear.h"
 #include "src/tasks/discrete/d_scalar_gauss.h"
+#include "src/tasks/discrete/d_vanderpol_linear.h"
+#include "src/tasks/discrete/d_vanderpol_gauss.h"
 #include "src/tasks/logic_dynamic/ld_scalar_rejection_gauss.h"
 #include "src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.h"
 #include "src/tasks/logic_dynamic/ld_landing_rejection_3d_linear.h"

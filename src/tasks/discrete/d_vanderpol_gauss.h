@@ -1,0 +1,4 @@
+#ifndef D_VANDERPOL_GAUSS_H
+#define D_VANDERPOL_GAUSS_H
+
+#endif // D_VANDERPOL_GAUSS_H
