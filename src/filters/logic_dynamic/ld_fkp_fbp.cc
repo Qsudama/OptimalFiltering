@@ -144,40 +144,40 @@ void FKP_FBP::computeBlock3a(long k) {
     }
     long l = long(m_params->orderMult());
     long p = l*m;
-        if (k <= l-1) {
-            for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                int sizeS = m_sampleS[s].size();
-                if (k == 0) {
-                    sizeS = 0;
-                }
-                Vector def = Vector(m_sampleS[s]);
-                m_sampleS[s] = Vector::Zero(sizeS+m);
-                for(long i = 0; i < sizeS+m; i++) {
-                    if (i < m) {
-                        if (m_identifier == FILTER_ID::LDFBP) {
-                            m_sampleS[s][i] = m_sampleZ[s][i];
-                        } else if (m_identifier == FILTER_ID::LDFKP) {
-                            m_sampleS[s][i] = m_sampleY[s][i];
-                        }
-                    } else {
-                        m_sampleS[s][i] = def[i-m];
-                    }
-                }
+    if (k <= l-1) {
+        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+            int sizeS = m_sampleS[s].size();
+            if (k == 0) {
+                sizeS = 0;
             }
-        } else {
-            for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                for (long i = p - 1; i >= m; i--) {
-                    m_sampleS[s][i] = m_sampleS[s][i - m];
-                }
-                for (long i = 0; i < long(m); i++) {
+            Vector def = Vector(m_sampleS[s]);
+            m_sampleS[s] = Vector::Zero(sizeS+m);
+            for(long i = 0; i < sizeS+m; i++) {
+                if (i < m) {
                     if (m_identifier == FILTER_ID::LDFBP) {
                         m_sampleS[s][i] = m_sampleZ[s][i];
                     } else if (m_identifier == FILTER_ID::LDFKP) {
                         m_sampleS[s][i] = m_sampleY[s][i];
                     }
+                } else {
+                    m_sampleS[s][i] = def[i-m];
                 }
             }
         }
+    } else {
+        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+            for (long i = p - 1; i >= m; i--) {
+                m_sampleS[s][i] = m_sampleS[s][i - m];
+            }
+            for (long i = 0; i < long(m); i++) {
+                if (m_identifier == FILTER_ID::LDFBP) {
+                    m_sampleS[s][i] = m_sampleZ[s][i];
+                } else if (m_identifier == FILTER_ID::LDFKP) {
+                    m_sampleS[s][i] = m_sampleY[s][i];
+                }
+            }
+        }
+    }
 }
 
 void FKP_FBP::computeBlock3b() {
