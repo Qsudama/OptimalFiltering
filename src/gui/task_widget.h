@@ -61,6 +61,11 @@ private slots:
 
 private:
     /*!
+     \brief Настраивает окно параметров задачи.
+    */
+    void setupParametersWindow();
+
+    /*!
      \brief Загружает шрифты и устанавливает их параметры (начертание, размер и т.д.).
      \see FontManager.
     */
