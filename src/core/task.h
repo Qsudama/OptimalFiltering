@@ -13,6 +13,7 @@
 
 #include "src/helpers/log_in_file_manager.h"
 #include "src/helpers/log_in_console_manager.h"
+#include "src/helpers/alert_helper.h"
 
 using Math::Matrix;
 using Math::Vector;
