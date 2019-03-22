@@ -69,7 +69,11 @@ void Filter::init()
 
 void Filter::writeResult(size_t n, bool copy)
 {
-    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
+//    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
+    if (n >= m_result.size()) {
+        AlertHelper::showErrorAlertWithText("Filter::writeResult\nВыход за пределы массива!");
+        return;
+    }
 
     timerInstance.interrupt_timer();
 
@@ -101,8 +105,11 @@ void Filter::writeResult(size_t n, bool copy)
 
 void Filter::writeResult(size_t n, int countI)
 {
-    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
-
+//    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
+    if (n >= m_result.size()) {
+        AlertHelper::showErrorAlertWithText("Filter::writeResult\nВыход за пределы массива!");
+        return;
+    }
     timerInstance.interrupt_timer();
 
     Array<Vector> mx(countI);

@@ -20,7 +20,7 @@
 #include <memory>
 
 #include "src/helpers/timer_manager.h"
-
+#include "src/helpers/alert_helper.h"
 
 using Math::Matrix;
 using Math::Vector;

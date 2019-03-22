@@ -5,6 +5,8 @@
 
 #include "src/helpers/log_in_file_manager.h"
 
+#include "src/helpers/alert_helper.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_tablesIsVisible(false)
@@ -361,15 +363,7 @@ void MainWindow::addTable(const Core::FilterOutput &data, const std::string &lab
     m_btnShowHideTables->setEnabled(true);
 }
 
-void MainWindow::showErrorMessage (void)
+void MainWindow::showErrorMessage(void)
 {
-    QMessageBox msgBox;
-    msgBox.setText("Внимание");
-    msgBox.setInformativeText("Выбран не верный тип фильтра для данной задачи");
-    msgBox.setIcon(QMessageBox::Information);
-    msgBox.setDefaultButton(QMessageBox::Ok);
-    QSpacerItem* horizontalSpacer = new QSpacerItem(300, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    QGridLayout* layout = (QGridLayout*)msgBox.layout();
-    layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
-    msgBox.exec();
+    AlertHelper::showErrorAlertWithText("Выбран не верный тип фильтра для данной задачи");
 }
