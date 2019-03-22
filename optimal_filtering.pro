@@ -326,7 +326,8 @@ HEADERS += \
     src/filters/filters_identifiers.h \
     src/tasks/tasks_identifiers.h \
     src/tasks/discrete/d_vanderpol_linear.h \
-    src/tasks/discrete/d_vanderpol_gauss.h
+    src/tasks/discrete/d_vanderpol_gauss.h \
+    src/helpers/alert_helper.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -402,4 +403,5 @@ SOURCES += \
     src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.cc \
     src/filters/logic_dynamic/ld_fkp_fbp.cc \
     src/tasks/discrete/d_vanderpol_linear.cpp \
-    src/tasks/discrete/d_vanderpol_gauss.cpp
+    src/tasks/discrete/d_vanderpol_gauss.cpp \
+    src/helpers/alert_helper.cc
