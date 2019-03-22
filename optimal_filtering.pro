@@ -308,7 +308,6 @@ HEADERS += \
     src/core/logic_dynamic_task.h \
     src/filters/logic_dynamic/ld_aof.h \
     src/filters/logic_dynamic/ld_fos.h \
-    src/filters/logic_dynamic/ld_fkp.h \
     src/filters/discrete/d_dfmp.h \
     src/filters/discrete/d_fkp.h \
     src/filters/discrete/d_dfkp.h \
@@ -387,7 +386,6 @@ SOURCES += \
     src/core/logic_dynamic_task.cc \
     src/filters/logic_dynamic/ld_aof.cc \
     src/filters/logic_dynamic/ld_fos.cc \
-    src/filters/logic_dynamic/ld_fkp.cc \
     src/filters/discrete/d_dfkp.cc \
     src/filters/discrete/d_dfmp.cc \
     src/filters/discrete/d_fkp.cc \

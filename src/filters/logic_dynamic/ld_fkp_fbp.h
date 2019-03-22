@@ -47,7 +47,7 @@ private:
     Array<double> Q;
     Array<Vector> kappa;
     Array<Matrix> T;
-    Array<Vector> meanZ;
+    Array<Vector> meanS;
     Array<Matrix> Gamma;
     Array<Matrix> Dzz;
 
