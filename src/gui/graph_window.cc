@@ -1,5 +1,7 @@
 #include "graph_window.h"
 
+#include "src/helpers/alert_helper.h"
+
 GraphWindow::GraphWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -423,8 +425,11 @@ int GraphWindow::countSheets() const
 
 GraphSheet &GraphWindow::sheet(int index)
 {
-    assert(0 <= index && index < m_sheets.size() && "GraphWindow::sheet(index) : out of range");
-
+//    assert(0 <= index && index < m_sheets.size() && "GraphWindow::sheet(index) : out of range");
+    if (index <= 0 && index >= m_sheets.size()) {
+        AlertHelper::showErrorAlertWithText("GraphWindow::sheet\nВыход за пределы!");
+        return m_sheets[0];
+    }
     return m_sheets[index];
 }
 
