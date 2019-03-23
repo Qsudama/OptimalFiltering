@@ -47,6 +47,9 @@ void DFOS::algorithm()
             }
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 m_sampleZ[s] = Gamma * m_sampleZ[s] + kappa;
+                if (s == trajectoryNumber) {
+                    m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
+                }
             }
             writeResult(n);
         }
@@ -55,13 +58,16 @@ void DFOS::algorithm()
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                m_sampleY[s] = m_task->c(m_sampleX[s]); // = Yk (Y в момент t = tk)
+                 m_sampleY[s] = m_task->c(m_sampleX[s], m_params->measurementStep()); // = Yk (Y в момент t = tk)
 
-                h = m_task->h(m_sampleZ[s], T);
-                G = m_task->G(m_sampleZ[s], T);
-                F = m_task->F(m_sampleZ[s], T);
+                h = m_task->h(m_sampleZ[s], T, m_params->measurementStep());
+                G = m_task->G(m_sampleZ[s], T, m_params->measurementStep());
+                F = m_task->F(m_sampleZ[s], T, m_params->measurementStep());
 
                 m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
+                if (s == trajectoryNumber) {
+                    m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
+                }
             }
             writeResult(n);
         }

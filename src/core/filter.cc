@@ -1,5 +1,6 @@
 #include "filter.h"
 #include <ctime>
+#include "src/math/math.h"
 
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
@@ -11,7 +12,7 @@ namespace Core
 Filter::Filter(PtrFilterParameters params)
     :
 #ifdef QT_ENABLED
-     QObject(nullptr)
+    QObject(nullptr)
 #endif
     , timerInstance(TimerManager::Instance())
     , m_params(params)
@@ -59,6 +60,7 @@ void Filter::init()
     m_sampleY.resize(m_params->sampleSize());
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
+    m_realizationE.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount() * m_params->predictionCount() * m_params->integrationCount());
     m_result.resize(size);
@@ -85,6 +87,9 @@ void Filter::writeResult(size_t n, bool copy)
         m_result[n].meanE = m_result[n - 1].meanE;
         m_result[n].varZ  = m_result[n - 1].varZ;
         m_result[n].varE  = m_result[n - 1].varE;
+        m_result[n].meanIntegral = m_result[n - 1].meanIntegral + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].SeBoundaryUp  = m_result[n - 1].SeBoundaryUp;
+        m_result[n].SeBoundaryDown  = m_result[n - 1].SeBoundaryDown;
     } else {
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
@@ -93,6 +98,9 @@ void Filter::writeResult(size_t n, bool copy)
         m_result[n].varZ  = Var(m_sampleZ, m_result[n].meanZ);
         m_result[n].meanE = Mean(m_sampleE);
         m_result[n].varE  = Var(m_sampleE, m_result[n].meanE);
+        m_result[n].meanIntegral = m_result[n - 1].meanIntegral + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].SeBoundaryUp  = m_result[n].meanE(0) + 3 * Math::sqrt(m_result[n].varE(0, 0));
+        m_result[n].SeBoundaryDown  = m_result[n].meanE(0) - 3 * Math::sqrt(m_result[n].varE(0, 0));
     }
 
 #ifdef QT_ENABLED

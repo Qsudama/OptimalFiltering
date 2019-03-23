@@ -40,7 +40,7 @@ public:
 
         Шум \f$W_k\f$ генерируется внутри.
     */
-    virtual Vector c(const Vector &x) const = 0;
+    virtual Vector c(const Vector &x, double measurementStep) const = 0;
 
     /*! \brief Структурная функция прогноза \f$\tau(t, m, D)\f$.
 
@@ -80,7 +80,7 @@ public:
 
         * * линеаризованного приближения: \f[h_k(m, D) = c_k(m, M[W_k]).\f]
     */
-    virtual Vector h(const Vector &m, const Matrix &D) const = 0;
+    virtual Vector h(const Vector &m, const Matrix &D, double measurementStep) const = 0;
 
     /*! \brief Структурная функция коррекции \f$G_k(m, D)\f$.
 
@@ -90,7 +90,7 @@ public:
 
         * * линеаризованного приближения: \f[G_k(m, D) = \frac{d}{dm}c_k(m,M[W_k]).\f]
     */
-    virtual Matrix G(const Vector &m, const Matrix &D) const = 0;
+    virtual Matrix G(const Vector &m, const Matrix &D, double measurementStep) const = 0;
 
     /*! \brief Структурная функция коррекции \f$F_k(m, D)\f$.
 
@@ -104,7 +104,7 @@ public:
 
         Здесь \f$C_k^x(x) = \frac{d}{dx} c_k(x, M[W_k]),\ C_k^w(x) = \frac{d}{dw} c_k(x, M[W_k])\f$.
     */
-    virtual Matrix F(const Vector &m, const Matrix &D) const = 0;
+    virtual Matrix F(const Vector &m, const Matrix &D, double measurementStep) const = 0;
 };
 
 

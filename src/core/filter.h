@@ -33,6 +33,8 @@ using Math::RowVector;
  Большая часть классов здесь абстрактные, т.е. предоставляют лишь общие интерфейсы.
 */
 
+const int trajectoryNumber = 401;
+
 namespace Core
 {
 
@@ -130,6 +132,8 @@ protected:
     Array<int>    m_sampleI; /*!< Массив для выборки режимов (Только для логик-динамических фильтров). */
 
     Math::MultivariateNormalDistribution m_normalRand; /*!< Генератор гауссовских случайных векторов. */
+
+    Array<Vector> m_realizationE;
 };
 
 

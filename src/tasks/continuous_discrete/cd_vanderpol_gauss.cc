@@ -46,18 +46,17 @@ Matrix VanDerPolGauss::A(const Vector &m, const Matrix &D) const
     return res;
 }
 
-Matrix VanDerPolGauss::G(const Vector & /*m*/, const Matrix & /*D*/) const
+Matrix VanDerPolGauss::G(const Vector & /*m*/, const Matrix & /*D*/, double measurementStep) const
 {
     return Matrix::Identity(2, 2); // WARNING: size?
 }
 
-Matrix VanDerPolGauss::F(const Vector & /*m*/, const Matrix &D) const
+Matrix VanDerPolGauss::F(const Vector & /*m*/, const Matrix &D, double measurementStep) const
 {
     Matrix res = D;
 
-    res(0, 0) += m_varW(0, 0);
-    res(1, 1) += m_varW(1, 1);
-
+    res(0, 0) += 1.0 / measurementStep * m_varW(0, 0);
+    res(1, 1) += 1.0 / measurementStep * m_varW(1, 1);
     return res;
 }
 
