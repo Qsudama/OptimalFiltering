@@ -7,6 +7,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 
+#include "src/helpers/alert_helper.h"
 
 FilterResultsTable::FilterResultsTable(const Core::FilterOutput &data, const std::string &label,
                                        const Math::Vector &scale, QWidget *parent)
@@ -37,8 +38,11 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
 {
     int dim = int(data[0].meanX.size());
 
-    assert(dim == scale.size() && "FilterResultsTable::initTable(data, scale) : corrupt dimension of scale");
-
+//    assert(dim == scale.size() && "FilterResultsTable::initTable(data, scale) : corrupt dimension of scale");
+    if (dim != scale.size()) {
+        AlertHelper::showErrorAlertWithText("FilterResultsTable::initTable\ndim != scale.size()");
+        return;
+    }
     int rows = int(data.size());
     int cols = 1 + 4 * dim;
 
