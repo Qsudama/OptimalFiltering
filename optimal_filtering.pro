@@ -327,7 +327,10 @@ HEADERS += \
     src/tasks/tasks_identifiers.h \
     src/tasks/discrete/d_vanderpol_linear.h \
     src/tasks/discrete/d_vanderpol_gauss.h \
-    src/helpers/alert_helper.h
+    src/helpers/alert_helper.h \
+    src/tasks/continuous_discrete/cd_scalar_linear.h \
+    src/tasks/continuous/c_scalar_gauss.h \
+    src/tasks/continuous/c_scalar_linear.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -404,4 +407,7 @@ SOURCES += \
     src/filters/logic_dynamic/ld_fkp_fbp.cc \
     src/tasks/discrete/d_vanderpol_linear.cpp \
     src/tasks/discrete/d_vanderpol_gauss.cpp \
-    src/helpers/alert_helper.cc
+    src/helpers/alert_helper.cc \
+    src/tasks/continuous_discrete/cd_scalar_linear.cc \
+    src/tasks/continuous/c_scalar_gauss.cc \
+    src/tasks/continuous/c_scalar_linear.cc

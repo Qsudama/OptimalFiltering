@@ -50,6 +50,9 @@ void AOF::algorithm()
             m_sampleP[s] =
                 m_sampleP[s] + (A * m_sampleP[s] + m_sampleP[s] * A.transpose() + Theta) * m_params->integrationStep();
             m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
+            if (s == trajectoryNumber) {
+                m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
+            }
         }
         m_task->setTime(m_result[n].time);
 
@@ -57,16 +60,19 @@ void AOF::algorithm()
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                m_sampleY[s] = m_task->c(m_sampleX[s]);
+                m_sampleY[s] = m_task->c(m_sampleX[s], m_params->measurementStep());
 
-                h = m_task->h(m_sampleZ[s], m_sampleP[s]);
-                G = m_task->G(m_sampleZ[s], m_sampleP[s]);
-                F = m_task->F(m_sampleZ[s], m_sampleP[s]);
+                h = m_task->h(m_sampleZ[s], m_sampleP[s], m_params->measurementStep());
+                G = m_task->G(m_sampleZ[s], m_sampleP[s], m_params->measurementStep());
+                F = m_task->F(m_sampleZ[s], m_sampleP[s], m_params->measurementStep());
                 K = m_sampleP[s] * G.transpose() * Pinv(F);
 
                 m_sampleZ[s] = m_sampleZ[s] + K * (m_sampleY[s] - h);
                 m_sampleP[s] = m_sampleP[s] - K * G * m_sampleP[s];
                 m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
+                if (s == trajectoryNumber) {
+                    m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
+                }
             }
         }
         writeResult(n);

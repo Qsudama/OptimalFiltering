@@ -23,7 +23,7 @@ void GraphWindow::loadFonts()
     m_plotterTitleFont         = FontManager::instance().regularBold(GuiConfig::FONT_SIZE_HUGE);
     m_plotterSubTitleFont      = FontManager::instance().regular(GuiConfig::FONT_SIZE_LARGE);
     m_plotterAxesLabelFont     = FontManager::instance().regular(GuiConfig::FONT_SIZE_LARGE);
-    m_plotterLegendFont        = FontManager::instance().regular(GuiConfig::FONT_SIZE_BIG);
+    m_plotterLegendFont        = FontManager::instance().regular(GuiConfig::FONT_SIZE_HUGE);
     m_plotterAxesTickLabelFont = FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL);
 }
 

@@ -27,8 +27,8 @@ protected:
     Vector tau(const Vector &m, const Matrix &D) const override;
     Matrix Theta(const Vector &m, const Matrix &D) const override;
     Matrix A(const Vector &m, const Matrix &D) const override;
-    Matrix G(const Vector &m, const Matrix &D) const override;
-    Matrix F(const Vector &m, const Matrix &D) const override;
+    Matrix G(const Vector &m, const Matrix &D, double measurementStep) const override;
+    Matrix F(const Vector &m, const Matrix &D, double measurementStep) const override;
 };
 
 
