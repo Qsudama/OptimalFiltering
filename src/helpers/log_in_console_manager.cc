@@ -28,7 +28,6 @@ void LogInConsoleManager::logSizeTValueWithQDebug(size_t value)
 {
     qDebug() <<  LOG_HEADER << QString::number(value);
 }
-
 //template <class T>
 //void LogInConsoleManager::logNumericValueWithQDebug(T value)
 //{
