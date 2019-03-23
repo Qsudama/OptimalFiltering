@@ -2,7 +2,7 @@
 #include "src/gui/font_manager.h"
 
 static double const coeff = 0.5;
-static double const minMesStep = 0.25;
+static double const minMesStep = 0.0001;
 static double const step = 1.0;
 
 FilterParametersWidget::FilterParametersWidget(QWidget *parent)
