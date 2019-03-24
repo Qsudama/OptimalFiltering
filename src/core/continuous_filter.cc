@@ -18,6 +18,12 @@ ContinuousFilter::ContinuousFilter(PtrFilterParameters params, PtrTask task)
     m_info->setType("н");
 }
 
+double ContinuousFilter::execute_time_filter()
+{
+    double result = timerInstance.result_execute_time / (m_params->measurementCount() * m_params->sampleSize());
+    return result;
+}
+
 void ContinuousFilter::zeroIteration()
 {
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
@@ -43,7 +49,7 @@ void ContinuousFilter::zeroIteration()
         m_sampleZ[s] = mx0;
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
         if(s == trajectoryNumber) {
-            m_realizationE[0] = m_sampleX[s] -  m_sampleZ[s];
+            m_realizationE[0] = m_sampleX[s] - m_sampleZ[s];
         }
     }
 

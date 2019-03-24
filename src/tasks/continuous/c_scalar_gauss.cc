@@ -31,7 +31,7 @@ Matrix ScalarGauss::G(const Vector & m, const Matrix & /*D*/) const
     return res;
 }
 
-Matrix ScalarGauss::Q(const Vector &m, const Matrix &D) const
+Matrix ScalarGauss::Q(const Vector &m, const Matrix &/*D*/) const
 {
     Matrix b   = B(m);
     Matrix res = b * b.transpose();

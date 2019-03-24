@@ -36,6 +36,7 @@ protected:
     */
     void zeroIteration() override;
 
+    double execute_time_filter() override;
 
 protected:
     PtrCDTask m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */

@@ -36,7 +36,7 @@ LandingLinear::LandingLinear()
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
     m_varX0(0, 0) = pow(15E-3, 2);
     m_varX0(1, 1) = pow(DegToRad(1.0), 2);
-    m_varX0(2, 2) = pow(1.0, 2);
+    m_varX0(2, 2) = pow(7.0, 2);
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
 
@@ -125,7 +125,7 @@ Vector LandingLinear::c(const Vector &x, double measurementStep) const
     return res;
 }
 
-Vector LandingLinear::h(const Vector &m, const Matrix & /* D*/, double measurementStep) const
+Vector LandingLinear::h(const Vector &m, const Matrix & /* D*/, double /*measurementStep*/) const
 {
     double e = exp(-BB * m[2]);
     Vector res(m_dimY);
@@ -136,7 +136,7 @@ Vector LandingLinear::h(const Vector &m, const Matrix & /* D*/, double measureme
     return res;
 }
 
-Matrix LandingLinear::G(const Vector &m, const Matrix & /*D*/, double measurementStep) const
+Matrix LandingLinear::G(const Vector &m, const Matrix & /*D*/, double /*measurementStep*/) const
 {
     double e  = exp(-BB * m[2]);
     double kt = k(m_time);

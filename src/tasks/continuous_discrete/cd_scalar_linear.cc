@@ -59,7 +59,7 @@ Vector ScalarLinear::a(const Vector &x) const
     return res;
 }
 
-Matrix ScalarLinear::B(const Vector &x) const
+Matrix ScalarLinear::B(const Vector &/*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimV);
     res(0, 0) = b0;
@@ -75,7 +75,7 @@ Vector ScalarLinear::tau(const Vector &m, const Matrix & /*D*/) const
     return res;
 }
 
-Matrix ScalarLinear::Theta(const Vector &m, const Matrix & D) const
+Matrix ScalarLinear::Theta(const Vector &/*m*/, const Matrix & /*D*/) const
 {
     Matrix res(m_dimX, m_dimX);
 
@@ -108,14 +108,14 @@ Vector ScalarLinear::c(const Vector &x, double measurementStep) const
     return res;
 }
 
-Vector ScalarLinear::h(const Vector &m, const Matrix & /* D*/, double measurementStep) const
+Vector ScalarLinear::h(const Vector &m, const Matrix & /* D*/, double /*measurementStep*/) const
 {   Vector res(m_dimX);
      //res[0] = (c1 * m[0] + c2 * m[0] * m[0]) * measurementStep; // + m_meanW;
     res[0] = (c1 * m[0] + c2 * m[0] * m[0]);
     return res;
 }
 
-Matrix ScalarLinear::G(const Vector & m, const Matrix & /*D*/, double measurementStep) const
+Matrix ScalarLinear::G(const Vector & m, const Matrix & /*D*/, double /*measurementStep*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimX); // WARNING (size = ?)
 
