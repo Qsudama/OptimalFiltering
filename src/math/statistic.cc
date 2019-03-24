@@ -233,7 +233,7 @@ double Cov(const Array<double> &sampleX, const Array<double> &sampleY, const dou
 Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
 {
 //    assert(sampleX.size() == sampleY.size());
-    if (sampleX.size() == sampleY.size()) {
+    if (sampleX.size() != sampleY.size()) {
         AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY)(12)\nsampleX.size() != sampleY.size()");
         return Vector::Zero(sampleX.size());
     }
