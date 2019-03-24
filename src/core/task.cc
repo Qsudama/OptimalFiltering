@@ -122,7 +122,7 @@ void Task::setMeanV(const Vector &mean)
 void Task::setMeanW(const Vector &mean)
 {
 //    assert(mean.size() == m_dimW && "Core::Task::setMeanW(mean) : corrupt dimension of mean");
-    if (mean.size() != m_dimV) {
+    if (mean.size() != m_dimW) {
         AlertHelper::showErrorAlertWithText("Core::Task::setMeanW\nРазмерность входного вектора не соответствует размерности вектора W");
         return;
     }
