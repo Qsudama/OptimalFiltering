@@ -59,7 +59,7 @@ Vector ScalarLinear::a(const Vector &x) const
     return res;
 }
 
-Matrix ScalarLinear::B(const Vector &x) const
+Matrix ScalarLinear::B(const Vector &/*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimV);
     res(0, 0) = b0;

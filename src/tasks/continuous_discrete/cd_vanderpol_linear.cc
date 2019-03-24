@@ -109,12 +109,12 @@ Vector VanDerPolLinear::c(const Vector &x, double measurementStep) const
     return x + 1.0 / Math::sqrt(measurementStep) * m_normalRand(m_meanW, m_varW);
 }
 
-Vector VanDerPolLinear::h(const Vector &m, const Matrix & /* D*/, double measurementStep) const
+Vector VanDerPolLinear::h(const Vector &m, const Matrix & /* D*/, double /*measurementStep*/) const
 {
     return m + m_meanW;
 }
 
-Matrix VanDerPolLinear::G(const Vector & /*m*/, const Matrix & /*D*/, double measurementStep) const
+Matrix VanDerPolLinear::G(const Vector & /*m*/, const Matrix & /*D*/, double /*measurementStep*/) const
 {
     Matrix res = Matrix::Zero(2, 2); // WARNING (size = ?)
 

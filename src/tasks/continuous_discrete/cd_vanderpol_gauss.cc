@@ -46,7 +46,7 @@ Matrix VanDerPolGauss::A(const Vector &m, const Matrix &D) const
     return res;
 }
 
-Matrix VanDerPolGauss::G(const Vector & /*m*/, const Matrix & /*D*/, double measurementStep) const
+Matrix VanDerPolGauss::G(const Vector & /*m*/, const Matrix & /*D*/, double /*measurementStep*/) const
 {
     return Matrix::Identity(2, 2); // WARNING: size?
 }
