@@ -35,7 +35,7 @@ LandingLinear::LandingLinear()
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
     m_varX0(0, 0) = pow(15E-3, 2);
     m_varX0(1, 1) = pow(DegToRad(1.0), 2);
-    m_varX0(2, 2) = pow(7.0, 2);
+    m_varX0(2, 2) = pow(1.0, 2);
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
 
