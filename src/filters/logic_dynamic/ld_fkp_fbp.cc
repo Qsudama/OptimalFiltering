@@ -20,18 +20,22 @@ FKP_FBP::FKP_FBP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID
     : LogicDynamicFilter(params, task, id)
 {
     string filter_identifier = "";
+    string syffix_filter = "";
+    if (m_task->countI > 1) {
+        syffix_filter = "лд";
+    }
     long ny;
     if (m_identifier == FILTER_ID::LDFBP) {
         ny = long(m_task->dimX());
-        filter_identifier = "ФБПлд";
+        filter_identifier = "ФБП";
     } else {
         ny = long(m_task->dimY());
-        filter_identifier = "ФКПлд";
+        filter_identifier = "ФКП";
     }
 
     long p  = ny * long(m_params->orderMult());
     string condit = initialConditWithType();
-    m_info->setName(m_task->info()->type() + filter_identifier + " (p=" + to_string(p) + condit + ")");
+    m_info->setName(m_task->info()->type() + filter_identifier + syffix_filter + " (p=" + to_string(p) + condit + ")");
 }
 
 void FKP_FBP::zeroIteration()

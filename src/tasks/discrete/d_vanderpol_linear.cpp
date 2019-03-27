@@ -27,19 +27,19 @@ VanDerPolLinear::VanDerPolLinear()
 
     m_dimW  = 2;
     m_meanW = Vector::Zero(m_dimW);
-    m_meanW[0] = 1.0;
-    m_meanW[1] = 1.5;
+    m_meanW[0] = 0.0;
+    m_meanW[1] = 0.0;
 
 
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
-    m_varX0(0, 0) = 5.0;
-    m_varX0(1, 1) = 5.0;
+    m_varX0(0, 0) = 0.15;
+    m_varX0(1, 1) = 0.15;
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
 
     m_varW = Matrix::Zero(m_dimW, m_dimW);
-    m_varW(0, 0) = 4.0;
-    m_varW(1, 1) = 6.0;
+    m_varW(0, 0) = 1.0;
+    m_varW(1, 1) = 1.0;
 
     (*m_consts)["Omega"]   = m_omega;
     (*m_consts)["Alpha"] = m_alpha;

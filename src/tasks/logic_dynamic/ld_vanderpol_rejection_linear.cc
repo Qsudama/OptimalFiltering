@@ -33,15 +33,15 @@ VanDerPolRejectionLinear::VanDerPolRejectionLinear()
     m_meanX0[1] = 0.0;
 
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
-    m_varX0(0, 0) = 0.33;
-    m_varX0(1, 1) = 0.33;
+    m_varX0(0, 0) = 0.15;
+    m_varX0(1, 1) = 0.15;
 
 
     m_meanV = Vector::Zero(m_dimV);
 
     m_meanW    = Vector(m_dimW);
-    m_meanW[0] = 1.0;
-    m_meanW[1] = 1.5;
+    m_meanW[0] = 0.0;
+    m_meanW[1] = 0.0;
 
 
     m_varV = Matrix::Identity(m_dimV, m_dimV);

@@ -25,7 +25,11 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
 //    из-за того что таск 6-ти мерный а надо чтобы показывало 3-х мерный
     long n = task->dimX()/2;
     string condit = initialConditWithType();
-    m_info->setName(m_task->info()->type() + "AОФлд (p=" + to_string(n * (n + 3) / 2) + condit + ")");
+    string syffix_filter = "";
+    if (m_task->countI > 1) {
+        syffix_filter = "лд";
+    }
+    m_info->setName(m_task->info()->type() + "AОФ" + syffix_filter + "(p=" + to_string(n * (n + 3) / 2) + condit + ")");
 }
 
 void AOF::algorithm()
