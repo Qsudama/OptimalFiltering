@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "src/gui/filter_results_table.h"
+#include "src/gui/timer_results_table.h"
 #include <QTabWidget>
 #include <QVBoxLayout>
 
@@ -46,11 +47,13 @@ void MainWindow::initControls()
     m_startConditionsFilterWidget = new StartConditionsFilterWidget;
     m_btnClear                 = new QPushButton(tr("Очистить"));
     m_btnShowHideTables        = new QPushButton(tr("Показать таблицы"));
+    m_btnShowTimes             = new QPushButton(tr("Показать время выполнения"));
 
     m_btnShowHideTables->setEnabled(false);
 
     connect(m_btnClear, SIGNAL(clicked()), this, SIGNAL(clear()));
     connect(m_btnShowHideTables, SIGNAL(clicked()), this, SLOT(onShowHideTables()));
+    connect(m_btnShowTimes, SIGNAL(clicked()), this, SLOT(onShowTableTimer()));
     connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)), this,
@@ -71,13 +74,19 @@ void MainWindow::initLayouts()
     page1Layout->addWidget(m_filterStartWidget);
     page1Layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
-    QHBoxLayout *btnLayout = new QHBoxLayout;
-    btnLayout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
-    btnLayout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
-    btnLayout->addWidget(m_btnClear);
-    btnLayout->addWidget(m_btnShowHideTables);
+    QHBoxLayout *btnLayout1 = new QHBoxLayout;
+    btnLayout1->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    btnLayout1->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
+    btnLayout1->addWidget(m_btnClear);
+    btnLayout1->addWidget(m_btnShowHideTables);
 
-    page1Layout->addLayout(btnLayout);
+    QHBoxLayout *btnLayout2 = new QHBoxLayout;
+    btnLayout2->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    btnLayout2->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
+    btnLayout2->addWidget(m_btnShowTimes);
+
+    page1Layout->addLayout(btnLayout1);
+    page1Layout->addLayout(btnLayout2);
 
     QWidget *page1 = new QWidget;
     page1->setLayout(page1Layout);
@@ -189,6 +198,14 @@ void MainWindow::onShowHideTables()
         }
         m_tablesIsVisible = true;
         m_btnShowHideTables->setText(tr("Скрыть таблицы"));
+    }
+}
+
+void MainWindow::onShowTableTimer()
+{
+    if (m_filter_labels.count() > 0) {
+        TimerResultsTable *timerTable = new TimerResultsTable(m_filter_labels);
+        timerTable->show();
     }
 }
 
@@ -314,8 +331,9 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     }
 
     m_graphWindow->updatePlotter();
-
-    addTable(filter->result(), filter->info()->name(), scale);
+    std::string filter_name = filter->info()->name();
+    m_filter_labels.append(filter_name);
+    addTable(filter->result(), filter_name, scale);
 }
 
 QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {

@@ -330,7 +330,8 @@ HEADERS += \
     src/helpers/alert_helper.h \
     src/tasks/continuous_discrete/cd_scalar_linear.h \
     src/tasks/continuous/c_scalar_gauss.h \
-    src/tasks/continuous/c_scalar_linear.h
+    src/tasks/continuous/c_scalar_linear.h \
+    src/gui/timer_results_table.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -410,4 +411,5 @@ SOURCES += \
     src/helpers/alert_helper.cc \
     src/tasks/continuous_discrete/cd_scalar_linear.cc \
     src/tasks/continuous/c_scalar_gauss.cc \
-    src/tasks/continuous/c_scalar_linear.cc
+    src/tasks/continuous/c_scalar_linear.cc \
+    src/gui/timer_results_table.cc
