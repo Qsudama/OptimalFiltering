@@ -52,6 +52,8 @@ void RangesDialog::initControls(const Math::Vector2 &x, const Math::Vector2 &y)
     m_buttonBox = new QDialogButtonBox;
     m_buttonBox->setOrientation(Qt::Horizontal);
     m_buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    m_buttonBox->buttons()[1]->setText("Ок");
+    m_buttonBox->buttons()[1]->setText("Отмена");
     connect(m_buttonBox, SIGNAL(accepted()), this, SLOT(onAcceptedClicked()));
     connect(m_buttonBox, SIGNAL(rejected()), this, SLOT(onRejectedClicked()));
 }
