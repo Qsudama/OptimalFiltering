@@ -18,10 +18,10 @@ ContinuousDiscreteFilter::ContinuousDiscreteFilter(PtrFilterParameters params, P
     m_info->setType("нд");
 }
 
-double ContinuousDiscreteFilter::execute_time_filter()
+FilterTimeResult ContinuousDiscreteFilter::execute_time_filter()
 {
-    double result = timerInstance.result_execute_time / (m_params->measurementCount() * m_params->sampleSize());
-    return result;
+    double coef = m_params->measurementCount() * m_params->sampleSize();
+    return timerInstance.result_execute_time(m_info->name(), coef);
 }
 
 void ContinuousDiscreteFilter::zeroIteration()

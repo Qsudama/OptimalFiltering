@@ -2,6 +2,7 @@
 #define TIMER_RESULTS_TABLE_H
 
 #include "src/gui/gui_config.h"
+#include "src/helpers/timer_manager.h"
 #include <QMainWindow>
 #include <QTableWidget>
 #include <QTextStream>
@@ -17,7 +18,7 @@ class TimerResultsTable : public QMainWindow
 
 public:
     //! \brief Конструктор.
-    TimerResultsTable(const QVector<std::string> &labels,
+    TimerResultsTable(const QVector<FilterTimeResult> filters_results,
                        QWidget *parent = nullptr);
 
 private slots:
@@ -25,14 +26,8 @@ private slots:
 
 
 private:
-//    //! \brief Создает таблицу и заполняет ее из data.
-//    void initTable(const Core::FilterOutput &data, const Math::Vector &scale);
-
-//    //! \brief Инициализирует меню.
-//    void initMenu();
-
-//    //! \brief Форматирует текст и записывает в out.
-//    void writeToFile(QTextStream &out);
+//    //! \brief Создает таблицу и заполняет ее из filters_results.
+    void initTable(QVector<FilterTimeResult> filters_results);
 
 
 private:

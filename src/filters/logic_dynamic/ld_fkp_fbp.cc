@@ -35,7 +35,10 @@ FKP_FBP::FKP_FBP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID
 
     long p  = ny * long(m_params->orderMult());
     string condit = initialConditWithType();
-    m_info->setName(m_task->info()->type() + filter_identifier + syffix_filter + " (p=" + to_string(p) + condit + ")");
+
+    m_info->setName(filter_identifier + syffix_filter);
+    m_info->setType(syffix_filter);
+    m_info->setDimension("(p=" + to_string(p) + condit + ")");
 }
 
 void FKP_FBP::zeroIteration()

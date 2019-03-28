@@ -20,7 +20,9 @@ FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(
 {
     long ny = long(m_task->dimY());
     long p = ny * long(m_params->orderMult());
-    m_info->setName(m_task->info()->type() + "ФКПд (p=" + std::to_string(p) + ")");
+//    m_info->setFullName(m_task->info()->type() + "ФКПд (p=" + std::to_string(p) + ")");
+    m_info->setName("ФКПд");
+    m_info->setDimension("(p=" + std::to_string(p) + ")");
 }
 
 void FKP::zeroIteration() {

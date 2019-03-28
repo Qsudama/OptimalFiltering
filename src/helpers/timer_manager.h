@@ -2,6 +2,21 @@
 #define TIMER_MANAGER_H
 
 #include <time.h> // includes clock_t and CLOCKS_PER_SEC
+#include <iostream>
+
+using namespace std;
+//! \brief Структура хранящая в себе всю инфрормацию о времени выполнения конкретного фильтра.
+struct FilterTimeResult
+{
+    //! \brief Имя фильтра.
+    string name;
+    //! \brief Все время работы фильтра (в миллисекундах).
+    double all_time;
+    //! \brief Суммарное время пауз (в миллисекундах).
+    double pause_time;
+    //! \brief Результативное время: all_time - pause_time (в миллисекундах).
+    double result_time;
+};
 
 class TimerManager
 {
@@ -33,8 +48,12 @@ public:
     //! \brief Функция конвертирования секунд в миллисекунды
     double convert_sek_to_msek(double time);
 
-    //! \brief Результативное время выполнения фильтра (в миллисекундах).
-    double result_execute_time;
+    /*!
+    \brief Возвращает структуру времени выполнения фильтра.
+
+    \param filter_name - имя фильтра.
+    */
+    FilterTimeResult result_execute_time(string filter_name, double coeff = 1.0);
 
 private:
 

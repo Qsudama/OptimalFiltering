@@ -39,7 +39,7 @@ protected:
     */
     void zeroIteration() override;
 
-    double execute_time_filter() override;
+    FilterTimeResult execute_time_filter() override;
 
     double calculate_d(const Matrix &D);
     double calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
