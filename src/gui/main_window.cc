@@ -168,6 +168,7 @@ void MainWindow::closeEvent(QCloseEvent *)
 void MainWindow::onClear()
 {
     m_colorManager.reset();
+    m_filter_time_results.clear();
 
     for (int i = 0; i < m_tables.size(); ++i) {
         m_tables[i]->close();
@@ -203,8 +204,8 @@ void MainWindow::onShowHideTables()
 
 void MainWindow::onShowTableTimer()
 {
-    if (m_filter_labels.count() > 0) {
-        TimerResultsTable *timerTable = new TimerResultsTable(m_filter_labels);
+    if (m_filter_time_results.count() > 0) {
+        TimerResultsTable *timerTable = new TimerResultsTable(m_filter_time_results);
         timerTable->show();
     }
 }
@@ -232,12 +233,13 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTE
     connect(filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
 
     m_statusProgressBar->setEnabled(true);
-    QString status = tr("Состояние: выполняется ") + QString::fromStdString(filter->info()->name());
+    QString status = tr("Состояние: выполняется ") + QString::fromStdString(filter->info()->full_name());
     statusBar()->showMessage(status);
 
     filter->run(); // TODO сделать отдельный поток
 
     showData(filter, ftype, task);
+    m_filter_time_results.append(filter->execute_time());
     this->statusBar()->showMessage(tr("Состояние: ничего не выполняется"));
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
@@ -247,9 +249,9 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 {
     QColor  color = m_colorManager.nextColor();
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
-    FilterTimeResult time_result = filter->execute_time();
-    QString execute_time = tr(" ") + QString("%1").arg(time_result.result_time, 0, 'f', 4) + tr(" мсек.; ");
-    QString fname = QString::fromStdString(filter->info()->name()) + tr(";") + execute_time + ss_filter;
+//    FilterTimeResult time_result = filter->execute_time();
+//    QString execute_time = QString("%1").arg(time_result.result_time, 0, 'f', 4) + tr(" мсек.; ");
+    QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") /*+ execute_time*/ + ss_filter;
 
     QPen mxPen, mePen, sxPen, sePen;
     mxPen.setWidthF(2.0);
@@ -333,7 +335,6 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 
     m_graphWindow->updatePlotter();
     std::string filter_name = filter->info()->name();
-    m_filter_labels.append(filter_name);
     addTable(filter->result(), filter_name, scale);
 }
 

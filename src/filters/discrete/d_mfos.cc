@@ -19,7 +19,9 @@ using Math::MakeBlockMatrix;
 MFOS::MFOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : DiscreteFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "МФМПд (p=" + std::to_string(task->dimX()) + ")");
+//    m_info->setFullName(m_task->info()->type() + "МФМПд (p=" + std::to_string(task->dimX()) + ")");
+    m_info->setName("МФМПд");
+    m_info->setDimension("(p=" + std::to_string(task->dimX()) + ")");
 }
 
 void MFOS::algorithm()

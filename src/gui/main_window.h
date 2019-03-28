@@ -117,7 +117,7 @@ private:
     QPushButton *             m_btnShowTimes;
 
     QVector<FilterResultsTable *> m_tables;
-    QVector<std::string> m_filter_labels;
+    QVector<FilterTimeResult> m_filter_time_results;
 };
 
 

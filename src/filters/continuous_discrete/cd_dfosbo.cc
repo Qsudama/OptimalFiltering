@@ -18,7 +18,9 @@ DFOSBO::DFOSBO(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousDiscreteFilter(params, task)
 {
     long p = task->dimY() * long(params->orderMult());
-    m_info->setName(m_task->info()->type() + "ФКПнд-дп (p=" + std::to_string(p) + ")");
+//    m_info->setName(m_task->info()->type() + "ФКПнд-дп (p=" + std::to_string(p) + ")");
+    m_info->setName("ФКПнд-дп");
+    m_info->setDimension("(p=" + std::to_string(p) + ")");
 }
 
 void DFOSBO::zeroIteration()
