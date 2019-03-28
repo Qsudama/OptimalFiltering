@@ -75,7 +75,7 @@ public:
     */
     void run();
 
-    double execute_time();
+    FilterTimeResult execute_time();
 
     //! \brief Возвращает результат работы (не имеет смысла до вызова run()).
     const FilterOutput &result() const;
@@ -100,7 +100,7 @@ protected:
     virtual void algorithm() = 0;
 
     //! \brief Возвращает таймер выполнения фильтра.
-    virtual double execute_time_filter();
+    virtual FilterTimeResult execute_time_filter();
 
     /*!
      \brief Вычисляет и записывает результаты для времени \f$t_n\f$.
