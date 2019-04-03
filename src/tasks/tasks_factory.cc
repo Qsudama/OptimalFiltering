@@ -69,6 +69,8 @@ PtrTask TaskFactory::createDiscrete(TASK_ID id)
         return PtrTask(new Tasks::Discrete::LandingGauss);
     case TASK_ID::DVanDerPolLinear:
         return PtrTask(new Tasks::Discrete::VanDerPolLinear);
+    case TASK_ID::DVanDerPolGauss:
+        return PtrTask(new Tasks::Discrete::VanDerPolGauss);
     case TASK_ID::ScalarLinear:
         return PtrTask(new Tasks::Discrete::ScalarLinear);
     case TASK_ID::ScalarGauss:

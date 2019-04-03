@@ -44,11 +44,12 @@ VanDerPolLinear::VanDerPolLinear()
     (*m_consts)["Omega"]   = m_omega;
     (*m_consts)["Alpha"] = m_alpha;
     (*m_consts)["Beta"]    = m_beta;
+
+    (*m_params)["Δt"] = deltaT;
 }
 
-void VanDerPolLinear::loadParams()
-{
-
+void VanDerPolLinear::loadParams() {
+    deltaT = (*m_params).at("Δt");
 }
 
 Vector VanDerPolLinear::a(const Vector &x) const
