@@ -33,6 +33,8 @@ using Math::RowVector;
  Большая часть классов здесь абстрактные, т.е. предоставляют лишь общие интерфейсы.
 */
 
+const int trajectoryNumber = 401;
+
 namespace Core
 {
 
@@ -73,7 +75,7 @@ public:
     */
     void run();
 
-    double execute_time();
+    FilterTimeResult execute_time();
 
     //! \brief Возвращает результат работы (не имеет смысла до вызова run()).
     const FilterOutput &result() const;
@@ -98,7 +100,7 @@ protected:
     virtual void algorithm() = 0;
 
     //! \brief Возвращает таймер выполнения фильтра.
-    virtual double execute_time_filter();
+    virtual FilterTimeResult execute_time_filter();
 
     /*!
      \brief Вычисляет и записывает результаты для времени \f$t_n\f$.
@@ -130,6 +132,8 @@ protected:
     Array<int>    m_sampleI; /*!< Массив для выборки режимов (Только для логик-динамических фильтров). */
 
     Math::MultivariateNormalDistribution m_normalRand; /*!< Генератор гауссовских случайных векторов. */
+
+    Array<Vector> m_realizationE;
 };
 
 

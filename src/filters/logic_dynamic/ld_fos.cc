@@ -21,7 +21,13 @@ FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
 {
     long n = task->dimX()/2;
     string condit = initialConditWithType();
-    m_info->setName(m_task->info()->type() + "ФОСлд (p=" + std::to_string(n) + condit + ")");
+    string syffix_filter = "";
+    if (m_task->countI > 1) {
+        syffix_filter = "лд";
+    }
+    m_info->setName("ФОС" + syffix_filter);
+    m_info->setType(syffix_filter);
+    m_info->setDimension("(p=" + std::to_string(n) + condit + ")");
 }
 
 void FOS::zeroIteration()

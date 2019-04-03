@@ -20,7 +20,9 @@ DFMP::DFMP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilte
 {
     std::string argsCount = std::to_string(params->argumentsCount());
     std::string dimX = std::to_string(task->dimX());
-    m_info->setName(m_task->info()->type() + "ДФМПд-" + argsCount + " (p=" + dimX + ")");
+//    m_info->setFullName(m_task->info()->type() + "ДФМПд-" + argsCount + " (p=" + dimX + ")");
+    m_info->setName("ДФМПд");
+    m_info->setDimension("- " + argsCount + " (p=" + dimX + ")");
 }
 
 void DFMP::zeroIteration() {

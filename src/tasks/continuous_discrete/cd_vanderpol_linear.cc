@@ -30,18 +30,18 @@ VanDerPolLinear::VanDerPolLinear()
 
     m_dimW     = 2;
     m_meanW    = Vector(m_dimW);
-    m_meanW[0] = 1.0;
-    m_meanW[1] = 1.5;
+    m_meanW[0] = 0.0;
+    m_meanW[1] = 0.0;
 
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
-    m_varX0(0, 0) = 5.0;
-    m_varX0(1, 1) = 5.0;
+    m_varX0(0, 0) = 0.15;
+    m_varX0(1, 1) = 0.15;
 
     m_varV = Matrix::Identity(m_dimV, m_dimV);
 
     m_varW = Matrix::Identity(m_dimW, m_dimW);
-    m_varW(0, 0) = 4.0;
-    m_varW(1, 1) = 4.0;
+    m_varW(0, 0) = 1.0;
+    m_varW(1, 1) = 1.0;
 
     (*m_params)["Omega"] = m_omega;
     (*m_params)["Alpha"] = m_alpha;
@@ -104,17 +104,17 @@ Matrix VanDerPolLinear::A(const Vector &m, const Matrix & /*D*/) const
 }
 
 
-Vector VanDerPolLinear::c(const Vector &x) const
+Vector VanDerPolLinear::c(const Vector &x, double measurementStep) const
 {
-    return x + m_normalRand(m_meanW, m_varW);
+    return x + 1.0 / Math::sqrt(measurementStep) * m_normalRand(m_meanW, m_varW);
 }
 
-Vector VanDerPolLinear::h(const Vector &m, const Matrix & /* D*/) const
+Vector VanDerPolLinear::h(const Vector &m, const Matrix & /* D*/, double /*measurementStep*/) const
 {
     return m + m_meanW;
 }
 
-Matrix VanDerPolLinear::G(const Vector & /*m*/, const Matrix & /*D*/) const
+Matrix VanDerPolLinear::G(const Vector & /*m*/, const Matrix & /*D*/, double /*measurementStep*/) const
 {
     Matrix res = Matrix::Zero(2, 2); // WARNING (size = ?)
 
@@ -123,9 +123,12 @@ Matrix VanDerPolLinear::G(const Vector & /*m*/, const Matrix & /*D*/) const
     return res;
 }
 
-Matrix VanDerPolLinear::F(const Vector & /*m*/, const Matrix &D) const
+Matrix VanDerPolLinear::F(const Vector & /*m*/, const Matrix &D, double measurementStep) const
 {
-    return D + m_varW;
+    Matrix matching = Matrix::Zero(2, 2);
+    matching(0, 0) = 1;
+    matching(1, 1) = 1;
+    return D + 1.0 / measurementStep * matching; //m_varW;
 }
 
 

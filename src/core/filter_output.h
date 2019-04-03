@@ -22,6 +22,10 @@ struct SingleFilterOutput {
     Math::Matrix varZ;  /*!< Дисперсия \f$M[Z_t]\f$. */
     Math::Matrix varE;  /*!< Дисперсия \f$M[E_t], E_t = |X_t - Z_t|\f$. */
     double       time;  /*!< Время \f$t\f$. */
+    double meanIntegral; /*!< Интегральное среднее */
+    double SeBoundaryUp;
+    double SeBoundaryDown;
+    double realizationE;
 };
 
 
@@ -106,6 +110,13 @@ void GetStdDeviationZ(const FilterOutput &fo, long index, ArrayDbl &array, doubl
 */
 void GetStdDeviationE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
+void GetMeanIntegral(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
+void GetSeBoundaryUp(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
+void GetSeBoundaryDown(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
+void GetERealization(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
 } // end Core
 

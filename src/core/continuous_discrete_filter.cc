@@ -18,11 +18,19 @@ ContinuousDiscreteFilter::ContinuousDiscreteFilter(PtrFilterParameters params, P
     m_info->setType("нд");
 }
 
+FilterTimeResult ContinuousDiscreteFilter::execute_time_filter()
+{
+    double coef = m_params->measurementCount() * m_params->sampleSize();
+    return timerInstance.result_execute_time(m_info->name(), coef);
+}
+
 void ContinuousDiscreteFilter::zeroIteration()
 {
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
         m_sampleX[s] = m_task->x0();
-        m_sampleY[s] = m_task->c(m_sampleX[s]);
+        m_sampleY[s] = m_task->c(m_sampleX[s], m_params->measurementStep());
+        m_sampleY[s] = m_task->c(m_sampleX[s], m_params->measurementStep());
+        m_realizationE[s] = m_sampleX[s];
     }
 
     Vector mx0  = Mean(m_sampleX);
@@ -33,8 +41,12 @@ void ContinuousDiscreteFilter::zeroIteration()
     Vector e0   = mx0 - H0 * my0;
 
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-        m_sampleZ[s] = H0 * m_sampleY[s] + e0;
+      //m_sampleZ[s] = H0 * m_sampleY[s] + e0;
+        m_sampleZ[s] = mx0;
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
+        if(s == trajectoryNumber) {
+            m_realizationE[0] = m_sampleX[s] -  m_sampleZ[s];
+        }
     }
 
     m_result[0].meanX = mx0;
@@ -44,6 +56,10 @@ void ContinuousDiscreteFilter::zeroIteration()
     m_result[0].varZ  = Var(m_sampleZ, m_result[0].meanZ);
     m_result[0].varE  = Var(m_sampleE, m_result[0].meanE);
     m_result[0].time  = 0.0;
+    m_result[0].meanIntegral = 0.0;
+    m_result[0].SeBoundaryUp = m_result[0].meanE(0) + 3 * Math::sqrt(m_result[0].varE(0, 0));
+    m_result[0].SeBoundaryDown = m_result[0].meanE(0) - 3 * Math::sqrt(m_result[0].varE(0, 0));
+    m_result[0].realizationE = m_realizationE[0](0, 0);
 }
 
 

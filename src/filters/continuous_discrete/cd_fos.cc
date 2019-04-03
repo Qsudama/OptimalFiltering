@@ -17,7 +17,9 @@ using Math::Statistic::Mean;
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousDiscreteFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФМПнд-нп (p=" + std::to_string(task->dimX()) + ")");
+//    m_info->setName(m_task->info()->type() + "ФМПнд-нп (p=" + std::to_string(task->dimX()) + ")");
+    m_info->setName("ФМПнд-дп");
+    m_info->setDimension("(p=" + std::to_string(task->dimX()) + ")");
 }
 
 void FOS::algorithm()
@@ -37,6 +39,9 @@ void FOS::algorithm()
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
                            m_task->B(m_sampleX[s]) * sqrtdt * m_normalRand(m_task->dimV());
             m_sampleZ[s] = m_sampleZ[s] + m_task->tau(m_sampleZ[s], Gamma) * m_params->integrationStep();
+            if (s == trajectoryNumber) {
+                m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
+            }
         }
         m_task->setTime(m_result[n].time);
 
@@ -46,13 +51,16 @@ void FOS::algorithm()
 
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                m_sampleY[s] = m_task->c(m_sampleX[s]);
+                m_sampleY[s] = m_task->c(m_sampleX[s], m_params->measurementStep());
 
-                h = m_task->h(m_sampleZ[s], Gamma);
-                G = m_task->G(m_sampleZ[s], Gamma);
-                F = m_task->F(m_sampleZ[s], Gamma);
+                h = m_task->h(m_sampleZ[s], Gamma, m_params->measurementStep());
+                G = m_task->G(m_sampleZ[s], Gamma, m_params->measurementStep());
+                F = m_task->F(m_sampleZ[s], Gamma, m_params->measurementStep());
 
                 m_sampleZ[s] = m_sampleZ[s] + Gamma * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
+                if (s == trajectoryNumber) {
+                    m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
+                }
             }
         }
         writeResult(n);

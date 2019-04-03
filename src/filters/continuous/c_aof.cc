@@ -12,7 +12,9 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousFilter(params, task)
 {
     long n = task->dimX();
-    m_info->setName(m_task->info()->type() + "AОФн (p=" + std::to_string(n * (n + 3) / 2) + ")");
+//    m_info->setName(m_task->info()->type() + "AОФн (p=" + std::to_string(n * (n + 3) / 2) + ")");
+    m_info->setName("AОФн");
+    m_info->setDimension("(p=" + std::to_string(n * (n + 3) / 2) + ")");
 }
 
 void AOF::zeroIteration()
@@ -51,6 +53,9 @@ void AOF::algorithm()
 
             m_sampleP[s] = m_sampleP[s] + m_task->Psi(prevZ, m_sampleP[s]) * m_params->integrationStep();
             m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
+            if (s == trajectoryNumber) {
+                m_result[n].realizationE = m_sampleX[s](0, 0) - m_sampleZ[s](0, 0);
+            }
         }
         writeResult(n);
     }

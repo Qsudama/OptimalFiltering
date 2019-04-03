@@ -33,6 +33,10 @@ PtrTask TaskFactory::createContinuous(TASK_ID id)
         return PtrTask(new Tasks::Continuous::VanDerPolLinear);
     case TASK_ID::VanDerPolGauss:
         return PtrTask(new Tasks::Continuous::VanDerPolGauss);
+    case TASK_ID::ScalarLinear:
+        return PtrTask(new Tasks::Continuous::ScalarLinear);
+    case TASK_ID::ScalarGauss:
+        return PtrTask(new Tasks::Continuous::ScalarGauss);
     default:
         return PtrTask(nullptr); // WARNING
     }
@@ -49,6 +53,8 @@ PtrTask TaskFactory::createContinuousDiscrete(TASK_ID id)
         return PtrTask(new Tasks::ContinuousDiscrete::VanDerPolLinear);
     case TASK_ID::VanDerPolGauss:
         return PtrTask(new Tasks::ContinuousDiscrete::VanDerPolGauss);
+    case TASK_ID::ScalarLinear:
+        return PtrTask(new Tasks::ContinuousDiscrete::ScalarLinear);
     default:
         return PtrTask(nullptr); // WARNING
     }

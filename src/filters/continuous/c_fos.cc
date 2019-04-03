@@ -11,7 +11,9 @@ namespace Continuous
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФМПн (p=" + std::to_string(task->dimX()) + ")");
+//    m_info->setName(m_task->info()->type() + "ФМПн (p=" + std::to_string(task->dimX()) + ")");
+    m_info->setName("ФМПн");
+    m_info->setDimension("(p=" + std::to_string(task->dimX()) + ")");
 }
 
 void FOS::algorithm()
@@ -37,6 +39,9 @@ void FOS::algorithm()
             m_sampleZ[s] =
                 m_sampleZ[s] + m_task->a(m_sampleZ[s]) * m_params->integrationStep() +
                 m_task->K(m_sampleZ[s], Gamma) * (dy - m_task->c(m_sampleZ[s]) * m_params->integrationStep());
+            if (s == trajectoryNumber) {
+                m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
+            }
         }
         writeResult(n);
     }
