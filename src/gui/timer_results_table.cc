@@ -1,12 +1,14 @@
 #include "timer_results_table.h"
 #include "src/gui/font_manager.h"
 #include <QHBoxLayout>
+#include <QHeaderView>
 
 TimerResultsTable::TimerResultsTable(const QVector<FilterTimeResult> filters_results, QWidget *parent)
     : QMainWindow(parent)
     , m_table(nullptr)
 {
     setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
+    setWindowTitle(QString::fromStdString("Время моделирования"));
 
     initTable(filters_results);
 
@@ -20,7 +22,7 @@ TimerResultsTable::TimerResultsTable(const QVector<FilterTimeResult> filters_res
     }
     centralWidget()->setLayout(mainLayout);
     centralWidget()->setMinimumHeight(250);
-    centralWidget()->setMinimumWidth(500);
+    centralWidget()->setMinimumWidth(700);
 }
 
 void TimerResultsTable::initTable(QVector<FilterTimeResult> filters_results)
@@ -43,9 +45,9 @@ void TimerResultsTable::initTable(QVector<FilterTimeResult> filters_results)
     QStringList horisontal_labels;
     QStringList vertical_labels;
 
-    horisontal_labels.append(tr("Время моделирования (мсек)"));
-    horisontal_labels.append(tr("Время всех пауз (мсек)"));
-    horisontal_labels.append(tr("Время без пауз (мсек)"));
+    horisontal_labels.append(tr("Моделирование (мсек)"));
+    horisontal_labels.append(tr("На статистики (мсек)"));
+    horisontal_labels.append(tr("На реализацию (мсек)"));
 
     for (int i = 0; i < rows; ++i) {
         FilterTimeResult filter_result = filters_results[i];
@@ -55,6 +57,7 @@ void TimerResultsTable::initTable(QVector<FilterTimeResult> filters_results)
 
     m_table->setVerticalHeaderLabels(vertical_labels);
     m_table->setHorizontalHeaderLabels(horisontal_labels);
+    m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Stretch);
     m_table->setFont(titleFont);
 
     for (int i = 0; i < rows; i++) {
@@ -62,14 +65,17 @@ void TimerResultsTable::initTable(QVector<FilterTimeResult> filters_results)
 
         QTableWidgetItem *twItem = new QTableWidgetItem(QString::number(filter_result.all_time));
         twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+        twItem->setTextAlignment(Qt::AlignCenter);
         m_table->setItem(i, 0, twItem);
 
         twItem = new QTableWidgetItem(QString::number(filter_result.pause_time));
         twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+        twItem->setTextAlignment(Qt::AlignCenter);
         m_table->setItem(i, 1, twItem);
 
         twItem = new QTableWidgetItem(QString::number(filter_result.result_time));
         twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+        twItem->setTextAlignment(Qt::AlignCenter);
         m_table->setItem(i, 2, twItem);
 
     }

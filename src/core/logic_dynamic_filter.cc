@@ -21,7 +21,8 @@ LogicDynamicFilter::LogicDynamicFilter(PtrFilterParameters params, PtrTask task,
 FilterTimeResult LogicDynamicFilter::execute_time_filter()
 {
     double coef = m_params->measurementCount() * m_params->sampleSize();
-    return timerInstance.result_execute_time(m_info->name(), coef);
+    string filter_name = m_info->name() + m_info->dimension();
+    return timerInstance.result_execute_time(filter_name, coef);
 }
 
 void LogicDynamicFilter::init()
