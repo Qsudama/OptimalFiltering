@@ -8,6 +8,7 @@ TimerResultsTable::TimerResultsTable(const QVector<FilterTimeResult> filters_res
     , m_table(nullptr)
 {
     setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
+    setWindowTitle(QString::fromStdString("Время моделирования"));
 
     initTable(filters_results);
 
@@ -64,14 +65,17 @@ void TimerResultsTable::initTable(QVector<FilterTimeResult> filters_results)
 
         QTableWidgetItem *twItem = new QTableWidgetItem(QString::number(filter_result.all_time));
         twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+        twItem->setTextAlignment(Qt::AlignCenter);
         m_table->setItem(i, 0, twItem);
 
         twItem = new QTableWidgetItem(QString::number(filter_result.pause_time));
         twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+        twItem->setTextAlignment(Qt::AlignCenter);
         m_table->setItem(i, 1, twItem);
 
         twItem = new QTableWidgetItem(QString::number(filter_result.result_time));
         twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+        twItem->setTextAlignment(Qt::AlignCenter);
         m_table->setItem(i, 2, twItem);
 
     }
