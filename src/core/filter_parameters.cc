@@ -112,7 +112,8 @@ void FilterParameters::setMeasurementStep(double step)
     }
     m_measurementStep  = step;
     m_measurementCount = Uint(m_maxTime / m_measurementStep);
-    setPredictionStep(m_predictionStep);
+    double predictionStep = std::min(m_predictionStep, m_measurementStep);
+    setPredictionStep(predictionStep);
 }
 
 void FilterParameters::setPredictionStep(double step)

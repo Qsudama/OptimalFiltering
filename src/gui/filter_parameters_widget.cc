@@ -3,7 +3,7 @@
 
 static double const coeff = 0.5;
 static double const minMesStep = 0.0001;
-static double const step = 1.0;
+static double const step = 0.01;
 
 FilterParametersWidget::FilterParametersWidget(QWidget *parent)
     : QGroupBox(parent)
