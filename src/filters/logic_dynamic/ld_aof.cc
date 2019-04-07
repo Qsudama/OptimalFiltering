@@ -23,15 +23,15 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
 {
 //    Неправильно считает для скалярного примера
 //    из-за того что таск 6-ти мерный а надо чтобы показывало 3-х мерный
-    long n = task->dimX()/2;
-    string condit = initialConditWithType();
+    long n = task->dimX();
     string syffix_filter = "";
     if (m_task->countI > 1) {
         syffix_filter = "лд";
     }
     m_info->setName("AОФ" + syffix_filter);
     m_info->setType(syffix_filter);
-    m_info->setDimension("(p=" + to_string(n * (n + 3) / 2) + condit + ")");
+    m_info->setCondition(initialConditWithType());
+    m_info->setDimension("(p=" + to_string(n * (n + 3) / 2) + ")");
 }
 
 void AOF::algorithm()

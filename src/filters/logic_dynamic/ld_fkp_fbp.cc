@@ -34,11 +34,11 @@ FKP_FBP::FKP_FBP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID
     }
 
     long p  = ny * long(m_params->orderMult());
-    string condit = initialConditWithType();
 
     m_info->setName(filter_identifier + syffix_filter);
     m_info->setType(syffix_filter);
-    m_info->setDimension("(p=" + to_string(p) + condit + ")");
+    m_info->setCondition(initialConditWithType());
+    m_info->setDimension("(p=" + to_string(p) + ")");
 }
 
 void FKP_FBP::zeroIteration()
