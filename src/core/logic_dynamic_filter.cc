@@ -32,6 +32,8 @@ void LogicDynamicFilter::init()
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
     m_sampleI.resize(m_params->sampleSize());
+    m_specificE.resize(m_params->sampleSize());
+    m_specificX.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount());
     m_result.resize(size);

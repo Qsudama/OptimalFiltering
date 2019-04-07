@@ -39,9 +39,6 @@ void FOS::algorithm()
             m_sampleX[s] = m_sampleX[s] + m_task->a(m_sampleX[s]) * m_params->integrationStep() +
                            m_task->B(m_sampleX[s]) * sqrtdt * m_normalRand(m_task->dimV());
             m_sampleZ[s] = m_sampleZ[s] + m_task->tau(m_sampleZ[s], Gamma) * m_params->integrationStep();
-            if (s == trajectoryNumber) {
-                m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
-            }
         }
         m_task->setTime(m_result[n].time);
 
@@ -58,9 +55,6 @@ void FOS::algorithm()
                 F = m_task->F(m_sampleZ[s], Gamma, m_params->measurementStep());
 
                 m_sampleZ[s] = m_sampleZ[s] + Gamma * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
-                if (s == trajectoryNumber) {
-                    m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
-                }
             }
         }
         writeResult(n);

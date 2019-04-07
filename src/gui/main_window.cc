@@ -251,7 +251,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
 
-    QPen mxPen, mePen, sxPen, sePen;
+    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE;
     mxPen.setWidthF(2.0);
     mxPen.setColor(Qt::darkMagenta);
     mePen.setWidthF(2.0);
@@ -262,17 +262,27 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     sxPen.setStyle(Qt::DashLine);
     sePen.setWidthF(1.5);
     sePen.setColor(color);
+    upDownX.setWidthF(1.5);
+    upDownX.setColor(Qt::yellow);
+    upDownE.setWidthF(1.5);
+    upDownE.setColor(Qt::green);
+    selectRealizX.setWidthF(1.5);
+    selectRealizX.setColor(Qt::darkYellow);
+    selectRealizE.setWidthF(1.5);
+    selectRealizE.setColor(Qt::darkGreen);
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
-        m_graphWindow->setCountSheets(dim);
+        m_graphWindow->setCountSheets(dim + 1);
     }
 
     QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
     QString subTitle = subtitleForParametrs(ftype, task);
     for (int i = 0; i < dim; i++) {
-        m_graphWindow->sheet(i).setTitleLabel(title);
-        m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
+        if (i < dim - 1) {
+            m_graphWindow->sheet(i).setTitleLabel(title);
+            m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
+        }
     }
     if (m_taskWidget->id() == TASK_ID::LandingLinear || m_taskWidget->id() == TASK_ID::LandingGauss || m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear  || m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
@@ -314,7 +324,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         }
     }
 
-    QVector<double> x, y;
+    QVector<double> x, y, y_up, y_down;
     Core::GetTime(filter->result(), x);
 
     for (int i = 0; i < dim; i++) {
@@ -329,6 +339,12 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 
         Core::GetStdDeviationE(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname, sePen, true);
+
+        Core::GetRealizationE(filter->result(), i, y, scale[i]);
+        Core::GetUpE(filter->result(), i, y_up, scale[i]);
+        Core::GetDownE(filter->result(), i, y_down, scale[i]);
+        QString name_sheet_e = "E (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE, false);
     }
 
     m_graphWindow->updatePlotter();

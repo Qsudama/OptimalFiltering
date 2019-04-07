@@ -72,9 +72,6 @@ void DFOSBO::algorithm()
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 m_sampleZ[s] = Gamma * m_sampleS[s] + kappa;
-                if (s == trajectoryNumber) {
-                    m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
-                }
             }
             writeResult(n);
         }
@@ -90,9 +87,6 @@ void DFOSBO::algorithm()
                 F = m_task->F(m_sampleZ[s], T, m_params->measurementStep());
 
                 m_sampleZ[s] = m_sampleZ[s] + T * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
-                if (s == trajectoryNumber) {
-                    m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
-                }
 
                 long ny = long(m_task->dimY());
                 long p  = ny * long(m_params->orderMult());

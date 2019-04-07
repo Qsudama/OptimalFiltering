@@ -60,7 +60,8 @@ void Filter::init()
     m_sampleY.resize(m_params->sampleSize());
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
-    m_realizationE.resize(m_params->sampleSize());
+    m_specificE.resize(m_params->sampleSize());
+    m_specificX.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount() * m_params->predictionCount() * m_params->integrationCount());
     m_result.resize(size);
@@ -87,20 +88,23 @@ void Filter::writeResult(size_t n, bool copy)
         m_result[n].meanE = m_result[n - 1].meanE;
         m_result[n].varZ  = m_result[n - 1].varZ;
         m_result[n].varE  = m_result[n - 1].varE;
-        m_result[n].meanIntegral = m_result[n - 1].meanIntegral + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
-        m_result[n].SeBoundaryUp  = m_result[n - 1].SeBoundaryUp;
-        m_result[n].SeBoundaryDown  = m_result[n - 1].SeBoundaryDown;
+        m_result[n].meanIntegralE = m_result[n - 1].meanIntegralE + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].upE  = m_result[n - 1].upE;
+        m_result[n].downE  = m_result[n - 1].downE;
     } else {
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
+            if (s == m_params->specificRealization()) {
+                m_result[n].specificE = m_sampleE[s];
+            }
         }
         m_result[n].meanZ = Mean(m_sampleZ);
         m_result[n].varZ  = Var(m_sampleZ, m_result[n].meanZ);
         m_result[n].meanE = Mean(m_sampleE);
         m_result[n].varE  = Var(m_sampleE, m_result[n].meanE);
-        m_result[n].meanIntegral = m_result[n - 1].meanIntegral + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
-        m_result[n].SeBoundaryUp  = m_result[n].meanE(0) + 3 * Math::sqrt(m_result[n].varE(0, 0));
-        m_result[n].SeBoundaryDown  = m_result[n].meanE(0) - 3 * Math::sqrt(m_result[n].varE(0, 0));
+        m_result[n].meanIntegralE = m_result[n - 1].meanIntegralE + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].upE  = m_result[n].meanE(0) + 3 * Math::sqrt(m_result[n].varE(0, 0));
+        m_result[n].downE  = m_result[n].meanE(0) - 3 * Math::sqrt(m_result[n].varE(0, 0));
     }
 
 #ifdef QT_ENABLED
@@ -144,6 +148,9 @@ void Filter::writeResult(size_t n, int countI)
         Vector rE = m_sampleX[s] - m_sampleZ[s];
         //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];
         m_sampleE[s] = rE;
+        if (s == m_params->specificRealization()) {
+            m_result[n].specificE = m_sampleE[s];
+        }
     }
     mz = Mean(m_sampleZ);
     varZ = Var(m_sampleZ, mz);

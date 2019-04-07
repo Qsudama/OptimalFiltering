@@ -489,6 +489,14 @@ void GraphWindow::updatePlotter()
         m_plotter->graph(j)->setName(m_currentSheet->curves()[i].fullName());
         m_plotter->graph(j)->setAntialiased(true);
         m_plotter->graph(j)->setAdaptiveSampling(true);
+        if (m_currentSheet->curves()[i].with_side) {
+            m_plotter->addGraph();
+            m_plotter->addGraph();
+            m_plotter->graph(j+1)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_up);
+            m_plotter->graph(j+2)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_down);
+            m_plotter->graph(j+1)->setPen(m_currentSheet->curves()[i].up_down_pen);
+            m_plotter->graph(j+2)->setPen(m_currentSheet->curves()[i].up_down_pen);
+        }
     }
 
     m_plotter->replot();

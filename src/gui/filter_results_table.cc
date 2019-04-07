@@ -82,7 +82,7 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
         Core::GetMeanE(data, j, arrMe, scale[j]);
         Core::GetStdDeviationX(data, j, arrSx, scale[j]);
         Core::GetStdDeviationE(data, j, arrSe, scale[j]);
-        Core::GetMeanIntegral(data, j, arrMint, scale[j]);
+        Core::GetMeanIntegralE(data, j, arrMint, scale[j]);
 
         for (int i = 0; i < rows; ++i) {
             QTableWidgetItem *twItem = new QTableWidgetItem(QString::number(arrMx[i]));
