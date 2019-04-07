@@ -48,13 +48,14 @@ public:
     \param predictionStep - интервал \f$\delta \tau\f$ между (дискретными) прогнозами.
     \param integrationStep - шаг интегрирования \f$\Delta t\f$.
     \param sampleSize - размер выборок.
+    \param specificRealization - номер запоминаемой реализации.
     \param orderMult - кратность порядка фильтра для ФКП (ФОСпп).
     \param argumentsCount - Количество аргументов в фильтре (дискретные фильтры).
 
     После автоматической коррекции значения могут несколько отличаться от заданных.
     */
     FilterParameters(double maxTime, double measurementStep, double predictionStep, double integrationStep,
-                     Uint sampleSize, Uint orderMult = 1, Uint argumentsCount = 2);
+                     Uint sampleSize, Uint specificRealization, Uint orderMult = 1, Uint argumentsCount = 2);
 
     //! \brief Возвращает время \f$T_{max}\f$ окончания фильтрации.
     const double &maxTime() const;
@@ -81,6 +82,9 @@ public:
     //! \brief Возвращает размер выборок.
     const Uint &sampleSize() const;
 
+    //! \brief Возвращает номер запоминаемой реализации.
+    const Uint &specificRealization() const;
+
     //! \brief Возвращает кратность порядка фильтра для ФКП (ФОСпп).
     const Uint &orderMult() const;
 
@@ -104,6 +108,10 @@ public:
 
     //! \brief Устанавливает размер выборок.
     void setSampleSize(Uint size);
+
+    //! \brief Устанавливает номер запоминаемой реализации.
+    //! Возвращает true если получилось установить значение. Иначе false.
+    bool setSpecificRealization(Uint realization);
 
     //! \brief Устанавливает кратность порядка фильтра для ФКП (ФОСпп).
     void setOrderMult(Uint order);
@@ -143,6 +151,7 @@ private:
     Uint m_predictionCount; /*!< Количество \f$L\f$ прогнозов между двумя измерениями. */
     Uint m_integrationCount; /*!< Количество \f$N\f$ интегрирований между двумя прогнозами. */
     Uint m_sampleSize; /*!< Размер выборок. */
+    Uint m_specificRealization; /*!< Номер запоминаемой реализации. */
     Uint m_orderMult;  /*!< Кратность порядка фильтра. */
     Uint m_argumentsCount;  /*!< Кол-фо аргументов фильтра. */
 

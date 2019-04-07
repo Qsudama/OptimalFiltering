@@ -7,11 +7,12 @@ namespace Core
 
 
 FilterParameters::FilterParameters(double maxTime, double measurementStep, double predictionStep,
-                                   double integrationStep, Uint sampleSize, Uint orderMult, Uint argumentsCount)
+                                   double integrationStep, Uint sampleSize, Uint specificRealization, Uint orderMult, Uint argumentsCount)
     : m_maxTime(maxTime)
     , m_predictionStep(predictionStep)
     , m_integrationStep(integrationStep)
     , m_sampleSize(sampleSize)
+    , m_specificRealization(specificRealization)
     , m_orderMult(orderMult)
     , m_argumentsCount(argumentsCount)
 {
@@ -69,6 +70,11 @@ const Uint &FilterParameters::integrationCount() const
 const Uint &FilterParameters::sampleSize() const
 {
     return m_sampleSize;
+}
+
+const Uint &FilterParameters::specificRealization() const
+{
+    return m_specificRealization;
 }
 
 const Uint &FilterParameters::orderMult() const
@@ -161,6 +167,17 @@ void FilterParameters::setSampleSize(Uint size)
     }
     m_sampleSize = size;
 }
+
+bool FilterParameters::setSpecificRealization(Uint realization)
+{
+    if (realization > m_sampleSize) {
+        AlertHelper::showErrorAlertWithText("Core::FilterParameters::setSpecificRealization\nНомер выводимой реализации не должен быть больше количества реализаций");
+        return false;
+    }
+    m_specificRealization = realization;
+    return true;
+}
+
 
 void FilterParameters::setOrderMult(Uint order)
 {
