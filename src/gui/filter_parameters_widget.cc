@@ -197,7 +197,7 @@ void FilterParametersWidget::initLayouts()
     mainLayout->addWidget(new QLabel("="), 5, 3);
     mainLayout->addWidget(m_sbOrderMultiplicity, 5, 4);
 
-    mainLayout->addWidget(new QLabel(tr("Количество аргументов оценки ФМП")), 6, 0);
+    mainLayout->addWidget(new QLabel(tr("Порядок ФМП (не больше размерности X)")), 6, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 6, 1);
     mainLayout->addWidget(m_argumentsCount, 6, 4);
 

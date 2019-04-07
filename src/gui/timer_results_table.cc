@@ -8,7 +8,7 @@ TimerResultsTable::TimerResultsTable(const QVector<FilterTimeResult> filters_res
     , m_table(nullptr)
 {
     setFont(FontManager::instance().regular(GuiConfig::FONT_SIZE_NORMAL));
-    setWindowTitle(QString::fromStdString("Время моделирования"));
+    setWindowTitle(QString::fromStdString("Время моделирования одного такта"));
 
     initTable(filters_results);
 
@@ -27,13 +27,6 @@ TimerResultsTable::TimerResultsTable(const QVector<FilterTimeResult> filters_res
 
 void TimerResultsTable::initTable(QVector<FilterTimeResult> filters_results)
 {
-//    int dim = int(data[0].meanX.size());
-
-////    assert(dim == scale.size() && "FilterResultsTable::initTable(data, scale) : corrupt dimension of scale");
-//    if (dim != scale.size()) {
-//        AlertHelper::showErrorAlertWithText("FilterResultsTable::initTable\ndim != scale.size()");
-//        return;
-//    }
 
     int rows = int(filters_results.size());
     int cols = 3;
@@ -63,17 +56,21 @@ void TimerResultsTable::initTable(QVector<FilterTimeResult> filters_results)
     for (int i = 0; i < rows; i++) {
         FilterTimeResult filter_result = filters_results[i];
 
-        QTableWidgetItem *twItem = new QTableWidgetItem(QString::number(filter_result.all_time));
+        QString all_time = QString("%1").arg(filter_result.all_time, 0, 'f', 3);
+        QString pause_time = QString("%1").arg(filter_result.pause_time, 0, 'f', 3);
+        QString result_time = QString("%1").arg(filter_result.result_time, 0, 'f', 3);
+
+        QTableWidgetItem *twItem = new QTableWidgetItem(all_time);
         twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
         twItem->setTextAlignment(Qt::AlignCenter);
         m_table->setItem(i, 0, twItem);
 
-        twItem = new QTableWidgetItem(QString::number(filter_result.pause_time));
+        twItem = new QTableWidgetItem(pause_time);
         twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
         twItem->setTextAlignment(Qt::AlignCenter);
         m_table->setItem(i, 1, twItem);
 
-        twItem = new QTableWidgetItem(QString::number(filter_result.result_time));
+        twItem = new QTableWidgetItem(result_time);
         twItem->setFlags(twItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
         twItem->setTextAlignment(Qt::AlignCenter);
         m_table->setItem(i, 2, twItem);

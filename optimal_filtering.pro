@@ -331,7 +331,8 @@ HEADERS += \
     src/tasks/continuous_discrete/cd_scalar_linear.h \
     src/tasks/continuous/c_scalar_gauss.h \
     src/tasks/continuous/c_scalar_linear.h \
-    src/gui/timer_results_table.h
+    src/gui/timer_results_table.h \
+    src/gui/custom_double_spin_box.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -412,4 +413,5 @@ SOURCES += \
     src/tasks/continuous_discrete/cd_scalar_linear.cc \
     src/tasks/continuous/c_scalar_gauss.cc \
     src/tasks/continuous/c_scalar_linear.cc \
-    src/gui/timer_results_table.cc
+    src/gui/timer_results_table.cc \
+    src/gui/custom_double_spin_box.cc

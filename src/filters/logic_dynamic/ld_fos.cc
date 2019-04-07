@@ -20,14 +20,14 @@ FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
     : LogicDynamicFilter(params, task, id)
 {
     long n = task->dimX()/2;
-    string condit = initialConditWithType();
     string syffix_filter = "";
     if (m_task->countI > 1) {
         syffix_filter = "лд";
     }
     m_info->setName("ФОС" + syffix_filter);
     m_info->setType(syffix_filter);
-    m_info->setDimension("(p=" + std::to_string(n) + condit + ")");
+    m_info->setCondition(initialConditWithType());
+    m_info->setDimension("(p=" + std::to_string(n) + ")");
 }
 
 void FOS::zeroIteration()
