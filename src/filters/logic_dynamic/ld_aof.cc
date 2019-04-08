@@ -93,19 +93,6 @@ void AOF::computeBlock1(long s, size_t k) {
     }
 }
 
-void AOF::computeBlock2(long s, size_t k) {
-    Vector resZ = Vector::Zero(Sigma[s][0].size());
-    Vector mult = Vector::Zero(Sigma[s][0].size());
-    for (int i = 0; i < m_task->countI; i++) {
-        mult = P[s][i]*Sigma[s][i];
-        resZ += mult;
-    }
-    if (std::isnan(resZ[0])) {
-//        qDebug() << "Nan! s = " << s << "k = " << k;
-    }
-    m_sampleZ[s] = resZ;
-}
-
 void AOF::computeBlock4(long s, size_t k) {
     if (k == 0 && s == 125) {
         qDebug() << "Внимание в блоке 4";

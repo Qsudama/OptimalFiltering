@@ -52,9 +52,6 @@ void AOF::algorithm()
             m_sampleP[s] =
                 m_sampleP[s] + (A * m_sampleP[s] + m_sampleP[s] * A.transpose() + Theta) * m_params->integrationStep();
             m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
-            if (s == trajectoryNumber) {
-                m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
-            }
         }
         m_task->setTime(m_result[n].time);
 
@@ -72,9 +69,6 @@ void AOF::algorithm()
                 m_sampleZ[s] = m_sampleZ[s] + K * (m_sampleY[s] - h);
                 m_sampleP[s] = m_sampleP[s] - K * G * m_sampleP[s];
                 m_sampleP[s] = 0.5 * (m_sampleP[s] + m_sampleP[s].transpose());
-                if (s == trajectoryNumber) {
-                    m_result[n].realizationE = m_sampleX[s](0, 0) -  m_sampleZ[s](0, 0);
-                }
             }
         }
         writeResult(n);

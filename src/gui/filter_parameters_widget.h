@@ -120,6 +120,13 @@ private slots:
     void onSampleSizeChanged(int value);
 
     /*!
+     \brief Устанавливает новый номер выводимой реализации в трубке.
+     \param value - новое значение выводимой реализации.
+     \details Слот. Реакция на сигнал valueChanged(int) элемента m_sbSpecificRealization.
+    */
+    void onSpecificRealizationChanged(int value);
+
+    /*!
      \brief Обновляет значения во всех элементах.
      \note Параметры хранятся в экземпляре класса Core::FilterParameters.
             При изменении какого-либо параметра его значение предварительно корректируется
@@ -140,8 +147,11 @@ private:
     */
     void loadFonts();
 
-    //! \brief Инициализирует управляющие элементы и связывает их сигналы с нужными слотами.
+    //! \brief Инициализирует управляющие элементы.
     void initControls();
+
+    //! \brief Связывает управляющие элементы c их сигналами с нужными слотами.
+    void connectFieldSignals();
 
     //! \brief Устанавливает расположение всех элементов на виджете.
     void initLayouts();
@@ -195,6 +205,7 @@ private:
     QSpinBox *      m_sbOrderMultiplicity;
     QSpinBox *      m_argumentsCount;
     QSpinBox *      m_sbSampleSize;
+    QSpinBox *      m_sbSpecificRealization;
     QRadioButton *  m_radioPredictionStep;
     QRadioButton *  m_radioPredictionCount;
     QCheckBox *     m_checkFixAll;

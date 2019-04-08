@@ -19639,6 +19639,7 @@ QCPGraph::QCPGraph(QCPAxis *keyAxis, QCPAxis *valueAxis)
     setScatterSkip(0);
     setChannelFillGraph(0);
     setAdaptiveSampling(true);
+    setTag(0);
 }
 
 QCPGraph::~QCPGraph()
@@ -19782,6 +19783,11 @@ void QCPGraph::setChannelFillGraph(QCPGraph *targetGraph)
 void QCPGraph::setAdaptiveSampling(bool enabled)
 {
     mAdaptiveSampling = enabled;
+}
+
+void QCPGraph::setTag(int tag)
+{
+    mTag = tag;
 }
 
 /*! \overload

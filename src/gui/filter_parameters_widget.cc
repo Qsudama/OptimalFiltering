@@ -5,15 +5,18 @@ static double const coeff = 0.5;
 static double const minMesStep = 0.0001;
 static double const step = 0.01;
 
+int setting_specific_realization = 0;
+
 FilterParametersWidget::FilterParametersWidget(QWidget *parent)
     : QGroupBox(parent)
     , m_updateOn(true)
-    , m_parameters(new Core::FilterParameters(50.0, 1.0, 1.0, 0.1, 200, 4, 2))
+    , m_parameters(new Core::FilterParameters(50.0, 1.0, 1.0, 0.1, 200, 1, 4, 2))
     , m_currentFiltersFamily(0)
 {
     setTitle(tr("Параметры фильтрации"));
     loadFonts();
     initControls();
+    connectFieldSignals();
     initLayouts();
     onFixAllToggled(m_checkFixAll->isChecked());
 }
@@ -137,7 +140,22 @@ void FilterParametersWidget::initControls()
     m_sbSampleSize->setSingleStep(singleStepSampleSize);
     m_sbSampleSize->setValue(int(m_parameters->sampleSize()));
     m_sbSampleSize->setFont(m_monotypeFont);
+
+    // Номер конкретной реализации - m_sbSpecificRealization
+
+    m_sbSpecificRealization = new QSpinBox;
+    m_sbSpecificRealization->setMinimum(1);
+    m_sbSpecificRealization->setMaximum(10000);
+    m_sbSpecificRealization->setSingleStep(1);
+    m_sbSpecificRealization->setValue(1);
+    m_sbSpecificRealization->setFont(m_monotypeFont);
+
+}
+
+void FilterParametersWidget::connectFieldSignals()
+{
     connect(m_sbSampleSize, SIGNAL(valueChanged(int)), this, SLOT(onSampleSizeChanged(int)));
+    connect(m_sbSpecificRealization, SIGNAL(valueChanged(int)), this, SLOT(onSpecificRealizationChanged(int)));
 
     m_radioPredictionStep = new QRadioButton(tr("Интервал между прогнозами"));
     m_radioPredictionStep->setChecked(true);
@@ -207,11 +225,17 @@ void FilterParametersWidget::initLayouts()
     mainLayout->addWidget(new QLabel("="), 7, 3);
     mainLayout->addWidget(m_sbSampleSize, 7, 4);
 
-    mainLayout->addWidget(m_checkFixAll, 8, 0);
+    mainLayout->addWidget(new QLabel(tr("Номер выводимой реализации")), 8, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 8, 1);
-    mainLayout->addWidget(new QLabel(" "), 8, 2);
-    mainLayout->addWidget(new QLabel(" "), 8, 3);
-    mainLayout->addWidget(m_btnUpdate, 8, 4);
+    mainLayout->addWidget(new QLabel(tr("N")), 8, 2);
+    mainLayout->addWidget(new QLabel("="), 8, 3);
+    mainLayout->addWidget(m_sbSpecificRealization, 8, 4);
+
+    mainLayout->addWidget(m_checkFixAll, 9, 0);
+    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 9, 1);
+    mainLayout->addWidget(new QLabel(" "), 9, 2);
+    mainLayout->addWidget(new QLabel(" "), 9, 3);
+    mainLayout->addWidget(m_btnUpdate, 9, 4);
 
     this->setLayout(mainLayout);
 
@@ -349,6 +373,19 @@ void FilterParametersWidget::onArgumentsCountChanged(int value)
 void FilterParametersWidget::onSampleSizeChanged(int value)
 {
     m_parameters->setSampleSize(uint(value));
+}
+
+void FilterParametersWidget::onSpecificRealizationChanged(int value)
+{
+    if (setting_specific_realization > 1) { // предохранитель от внутренней рекурсии с вызовом алерта
+        return;
+    }
+    setting_specific_realization++;
+    bool setting = m_parameters->setSpecificRealization(uint(value));
+    if (!setting) {
+        m_sbSpecificRealization->setValue(m_parameters->sampleSize());
+    }
+    setting_specific_realization--;
 }
 
 void FilterParametersWidget::onUpdateValues()

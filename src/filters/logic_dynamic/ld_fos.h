@@ -52,7 +52,7 @@ private:
     Array<Matrix> Dzz;
 
     void computeBlock1(long s);
-    void computeBlock2(long s);
+//    void computeBlock2(long s);
     void computeBlock3b();
     void computeBlock3c();
     void computeBlock4(long s);
