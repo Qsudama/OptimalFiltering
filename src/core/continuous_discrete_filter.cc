@@ -5,7 +5,7 @@ using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
 using Math::LinAlg::Pinv;
-
+using std::sqrt;
 
 namespace Core
 {
@@ -59,12 +59,12 @@ void ContinuousDiscreteFilter::zeroIteration()
     m_result[0].varE  = Var(m_sampleE, m_result[0].meanE);
     m_result[0].time  = 0.0;
     m_result[0].meanIntegralE = 0.0;
-    m_result[0].upE = m_result[0].meanE(0) + 3 * Math::sqrt(m_result[0].varE(0, 0));
-    m_result[0].downE = m_result[0].meanE(0) - 3 * Math::sqrt(m_result[0].varE(0, 0));
+    m_result[0].upE = m_result[0].meanE(0) + 3 * sqrt(m_result[0].varE(0, 0));
+    m_result[0].downE = m_result[0].meanE(0) - 3 * sqrt(m_result[0].varE(0, 0));
     m_result[0].specificE = m_specificE[0];
     m_result[0].meanIntegralX = 0.0;
-    m_result[0].upX = m_result[0].meanX(0) + 3 * Math::sqrt(m_result[0].varX(0, 0));
-    m_result[0].downX = m_result[0].meanX(0) - 3 * Math::sqrt(m_result[0].varX(0, 0));
+    m_result[0].upX = m_result[0].meanX(0) + 3 * sqrt(m_result[0].varX(0, 0));
+    m_result[0].downX = m_result[0].meanX(0) - 3 * sqrt(m_result[0].varX(0, 0));
     m_result[0].specificX = m_specificX[0];
 }
 

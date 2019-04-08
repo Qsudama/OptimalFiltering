@@ -4,6 +4,7 @@
 
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
+using std::sqrt;
 
 namespace Core
 {
@@ -95,10 +96,10 @@ void Filter::writeResult(size_t n, bool copy)
         m_result[n].meanE = m_result[n - 1].meanE;
         m_result[n].varZ  = m_result[n - 1].varZ;
         m_result[n].varE  = m_result[n - 1].varE;
-        m_result[n].meanIntegralE = m_result[n - 1].meanIntegralE + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].meanIntegralE = m_result[n - 1].meanIntegralE + sqrt(m_result[n].varE(0, 0)) / m_result.size();
         m_result[n].upE = m_result[n - 1].upE;
         m_result[n].downE = m_result[n - 1].downE;
-        m_result[n].meanIntegralX = m_result[n - 1].meanIntegralX + Math::sqrt(m_result[n].varX(0, 0)) / m_result.size();
+        m_result[n].meanIntegralX = m_result[n - 1].meanIntegralX + sqrt(m_result[n].varX(0, 0)) / m_result.size();
         m_result[n].upX = m_result[n - 1].upX;
         m_result[n].downX = m_result[n - 1].downX;
     } else {
@@ -106,12 +107,12 @@ void Filter::writeResult(size_t n, bool copy)
         m_result[n].varZ  = Var(m_sampleZ, m_result[n].meanZ);
         m_result[n].meanE = Mean(m_sampleE);
         m_result[n].varE  = Var(m_sampleE, m_result[n].meanE);
-        m_result[n].meanIntegralE = m_result[n - 1].meanIntegralE + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
-        m_result[n].upE  = m_result[n].meanE(0) + 3 * Math::sqrt(m_result[n].varE(0, 0));
-        m_result[n].downE  = m_result[n].meanE(0) - 3 * Math::sqrt(m_result[n].varE(0, 0));
-        m_result[n].meanIntegralX = m_result[n - 1].meanIntegralX + Math::sqrt(m_result[n].varX(0, 0)) / m_result.size();
-        m_result[n].upX = m_result[n].meanX(0) + 3 * Math::sqrt(m_result[n].varX(0, 0));
-        m_result[n].downX = m_result[n].meanX(0) - 3 * Math::sqrt(m_result[n].varX(0, 0));
+        m_result[n].meanIntegralE = m_result[n - 1].meanIntegralE + sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].upE  = m_result[n].meanE(0) + 3 * sqrt(m_result[n].varE(0, 0));
+        m_result[n].downE  = m_result[n].meanE(0) - 3 * sqrt(m_result[n].varE(0, 0));
+        m_result[n].meanIntegralX = m_result[n - 1].meanIntegralX + sqrt(m_result[n].varX(0, 0)) / m_result.size();
+        m_result[n].upX = m_result[n].meanX(0) + 3 * sqrt(m_result[n].varX(0, 0));
+        m_result[n].downX = m_result[n].meanX(0) - 3 * sqrt(m_result[n].varX(0, 0));
     }
 
 #ifdef QT_ENABLED
@@ -173,13 +174,13 @@ void Filter::writeResult(size_t n, int countI)
         m_result[0].meanIntegralE = 0.0;
         m_result[0].meanIntegralX = 0.0;
     } else {
-        m_result[n].meanIntegralE= m_result[n - 1].meanIntegralE + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
-        m_result[n].meanIntegralX = m_result[n - 1].meanIntegralX + Math::sqrt(m_result[n].varX(0, 0)) / m_result.size();
+        m_result[n].meanIntegralE= m_result[n - 1].meanIntegralE + sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].meanIntegralX = m_result[n - 1].meanIntegralX + sqrt(m_result[n].varX(0, 0)) / m_result.size();
     }
-    m_result[n].upE  = m_result[n].meanE(0) + 3 * Math::sqrt(m_result[n].varE(0, 0));
-    m_result[n].downE  = m_result[n].meanE(0) - 3 * Math::sqrt(m_result[n].varE(0, 0));
-    m_result[n].upX  = m_result[n].meanX(0) + 3 * Math::sqrt(m_result[n].varX(0, 0));
-    m_result[n].downX  = m_result[n].meanX(0) - 3 * Math::sqrt(m_result[n].varX(0, 0));
+    m_result[n].upE  = m_result[n].meanE(0) + 3 * sqrt(m_result[n].varE(0, 0));
+    m_result[n].downE  = m_result[n].meanE(0) - 3 * sqrt(m_result[n].varE(0, 0));
+    m_result[n].upX  = m_result[n].meanX(0) + 3 * sqrt(m_result[n].varX(0, 0));
+    m_result[n].downX  = m_result[n].meanX(0) - 3 * sqrt(m_result[n].varX(0, 0));
 
 
 #ifdef QT_ENABLED

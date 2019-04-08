@@ -97,11 +97,11 @@ Matrix ScalarLinear::A(const Vector &m, const Matrix & /*D*/) const
 
 Vector ScalarLinear::c(const Vector &x, double measurementStep) const
 {
-    /*Vector w = Math::sqrt(measurementStep) * m_normalRand(m_meanW, m_varW); // СКО, а не Дисперсия
+    /*Vector w = sqrt(measurementStep) * m_normalRand(m_meanW, m_varW); // СКО, а не Дисперсия
     Vector res(m_dimX);
     res[0] = (c1 * x[0] + c2 * x[0] * x[0]) * measurementStep + d0* w[0] + d1* x[0]* w[0];*/
 
-    Vector w = 1.0 / Math::sqrt(measurementStep) * m_normalRand(m_meanW, m_varW); // СКО, а не Дисперсия
+    Vector w = 1.0 / sqrt(measurementStep) * m_normalRand(m_meanW, m_varW); // СКО, а не Дисперсия
     Vector res(m_dimX);
     res[0] = (c1 * x[0] + c2 * x[0] * x[0]) + d0* w[0] + d1* x[0]* w[0];
 

@@ -117,7 +117,7 @@ Matrix LandingLinear::A(const Vector &m, const Matrix & /*D*/) const
 Vector LandingLinear::c(const Vector &x, double measurementStep) const
 {
     double e = exp(-BB * x[2]);
-    Vector w = 1.0 / Math::sqrt(measurementStep) * m_normalRand(m_meanW, m_varW);
+    Vector w = 1.0 / sqrt(measurementStep) * m_normalRand(m_meanW, m_varW);
     Vector res(m_dimY);
 
     res[0] = CC * (w[0] + 1.0) * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1])) + w[2];

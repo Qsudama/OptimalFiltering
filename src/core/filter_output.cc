@@ -3,6 +3,8 @@
 
 #include "src/helpers/alert_helper.h"
 
+using std::sqrt;
+
 namespace Core
 {
 
@@ -63,7 +65,7 @@ void GetStdDeviationX(const FilterOutput &fo, long index, ArrayDbl &array, doubl
     }
     array.resize(IndexType(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
-        array[IndexType(i)] = coeff * Math::sqrt(fo[i].varX(index, index));
+        array[IndexType(i)] = coeff * sqrt(fo[i].varX(index, index));
     }
 }
 
@@ -76,7 +78,7 @@ void GetStdDeviationZ(const FilterOutput &fo, long index, ArrayDbl &array, doubl
     }
     array.resize(IndexType(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
-        array[IndexType(i)] = coeff * Math::sqrt(fo[i].varZ(index, index));
+        array[IndexType(i)] = coeff * sqrt(fo[i].varZ(index, index));
     }
 }
 
@@ -89,7 +91,7 @@ void GetStdDeviationE(const FilterOutput &fo, long index, ArrayDbl &array, doubl
     }
     array.resize(IndexType(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
-        array[IndexType(i)] = coeff * Math::sqrt(fo[i].varE(index, index));
+        array[IndexType(i)] = coeff * sqrt(fo[i].varE(index, index));
     }
 }
 
