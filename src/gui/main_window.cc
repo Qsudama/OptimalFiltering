@@ -275,13 +275,13 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
-        m_graphWindow->setCountSheets(dim + 1);
+        m_graphWindow->setCountSheets(dim + 2);
     }
 
     QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
     QString subTitle = subtitleForParametrs(ftype, task);
     for (int i = 0; i < dim; i++) {
-        if (i < dim - 1) {
+        if (i < dim - 2) {
             m_graphWindow->sheet(i).setTitleLabel(title);
             m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
         }
@@ -347,6 +347,12 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetDownE(filter->result(), i, y_down, scale[i]);
         QString name_sheet_e = "E (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
         m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE, false);
+
+        Core::GetRealizationX(filter->result(), i, y, scale[i]);
+        Core::GetUpX(filter->result(), i, y_up, scale[i]);
+        Core::GetDownX(filter->result(), i, y_down, scale[i]);
+        QString name_sheet_x = "X (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX, false);
     }
 
     m_graphWindow->updatePlotter();

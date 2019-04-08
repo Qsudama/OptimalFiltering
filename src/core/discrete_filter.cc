@@ -46,6 +46,7 @@ void DiscreteFilter::zeroIteration()
         m_sampleX[s] = m_task->x0();
         m_sampleY[s] = m_task->b(m_sampleX[s]);
         m_specificE[s] = m_sampleX[s];
+        m_specificX[s] = m_sampleX[s];
     }
 
     Vector mx0  = Mean(m_sampleX);
@@ -60,6 +61,7 @@ void DiscreteFilter::zeroIteration()
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
         if (s == m_params->specificRealization()) {
             m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
+            m_specificX[0] = m_sampleX[s] - m_sampleZ[s];
         }
     }
 
@@ -74,6 +76,10 @@ void DiscreteFilter::zeroIteration()
     m_result[0].upE = m_result[0].meanE(0) + 3 * Math::sqrt(m_result[0].varE(0, 0));
     m_result[0].downE = m_result[0].meanE(0) - 3 * Math::sqrt(m_result[0].varE(0, 0));
     m_result[0].specificE = m_specificE[0];
+    m_result[0].meanIntegralX = 0.0;
+    m_result[0].upX = m_result[0].meanX(0) + 3 * Math::sqrt(m_result[0].varX(0, 0));
+    m_result[0].downX = m_result[0].meanX(0) - 3 * Math::sqrt(m_result[0].varX(0, 0));
+    m_result[0].specificX = m_specificX[0];
 }
 
 
