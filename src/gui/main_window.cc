@@ -247,7 +247,9 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTE
 
 void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
 {
-    QColor  color = m_colorManager.nextColor();
+    QColor color = m_colorManager.nextColor();
+    QColor color_realization_e = m_colorManager.nextColorRealizationE();
+    QColor color_realization_x = m_colorManager.nextColorRealizationX();
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
 
@@ -263,13 +265,13 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     sePen.setWidthF(1.5);
     sePen.setColor(color);
     upDownX.setWidthF(1.5);
-    upDownX.setColor(Qt::yellow);
+    upDownX.setColor(color_realization_x);
     upDownE.setWidthF(1.5);
-    upDownE.setColor(Qt::green);
+    upDownE.setColor(color_realization_e);
     selectRealizX.setWidthF(1.5);
-    selectRealizX.setColor(Qt::darkYellow);
+    selectRealizX.setColor(color_realization_x);
     selectRealizE.setWidthF(1.5);
-    selectRealizE.setColor(Qt::darkGreen);
+    selectRealizE.setColor(color_realization_e);
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {

@@ -3,20 +3,49 @@
 
 ColorManager::ColorManager()
     : m_currentIndex(0)
+    , m_realizationECollorsCurrentIndex(0)
+    , m_realizationXCollorsCurrentIndex(0)
 {
-    m_colors.resize(12);
-    m_colors[0]  = QColor::fromHsv(359, 255, 255);
-    m_colors[1]  = QColor::fromHsv(179, 230, 230);
-    m_colors[2]  = QColor::fromHsv(239, 255, 255);
-    m_colors[3]  = QColor::fromHsv(299, 255, 255);
-    m_colors[4]  = QColor::fromHsv(149, 204, 204);
-    m_colors[5]  = QColor::fromHsv(29, 204, 204);
-    m_colors[6]  = QColor::fromHsv(209, 204, 204);
-    m_colors[7]  = QColor::fromHsv(89, 204, 204);
-    m_colors[8]  = QColor::fromHsv(269, 204, 204);
-    m_colors[9]  = QColor::fromHsv(329, 255, 153);
-    m_colors[10] = QColor::fromHsv(59, 255, 255);
-    m_colors[11] = QColor::fromHsv(119, 255, 255);
+    initColors();
+}
+
+void ColorManager::initColors()
+{
+    m_colors.resize(10);
+    m_colors[0]  = QColor::fromRgb(255, 0, 4);
+    m_colors[1]  = QColor::fromRgb(0, 255, 251);
+    m_colors[2]  = QColor::fromRgb(0, 4, 255);
+    m_colors[3]  = QColor::fromRgb(251, 0, 255);
+    m_colors[4]  = QColor::fromRgb(0, 255, 123);
+    m_colors[5]  = QColor::fromRgb(255, 123, 0);
+    m_colors[6]  = QColor::fromRgb(0, 132, 255);
+    m_colors[7]  = QColor::fromRgb(132, 255, 0);
+    m_colors[8]  = QColor::fromRgb(123, 0, 255);
+    m_colors[9]  = QColor::fromRgb(255, 0, 132);
+
+    m_realization_e_colors.resize(10);
+    m_realization_e_colors[0]  = QColor::fromRgb(0, 170, 169);
+    m_realization_e_colors[1]  = QColor::fromRgb(150, 0, 4);
+    m_realization_e_colors[2]  = QColor::fromRgb(142, 0, 141);
+    m_realization_e_colors[3]  = QColor::fromRgb(0, 4, 151);
+    m_realization_e_colors[4]  = QColor::fromRgb(188, 103, 0);
+    m_realization_e_colors[5]  = QColor::fromRgb(0, 173, 123);
+    m_realization_e_colors[6]  = QColor::fromRgb(132, 172, 0);
+    m_realization_e_colors[7]  = QColor::fromRgb(0, 100, 188);
+    m_realization_e_colors[8]  = QColor::fromRgb(187, 0, 120);
+    m_realization_e_colors[9]  = QColor::fromRgb(90, 0, 181);
+
+    m_realization_x_colors.resize(10);
+    m_realization_x_colors[0]  = QColor::fromRgb(150, 0, 4);
+    m_realization_x_colors[1]  = QColor::fromRgb(0, 170, 169);
+    m_realization_x_colors[2]  = QColor::fromRgb(0, 4, 151);
+    m_realization_x_colors[3]  = QColor::fromRgb(142, 0, 141);
+    m_realization_x_colors[4]  = QColor::fromRgb(0, 173, 123);
+    m_realization_x_colors[5]  = QColor::fromRgb(188, 103, 0);
+    m_realization_x_colors[6]  = QColor::fromRgb(0, 100, 188);
+    m_realization_x_colors[7]  = QColor::fromRgb(132, 172, 0);
+    m_realization_x_colors[8]  = QColor::fromRgb(90, 0, 181);
+    m_realization_x_colors[9]  = QColor::fromRgb(187, 0, 120);
 }
 
 const QColor &ColorManager::nextColor()
@@ -29,7 +58,30 @@ const QColor &ColorManager::nextColor()
     return m_colors[index];
 }
 
+const QColor &ColorManager::nextColorRealizationE()
+{
+    int index = m_realizationECollorsCurrentIndex;
+    ++m_realizationECollorsCurrentIndex;
+    if (m_realizationECollorsCurrentIndex >= m_realization_e_colors.size()) {
+        m_realizationECollorsCurrentIndex = 0;
+    }
+    return m_realization_e_colors[index];
+}
+
+
+const QColor &ColorManager::nextColorRealizationX()
+{
+    int index = m_realizationXCollorsCurrentIndex;
+    ++m_realizationXCollorsCurrentIndex;
+    if (m_realizationXCollorsCurrentIndex >= m_realization_x_colors.size()) {
+        m_realizationXCollorsCurrentIndex = 0;
+    }
+    return m_realization_x_colors[index];
+}
+
 void ColorManager::reset()
 {
     m_currentIndex = 0;
+    m_realizationECollorsCurrentIndex = 0;
+    m_realizationXCollorsCurrentIndex = 0;
 }

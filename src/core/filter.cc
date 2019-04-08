@@ -161,6 +161,13 @@ void Filter::writeResult(size_t n, int countI)
     m_result[n].varZ  = varZ;
     m_result[n].meanE = me;
     m_result[n].varE  = varE;
+    if (n == 0) {
+        m_result[0].meanIntegralE = 0.0;
+    } else {
+        m_result[n].meanIntegralE = m_result[n - 1].meanIntegralE + Math::sqrt(m_result[n].varE(0, 0)) / m_result.size();
+    }
+    m_result[n].upE  = m_result[n].meanE(0) + 3 * Math::sqrt(m_result[n].varE(0, 0));
+    m_result[n].downE  = m_result[n].meanE(0) - 3 * Math::sqrt(m_result[n].varE(0, 0));
 
 
 #ifdef QT_ENABLED

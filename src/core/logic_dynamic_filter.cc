@@ -70,12 +70,6 @@ void LogicDynamicFilter::zeroIteration() {
         Upsilon[s].resize(m_task->countI);
     }
 
-    m_sampleX.resize(m_params->sampleSize());
-    m_sampleY.resize(m_params->sampleSize());
-    m_sampleZ.resize(m_params->sampleSize());
-    m_sampleE.resize(m_params->sampleSize());
-    m_sampleI.resize(m_params->sampleSize());
-
     size_t size = size_t(m_params->measurementCount());
     m_result.resize(size);
     for (size_t i = 0; i < size; ++i) {
@@ -131,6 +125,22 @@ void LogicDynamicFilter::computeBlock0() {
                 Phi[s][i] =  varY[i];
             }
         }
+    }
+}
+
+void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
+    Vector resZ = Vector::Zero(Sigma[s][0].size());
+    Vector mult = Vector::Zero(Sigma[s][0].size());
+    for (int i = 0; i < m_task->countI; i++) {
+        mult = P[s][i]*Sigma[s][i];
+        resZ += mult;
+    }
+    if (std::isnan(resZ[0])) {
+//        qDebug() << "Nan! s = " << s << "k = " << k;
+    }
+    m_sampleZ[s] = resZ;
+    if ((Uint)s == m_params->specificRealization()) {
+        m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
     }
 }
 

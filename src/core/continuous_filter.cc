@@ -48,7 +48,7 @@ void ContinuousFilter::zeroIteration()
       //m_sampleZ[s] = H0 * m_sampleY[s] + e0;
         m_sampleZ[s] = mx0;
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
-        if(s == m_params->specificRealization()) {
+        if (s == m_params->specificRealization()) {
             m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
         }
     }

@@ -54,7 +54,7 @@ private:
     Array<Vector> m_sampleS; /*!< Массив для хранения расширенных векторов состояния \f$S_k\f$. */
 
     void computeBlock1(long s);
-    void computeBlock2(long s);
+//    void computeBlock2(long s);
     void computeBlock3a(long k);
     void computeBlock3b();
     void computeBlock3c();
