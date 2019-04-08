@@ -215,7 +215,7 @@ void MainWindow::onFilterUpdatePercent(int p)
     m_statusProgressBar->setValue(p);
 }
 
-void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTER_ID id)
+void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE /*atype*/, FILTER_ID id)
 {
     bool normalTask   = m_taskWidget->taskIsNull(ftype);
     if (!normalTask) {
