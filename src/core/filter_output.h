@@ -122,6 +122,14 @@ void GetDownE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff 
 
 void GetRealizationE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
+void GetMeanIntegralX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
+void GetUpX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
+void GetDownX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
+void GetRealizationX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
 } // end Core
 
 

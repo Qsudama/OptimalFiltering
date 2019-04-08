@@ -141,6 +141,7 @@ void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
     m_sampleZ[s] = resZ;
     if ((Uint)s == m_params->specificRealization()) {
         m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
+        m_specificX[0] = m_sampleX[s] - m_sampleZ[s];
     }
 }
 

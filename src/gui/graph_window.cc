@@ -145,7 +145,7 @@ void GraphWindow::updateMenu()
 {
     //меню - выбор страницы
     m_menuSheet->clear();
-    for (int i = 0; i < m_sheets.size() - 1; i++) {
+    for (int i = 0; i < m_sheets.size() - 2; i++) {
         QAction *action = new QAction(QString::number(i + 1), m_menuSheet);
         action->setData(i + 100);
         action->setCheckable(true);
@@ -371,13 +371,13 @@ void GraphWindow::onHideCurveFromContextMenu()
         return;
     }
 
-    QString name  = m_plotter->selectedGraphs().at(0)->name();
-    int     index = -1;
+    QString name = m_plotter->selectedGraphs().at(0)->name();
+    int index = -1;
     for (int j = 0; j < m_currentSheet->curves().size(); j++) {
         if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == true) {
             m_currentSheet->setCurveVisible(j, false);
             index = j;
-            j     = m_currentSheet->curves().size() + 1;
+            j = m_currentSheet->curves().size() + 1;
         }
     }
     if (index > -1) {
@@ -391,15 +391,15 @@ void GraphWindow::onHideCurve(QAction *action)
         return;
     }
 
-    QString name  = action->data().toString();
-    int     index = -1;
+    QString name = action->data().toString();
+    int index = -1;
 
     for (int j = 0; j < m_currentSheet->curves().size(); j++) {
         if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == true) {
             m_menuHide->removeAction(action);
             m_currentSheet->setCurveVisible(j, false);
             index = j;
-            j     = m_currentSheet->curves().size() + 1;
+            j = m_currentSheet->curves().size() + 1;
         }
     }
     if (index > -1) {
@@ -413,8 +413,8 @@ void GraphWindow::onShowCurve(QAction *action)
         return;
     }
 
-    QString name  = action->data().toString();
-    int     index = -1;
+    QString name = action->data().toString();
+    int index = -1;
 
     for (int j = 0; j < m_currentSheet->curves().size(); j++) {
         if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == false) {
@@ -422,7 +422,7 @@ void GraphWindow::onShowCurve(QAction *action)
             m_menuShow->removeAction(action);
             m_currentSheet->setCurveVisible(j, true);
             index = j;
-            j     = m_currentSheet->curves().size() + 1;
+            j = m_currentSheet->curves().size() + 1;
         }
     }
     if (index > -1) {

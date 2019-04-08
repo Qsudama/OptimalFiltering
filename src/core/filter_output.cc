@@ -145,4 +145,57 @@ void GetRealizationE(const FilterOutput &fo, long index, ArrayDbl &array, double
     }
 }
 
+void GetMeanIntegralX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
+{
+//    assert(index >= 0 && index < fo[0].meanX.size() && "Core::GetMeanX(fo, index, array, coeff) : out of range");
+//    if (index < 0 && index >= fo[0].meanIntegralE.rows()) {
+//        AlertHelper::showErrorAlertWithText("Core::GetMeanIntegralE\nВыход за пределы массива!");
+//        return;
+//    }
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].meanIntegralX;//[index];
+    }
+}
+
+void GetUpX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
+{
+//    assert(index >= 0 && index < fo[0].varE.rows() && "Core::GetStdDeviationE(fo, index, array, coeff) : out of range");
+//    if (index < 0 && index >= fo[0].upE.rows()) {
+//        AlertHelper::showErrorAlertWithText("Core::GetUpE\nВыход за пределы массива!");
+//        return;
+//    }
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].upX;
+    }
+}
+
+void GetDownX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
+{
+//    assert(index >= 0 && index < fo[0].varE.rows() && "Core::GetStdDeviationE(fo, index, array, coeff) : out of range");
+//    if (index < 0 && index >= fo[0].varE.rows()) {
+//        AlertHelper::showErrorAlertWithText("Core::GetDownE\nВыход за пределы массива!");
+//        return;
+//    }
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].downX;
+    }
+}
+
+void GetRealizationX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
+{
+//    assert(index >= 0 && index < fo[0].varE.rows() && "Core::GetStdDeviationE(fo, index, array, coeff) : out of range");
+    if (index < 0 && index >= fo[0].specificX.rows()) {
+        AlertHelper::showErrorAlertWithText("Core::GetRealizationE\nВыход за пределы массива!");
+        return;
+    }
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].specificX[index];
+    }
+}
+
+
 } // end Core
