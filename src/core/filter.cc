@@ -83,6 +83,13 @@ void Filter::writeResult(size_t n, bool copy)
     m_result[n].meanX = Mean(m_sampleX);
     m_result[n].varX  = Var(m_sampleX, m_result[n].meanX);
 
+    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+        m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
+        if (s == m_params->specificRealization()) {
+            m_result[n].specificE = m_sampleE[s];
+            m_result[n].specificX = m_sampleE[s];
+        }
+    }
     if (copy) {
         m_result[n].meanZ = m_result[n - 1].meanZ;
         m_result[n].meanE = m_result[n - 1].meanE;
@@ -95,13 +102,6 @@ void Filter::writeResult(size_t n, bool copy)
         m_result[n].upX = m_result[n - 1].upX;
         m_result[n].downX = m_result[n - 1].downX;
     } else {
-        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
-            if (s == m_params->specificRealization()) {
-                m_result[n].specificE = m_sampleE[s];
-                m_result[n].specificX = m_sampleE[s];
-            }
-        }
         m_result[n].meanZ = Mean(m_sampleZ);
         m_result[n].varZ  = Var(m_sampleZ, m_result[n].meanZ);
         m_result[n].meanE = Mean(m_sampleE);
