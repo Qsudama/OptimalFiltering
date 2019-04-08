@@ -35,7 +35,7 @@ void TaskWidget::initControls()
     m_cbTask->addItem(tr("Линейный скалярный пример со сбоями измерителя"));                     // 8
     m_cbTask->addItem(tr("3-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));                  // 9
     m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));                  // 10
-//    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля  со сбоями 2-х датчиков (линеар)"));         // 11
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля со сбоями 2-х датчиков (линеар)"));            // 11
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 

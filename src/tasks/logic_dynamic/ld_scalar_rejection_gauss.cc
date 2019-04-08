@@ -20,7 +20,7 @@ using Math::Convert::DegToRad;
 ScalarRejectionGauss::ScalarRejectionGauss()
     : LogicDynamicTask()
     , m_e(0.2)
-    , cI2(10)
+    , m_cI2(10)
     , countIInTask(2)
 {
     m_info->setName("Скалярный пример со сбоями измерителя");
@@ -43,11 +43,11 @@ ScalarRejectionGauss::ScalarRejectionGauss()
     m_varV(0, 0) = 1.0;
     m_varW(0, 0) = 1.0;
 
-    (*m_params)["a1"]     = A1;
-    (*m_params)["a2"]     = A2;
+    (*m_params)["a1"] = A1;
+    (*m_params)["a2"] = A2;
 
-    (*m_params)["e"]   = m_e;
-    (*m_params)["с(2)"]   = cI2;
+    (*m_params)["e"] = m_e;
+    (*m_params)["с(2)"] = m_cI2;
     (*m_params)["Кол-во режимов I"] = countIInTask;
 }
 
@@ -57,7 +57,7 @@ void ScalarRejectionGauss::loadParams()
     A2         = m_params->at("a2");
     countI     = m_params->at("Кол-во режимов I");
     m_e        = m_params->at("e");
-    cI2        = m_params->at("с(2)");
+    m_cI2        = m_params->at("с(2)");
 }
 
 double ScalarRejectionGauss::C(int i) const
@@ -65,7 +65,7 @@ double ScalarRejectionGauss::C(int i) const
     if (i == 1) {
         return 1.0;
     } else {
-        return cI2;
+        return m_cI2;
     }
 }
 
