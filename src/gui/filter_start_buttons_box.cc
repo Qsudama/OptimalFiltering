@@ -84,11 +84,11 @@ void FilterStartButtonsBox::initControls()
     m_btnLDFos = new QPushButton(tr("лд-ФОС"));
     connect(m_btnLDFos, SIGNAL(clicked()), this, SLOT(onBtnLDFosClicked()));
 
-    m_btnLDFkp = new QPushButton(tr("лд-ФКП"));
-    connect(m_btnLDFkp, SIGNAL(clicked()), this, SLOT(onBtnLDFkpClicked()));
-
     m_btnLDFbp = new QPushButton(tr("лд-ФБП"));
     connect(m_btnLDFbp, SIGNAL(clicked()), this, SLOT(onBtnLDFbpClicked()));
+
+    m_btnLDFkp = new QPushButton(tr("лд-ФКП"));
+    connect(m_btnLDFkp, SIGNAL(clicked()), this, SLOT(onBtnLDFkpClicked()));
 }
 
 void FilterStartButtonsBox::initLayouts()
@@ -156,8 +156,8 @@ void FilterStartButtonsBox::initLayouts()
 
     tab4Layout->addWidget(m_btnLDAof, 0, 0);
     tab4Layout->addWidget(m_btnLDFos, 0, 1);
-    tab4Layout->addWidget(m_btnLDFkp, 0, 2);
-    tab4Layout->addWidget(m_btnLDFbp, 0, 3);
+    tab4Layout->addWidget(m_btnLDFbp, 0, 2);
+    tab4Layout->addWidget(m_btnLDFkp, 0, 3);
 
     tab1->setLayout(tab1Layout);
     tab2->setLayout(tab2Layout);
@@ -257,12 +257,12 @@ void FilterStartButtonsBox::onBtnLDFosClicked()
     emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::FOS);
 }
 
-void FilterStartButtonsBox::onBtnLDFkpClicked()
-{
-    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::LDFKP);
-}
-
 void FilterStartButtonsBox::onBtnLDFbpClicked()
 {
     emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::LDFBP);
+}
+
+void FilterStartButtonsBox::onBtnLDFkpClicked()
+{
+    emit start(FILTER_TYPE::LogicDynamic, APPROX_TYPE::Linear, FILTER_ID::LDFKP);
 }
