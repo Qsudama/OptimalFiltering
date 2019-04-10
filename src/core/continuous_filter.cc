@@ -31,8 +31,6 @@ void ContinuousFilter::zeroIteration()
         m_sampleX[s] = m_task->x0();
 //        m_sampleY[s] = Vector::Zero(m_task->dimY());
         m_sampleY[s] = m_task->c(m_sampleX[s]);
-        m_specificE[s] = m_sampleX[s];
-        m_specificX[s] = m_sampleX[s];
     }
 
 //    m_result[0].meanX = Mean(m_sampleX);
@@ -52,7 +50,7 @@ void ContinuousFilter::zeroIteration()
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
         if (s == m_params->specificRealization()) {
             m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
-            m_specificX[0] = m_sampleX[s] - m_sampleZ[s];
+            m_specificX[0] = m_sampleX[s]; // Вот тут вопросик
         }
     }
 

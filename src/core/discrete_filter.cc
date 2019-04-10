@@ -45,8 +45,6 @@ void DiscreteFilter::zeroIteration()
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
         m_sampleX[s] = m_task->x0();
         m_sampleY[s] = m_task->b(m_sampleX[s]);
-        m_specificE[s] = m_sampleX[s];
-        m_specificX[s] = m_sampleX[s];
     }
 
     Vector mx0  = Mean(m_sampleX);
@@ -61,7 +59,7 @@ void DiscreteFilter::zeroIteration()
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
         if (s == m_params->specificRealization()) {
             m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
-            m_specificX[0] = m_sampleX[s] - m_sampleZ[s];
+            m_specificX[0] = m_sampleX[s]; // Вот тут вопросик
         }
     }
 

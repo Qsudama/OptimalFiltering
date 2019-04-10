@@ -87,7 +87,7 @@ void Filter::writeResult(size_t n, bool copy)
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
         if (s == m_params->specificRealization()) {
             m_result[n].specificE = m_sampleE[s];
-            m_result[n].specificX = m_sampleE[s];
+            m_result[n].specificX = m_sampleX[s];
         }
     }
     if (copy) {
@@ -159,7 +159,7 @@ void Filter::writeResult(size_t n, int countI)
         m_sampleE[s] = rE;
         if (s == m_params->specificRealization()) {
             m_result[n].specificE = m_sampleE[s];
-            m_result[n].specificX = m_sampleE[s];
+            m_result[n].specificX = m_sampleX[s];
         }
     }
     mz = Mean(m_sampleZ);
