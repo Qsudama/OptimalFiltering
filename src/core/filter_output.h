@@ -22,14 +22,13 @@ struct SingleFilterOutput {
     Math::Matrix varZ;  /*!< Дисперсия \f$M[Z_t]\f$. */
     Math::Matrix varE;  /*!< Дисперсия \f$M[E_t], E_t = |X_t - Z_t|\f$. */
     double       time;  /*!< Время \f$t\f$. */
-    double meanIntegralE; /*!< Интегральное среднее E*/
     Math::Vector upE; /*!< Верхняя граница E*/
     Math::Vector downE; /*!< Нижняя граница E*/
-    Math::Vector specificE; /*!< Конкретная реализация E выбранной траектории*/
-    double meanIntegralX; /*!< Интегральное среднее X*/
     Math::Vector upX; /*!< Верхняя граница X*/
     Math::Vector downX; /*!< Нижняя граница X*/
     Math::Vector specificX; /*!< Конкретная реализация X выбранной траектории*/
+    Math::Vector specificE; /*!< Конкретная реализация E выбранной траектории*/
+    Math::Vector specificZ; /*!< Конкретная реализация Z выбранной траектории*/
 };
 
 
@@ -114,7 +113,7 @@ void GetStdDeviationZ(const FilterOutput &fo, long index, ArrayDbl &array, doubl
 */
 void GetStdDeviationE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
-void GetMeanIntegralE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
 
 void GetUpE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
@@ -122,13 +121,13 @@ void GetDownE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff 
 
 void GetRealizationE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
-void GetMeanIntegralX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
-
 void GetUpX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
 void GetDownX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
 void GetRealizationX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
+void GetRealizationZ(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
 } // end Core
 

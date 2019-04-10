@@ -147,7 +147,7 @@ public:
                   const QString &name,
                   const QPen &penRealize,
                   const QPen &penSide,
-                  bool visible = true);
+                  bool visible = false);
 
 
 private:

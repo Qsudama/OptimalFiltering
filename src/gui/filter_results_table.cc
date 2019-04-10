@@ -42,7 +42,7 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
         return;
     }
     int rows = int(data.size());
-    int cols = 1 + 4 * dim + 1;
+    int cols = 1 + 4 * dim;
 
     m_table = new QTableWidget(rows, cols);
 
@@ -58,7 +58,6 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
         labels.append(tr("Sx") + strNum);
         labels.append(tr("Se") + strNum);
     }
-    labels.append(tr("Mint"));
 
     m_table->setHorizontalHeaderLabels(labels);
     m_table->setFont(titleFont);
@@ -66,7 +65,7 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
     m_table->setSortingEnabled(false);
     m_table->setWordWrap(false);
 
-    QVector<double> arrT, arrMx, arrMe, arrSx, arrSe, arrMint;
+    QVector<double> arrT, arrMx, arrMe, arrSx, arrSe;
 
     Core::GetTime(data, arrT);
     for (int i = 0; i < rows; ++i) {
@@ -79,8 +78,7 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
         Core::GetMeanX(data, j, arrMx, scale[j]);
         Core::GetMeanE(data, j, arrMe, scale[j]);
         Core::GetStdDeviationX(data, j, arrSx, scale[j]);
-        Core::GetStdDeviationE(data, j, arrSe, scale[j]);
-        Core::GetMeanIntegralE(data, j, arrMint, scale[j]);
+        Core::GetStdDeviationE(data, j, arrSe, scale[j]);        
 
         for (int i = 0; i < rows; ++i) {
             QTableWidgetItem *twItem = new QTableWidgetItem(QString::number(arrMx[i]));
@@ -102,11 +100,6 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
                 twItem->setFont(warningFont);
             }
             m_table->setItem(i, 4 + 4 * j, twItem);
-        }
-        for (int i = 0; i < rows; ++i) {
-            QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(arrMint[i]));
-            newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
-            m_table->setItem(i, 4 + 4 * (dim - 1) + 1, newItem);
         }
     }
 }

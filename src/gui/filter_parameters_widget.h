@@ -156,6 +156,7 @@ private:
     //! \brief Устанавливает расположение всех элементов на виджете.
     void initLayouts();
 
+    void initLabels();
     /*!
      \brief Изменяет диапозон значений QDoubleSpinBox.
 
@@ -196,20 +197,30 @@ private:
     int computeMinimumWidth();
 
 
+    void enableLabel(QLabel *label, bool enable);
+
 private:
     QDoubleSpinBox *m_dsbMaxTime;
     QDoubleSpinBox *m_dsbMeasurementStep;
     QDoubleSpinBox *m_dsbPredictionStep;
-    QSpinBox *      m_sbPredictionCount;
+    QSpinBox *m_sbPredictionCount;
     QDoubleSpinBox *m_dsbIntegrationStep;
-    QSpinBox *      m_sbOrderMultiplicity;
-    QSpinBox *      m_argumentsCount;
-    QSpinBox *      m_sbSampleSize;
-    QSpinBox *      m_sbSpecificRealization;
-    QRadioButton *  m_radioPredictionStep;
-    QRadioButton *  m_radioPredictionCount;
-    QCheckBox *     m_checkFixAll;
-    QPushButton *   m_btnUpdate;
+    QSpinBox *m_sbOrderMultiplicity;
+    QSpinBox *m_argumentsCount;
+    QSpinBox *m_sbSampleSize;
+    QSpinBox *m_sbSpecificRealization;
+    QRadioButton *m_radioPredictionStep;
+    QRadioButton *m_radioPredictionCount;
+    QCheckBox *m_checkFixAll;
+    QPushButton *m_btnUpdate;
+
+    QLabel *m_maxTimeLabel;
+    QLabel *m_measurementStepLabel;
+    QLabel *m_integrationStepLabel;
+    QLabel *m_orderMultiplicityLabel;
+    QLabel *m_argumentsCountLabel;
+    QLabel *m_sampleSizeLabel;
+    QLabel *m_specificRealizationLabel;
 
     /*!
      * \details Если true, то запрещает виджетам изменяться.

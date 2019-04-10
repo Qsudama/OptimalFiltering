@@ -32,8 +32,6 @@ void LogicDynamicFilter::init()
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
     m_sampleI.resize(m_params->sampleSize());
-    m_specificE.resize(m_params->sampleSize());
-    m_specificX.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount());
     m_result.resize(size);
@@ -139,10 +137,6 @@ void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
 //        qDebug() << "Nan! s = " << s << "k = " << k;
     }
     m_sampleZ[s] = resZ;
-    if ((Uint)s == m_params->specificRealization()) {
-        m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
-        m_specificX[0] = m_sampleX[s] - m_sampleZ[s];
-    }
 }
 
 double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {

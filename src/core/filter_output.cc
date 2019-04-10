@@ -89,18 +89,6 @@ void GetStdDeviationE(const FilterOutput &fo, long index, ArrayDbl &array, doubl
     }
 }
 
-void GetMeanIntegralE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
-{
-//    if (index < 0 && index >= fo[0].meanIntegralE.rows()) {
-//        AlertHelper::showErrorAlertWithText("Core::GetMeanIntegralE\nВыход за пределы массива!");
-//        return;
-//    }
-    array.resize(IndexType(fo.size()));
-    for (size_t i = 0; i < size_t(fo.size()); ++i) {
-        array[IndexType(i)] = coeff * fo[i].meanIntegralE;//[index];
-    }
-}
-
 void GetUpE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 {
     if (index < 0 && index >= fo[0].upE.size()) {
@@ -137,18 +125,6 @@ void GetRealizationE(const FilterOutput &fo, long index, ArrayDbl &array, double
     }
 }
 
-void GetMeanIntegralX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
-{
-//    if (index < 0 && index >= fo[0].meanIntegralX.rows()) {
-//        AlertHelper::showErrorAlertWithText("Core::GetMeanIntegralX\nВыход за пределы массива!");
-//        return;
-//    }
-    array.resize(IndexType(fo.size()));
-    for (size_t i = 0; i < size_t(fo.size()); ++i) {
-        array[IndexType(i)] = coeff * fo[i].meanIntegralX;//[index];
-    }
-}
-
 void GetUpX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 {
     if (index < 0 && index >= fo[0].upX.size()) {
@@ -182,6 +158,18 @@ void GetRealizationX(const FilterOutput &fo, long index, ArrayDbl &array, double
     array.resize(IndexType(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
         array[IndexType(i)] = coeff * fo[i].specificX[index];
+    }
+}
+
+void GetRealizationZ(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
+{
+    if (index < 0 && index >= fo[0].specificZ.size()) {
+        AlertHelper::showErrorAlertWithText("Core::GetRealizationZ\nВыход за пределы массива!");
+        return;
+    }
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].specificZ[index];
     }
 }
 
