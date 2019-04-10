@@ -20,12 +20,10 @@ FilterParameters::FilterParameters(double maxTime, double measurementStep, doubl
 
     m_initialCondition = INITIAL_CONDITIONS::GaussApproximation;
 
-//    assert(sampleSize > 0 && "Core::FilterParameters::Constructor : corrupt value of sampleSize");
     if (sampleSize <= 0) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::Constructor\nРазмер выборки <= 0");
         return;
     }
-//    assert(orderMult > 0 && "Core::FilterParameters::Constructor : corrupt value of orderMult");
     if (orderMult <= 0) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::Constructor\nКратность порядка фильтра <= 0");
         return;
@@ -94,7 +92,6 @@ const Core::INITIAL_CONDITIONS &FilterParameters::initialCondition() const
 
 void FilterParameters::setMaxTime(double tmax)
 {
-//    assert(tmax > 0.0 && "Core::FilterParameters::setMaxTime(tmax) : corrupt value of tmax");
     if (tmax <= 0.0) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::setMaxTime\nВремя окончания фильтрации <= 0");
         return;
@@ -111,7 +108,6 @@ void FilterParameters::setMaxTime(double tmax)
 
 void FilterParameters::setMeasurementStep(double step)
 {
-//    assert(step > 0.0 && "Core::FilterParameters::setMeasurementStep(step) : corrupt value of step");
     if (step <= 0.0) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::setMeasurementStep\nИнтервал между измерениями <= 0");
         return;
@@ -124,7 +120,6 @@ void FilterParameters::setMeasurementStep(double step)
 
 void FilterParameters::setPredictionStep(double step)
 {
-//    assert(step > 0.0 && "Core::FilterParameters::setPredictionStep(step) : corrupt value of step");
     if (step <= 0.0) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::setPredictionStep\nИнтервал между прогнозами <= 0");
         return;
@@ -132,7 +127,6 @@ void FilterParameters::setPredictionStep(double step)
     m_predictionStep = step;
     correctStepAndCount(m_measurementStep, m_predictionStep, m_predictionCount);
 
-//    assert(m_predictionStep <= m_measurementStep && "Core::FilterParameters::setPredictionStep(step) : logic error (prediction step > measurement step)");
     if (m_predictionStep > m_measurementStep) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::setPredictionStep\nИнтервал между прогзнозами > интервал между измерениями");
         return;
@@ -143,7 +137,6 @@ void FilterParameters::setPredictionStep(double step)
 
 void FilterParameters::setIntegrationStep(double step)
 {
-//    assert(step > 0.0 && "Core::FilterParameters::setIntegrationStep(step) : corrupt value of step");
     if (step <= 0.0) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::setIntegrationStep\nШаг интегрирования <= 0");
         return;
@@ -151,7 +144,6 @@ void FilterParameters::setIntegrationStep(double step)
     m_integrationStep = step;
     correctStepAndCount(m_predictionStep, m_integrationStep, m_integrationCount);
 
-//    assert(m_integrationStep <= m_predictionStep && "Core::FilterParameters::setIntegrationStep(step) : logic error (integration step > prediction step)");
     if (m_integrationStep > m_predictionStep) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::setIntegrationStep\nШаг интегрирования > интервал между прогзнозами");
         return;
@@ -160,7 +152,6 @@ void FilterParameters::setIntegrationStep(double step)
 
 void FilterParameters::setSampleSize(Uint size)
 {
-//    assert(size > 0 && "Core::FilterParameters::setSampleSize(size) : corrupt value of size");
     if (size <= 0.0) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::setSampleSize\nРазмер выборки <= 0");
         return;
@@ -181,7 +172,6 @@ bool FilterParameters::setSpecificRealization(Uint realization)
 
 void FilterParameters::setOrderMult(Uint order)
 {
-//    assert(order > 0 && "Core::FilterParameters::setOrderMult(order) : corrupt value of order");
     if (order <= 0.0) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::setOrderMult\nКратность порядка фильтра <= 0");
         return;
@@ -191,7 +181,6 @@ void FilterParameters::setOrderMult(Uint order)
 
 void FilterParameters::setArgumentsCount(Uint order)
 {
-//    assert(order > 0 && "Core::FilterParameters::setArgumentsCount(order) : corrupt value of order");
     if (order <= 0.0) {
         AlertHelper::showErrorAlertWithText("Core::FilterParameters::setArgumentsCount\nКоличество аргументов в фильтре <= 0");
         return;

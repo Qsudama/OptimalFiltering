@@ -73,7 +73,6 @@ void Filter::init()
 
 void Filter::writeResult(size_t n, bool copy)
 {
-//    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
     if (n >= m_result.size()) {
         AlertHelper::showErrorAlertWithText("Filter::writeResult\nВыход за пределы массива!");
         return;
@@ -128,7 +127,6 @@ void Filter::writeResult(size_t n, bool copy)
 
 void Filter::writeResult(size_t n, int countI)
 {
-//    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
     if (n >= m_result.size()) {
         AlertHelper::showErrorAlertWithText("Filter::writeResult\nВыход за пределы массива!");
         return;
