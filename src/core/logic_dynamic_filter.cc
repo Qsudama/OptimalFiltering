@@ -137,11 +137,6 @@ void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
 //        qDebug() << "Nan! s = " << s << "k = " << k;
     }
     m_sampleZ[s] = resZ;
-    if ((Uint)s == m_params->specificRealization()) {
-        m_result[0].specificE = m_sampleX[s] - m_sampleZ[s];
-        m_result[0].specificX = m_sampleX[s];
-        m_result[0].specificZ = m_sampleZ[s];
-    }
 }
 
 double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {

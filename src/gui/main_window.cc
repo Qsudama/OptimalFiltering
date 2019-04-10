@@ -249,11 +249,11 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 {
     QColor color = m_colorManager.nextColor();
     QColor color_realization_e = m_colorManager.nextColorRealizationE();
-//    QColor color_realization_x = m_colorManager.nextColorRealizationX();
+    QColor color_realization_z = m_colorManager.nextColorRealizationZ();
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
 
-    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE;
+    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ;
     mxPen.setWidthF(2.0);
     mxPen.setColor(Qt::darkMagenta);
     mePen.setWidthF(2.0);
@@ -272,6 +272,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     selectRealizX.setColor(Qt::magenta);
     selectRealizE.setWidthF(1.5);
     selectRealizE.setColor(color_realization_e);
+    selectRealizZ.setWidthF(1.5);
+    selectRealizZ.setColor(color_realization_z);
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
@@ -353,6 +355,10 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetDownE(filter->result(), i, y_down, scale[i]);
         QString name_sheet_e = "E" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
         m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE, false);
+
+        Core::GetRealizationZ(filter->result(), i, y, scale[i]);
+        QString name_sheet_z = "Z" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        m_graphWindow->sheet(i).addCurve(x, y, name_sheet_z, selectRealizZ, false);
     }
 
     m_graphWindow->updatePlotter();
