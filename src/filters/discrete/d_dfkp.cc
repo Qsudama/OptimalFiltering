@@ -12,15 +12,15 @@ using Math::LinAlg::Pinv;
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
-using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
 
 
 DFKP::DFKP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(params, task)
 {
     long ny = long(m_task->dimY());
     long p = ny * long(m_params->orderMult());
-    m_info->setName(m_task->info()->type() + "ДФКПд (p=" + std::to_string(p) + ")");
+//    m_info->setFullName(m_task->info()->type() + "ДФКПд (p=" + std::to_string(p) + ")");
+    m_info->setName("ДФКПд");
+    m_info->setDimension("(p=" + std::to_string(p) + ")");
 }
 
 void DFKP::zeroIteration() {

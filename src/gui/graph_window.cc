@@ -1,5 +1,7 @@
 #include "graph_window.h"
 
+#include "src/helpers/alert_helper.h"
+
 GraphWindow::GraphWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -143,7 +145,7 @@ void GraphWindow::updateMenu()
 {
     //меню - выбор страницы
     m_menuSheet->clear();
-    for (int i = 0; i < m_sheets.size(); i++) {
+    for (int i = 0; i < m_sheets.size() - 2; i++) {
         QAction *action = new QAction(QString::number(i + 1), m_menuSheet);
         action->setData(i + 100);
         action->setCheckable(true);
@@ -220,11 +222,23 @@ void GraphWindow::onSelectionChanged()
     }
 
     for (int i = 0; i < m_plotter->graphCount(); ++i) {
-        QCPGraph *              graph = m_plotter->graph(i);
-        QCPPlottableLegendItem *item  = m_plotter->legend->itemWithPlottable(graph);
+        QCPGraph *graph = m_plotter->graph(i);
+        QCPPlottableLegendItem *item = m_plotter->legend->itemWithPlottable(graph);
         if (item->selected() || graph->selected()) {
             item->setSelected(true);
             graph->setSelection(QCPDataSelection(graph->data()->dataRange()));
+            if (i + 2 < m_plotter->graphCount()) {
+                if (graph->tag() == m_plotter->graph(i+1)->tag() && graph->tag() == m_plotter->graph(i+2)->tag()) {
+                    QCPGraph *graph_up = m_plotter->graph(i+1);
+                    QCPPlottableLegendItem *item_up = m_plotter->legend->itemWithPlottable(graph_up);
+                    QCPGraph *graph_down = m_plotter->graph(i+2);
+                    QCPPlottableLegendItem *item_down = m_plotter->legend->itemWithPlottable(graph_down);
+                    item_up->setSelected(true);
+                    graph_up->setSelection(QCPDataSelection(graph_up->data()->dataRange()));
+                    item_down->setSelected(true);
+                    graph_down->setSelection(QCPDataSelection(graph_down->data()->dataRange()));
+                }
+            }
         }
     }
 }
@@ -357,13 +371,13 @@ void GraphWindow::onHideCurveFromContextMenu()
         return;
     }
 
-    QString name  = m_plotter->selectedGraphs().at(0)->name();
-    int     index = -1;
+    QString name = m_plotter->selectedGraphs().at(0)->name();
+    int index = -1;
     for (int j = 0; j < m_currentSheet->curves().size(); j++) {
         if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == true) {
             m_currentSheet->setCurveVisible(j, false);
             index = j;
-            j     = m_currentSheet->curves().size() + 1;
+            j = m_currentSheet->curves().size() + 1;
         }
     }
     if (index > -1) {
@@ -377,15 +391,15 @@ void GraphWindow::onHideCurve(QAction *action)
         return;
     }
 
-    QString name  = action->data().toString();
-    int     index = -1;
+    QString name = action->data().toString();
+    int index = -1;
 
     for (int j = 0; j < m_currentSheet->curves().size(); j++) {
         if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == true) {
             m_menuHide->removeAction(action);
             m_currentSheet->setCurveVisible(j, false);
             index = j;
-            j     = m_currentSheet->curves().size() + 1;
+            j = m_currentSheet->curves().size() + 1;
         }
     }
     if (index > -1) {
@@ -399,8 +413,8 @@ void GraphWindow::onShowCurve(QAction *action)
         return;
     }
 
-    QString name  = action->data().toString();
-    int     index = -1;
+    QString name = action->data().toString();
+    int index = -1;
 
     for (int j = 0; j < m_currentSheet->curves().size(); j++) {
         if (m_currentSheet->curves()[j].fullName() == name && m_currentSheet->curves()[j].visible == false) {
@@ -408,7 +422,7 @@ void GraphWindow::onShowCurve(QAction *action)
             m_menuShow->removeAction(action);
             m_currentSheet->setCurveVisible(j, true);
             index = j;
-            j     = m_currentSheet->curves().size() + 1;
+            j = m_currentSheet->curves().size() + 1;
         }
     }
     if (index > -1) {
@@ -423,8 +437,10 @@ int GraphWindow::countSheets() const
 
 GraphSheet &GraphWindow::sheet(int index)
 {
-    assert(0 <= index && index < m_sheets.size() && "GraphWindow::sheet(index) : out of range");
-
+    if (index <= 0 && index >= m_sheets.size()) {
+        AlertHelper::showErrorAlertWithText("GraphWindow::sheet\nВыход за пределы!");
+        return m_sheets[0];
+    }
     return m_sheets[index];
 }
 
@@ -479,11 +495,24 @@ void GraphWindow::updatePlotter()
         }
         int j = m_plotter->graphCount();
         m_plotter->addGraph();
+        m_plotter->graph(j)->setTag(i);
         m_plotter->graph(j)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y);
         m_plotter->graph(j)->setPen(m_currentSheet->curves()[i].pen);
         m_plotter->graph(j)->setName(m_currentSheet->curves()[i].fullName());
         m_plotter->graph(j)->setAntialiased(true);
         m_plotter->graph(j)->setAdaptiveSampling(true);
+        if (m_currentSheet->curves()[i].with_side) {
+            m_plotter->addGraph();
+            m_plotter->addGraph();
+            m_plotter->graph(j+1)->setTag(i);
+            m_plotter->graph(j+2)->setTag(i);
+            m_plotter->graph(j+1)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_up);
+            m_plotter->graph(j+1)->setPen(m_currentSheet->curves()[i].up_down_pen);
+            m_plotter->graph(j+1)->setName("Верхняя граница " + m_currentSheet->curves()[i].name);
+            m_plotter->graph(j+2)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_down);
+            m_plotter->graph(j+2)->setName("Нижняя граница " + m_currentSheet->curves()[i].name);
+            m_plotter->graph(j+2)->setPen(m_currentSheet->curves()[i].up_down_pen);
+        }
     }
 
     m_plotter->replot();

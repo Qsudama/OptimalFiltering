@@ -3,6 +3,7 @@
 
 #include "src/gui/gui_config.h"
 #include "src/math/matrix.h"
+#include "src/gui/custom_double_spin_box.h"
 #include <QDoubleSpinBox>
 #include <QWidget>
 
@@ -60,7 +61,7 @@ private:
     bool         m_symmetric;
     Math::Matrix m_matrix;
 
-    QVector<QVector<QDoubleSpinBox *>> m_boxes;
+    QVector<QVector<QCustomDoubleSpinBox *>> m_boxes;
 };
 
 #endif // MATRIXWIDGET_H

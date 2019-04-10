@@ -33,6 +33,7 @@ protected:
     */
     void zeroIteration() override;
 
+    FilterTimeResult execute_time_filter() override;
 
 protected:
     PtrCTask m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */

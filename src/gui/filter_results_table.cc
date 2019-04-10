@@ -7,6 +7,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 
+#include "src/helpers/alert_helper.h"
 
 FilterResultsTable::FilterResultsTable(const Core::FilterOutput &data, const std::string &label,
                                        const Math::Vector &scale, QWidget *parent)
@@ -36,11 +37,12 @@ FilterResultsTable::FilterResultsTable(const Core::FilterOutput &data, const std
 void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::Vector &scale)
 {
     int dim = int(data[0].meanX.size());
-
-    assert(dim == scale.size() && "FilterResultsTable::initTable(data, scale) : corrupt dimension of scale");
-
+    if (dim != scale.size()) {
+        AlertHelper::showErrorAlertWithText("FilterResultsTable::initTable\ndim != scale.size()");
+        return;
+    }
     int rows = int(data.size());
-    int cols = 1 + 4 * dim;
+    int cols = 1 + 4 * dim + 1;
 
     m_table = new QTableWidget(rows, cols);
 
@@ -56,6 +58,7 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
         labels.append(tr("Sx") + strNum);
         labels.append(tr("Se") + strNum);
     }
+    labels.append(tr("Mint"));
 
     m_table->setHorizontalHeaderLabels(labels);
     m_table->setFont(titleFont);
@@ -63,7 +66,7 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
     m_table->setSortingEnabled(false);
     m_table->setWordWrap(false);
 
-    QVector<double> arrT, arrMx, arrMe, arrSx, arrSe;
+    QVector<double> arrT, arrMx, arrMe, arrSx, arrSe, arrMint;
 
     Core::GetTime(data, arrT);
     for (int i = 0; i < rows; ++i) {
@@ -77,6 +80,7 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
         Core::GetMeanE(data, j, arrMe, scale[j]);
         Core::GetStdDeviationX(data, j, arrSx, scale[j]);
         Core::GetStdDeviationE(data, j, arrSe, scale[j]);
+        Core::GetMeanIntegralE(data, j, arrMint, scale[j]);
 
         for (int i = 0; i < rows; ++i) {
             QTableWidgetItem *twItem = new QTableWidgetItem(QString::number(arrMx[i]));
@@ -98,6 +102,11 @@ void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::V
                 twItem->setFont(warningFont);
             }
             m_table->setItem(i, 4 + 4 * j, twItem);
+        }
+        for (int i = 0; i < rows; ++i) {
+            QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(arrMint[i]));
+            newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+            m_table->setItem(i, 4 + 4 * (dim - 1) + 1, newItem);
         }
     }
 }

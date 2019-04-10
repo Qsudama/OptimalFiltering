@@ -50,6 +50,9 @@ private slots:
     //! Показывает / скрывает таблицы результатов.
     void onShowHideTables();
 
+    //! Показывает таблицу результатов работы таймера.
+    void onShowTableTimer();
+
     //! Отображает прогресс выполнеия алгоритма (связывается с Filter).
     void onFilterUpdatePercent(int p);
 
@@ -111,8 +114,10 @@ private:
     StartConditionsFilterWidget *m_startConditionsFilterWidget;
     QPushButton *             m_btnClear;
     QPushButton *             m_btnShowHideTables;
+    QPushButton *             m_btnShowTimes;
 
     QVector<FilterResultsTable *> m_tables;
+    QVector<FilterTimeResult> m_filter_time_results;
 };
 
 

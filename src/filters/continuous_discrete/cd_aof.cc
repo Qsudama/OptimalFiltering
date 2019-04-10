@@ -15,7 +15,9 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousDiscreteFilter(params, task)
 {
     long n = task->dimX();
-    m_info->setName(m_task->info()->type() + "AОФнд (p=" + std::to_string(n * (n + 3) / 2) + ")");
+//    m_info->setName(m_task->info()->type() + "AОФнд (p=" + std::to_string(n * (n + 3) / 2) + ")");
+    m_info->setName("AОФнд");
+    m_info->setDimension("(p=" + std::to_string(n * (n + 3) / 2) + ")");
 }
 
 void AOF::zeroIteration()
@@ -57,11 +59,11 @@ void AOF::algorithm()
         if (n % (m_params->predictionCount() * m_params->integrationCount()) == 0) {
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                m_sampleY[s] = m_task->c(m_sampleX[s]);
+                m_sampleY[s] = m_task->c(m_sampleX[s], m_params->measurementStep());
 
-                h = m_task->h(m_sampleZ[s], m_sampleP[s]);
-                G = m_task->G(m_sampleZ[s], m_sampleP[s]);
-                F = m_task->F(m_sampleZ[s], m_sampleP[s]);
+                h = m_task->h(m_sampleZ[s], m_sampleP[s], m_params->measurementStep());
+                G = m_task->G(m_sampleZ[s], m_sampleP[s], m_params->measurementStep());
+                F = m_task->F(m_sampleZ[s], m_sampleP[s], m_params->measurementStep());
                 K = m_sampleP[s] * G.transpose() * Pinv(F);
 
                 m_sampleZ[s] = m_sampleZ[s] + K * (m_sampleY[s] - h);

@@ -23,9 +23,15 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
 {
 //    Неправильно считает для скалярного примера
 //    из-за того что таск 6-ти мерный а надо чтобы показывало 3-х мерный
-    long n = task->dimX()/2;
-    string condit = initialConditWithType();
-    m_info->setName(m_task->info()->type() + "AОФлд (p=" + to_string(n * (n + 3) / 2) + condit + ")");
+    long n = task->dimX();
+    string syffix_filter = "";
+    if (m_task->countI > 1) {
+        syffix_filter = "лд";
+    }
+    m_info->setName("AОФ" + syffix_filter);
+    m_info->setType(syffix_filter);
+    m_info->setCondition(initialConditWithType());
+    m_info->setDimension("(p=" + to_string(n * (n + 3) / 2) + ")");
 }
 
 void AOF::algorithm()
@@ -85,19 +91,6 @@ void AOF::computeBlock1(long s, size_t k) {
         Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);
         Upsilon[s][i] = Psi[s][i] - K[s][i]*Delta[s][i].transpose();
     }
-}
-
-void AOF::computeBlock2(long s, size_t k) {
-    Vector resZ = Vector::Zero(Sigma[s][0].size());
-    Vector mult = Vector::Zero(Sigma[s][0].size());
-    for (int i = 0; i < m_task->countI; i++) {
-        mult = P[s][i]*Sigma[s][i];
-        resZ += mult;
-    }
-    if (std::isnan(resZ[0])) {
-//        qDebug() << "Nan! s = " << s << "k = " << k;
-    }
-    m_sampleZ[s] = resZ;
 }
 
 void AOF::computeBlock4(long s, size_t k) {

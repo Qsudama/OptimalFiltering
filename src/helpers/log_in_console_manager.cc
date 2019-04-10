@@ -28,7 +28,6 @@ void LogInConsoleManager::logSizeTValueWithQDebug(size_t value)
 {
     qDebug() <<  LOG_HEADER << QString::number(value);
 }
-
 //template <class T>
 //void LogInConsoleManager::logNumericValueWithQDebug(T value)
 //{
@@ -38,7 +37,7 @@ void LogInConsoleManager::logSizeTValueWithQDebug(size_t value)
 void LogInConsoleManager::logArrayWithQDebug(Array<int> array)
 {
     QString str;
-    for (int i = 0; i < array.size(); ++i) {
+    for (int i = 0; i < int(array.size()); ++i) {
         if (i > 0) {
             str += " ";
         }

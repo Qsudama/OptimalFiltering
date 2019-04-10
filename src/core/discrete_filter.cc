@@ -5,7 +5,7 @@ using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
 using Math::LinAlg::Pinv;
-
+using Math::ConvertMatrixToVector;
 
 namespace Core
 {
@@ -18,10 +18,10 @@ DiscreteFilter::DiscreteFilter(PtrFilterParameters params, PtrTask task)
     m_info->setType("д");
 }
 
-double DiscreteFilter::execute_time_filter()
+FilterTimeResult DiscreteFilter::execute_time_filter()
 {
-    double result = timerInstance.result_execute_time / (m_params->measurementCount() * m_params->sampleSize());
-    return result;
+    double coef = m_params->measurementCount() * m_params->sampleSize();
+    return timerInstance.result_execute_time(m_info->name(), coef);
 }
 
 void DiscreteFilter::init()
@@ -30,6 +30,8 @@ void DiscreteFilter::init()
     m_sampleY.resize(m_params->sampleSize());
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
+    m_specificE.resize(m_params->sampleSize());
+    m_specificX.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount());
     m_result.resize(size);
@@ -43,6 +45,8 @@ void DiscreteFilter::zeroIteration()
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
         m_sampleX[s] = m_task->x0();
         m_sampleY[s] = m_task->b(m_sampleX[s]);
+        m_specificE[s] = m_sampleX[s];
+        m_specificX[s] = m_sampleX[s];
     }
 
     Vector mx0  = Mean(m_sampleX);
@@ -55,6 +59,10 @@ void DiscreteFilter::zeroIteration()
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {
         m_sampleZ[s] = H0 * m_sampleY[s] + e0;
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
+        if (s == m_params->specificRealization()) {
+            m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
+            m_specificX[0] = m_sampleX[s] - m_sampleZ[s];
+        }
     }
 
     m_result[0].meanX = mx0;
@@ -64,6 +72,20 @@ void DiscreteFilter::zeroIteration()
     m_result[0].varZ  = Var(m_sampleZ, m_result[0].meanZ);
     m_result[0].varE  = Var(m_sampleE, m_result[0].meanE);
     m_result[0].time  = 0.0;
+    m_result[0].meanIntegralE = 0.0;
+
+    Vector deviationE = 3 * ConvertMatrixToVector(Math::sqrt(m_result[0].varE));
+
+    m_result[0].upE  = m_result[0].meanE + deviationE;
+    m_result[0].downE  = m_result[0].meanE - deviationE;
+    m_result[0].specificE = m_specificE[0];    
+
+    m_result[0].meanIntegralX = 0.0;
+
+    Vector deviationX = 3 * ConvertMatrixToVector(Math::sqrt(m_result[0].varX));
+    m_result[0].upX = m_result[0].meanX + deviationX;
+    m_result[0].downX = m_result[0].meanX - deviationX;
+    m_result[0].specificX = m_specificX[0];
 }
 
 

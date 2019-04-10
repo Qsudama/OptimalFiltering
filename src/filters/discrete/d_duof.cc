@@ -12,13 +12,13 @@ using Math::LinAlg::Pinv;
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
-using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
 
 
 DUOF::DUOF(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ДУОФд (p=" + std::to_string(task->dimX()) + ")");
+//    m_info->setFullName(m_task->info()->type() + "ДУОФд (p=" + std::to_string(task->dimX()) + ")");
+    m_info->setName("ДУОФд");
+    m_info->setDimension("(p=" + std::to_string(task->dimX()) + ")");
 }
 
 void DUOF::zeroIteration() {

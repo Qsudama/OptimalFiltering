@@ -1,9 +1,12 @@
 #include "main_window.h"
 #include "src/gui/filter_results_table.h"
+#include "src/gui/timer_results_table.h"
 #include <QTabWidget>
 #include <QVBoxLayout>
 
 #include "src/helpers/log_in_file_manager.h"
+
+#include "src/helpers/alert_helper.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -44,11 +47,13 @@ void MainWindow::initControls()
     m_startConditionsFilterWidget = new StartConditionsFilterWidget;
     m_btnClear                 = new QPushButton(tr("Очистить"));
     m_btnShowHideTables        = new QPushButton(tr("Показать таблицы"));
+    m_btnShowTimes             = new QPushButton(tr("Показать время выполнения"));
 
     m_btnShowHideTables->setEnabled(false);
 
     connect(m_btnClear, SIGNAL(clicked()), this, SIGNAL(clear()));
     connect(m_btnShowHideTables, SIGNAL(clicked()), this, SLOT(onShowHideTables()));
+    connect(m_btnShowTimes, SIGNAL(clicked()), this, SLOT(onShowTableTimer()));
     connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)), this,
@@ -69,13 +74,19 @@ void MainWindow::initLayouts()
     page1Layout->addWidget(m_filterStartWidget);
     page1Layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
-    QHBoxLayout *btnLayout = new QHBoxLayout;
-    btnLayout->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
-    btnLayout->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
-    btnLayout->addWidget(m_btnClear);
-    btnLayout->addWidget(m_btnShowHideTables);
+    QHBoxLayout *btnLayout1 = new QHBoxLayout;
+    btnLayout1->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    btnLayout1->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
+    btnLayout1->addWidget(m_btnClear);
+    btnLayout1->addWidget(m_btnShowHideTables);
 
-    page1Layout->addLayout(btnLayout);
+    QHBoxLayout *btnLayout2 = new QHBoxLayout;
+    btnLayout2->setMargin(GuiConfig::LAYOUT_MARGIN_NORMAL);
+    btnLayout2->setSpacing(GuiConfig::LAYOUT_SPACING_NORMAL);
+    btnLayout2->addWidget(m_btnShowTimes);
+
+    page1Layout->addLayout(btnLayout1);
+    page1Layout->addLayout(btnLayout2);
 
     QWidget *page1 = new QWidget;
     page1->setLayout(page1Layout);
@@ -157,6 +168,7 @@ void MainWindow::closeEvent(QCloseEvent *)
 void MainWindow::onClear()
 {
     m_colorManager.reset();
+    m_filter_time_results.clear();
 
     for (int i = 0; i < m_tables.size(); ++i) {
         m_tables[i]->close();
@@ -190,12 +202,20 @@ void MainWindow::onShowHideTables()
     }
 }
 
+void MainWindow::onShowTableTimer()
+{
+    if (m_filter_time_results.count() > 0) {
+        TimerResultsTable *timerTable = new TimerResultsTable(m_filter_time_results);
+        timerTable->show();
+    }
+}
+
 void MainWindow::onFilterUpdatePercent(int p)
 {
     m_statusProgressBar->setValue(p);
 }
 
-void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTER_ID id)
+void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE /*atype*/, FILTER_ID id)
 {
     bool normalTask   = m_taskWidget->taskIsNull(ftype);
     if (!normalTask) {
@@ -213,12 +233,13 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTE
     connect(filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
 
     m_statusProgressBar->setEnabled(true);
-    QString status = tr("Состояние: выполняется ") + QString::fromStdString(filter->info()->name());
+    QString status = tr("Состояние: выполняется ") + QString::fromStdString(filter->info()->full_name());
     statusBar()->showMessage(status);
 
     filter->run(); // TODO сделать отдельный поток
 
     showData(filter, ftype, task);
+    m_filter_time_results.append(filter->execute_time());
     this->statusBar()->showMessage(tr("Состояние: ничего не выполняется"));
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
@@ -226,12 +247,13 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTE
 
 void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
 {
-    QColor  color = m_colorManager.nextColor();
+    QColor color = m_colorManager.nextColor();
+    QColor color_realization_e = m_colorManager.nextColorRealizationE();
+    QColor color_realization_x = m_colorManager.nextColorRealizationX();
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
-    QString execute_time = tr(" ") + QString("%1").arg(filter->execute_time(), 0, 'f', 4) + tr(" мсек.; ");
-    QString fname = QString::fromStdString(filter->info()->name()) + tr(";") + execute_time + ss_filter;
+    QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
 
-    QPen mxPen, mePen, sxPen, sePen;
+    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE;
     mxPen.setWidthF(2.0);
     mxPen.setColor(Qt::darkMagenta);
     mePen.setWidthF(2.0);
@@ -242,17 +264,27 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     sxPen.setStyle(Qt::DashLine);
     sePen.setWidthF(1.5);
     sePen.setColor(color);
+    upDownX.setWidthF(1.5);
+    upDownX.setColor(color_realization_x);
+    upDownE.setWidthF(1.5);
+    upDownE.setColor(color_realization_e);
+    selectRealizX.setWidthF(1.5);
+    selectRealizX.setColor(color_realization_x);
+    selectRealizE.setWidthF(1.5);
+    selectRealizE.setColor(color_realization_e);
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
-        m_graphWindow->setCountSheets(dim);
+        m_graphWindow->setCountSheets(dim + 2);
     }
 
     QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
     QString subTitle = subtitleForParametrs(ftype, task);
     for (int i = 0; i < dim; i++) {
-        m_graphWindow->sheet(i).setTitleLabel(title);
-        m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
+        if (i < dim - 2) {
+            m_graphWindow->sheet(i).setTitleLabel(title);
+            m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
+        }
     }
     if (m_taskWidget->id() == TASK_ID::LandingLinear || m_taskWidget->id() == TASK_ID::LandingGauss || m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear  || m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
@@ -294,7 +326,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         }
     }
 
-    QVector<double> x, y;
+    QVector<double> x, y, y_up, y_down;
     Core::GetTime(filter->result(), x);
 
     for (int i = 0; i < dim; i++) {
@@ -309,11 +341,23 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 
         Core::GetStdDeviationE(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname, sePen, true);
+
+        Core::GetRealizationE(filter->result(), i, y, scale[i]);
+        Core::GetUpE(filter->result(), i, y_up, scale[i]);
+        Core::GetDownE(filter->result(), i, y_down, scale[i]);
+        QString name_sheet_e = "E (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE, false);
+
+        Core::GetRealizationX(filter->result(), i, y, scale[i]);
+        Core::GetUpX(filter->result(), i, y_up, scale[i]);
+        Core::GetDownX(filter->result(), i, y_down, scale[i]);
+        QString name_sheet_x = "X (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX, false);
     }
 
     m_graphWindow->updatePlotter();
-
-    addTable(filter->result(), filter->info()->name(), scale);
+    std::string filter_name = filter->info()->name();
+    addTable(filter->result(), filter_name, scale);
 }
 
 QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {
@@ -361,15 +405,7 @@ void MainWindow::addTable(const Core::FilterOutput &data, const std::string &lab
     m_btnShowHideTables->setEnabled(true);
 }
 
-void MainWindow::showErrorMessage (void)
+void MainWindow::showErrorMessage(void)
 {
-    QMessageBox msgBox;
-    msgBox.setText("Внимание");
-    msgBox.setInformativeText("Выбран не верный тип фильтра для данной задачи");
-    msgBox.setIcon(QMessageBox::Information);
-    msgBox.setDefaultButton(QMessageBox::Ok);
-    QSpacerItem* horizontalSpacer = new QSpacerItem(300, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    QGridLayout* layout = (QGridLayout*)msgBox.layout();
-    layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
-    msgBox.exec();
+    AlertHelper::showErrorAlertWithText("Выбран не верный тип фильтра для данной задачи");
 }

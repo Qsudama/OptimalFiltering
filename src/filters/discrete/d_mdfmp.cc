@@ -13,14 +13,15 @@ using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
 using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
 
 
 MDFMP::MDFMP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(params, task)
 {
     std::string argsCount = std::to_string(params->argumentsCount());
     std::string dimX = std::to_string(task->dimX());
-    m_info->setName(m_task->info()->type() + "МДФМПд-" + argsCount + " (p=" + dimX + ")");
+//    m_info->setFullName(m_task->info()->type() + "МДФМПд-" + argsCount + " (p=" + dimX + ")");
+    m_info->setName("МДФМПд");
+    m_info->setDimension("- " + argsCount + " (p=" + dimX + ")");
 }
 
 void MDFMP::zeroIteration() {

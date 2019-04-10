@@ -47,14 +47,14 @@ private:
     Array<double> Q;
     Array<Vector> kappa;
     Array<Matrix> T;
-    Array<Vector> meanZ;
+    Array<Vector> meanS;
     Array<Matrix> Gamma;
     Array<Matrix> Dzz;
 
     Array<Vector> m_sampleS; /*!< Массив для хранения расширенных векторов состояния \f$S_k\f$. */
 
     void computeBlock1(long s);
-    void computeBlock2(long s);
+//    void computeBlock2(long s);
     void computeBlock3a(long k);
     void computeBlock3b();
     void computeBlock3c();

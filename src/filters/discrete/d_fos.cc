@@ -13,15 +13,15 @@ using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
 using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
-
 
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : DiscreteFilter(params, task)
 {
     std::string argsCount = std::to_string(params->argumentsCount());
     std::string dimX = std::to_string(task->dimX());
-    m_info->setName(m_task->info()->type() + "ФМПд-" + argsCount + " (p=" + dimX + ")");
+//    m_info->setFullName(m_task->info()->type() + "ФМПд-" + argsCount + " (p=" + dimX + ")");
+    m_info->setName("ФМПд");
+    m_info->setDimension("- " + argsCount + " (p=" + dimX + ")");
 }
 
 void FOS::algorithm()

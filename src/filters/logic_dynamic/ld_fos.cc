@@ -12,16 +12,20 @@ using Math::LinAlg::Pinv;
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
-using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
 
 
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
     : LogicDynamicFilter(params, task, id)
 {
     long n = task->dimX()/2;
-    string condit = initialConditWithType();
-    m_info->setName(m_task->info()->type() + "ФОСлд (p=" + std::to_string(n) + condit + ")");
+    string syffix_filter = "";
+    if (m_task->countI > 1) {
+        syffix_filter = "лд";
+    }
+    m_info->setName("ФОС" + syffix_filter);
+    m_info->setType(syffix_filter);
+    m_info->setCondition(initialConditWithType());
+    m_info->setDimension("(p=" + std::to_string(n) + ")");
 }
 
 void FOS::zeroIteration()
@@ -57,7 +61,7 @@ void FOS::algorithm()
             // Блок 1
             computeBlock1(s);;
             // Блок 2
-            computeBlock2(s);
+            computeBlock2(s, k);
         }
 
         // Блок 3
@@ -97,16 +101,6 @@ void FOS::computeBlock1(long s) {
         Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);
         Upsilon[s][i] = Psi[s][i] - K[s][i]*Delta[s][i].transpose();
     }
-}
-
-void FOS::computeBlock2(long s) {
-    Vector resZ = Vector::Zero(Sigma[s][0].size());
-    Vector mult = Vector::Zero(Sigma[s][0].size());
-    for (int i = 0; i < m_task->countI; i++) {
-        mult = P[s][i]*Sigma[s][i];
-        resZ += mult;
-    }
-    m_sampleZ[s] = resZ;
 }
 
 void FOS::computeBlock3b() {

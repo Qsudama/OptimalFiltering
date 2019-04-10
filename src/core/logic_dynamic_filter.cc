@@ -18,10 +18,11 @@ LogicDynamicFilter::LogicDynamicFilter(PtrFilterParameters params, PtrTask task,
     m_info->setType("лд");
 }
 
-double LogicDynamicFilter::execute_time_filter()
+FilterTimeResult LogicDynamicFilter::execute_time_filter()
 {
-    double result = timerInstance.result_execute_time / (m_params->measurementCount() * m_params->sampleSize());
-    return result;
+    double coef = m_params->measurementCount() * m_params->sampleSize();
+    string filter_name = m_info->name() + m_info->dimension();
+    return timerInstance.result_execute_time(filter_name, coef);
 }
 
 void LogicDynamicFilter::init()
@@ -31,6 +32,8 @@ void LogicDynamicFilter::init()
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
     m_sampleI.resize(m_params->sampleSize());
+    m_specificE.resize(m_params->sampleSize());
+    m_specificX.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount());
     m_result.resize(size);
@@ -66,12 +69,6 @@ void LogicDynamicFilter::zeroIteration() {
         Sigma[s].resize(m_task->countI);
         Upsilon[s].resize(m_task->countI);
     }
-
-    m_sampleX.resize(m_params->sampleSize());
-    m_sampleY.resize(m_params->sampleSize());
-    m_sampleZ.resize(m_params->sampleSize());
-    m_sampleE.resize(m_params->sampleSize());
-    m_sampleI.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount());
     m_result.resize(size);
@@ -128,6 +125,23 @@ void LogicDynamicFilter::computeBlock0() {
                 Phi[s][i] =  varY[i];
             }
         }
+    }
+}
+
+void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
+    Vector resZ = Vector::Zero(Sigma[s][0].size());
+    Vector mult = Vector::Zero(Sigma[s][0].size());
+    for (int i = 0; i < m_task->countI; i++) {
+        mult = P[s][i]*Sigma[s][i];
+        resZ += mult;
+    }
+    if (std::isnan(resZ[0])) {
+//        qDebug() << "Nan! s = " << s << "k = " << k;
+    }
+    m_sampleZ[s] = resZ;
+    if ((Uint)s == m_params->specificRealization()) {
+        m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
+        m_specificX[0] = m_sampleX[s] - m_sampleZ[s];
     }
 }
 
@@ -242,9 +256,9 @@ string LogicDynamicFilter::initialConditWithType()
 {
     string condit = "";
     if (m_params->initialCondition() == INITIAL_CONDITIONS::GaussApproximation) {
-            condit = ", Оц0-прибл";
+            condit = ", н.у.-прибл";
     } else {
-            condit = ", Оц0-точн";
+            condit = ", н.у.-точн";
     }
     return condit;
 }

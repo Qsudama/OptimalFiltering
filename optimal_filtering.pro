@@ -308,7 +308,6 @@ HEADERS += \
     src/core/logic_dynamic_task.h \
     src/filters/logic_dynamic/ld_aof.h \
     src/filters/logic_dynamic/ld_fos.h \
-    src/filters/logic_dynamic/ld_fkp.h \
     src/filters/discrete/d_dfmp.h \
     src/filters/discrete/d_fkp.h \
     src/filters/discrete/d_dfkp.h \
@@ -325,7 +324,15 @@ HEADERS += \
     src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.h \
     src/filters/logic_dynamic/ld_fkp_fbp.h \
     src/filters/filters_identifiers.h \
-    src/tasks/tasks_identifiers.h
+    src/tasks/tasks_identifiers.h \
+    src/tasks/discrete/d_vanderpol_linear.h \
+    src/tasks/discrete/d_vanderpol_gauss.h \
+    src/helpers/alert_helper.h \
+    src/tasks/continuous_discrete/cd_scalar_linear.h \
+    src/tasks/continuous/c_scalar_gauss.h \
+    src/tasks/continuous/c_scalar_linear.h \
+    src/gui/timer_results_table.h \
+    src/gui/custom_double_spin_box.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -385,7 +392,6 @@ SOURCES += \
     src/core/logic_dynamic_task.cc \
     src/filters/logic_dynamic/ld_aof.cc \
     src/filters/logic_dynamic/ld_fos.cc \
-    src/filters/logic_dynamic/ld_fkp.cc \
     src/filters/discrete/d_dfkp.cc \
     src/filters/discrete/d_dfmp.cc \
     src/filters/discrete/d_fkp.cc \
@@ -400,4 +406,12 @@ SOURCES += \
     src/helpers/timer_manager.cc \
     src/tasks/logic_dynamic/ld_landing_rejection_3d_linear.cc \
     src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.cc \
-    src/filters/logic_dynamic/ld_fkp_fbp.cc
+    src/filters/logic_dynamic/ld_fkp_fbp.cc \
+    src/tasks/discrete/d_vanderpol_linear.cpp \
+    src/tasks/discrete/d_vanderpol_gauss.cpp \
+    src/helpers/alert_helper.cc \
+    src/tasks/continuous_discrete/cd_scalar_linear.cc \
+    src/tasks/continuous/c_scalar_gauss.cc \
+    src/tasks/continuous/c_scalar_linear.cc \
+    src/gui/timer_results_table.cc \
+    src/gui/custom_double_spin_box.cc

@@ -121,8 +121,12 @@ void GraphSheet::setCurveVisible(int index, bool visible)
     calcRanges();
 }
 
-void GraphSheet::addCurve(const QVector<double> &x, const QVector<double> &y, const QString &name, const QPen &pen,
-                          bool visible)
+void GraphSheet::addCurve(const QVector<double> &x,
+                          const QVector<double> &y,
+                          const QString &name,
+                          const QPen &pen,
+                          bool visible,
+                          bool calc_ranges)
 {
     int number = 0;
     for (int i = 0; i < m_curves.size(); ++i) {
@@ -135,15 +139,38 @@ void GraphSheet::addCurve(const QVector<double> &x, const QVector<double> &y, co
     }
 
     m_curves.resize(m_curves.size() + 1);
-    m_curves.last().name    = name;
-    m_curves.last().number  = number;
-    m_curves.last().pen     = pen;
-    m_curves.last().visible = visible;
-    m_curves.last().x       = x;
-    m_curves.last().y       = y;
+    m_curves.last().name        = name;
+    m_curves.last().number      = number;
+    m_curves.last().pen         = pen;
+    m_curves.last().visible     = visible;
+    m_curves.last().with_side   = false;
+    m_curves.last().x           = x;
+    m_curves.last().y           = y;
+
+    if (calc_ranges) {
+        calcRanges();
+    }
+}
+
+void GraphSheet::addCurve(const QVector<double> &x,
+                          const QVector<double> &y,
+                          const QVector<double> &y_up,
+                          const QVector<double> &y_down,
+                          const QString &name,
+                          const QPen &penRealize,
+                          const QPen &penSide,
+                          bool visible)
+{
+    addCurve(x, y, name, penRealize, visible, false);
+    m_curves.last().with_side = true;
+    m_curves.last().y_up = y_up;
+    m_curves.last().y_down = y_down;
+    m_curves.last().up_down_pen = penSide;
 
     calcRanges();
 }
+
+
 
 void GraphSheet::calcRanges()
 {
@@ -179,6 +206,14 @@ void GraphSheet::calcRanges()
             }
             if (m_curves[i].y[j] < ymin) {
                 ymin = m_curves[i].y[j];
+            }
+            if (m_curves[i].with_side) {
+                if (m_curves[i].y_up[j] > ymax) {
+                    ymax = m_curves[i].y_up[j];
+                }
+                if (m_curves[i].y_down[j] < ymin) {
+                    ymin = m_curves[i].y_down[j];
+                }
             }
         }
     }

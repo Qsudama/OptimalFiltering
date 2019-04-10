@@ -6302,6 +6302,10 @@ public:
     {
         return mAdaptiveSampling;
     }
+    int tag() const
+    {
+        return mTag;
+    }
 
     // setters:
     void setData(QSharedPointer<QCPGraphDataContainer> data);
@@ -6311,6 +6315,7 @@ public:
     void setScatterSkip(int skip);
     void setChannelFillGraph(QCPGraph *targetGraph);
     void setAdaptiveSampling(bool enabled);
+    void setTag(int tag);
 
     // non-property methods:
     void addData(const QVector<double> &keys, const QVector<double> &values, bool alreadySorted = false);
@@ -6329,6 +6334,7 @@ protected:
     int                mScatterSkip;
     QPointer<QCPGraph> mChannelFillGraph;
     bool               mAdaptiveSampling;
+    int                mTag;
 
     // reimplemented virtual methods:
     virtual void draw(QCPPainter *painter) Q_DECL_OVERRIDE;

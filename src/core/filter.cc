@@ -1,8 +1,10 @@
 #include "filter.h"
 #include <ctime>
+#include "src/math/math.h"
 
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
+using Math::ConvertMatrixToVector;
 
 namespace Core
 {
@@ -11,7 +13,7 @@ namespace Core
 Filter::Filter(PtrFilterParameters params)
     :
 #ifdef QT_ENABLED
-     QObject(nullptr)
+    QObject(nullptr)
 #endif
     , timerInstance(TimerManager::Instance())
     , m_params(params)
@@ -33,7 +35,7 @@ void Filter::run()
     timerInstance.stop_timer();
 }
 
-double Filter::execute_time()
+FilterTimeResult Filter::execute_time()
 {
     return execute_time_filter();
 }
@@ -59,6 +61,8 @@ void Filter::init()
     m_sampleY.resize(m_params->sampleSize());
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
+    m_specificE.resize(m_params->sampleSize());
+    m_specificX.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount() * m_params->predictionCount() * m_params->integrationCount());
     m_result.resize(size);
@@ -69,27 +73,49 @@ void Filter::init()
 
 void Filter::writeResult(size_t n, bool copy)
 {
-    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
+    if (n >= m_result.size()) {
+        AlertHelper::showErrorAlertWithText("Filter::writeResult\nВыход за пределы массива!");
+        return;
+    }
 
     timerInstance.interrupt_timer();
 
     m_result[n].meanX = Mean(m_sampleX);
     m_result[n].varX  = Var(m_sampleX, m_result[n].meanX);
 
+    for (size_t s = 0; s < m_params->sampleSize(); ++s) {
+        m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
+        if (s == m_params->specificRealization()) {
+            m_result[n].specificE = m_sampleE[s];
+            m_result[n].specificX = m_sampleE[s];
+        }
+    }
     if (copy) {
         m_result[n].meanZ = m_result[n - 1].meanZ;
         m_result[n].meanE = m_result[n - 1].meanE;
         m_result[n].varZ  = m_result[n - 1].varZ;
         m_result[n].varE  = m_result[n - 1].varE;
+
+        m_result[n].meanIntegralE = m_result[n - 1].meanIntegralE + sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].meanIntegralX = m_result[n - 1].meanIntegralX + sqrt(m_result[n].varX(0, 0)) / m_result.size();
     } else {
-        for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-            m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
-        }
         m_result[n].meanZ = Mean(m_sampleZ);
         m_result[n].varZ  = Var(m_sampleZ, m_result[n].meanZ);
         m_result[n].meanE = Mean(m_sampleE);
         m_result[n].varE  = Var(m_sampleE, m_result[n].meanE);
+
+        m_result[n].meanIntegralE = m_result[n].meanIntegralE + sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].meanIntegralX = m_result[n].meanIntegralX + sqrt(m_result[n].varX(0, 0)) / m_result.size();
     }
+
+    Vector deviationE = 3 * ConvertMatrixToVector(Math::sqrt(m_result[n].varE));
+    Vector deviationX = 3 * ConvertMatrixToVector(Math::sqrt(m_result[n].varX));
+
+    m_result[n].upE  = m_result[n].meanE + deviationE;
+    m_result[n].downE  = m_result[n].meanE - deviationE;
+
+    m_result[n].upX = m_result[n].meanX + deviationX;
+    m_result[n].downX = m_result[n].meanX - deviationX;
 
 #ifdef QT_ENABLED
     emit updatePercent(int(100 * n / m_result.size()));
@@ -101,8 +127,10 @@ void Filter::writeResult(size_t n, bool copy)
 
 void Filter::writeResult(size_t n, int countI)
 {
-    assert(n < m_result.size() && "Core::Filter::writeResult(n, copy) : out of range (n >= size)");
-
+    if (n >= m_result.size()) {
+        AlertHelper::showErrorAlertWithText("Filter::writeResult\nВыход за пределы массива!");
+        return;
+    }
     timerInstance.interrupt_timer();
 
     Array<Vector> mx(countI);
@@ -129,6 +157,10 @@ void Filter::writeResult(size_t n, int countI)
         Vector rE = m_sampleX[s] - m_sampleZ[s];
         //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];
         m_sampleE[s] = rE;
+        if (s == m_params->specificRealization()) {
+            m_result[n].specificE = m_sampleE[s];
+            m_result[n].specificX = m_sampleE[s];
+        }
     }
     mz = Mean(m_sampleZ);
     varZ = Var(m_sampleZ, mz);
@@ -139,6 +171,21 @@ void Filter::writeResult(size_t n, int countI)
     m_result[n].varZ  = varZ;
     m_result[n].meanE = me;
     m_result[n].varE  = varE;
+    if (n == 0) {
+        m_result[0].meanIntegralE = 0.0;
+        m_result[0].meanIntegralX = 0.0;
+    } else {
+        m_result[n].meanIntegralE= m_result[n].meanIntegralE + sqrt(m_result[n].varE(0, 0)) / m_result.size();
+        m_result[n].meanIntegralX = m_result[n].meanIntegralX + sqrt(m_result[n].varX(0, 0)) / m_result.size();
+    }
+    Vector deviationE = 3 * ConvertMatrixToVector(Math::sqrt(m_result[n].varE));
+    Vector deviationX = 3 * ConvertMatrixToVector(Math::sqrt(m_result[n].varX));
+
+    m_result[n].upE  = m_result[n].meanE + deviationE;
+    m_result[n].downE  = m_result[n].meanE - deviationE;
+
+    m_result[n].upX  = m_result[n].meanX + deviationX;
+    m_result[n].downX  = m_result[n].meanX - deviationX;
 
 
 #ifdef QT_ENABLED
@@ -156,9 +203,9 @@ void Filter::updatePercent(int p) const
 }
 #endif
 
-double Filter::execute_time_filter()
+FilterTimeResult Filter::execute_time_filter()
 {
-    return 0.0;
+    return timerInstance.result_execute_time("filter");
 }
 
 } // end Core

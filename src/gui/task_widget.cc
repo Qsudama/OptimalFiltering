@@ -24,16 +24,18 @@ void TaskWidget::initControls()
 {
     m_cbTask = new QComboBox;
     // Нужно отслеживать соответсвие названия задачи и сопостовляемого таска в TaskWidget::id()
-    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (линеар)"));                                     // 0
-    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (гаусс)"));                                        // 1
-    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (линеар)"));                                            // 2
-    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (гаусс)"));                                               // 3
-    m_cbTask->addItem(tr("Скалярный пример (линеар)"));                                                         // 4
-    m_cbTask->addItem(tr("Скалярный пример (гаусс)"));                                                            // 5
-    m_cbTask->addItem(tr("Скалярный пример со сбоями измерителя (гаусс)"));                   // 6
-    m_cbTask->addItem(tr("3-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));             // 7
-    m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));             // 8
-//    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля  со сбоями 2-х датчиков (линеар)"));             // 9
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (линеар)"));                              // 0
+    m_cbTask->addItem(tr("3-мерный спуск ЛА на планету (гаусс)"));                               // 1
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (линеар)"));                                   // 2
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля (гаусс)"));                                    // 3
+    m_cbTask->addItem(tr("Скалярный пример (линеар)"));                                          // 4
+    m_cbTask->addItem(tr("Скалярный пример (гаусс)"));                                           // 5
+    m_cbTask->addItem(tr("Дискретный осциллятор Ван-дер-Поля (линеар)"));                        // 6
+    m_cbTask->addItem(tr("Дискретный осциллятор Ван-дер-Поля (гаусс)"));                         // 7
+    m_cbTask->addItem(tr("Линейный скалярный пример со сбоями измерителя"));                     // 8
+    m_cbTask->addItem(tr("3-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));                  // 9
+    m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));                  // 10
+//    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля  со сбоями 2-х датчиков (линеар)"));         // 11
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
@@ -67,13 +69,14 @@ void TaskWidget::initLayouts()
 
 void TaskWidget::onBtnParametersClicked()
 {
+    setupParametersWindow();
+
     if (m_parametersWidget->isHidden()) {
         m_parametersWidget->show();
     }
 }
 
-void TaskWidget::onCbTaskChanged(int)
-{
+void TaskWidget::setupParametersWindow() {
     TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
     if (taskId == TASK_ID::LDScalarRejectionGauss || taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear || taskId == TASK_ID::LDVanDerPolRejectionLinear) {
@@ -81,6 +84,8 @@ void TaskWidget::onCbTaskChanged(int)
     } else if(taskId == TASK_ID::ScalarLinear || taskId == TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
     } else if (taskId == TASK_ID::ScalarGauss) {
+        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
+    } else if (taskId == TASK_ID::DVanDerPolLinear || taskId == TASK_ID::DVanDerPolGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
     } else {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId);
@@ -108,9 +113,23 @@ void TaskWidget::onCbTaskChanged(int)
     emit changed();
 }
 
+void TaskWidget::onCbTaskChanged(int)
+{
+//    if (m_parametersWidget) {
+//        if (!m_parametersWidget->isHidden()) {
+//            m_parametersWidget->hide();
+//        }
+//        delete m_parametersWidget;
+//        m_parametersWidget = nullptr;
+//    }
+}
+
 Core::PtrTask TaskWidget::task(Core::FILTER_TYPE ftype)
 {
     Core::PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id());
+    if (!m_parametersWidget) {
+        setupParametersWindow();
+    }
     m_parametersWidget->loadParamsTo(tmpTask);
     return tmpTask;
 }
@@ -141,12 +160,16 @@ TASK_ID TaskWidget::id() const
     case 5:
         return TASK_ID::ScalarGauss;
     case 6:
-        return TASK_ID::LDScalarRejectionGauss;
+        return TASK_ID::DVanDerPolLinear;
     case 7:
-        return TASK_ID::LDLandingRejection3DLinear;
+        return TASK_ID::DVanDerPolGauss;
     case 8:
-        return TASK_ID::LDLandingRejection6DLinear;
+        return TASK_ID::LDScalarRejectionGauss;
     case 9:
+        return TASK_ID::LDLandingRejection3DLinear;
+    case 10:
+        return TASK_ID::LDLandingRejection6DLinear;
+    case 11:
         return TASK_ID::LDVanDerPolRejectionLinear;
     default:
         return TASK_ID::LandingLinear;
