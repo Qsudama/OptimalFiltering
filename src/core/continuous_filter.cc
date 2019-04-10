@@ -49,8 +49,9 @@ void ContinuousFilter::zeroIteration()
         m_sampleZ[s] = mx0;
         m_sampleE[s] = m_sampleX[s] - m_sampleZ[s];
         if (s == m_params->specificRealization()) {
-            m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
-            m_specificX[0] = m_sampleX[s]; // Вот тут вопросик
+            m_result[0].specificE = m_sampleX[s] - m_sampleZ[s];
+            m_result[0].specificX = m_sampleX[s];
+            m_result[0].specificZ = m_sampleZ[s];
         }
     }
 
@@ -61,20 +62,15 @@ void ContinuousFilter::zeroIteration()
     m_result[0].varZ  = Var(m_sampleZ, m_result[0].meanZ);
     m_result[0].varE  = Var(m_sampleE, m_result[0].meanE);
     m_result[0].time  = 0.0;
-    m_result[0].meanIntegralE = 0.0;
 
     Vector deviationE = 3 * ConvertMatrixToVector(Math::sqrt(m_result[0].varE));
+    Vector deviationX = 3 * ConvertMatrixToVector(Math::sqrt(m_result[0].varX));
 
     m_result[0].upE  = m_result[0].meanE + deviationE;
     m_result[0].downE  = m_result[0].meanE - deviationE;
-    m_result[0].specificE = m_specificE[0];
 
-    m_result[0].meanIntegralX = 0.0;
-
-    Vector deviationX = 3 * ConvertMatrixToVector(Math::sqrt(m_result[0].varX));
     m_result[0].upX = m_result[0].meanX + deviationX;
-    m_result[0].downX = m_result[0].meanX - deviationX;
-    m_result[0].specificX = m_specificX[0];
+    m_result[0].downX = m_result[0].meanX - deviationX; 
 }
 
 

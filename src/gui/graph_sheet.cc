@@ -131,7 +131,7 @@ void GraphSheet::addCurve(const QVector<double> &x,
     int number = 0;
     for (int i = 0; i < m_curves.size(); ++i) {
         if (m_curves[i].name == name) {
-            if (name.mid(0, 2) == "Mx" || name.mid(0, 2) == "Sx") { //
+            if (name.mid(0, 2) == "Mx" || name.mid(0, 2) == "Sx" || name.mid(0, 1) == "X") { //
                 return;                                             // WARNING: костыль...
             }                                                       //
             ++number;

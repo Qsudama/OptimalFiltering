@@ -61,8 +61,6 @@ void Filter::init()
     m_sampleY.resize(m_params->sampleSize());
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
-    m_specificE.resize(m_params->sampleSize());
-    m_specificX.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount() * m_params->predictionCount() * m_params->integrationCount());
     m_result.resize(size);
@@ -71,7 +69,7 @@ void Filter::init()
     }
 }
 
-void Filter::writeResult(size_t n, bool copy)
+void Filter::writeResult(size_t n, bool copy) // для непрерывных, непрерывно-дискретных, дискретных
 {
     if (n >= m_result.size()) {
         AlertHelper::showErrorAlertWithText("Filter::writeResult\nВыход за пределы массива!");
@@ -88,6 +86,7 @@ void Filter::writeResult(size_t n, bool copy)
         if (s == m_params->specificRealization()) {
             m_result[n].specificE = m_sampleE[s];
             m_result[n].specificX = m_sampleX[s];
+            m_result[n].specificZ = m_sampleZ[s];
         }
     }
     if (copy) {
@@ -95,17 +94,11 @@ void Filter::writeResult(size_t n, bool copy)
         m_result[n].meanE = m_result[n - 1].meanE;
         m_result[n].varZ  = m_result[n - 1].varZ;
         m_result[n].varE  = m_result[n - 1].varE;
-
-        m_result[n].meanIntegralE = m_result[n - 1].meanIntegralE + sqrt(m_result[n].varE(0, 0)) / m_result.size();
-        m_result[n].meanIntegralX = m_result[n - 1].meanIntegralX + sqrt(m_result[n].varX(0, 0)) / m_result.size();
     } else {
         m_result[n].meanZ = Mean(m_sampleZ);
         m_result[n].varZ  = Var(m_sampleZ, m_result[n].meanZ);
         m_result[n].meanE = Mean(m_sampleE);
         m_result[n].varE  = Var(m_sampleE, m_result[n].meanE);
-
-        m_result[n].meanIntegralE = m_result[n].meanIntegralE + sqrt(m_result[n].varE(0, 0)) / m_result.size();
-        m_result[n].meanIntegralX = m_result[n].meanIntegralX + sqrt(m_result[n].varX(0, 0)) / m_result.size();
     }
 
     Vector deviationE = 3 * ConvertMatrixToVector(Math::sqrt(m_result[n].varE));
@@ -125,7 +118,7 @@ void Filter::writeResult(size_t n, bool copy)
     timerInstance.continue_timer();
 }
 
-void Filter::writeResult(size_t n, int countI)
+void Filter::writeResult(size_t n, int countI) // для логико-динамических
 {
     if (n >= m_result.size()) {
         AlertHelper::showErrorAlertWithText("Filter::writeResult\nВыход за пределы массива!");
@@ -160,6 +153,7 @@ void Filter::writeResult(size_t n, int countI)
         if (s == m_params->specificRealization()) {
             m_result[n].specificE = m_sampleE[s];
             m_result[n].specificX = m_sampleX[s];
+            m_result[n].specificZ = m_sampleZ[s];
         }
     }
     mz = Mean(m_sampleZ);
@@ -171,13 +165,7 @@ void Filter::writeResult(size_t n, int countI)
     m_result[n].varZ  = varZ;
     m_result[n].meanE = me;
     m_result[n].varE  = varE;
-    if (n == 0) {
-        m_result[0].meanIntegralE = 0.0;
-        m_result[0].meanIntegralX = 0.0;
-    } else {
-        m_result[n].meanIntegralE= m_result[n].meanIntegralE + sqrt(m_result[n].varE(0, 0)) / m_result.size();
-        m_result[n].meanIntegralX = m_result[n].meanIntegralX + sqrt(m_result[n].varX(0, 0)) / m_result.size();
-    }
+
     Vector deviationE = 3 * ConvertMatrixToVector(Math::sqrt(m_result[n].varE));
     Vector deviationX = 3 * ConvertMatrixToVector(Math::sqrt(m_result[n].varX));
 

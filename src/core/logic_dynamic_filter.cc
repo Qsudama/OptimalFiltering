@@ -32,8 +32,6 @@ void LogicDynamicFilter::init()
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
     m_sampleI.resize(m_params->sampleSize());
-    m_specificE.resize(m_params->sampleSize());
-    m_specificX.resize(m_params->sampleSize());
 
     size_t size = size_t(m_params->measurementCount());
     m_result.resize(size);
@@ -140,8 +138,9 @@ void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
     }
     m_sampleZ[s] = resZ;
     if ((Uint)s == m_params->specificRealization()) {
-        m_specificE[0] = m_sampleX[s] - m_sampleZ[s];
-        m_specificX[0] = m_sampleX[s] - m_sampleZ[s];
+        m_result[0].specificE = m_sampleX[s] - m_sampleZ[s];
+        m_result[0].specificX = m_sampleX[s];
+        m_result[0].specificZ = m_sampleZ[s];
     }
 }
 

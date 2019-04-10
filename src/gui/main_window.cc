@@ -249,7 +249,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 {
     QColor color = m_colorManager.nextColor();
     QColor color_realization_e = m_colorManager.nextColorRealizationE();
-    QColor color_realization_x = m_colorManager.nextColorRealizationX();
+//    QColor color_realization_x = m_colorManager.nextColorRealizationX();
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
 
@@ -264,12 +264,12 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     sxPen.setStyle(Qt::DashLine);
     sePen.setWidthF(1.5);
     sePen.setColor(color);
-    upDownX.setWidthF(1.5);
-    upDownX.setColor(color_realization_x);
-    upDownE.setWidthF(1.5);
+    upDownX.setWidthF(1.0);
+    upDownX.setColor(Qt::magenta);
+    upDownE.setWidthF(1.0);
     upDownE.setColor(color_realization_e);
     selectRealizX.setWidthF(1.5);
-    selectRealizX.setColor(color_realization_x);
+    selectRealizX.setColor(Qt::magenta);
     selectRealizE.setWidthF(1.5);
     selectRealizE.setColor(color_realization_e);
 
@@ -336,6 +336,12 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetStdDeviationX(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
 
+        Core::GetRealizationX(filter->result(), i, y, scale[i]);
+        Core::GetUpX(filter->result(), i, y_up, scale[i]);
+        Core::GetDownX(filter->result(), i, y_down, scale[i]);
+        QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") ";
+        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX, false);
+
         Core::GetMeanE(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Me" + QString::number(i + 1) + " " + fname, mePen, false);
 
@@ -345,14 +351,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetRealizationE(filter->result(), i, y, scale[i]);
         Core::GetUpE(filter->result(), i, y_up, scale[i]);
         Core::GetDownE(filter->result(), i, y_down, scale[i]);
-        QString name_sheet_e = "E (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        QString name_sheet_e = "E" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
         m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE, false);
-
-        Core::GetRealizationX(filter->result(), i, y, scale[i]);
-        Core::GetUpX(filter->result(), i, y_up, scale[i]);
-        Core::GetDownX(filter->result(), i, y_down, scale[i]);
-        QString name_sheet_x = "X (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
-        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX, false);
     }
 
     m_graphWindow->updatePlotter();
