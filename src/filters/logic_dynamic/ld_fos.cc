@@ -12,8 +12,6 @@ using Math::LinAlg::Pinv;
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
-using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
 
 
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)

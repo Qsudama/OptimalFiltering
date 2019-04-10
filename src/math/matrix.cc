@@ -36,5 +36,16 @@ void MakeBlockMatrix(const Matrix &mat1, const Matrix &mat2, Matrix &blockMat, b
     }
 }
 
+Vector ConvertMatrixToVector(const Matrix matrix)
+{
+    if (matrix.rows() != matrix.cols()) {
+        return Vector::Zero(matrix.rows());
+    }
+    Vector result(matrix.rows());
+    for (int i = 0; i < matrix.rows(); i++) {
+        result[i] = matrix(i, i);
+    }
+    return result;
+}
 
 } // end Math

@@ -117,7 +117,7 @@ void GetUpE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 //    }
     array.resize(IndexType(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
-        array[IndexType(i)] = coeff * fo[i].upE;
+        array[IndexType(i)] = coeff * fo[i].upE[index];
     }
 }
 
@@ -130,13 +130,13 @@ void GetDownE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 //    }
     array.resize(IndexType(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
-        array[IndexType(i)] = coeff * fo[i].downE;
+        array[IndexType(i)] = coeff * fo[i].downE[index];
     }
 }
 
 void GetRealizationE(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 {
-//    assert(index >= 0 && index < fo[0].varE.rows() && "Core::GetStdDeviationE(fo, index, array, coeff) : out of range");
+
     if (index < 0 && index >= fo[0].specificE.rows()) {
         AlertHelper::showErrorAlertWithText("Core::GetRealizationE\nВыход за пределы массива!");
         return;
@@ -169,7 +169,7 @@ void GetUpX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 //    }
     array.resize(IndexType(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
-        array[IndexType(i)] = coeff * fo[i].upX;
+        array[IndexType(i)] = coeff * fo[i].upX[index];
     }
 }
 
@@ -182,7 +182,7 @@ void GetDownX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff)
 //    }
     array.resize(IndexType(fo.size()));
     for (size_t i = 0; i < size_t(fo.size()); ++i) {
-        array[IndexType(i)] = coeff * fo[i].downX;
+        array[IndexType(i)] = coeff * fo[i].downX[index];
     }
 }
 

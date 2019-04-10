@@ -4,9 +4,6 @@
 #include "iostream"
 #include "random"
 
-using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
-
 namespace Tasks
 {
 
