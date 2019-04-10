@@ -134,8 +134,6 @@ protected:
     Array<Vector> m_specificE;
     Array<Vector> m_specificX;
 
-    Array<Vector> m_realizationE;
-
     std::map<std::string, Array<Vector>> m_specific_params; /*!< Спецефические параметры фильтров. */
 };
 
