@@ -194,7 +194,8 @@ Matrix VanDerPolRejectionLinear::dbdx(int /*i*/, const Vector &x) const
 
     Matrix res = Matrix::Zero(m_dimY, m_dimX);
 
-    res(0, 0) = 2.0 * A1 * x[0] + A2;
+    res(0, 0) = 2.0 * A1 * x[0];
+    res(0, 1) = A2;
 
     return res;
 }
