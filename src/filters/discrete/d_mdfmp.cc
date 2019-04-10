@@ -13,7 +13,6 @@ using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
 using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
 
 
 MDFMP::MDFMP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(params, task)

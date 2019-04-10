@@ -23,12 +23,12 @@ struct SingleFilterOutput {
     Math::Matrix varE;  /*!< Дисперсия \f$M[E_t], E_t = |X_t - Z_t|\f$. */
     double       time;  /*!< Время \f$t\f$. */
     double meanIntegralE; /*!< Интегральное среднее E*/
-    double upE; /*!< Верхняя граница E*/
-    double downE; /*!< Нижняя граница E*/
+    Math::Vector upE; /*!< Верхняя граница E*/
+    Math::Vector downE; /*!< Нижняя граница E*/
     Math::Vector specificE; /*!< Конкретная реализация E выбранной траектории*/
     double meanIntegralX; /*!< Интегральное среднее X*/
-    double upX; /*!< Верхняя граница X*/
-    double downX; /*!< Нижняя граница X*/
+    Math::Vector upX; /*!< Верхняя граница X*/
+    Math::Vector downX; /*!< Нижняя граница X*/
     Math::Vector specificX; /*!< Конкретная реализация X выбранной траектории*/
 };
 

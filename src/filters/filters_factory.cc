@@ -88,7 +88,7 @@ PtrFilter FilterFactory::createLogicDynamic(FILTER_ID id, PtrFilterParameters pa
     case FILTER_ID::LDFKP:
         return PtrFilter(new Filters::LogicDynamic::FKP_FBP(params, task, id));
     case FILTER_ID::LDFBP:
-            return PtrFilter(new Filters::LogicDynamic::FKP_FBP(params, task, id));
+        return PtrFilter(new Filters::LogicDynamic::FKP_FBP(params, task, id));
     default:
         return PtrFilter(nullptr); // WARNING: такого фильтра нет
     };
