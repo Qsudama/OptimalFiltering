@@ -437,7 +437,6 @@ int GraphWindow::countSheets() const
 
 GraphSheet &GraphWindow::sheet(int index)
 {
-//    assert(0 <= index && index < m_sheets.size() && "GraphWindow::sheet(index) : out of range");
     if (index <= 0 && index >= m_sheets.size()) {
         AlertHelper::showErrorAlertWithText("GraphWindow::sheet\nВыход за пределы!");
         return m_sheets[0];

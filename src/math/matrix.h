@@ -43,6 +43,13 @@ void MakeBlockVector(const Vector &vec1, const Vector &vec2, Vector &blockVec);
 
 void MakeBlockMatrix(const Matrix &mat1, const Matrix &mat2, Matrix &blockMat, bool vertical = false);
 
+/*!
+ * \brief Cоздает вектор из диагональных элементов квадратичной матрицы.
+ * Если матрица не квадратичная - вернет вектор забитый нулями.
+ * \param matrix матрица из которой составляется вектор.
+ */
+
+Vector ConvertMatrixToVector(const Matrix matrix);
 
 } // end Math
 

@@ -37,8 +37,6 @@ FilterResultsTable::FilterResultsTable(const Core::FilterOutput &data, const std
 void FilterResultsTable::initTable(const Core::FilterOutput &data, const Math::Vector &scale)
 {
     int dim = int(data[0].meanX.size());
-
-//    assert(dim == scale.size() && "FilterResultsTable::initTable(data, scale) : corrupt dimension of scale");
     if (dim != scale.size()) {
         AlertHelper::showErrorAlertWithText("FilterResultsTable::initTable\ndim != scale.size()");
         return;

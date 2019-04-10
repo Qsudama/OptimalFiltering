@@ -33,7 +33,6 @@ void MultivariateNormalDistribution::setSeed(Uint seed)
 
 Vector MultivariateNormalDistribution::normal01(long dim) const
 {
-//    assert(dim > 0 && "Math::MultivariateNormalDistribution::normal01(dim) : corrupt value of dim");
     if (dim <= 0) {
         AlertHelper::showErrorAlertWithText("Math::MultivariateNormalDistribution::normal01\nРазмерность <= 0");
         return Vector::Zero(dim);
@@ -54,10 +53,6 @@ Vector MultivariateNormalDistribution::operator()(long dim) const
 Vector MultivariateNormalDistribution::operator()(const Vector &mean, const Matrix &var) const
 {
     long dim = mean.size();
-
-//    assert(dim > 0 && "Math::MultivariateNormalDistribution::operator()(mean, var) : corrupt dimension of mean");
-//    assert(var.rows() == dim && "Math::MultivariateNormalDistribution::operator()(mean, var) : corrupt dimension of var (row's count)");
-//    assert(var.cols() == dim && "Math::MultivariateNormalDistribution::operator()(mean, var) : corrupt dimension of var (col's count)");
     if (dim <= 0) {
         AlertHelper::showErrorAlertWithText("Math::MultivariateNormalDistribution::operator(mean, var)\nРазмерность <= 0");
         return Vector::Zero(dim);

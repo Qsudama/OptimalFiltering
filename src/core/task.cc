@@ -101,7 +101,6 @@ Vector Task::x0() const
 
 void Task::setMeanX0(const Vector &mean)
 {
-//    assert(mean.size() == m_dimX && "Core::Task::setMeanX(mean) : corrupt dimension of mean");
     if (mean.size() != m_dimX) {
         AlertHelper::showErrorAlertWithText("Core::Task::setMeanX0\nРазмерность входного вектора не соответствует размерности вектора X");
         return;
@@ -111,7 +110,6 @@ void Task::setMeanX0(const Vector &mean)
 
 void Task::setMeanV(const Vector &mean)
 {
-//    assert(mean.size() == m_dimV && "Core::Task::setMeanV(mean) : corrupt dimension of mean");
     if (mean.size() != m_dimV) {
         AlertHelper::showErrorAlertWithText("Core::Task::setMeanV\nРазмерность входного вектора не соответствует размерности вектора V");
         return;
@@ -121,7 +119,6 @@ void Task::setMeanV(const Vector &mean)
 
 void Task::setMeanW(const Vector &mean)
 {
-//    assert(mean.size() == m_dimW && "Core::Task::setMeanW(mean) : corrupt dimension of mean");
     if (mean.size() != m_dimW) {
         AlertHelper::showErrorAlertWithText("Core::Task::setMeanW\nРазмерность входного вектора не соответствует размерности вектора W");
         return;
@@ -131,8 +128,6 @@ void Task::setMeanW(const Vector &mean)
 
 void Task::setVarX0(const Matrix &var)
 {
-//    assert(var.rows() == m_dimX && "Core::Task::setVarX(var) : corrupt dimension of var (row's count)");
-//    assert(var.cols() == m_dimX && "Core::Task::setVarX(var) : corrupt dimension of var (col's count)");
     if (var.rows() != m_dimX) {
         AlertHelper::showErrorAlertWithText("Core::Task::setVarX0\nКоличество строк входной матрицы не соответствует размерности вектора X");
         return;
@@ -146,8 +141,6 @@ void Task::setVarX0(const Matrix &var)
 
 void Task::setVarV(const Matrix &var)
 {
-//    assert(var.rows() == m_dimV && "Core::Task::setVarV(var) : corrupt dimension of var (row's count)");
-//    assert(var.cols() == m_dimV && "Core::Task::setVarV(var) : corrupt dimension of var (col's count)");
     if (var.rows() != m_dimV) {
         AlertHelper::showErrorAlertWithText("Core::Task::setVarV\nКоличество строк входной матрицы не соответствует размерности вектора V");
         return;
@@ -161,8 +154,6 @@ void Task::setVarV(const Matrix &var)
 
 void Task::setVarW(const Matrix &var)
 {
-//    assert(var.rows() == m_dimW && "Core::Task::setVarW(var) : corrupt dimension of var (row's count)");
-//    assert(var.cols() == m_dimW && "Core::Task::setVarW(var) : corrupt dimension of var (col's count)");
     if (var.rows() != m_dimW) {
         AlertHelper::showErrorAlertWithText("Core::Task::setVarW\nКоличество строк входной матрицы не соответствует размерности вектора W");
         return;

@@ -13,7 +13,6 @@ using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
 using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
 
 
 MFOS::MFOS(Core::PtrFilterParameters params, Core::PtrTask task)
