@@ -115,18 +115,21 @@ void TaskWidget::setupParametersWindow() {
 
 void TaskWidget::onCbTaskChanged(int)
 {
-    if (m_parametersWidget) {
-        if (!m_parametersWidget->isHidden()) {
-            m_parametersWidget->hide();
-        }
-        delete m_parametersWidget;
-        m_parametersWidget = nullptr;
-    }
+//    if (m_parametersWidget) {
+//        if (!m_parametersWidget->isHidden()) {
+//            m_parametersWidget->hide();
+//        }
+//        delete m_parametersWidget;
+//        m_parametersWidget = nullptr;
+//    }
 }
 
 Core::PtrTask TaskWidget::task(Core::FILTER_TYPE ftype)
 {
     Core::PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id());
+    if (!m_parametersWidget) {
+        setupParametersWindow();
+    }
     m_parametersWidget->loadParamsTo(tmpTask);
     return tmpTask;
 }
