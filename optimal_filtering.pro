@@ -332,7 +332,77 @@ HEADERS += \
     src/tasks/continuous/c_scalar_gauss.h \
     src/tasks/continuous/c_scalar_linear.h \
     src/gui/timer_results_table.h \
-    src/gui/custom_double_spin_box.h
+    src/gui/custom_double_spin_box.h \
+    third_party/eigen/CholmodSupport \
+    third_party/eigen/MetisSupport \
+    third_party/eigen/PardisoSupport \
+    third_party/eigen/PaStiXSupport \
+    third_party/eigen/Sparse \
+    third_party/eigen/SparseCholesky \
+    third_party/eigen/SparseCore \
+    third_party/eigen/SparseLU \
+    third_party/eigen/SparseQR \
+    third_party/eigen/SPQRSupport \
+    third_party/eigen/SuperLUSupport \
+    third_party/eigen/UmfPackSupport \
+    third_party/eigen/src/CholmodSupport/CholmodSupport.h \
+    third_party/eigen/src/Core/arch/Default/ConjHelper.h \
+    third_party/eigen/src/MetisSupport/MetisSupport.h \
+    third_party/eigen/src/PardisoSupport/PardisoSupport.h \
+    third_party/eigen/src/PaStiXSupport/PaStiXSupport.h \
+    third_party/eigen/src/SparseCholesky/SimplicialCholesky.h \
+    third_party/eigen/src/SparseCholesky/SimplicialCholesky_impl.h \
+    third_party/eigen/src/SparseCore/AmbiVector.h \
+    third_party/eigen/src/SparseCore/CompressedStorage.h \
+    third_party/eigen/src/SparseCore/ConservativeSparseSparseProduct.h \
+    third_party/eigen/src/SparseCore/MappedSparseMatrix.h \
+    third_party/eigen/src/SparseCore/SparseAssign.h \
+    third_party/eigen/src/SparseCore/SparseBlock.h \
+    third_party/eigen/src/SparseCore/SparseColEtree.h \
+    third_party/eigen/src/SparseCore/SparseCompressedBase.h \
+    third_party/eigen/src/SparseCore/SparseCwiseBinaryOp.h \
+    third_party/eigen/src/SparseCore/SparseCwiseUnaryOp.h \
+    third_party/eigen/src/SparseCore/SparseDenseProduct.h \
+    third_party/eigen/src/SparseCore/SparseDiagonalProduct.h \
+    third_party/eigen/src/SparseCore/SparseDot.h \
+    third_party/eigen/src/SparseCore/SparseFuzzy.h \
+    third_party/eigen/src/SparseCore/SparseMap.h \
+    third_party/eigen/src/SparseCore/SparseMatrix.h \
+    third_party/eigen/src/SparseCore/SparseMatrixBase.h \
+    third_party/eigen/src/SparseCore/SparsePermutation.h \
+    third_party/eigen/src/SparseCore/SparseProduct.h \
+    third_party/eigen/src/SparseCore/SparseRedux.h \
+    third_party/eigen/src/SparseCore/SparseRef.h \
+    third_party/eigen/src/SparseCore/SparseSelfAdjointView.h \
+    third_party/eigen/src/SparseCore/SparseSolverBase.h \
+    third_party/eigen/src/SparseCore/SparseSparseProductWithPruning.h \
+    third_party/eigen/src/SparseCore/SparseTranspose.h \
+    third_party/eigen/src/SparseCore/SparseTriangularView.h \
+    third_party/eigen/src/SparseCore/SparseUtil.h \
+    third_party/eigen/src/SparseCore/SparseVector.h \
+    third_party/eigen/src/SparseCore/SparseView.h \
+    third_party/eigen/src/SparseCore/TriangularSolver.h \
+    third_party/eigen/src/SparseLU/SparseLU.h \
+    third_party/eigen/src/SparseLU/SparseLU_column_bmod.h \
+    third_party/eigen/src/SparseLU/SparseLU_column_dfs.h \
+    third_party/eigen/src/SparseLU/SparseLU_copy_to_ucol.h \
+    third_party/eigen/src/SparseLU/SparseLU_gemm_kernel.h \
+    third_party/eigen/src/SparseLU/SparseLU_heap_relax_snode.h \
+    third_party/eigen/src/SparseLU/SparseLU_kernel_bmod.h \
+    third_party/eigen/src/SparseLU/SparseLU_Memory.h \
+    third_party/eigen/src/SparseLU/SparseLU_panel_bmod.h \
+    third_party/eigen/src/SparseLU/SparseLU_panel_dfs.h \
+    third_party/eigen/src/SparseLU/SparseLU_pivotL.h \
+    third_party/eigen/src/SparseLU/SparseLU_pruneL.h \
+    third_party/eigen/src/SparseLU/SparseLU_relax_snode.h \
+    third_party/eigen/src/SparseLU/SparseLU_Structs.h \
+    third_party/eigen/src/SparseLU/SparseLU_SupernodalMatrix.h \
+    third_party/eigen/src/SparseLU/SparseLU_Utils.h \
+    third_party/eigen/src/SparseLU/SparseLUImpl.h \
+    third_party/eigen/src/SparseQR/SparseQR.h \
+    third_party/eigen/src/SPQRSupport/SuiteSparseQRSupport.h \
+    third_party/eigen/src/SuperLUSupport/SuperLUSupport.h \
+    third_party/eigen/src/UmfPackSupport/UmfPackSupport.h
 
 SOURCES += \
     src/core/continuous_discrete_filter.cc \
@@ -415,3 +485,6 @@ SOURCES += \
     src/tasks/continuous/c_scalar_linear.cc \
     src/gui/timer_results_table.cc \
     src/gui/custom_double_spin_box.cc
+
+DISTFILES += \
+    third_party/eigen/CMakeLists.txt
