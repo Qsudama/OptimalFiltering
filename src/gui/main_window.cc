@@ -296,7 +296,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
         m_graphWindow->sheet(2).setYLabel(tr("Высота (км)"));
     }
-    if (m_taskWidget->id() == TASK_ID::LDScalarRejectionGauss) {
+    if (m_taskWidget->id() == TASK_ID::LDScalarRejectionLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
     }
     if (m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) { // потому что первый if уже сработал как надо
@@ -371,7 +371,7 @@ QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask 
         //tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
 
     if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
-        if (m_taskWidget->id() == TASK_ID::LDScalarRejectionGauss) {
+        if (m_taskWidget->id() == TASK_ID::LDScalarRejectionLinear) {
             subTitle = subTitle +
                 tr("Вероятность сбоя ") + QString::number(task->params()->at("e")) +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));

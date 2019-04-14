@@ -84,8 +84,8 @@ PtrTask TaskFactory::createDiscrete(TASK_ID id)
 PtrTask TaskFactory::createLogicDynamic(TASK_ID id)
 {
     switch (id) {
-    case TASK_ID::LDScalarRejectionGauss:
-        return PtrTask(new Tasks::LogicDynamic::ScalarRejectionGauss);
+    case TASK_ID::LDScalarRejectionLinear:
+        return PtrTask(new Tasks::LogicDynamic::ScalarRejectionLinear);
     case TASK_ID::LDLandingRejection3DLinear:
         return PtrTask(new Tasks::LogicDynamic::LandingRejection3DLinear);
     case TASK_ID::LDLandingRejection6DLinear:

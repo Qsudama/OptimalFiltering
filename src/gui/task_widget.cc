@@ -79,7 +79,7 @@ void TaskWidget::onBtnParametersClicked()
 void TaskWidget::setupParametersWindow() {
     TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-    if (taskId == TASK_ID::LDScalarRejectionGauss || taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear || taskId == TASK_ID::LDVanDerPolRejectionLinear) {
+    if (taskId == TASK_ID::LDScalarRejectionLinear || taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear || taskId == TASK_ID::LDVanDerPolRejectionLinear) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId);
     } else if(taskId == TASK_ID::ScalarLinear || taskId == TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
@@ -164,7 +164,7 @@ TASK_ID TaskWidget::id() const
     case 7:
         return TASK_ID::DVanDerPolGauss;
     case 8:
-        return TASK_ID::LDScalarRejectionGauss;
+        return TASK_ID::LDScalarRejectionLinear;
     case 9:
         return TASK_ID::LDLandingRejection3DLinear;
     case 10:
