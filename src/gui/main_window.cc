@@ -249,11 +249,11 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 {
     QColor color = m_colorManager.nextColor();
     QColor color_realization_e = m_colorManager.nextColorRealizationE();
-    QColor color_realization_x = m_colorManager.nextColorRealizationX();
+    QColor color_realization_z = m_colorManager.nextColorRealizationZ();
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
 
-    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE;
+    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ;
     mxPen.setWidthF(2.0);
     mxPen.setColor(Qt::darkMagenta);
     mePen.setWidthF(2.0);
@@ -264,14 +264,16 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     sxPen.setStyle(Qt::DashLine);
     sePen.setWidthF(1.5);
     sePen.setColor(color);
-    upDownX.setWidthF(1.5);
-    upDownX.setColor(color_realization_x);
-    upDownE.setWidthF(1.5);
+    upDownX.setWidthF(1.0);
+    upDownX.setColor(Qt::magenta);
+    upDownE.setWidthF(1.0);
     upDownE.setColor(color_realization_e);
     selectRealizX.setWidthF(1.5);
-    selectRealizX.setColor(color_realization_x);
+    selectRealizX.setColor(Qt::magenta);
     selectRealizE.setWidthF(1.5);
     selectRealizE.setColor(color_realization_e);
+    selectRealizZ.setWidthF(1.5);
+    selectRealizZ.setColor(color_realization_z);
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
@@ -294,7 +296,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
         m_graphWindow->sheet(2).setYLabel(tr("Высота (км)"));
     }
-    if (m_taskWidget->id() == TASK_ID::LDScalarRejectionGauss) {
+    if (m_taskWidget->id() == TASK_ID::LDScalarRejectionLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
     }
     if (m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) { // потому что первый if уже сработал как надо
@@ -336,6 +338,12 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetStdDeviationX(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
 
+        Core::GetRealizationX(filter->result(), i, y, scale[i]);
+        Core::GetUpX(filter->result(), i, y_up, scale[i]);
+        Core::GetDownX(filter->result(), i, y_down, scale[i]);
+        QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") ";
+        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
+
         Core::GetMeanE(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Me" + QString::number(i + 1) + " " + fname, mePen, false);
 
@@ -345,14 +353,12 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetRealizationE(filter->result(), i, y, scale[i]);
         Core::GetUpE(filter->result(), i, y_up, scale[i]);
         Core::GetDownE(filter->result(), i, y_down, scale[i]);
-        QString name_sheet_e = "E (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
-        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE, false);
+        QString name_sheet_e = "E" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE);
 
-        Core::GetRealizationX(filter->result(), i, y, scale[i]);
-        Core::GetUpX(filter->result(), i, y_up, scale[i]);
-        Core::GetDownX(filter->result(), i, y_down, scale[i]);
-        QString name_sheet_x = "X (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
-        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX, false);
+        Core::GetRealizationZ(filter->result(), i, y, scale[i]);
+        QString name_sheet_z = "Z" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        m_graphWindow->sheet(i).addCurve(x, y, name_sheet_z, selectRealizZ, false);
     }
 
     m_graphWindow->updatePlotter();
@@ -365,7 +371,7 @@ QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask 
         //tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
 
     if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
-        if (m_taskWidget->id() == TASK_ID::LDScalarRejectionGauss) {
+        if (m_taskWidget->id() == TASK_ID::LDScalarRejectionLinear) {
             subTitle = subTitle +
                 tr("Вероятность сбоя ") + QString::number(task->params()->at("e")) +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));

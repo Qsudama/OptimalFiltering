@@ -17,7 +17,7 @@ using Math::Statistic::Cov;
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
     : LogicDynamicFilter(params, task, id)
 {
-    long n = task->dimX()/2;
+    long n = task->dimX();
     string syffix_filter = "";
     if (m_task->countI > 1) {
         syffix_filter = "лд";

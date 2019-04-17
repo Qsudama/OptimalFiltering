@@ -131,9 +131,6 @@ protected:
 
     Math::MultivariateNormalDistribution m_normalRand; /*!< Генератор гауссовских случайных векторов. */
 
-    Array<Vector> m_specificE;
-    Array<Vector> m_specificX;
-
     std::map<std::string, Array<Vector>> m_specific_params; /*!< Спецефические параметры фильтров. */
 };
 

@@ -32,10 +32,10 @@ void TaskWidget::initControls()
     m_cbTask->addItem(tr("Скалярный пример (гаусс)"));                                           // 5
     m_cbTask->addItem(tr("Дискретный осциллятор Ван-дер-Поля (линеар)"));                        // 6
     m_cbTask->addItem(tr("Дискретный осциллятор Ван-дер-Поля (гаусс)"));                         // 7
-    m_cbTask->addItem(tr("Линейный скалярный пример со сбоями измерителя"));                     // 8
+    m_cbTask->addItem(tr("Линейный скалярный пример с выбросами измерений"));                    // 8
     m_cbTask->addItem(tr("3-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));                  // 9
     m_cbTask->addItem(tr("6-мерный спуск ЛА со сбоями 2-х датчиков (линеар)"));                  // 10
-//    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля  со сбоями 2-х датчиков (линеар)"));         // 11
+    m_cbTask->addItem(tr("Осциллятор Ван-дер-Поля с выбросами измерений"));                      // 11
     m_cbTask->setCurrentIndex(0);
     connect(m_cbTask, SIGNAL(currentIndexChanged(int)), this, SLOT(onCbTaskChanged(int)));
 
@@ -79,7 +79,7 @@ void TaskWidget::onBtnParametersClicked()
 void TaskWidget::setupParametersWindow() {
     TASK_ID taskId = id();
     Core::PtrTask  tmpTask;
-    if (taskId == TASK_ID::LDScalarRejectionGauss || taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear || taskId == TASK_ID::LDVanDerPolRejectionLinear) {
+    if (taskId == TASK_ID::LDScalarRejectionLinear || taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear || taskId == TASK_ID::LDVanDerPolRejectionLinear) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId);
     } else if(taskId == TASK_ID::ScalarLinear || taskId == TASK_ID::ScalarGauss) {
         tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
@@ -164,7 +164,7 @@ TASK_ID TaskWidget::id() const
     case 7:
         return TASK_ID::DVanDerPolGauss;
     case 8:
-        return TASK_ID::LDScalarRejectionGauss;
+        return TASK_ID::LDScalarRejectionLinear;
     case 9:
         return TASK_ID::LDLandingRejection3DLinear;
     case 10:

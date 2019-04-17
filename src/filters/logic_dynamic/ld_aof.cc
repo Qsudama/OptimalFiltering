@@ -82,7 +82,7 @@ void AOF::computeBlock1(long s, size_t k) {
     if (k == 1 && s == 125) {
         // все ноги растут отсюда. Очень плохая сигма в последствии дает inf при вычислении Mu
         // Плохая из за очень больших значений Lambda. Нужно смотреть ее подсчет на k = 0
-        qDebug() << "Внимание в блоке 1";
+//        qDebug() << "Внимание в блоке 1";
     }
     P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
     //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];
@@ -95,7 +95,7 @@ void AOF::computeBlock1(long s, size_t k) {
 
 void AOF::computeBlock4(long s, size_t k) {
     if (k == 0 && s == 125) {
-        qDebug() << "Внимание в блоке 4";
+//        qDebug() << "Внимание в блоке 4";
     }
     Array<double> resOmega(m_task->countI);
     Array<Vector> resLambda(m_task->countI);
@@ -131,7 +131,7 @@ void AOF::computeBlock4(long s, size_t k) {
 void AOF::computeBlock5(long s, size_t k) {
     for (int i = 0; i < m_task->countI; i++) {
         if (k == 0 && s == 125) {
-            qDebug() << "Внимание в блоке 5";
+//            qDebug() << "Внимание в блоке 5";
         }
         Mu[s][i] = m_task->h(i+1, Lambda[s][i], Psi[s][i]);
         Delta[s][i] = m_task->G(i+1, Lambda[s][i], Psi[s][i]) - Lambda[s][i] * Mu[s][i].transpose();

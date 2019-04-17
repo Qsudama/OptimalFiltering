@@ -64,20 +64,20 @@ LandingRejection6DLinear::LandingRejection6DLinear() : LogicDynamicTask()
     m_varW(2, 2) = pow(0.00002, 2); // Sigma_W
     m_varW(3, 3) = pow(0.00002, 2); // Sigma_W
 
-    (*m_consts)["Kb"]     = KB;
-    (*m_consts)["Beta"]   = BB;
-    (*m_consts)["g"]      = GG;
-    (*m_consts)["R"]      = RR;
+    (*m_consts)["Kb"] = KB;
+    (*m_consts)["Beta"] = BB;
+    (*m_consts)["g"] = GG;
+    (*m_consts)["R"] = RR;
 
-    (*m_consts)["p"]   = 1 - m_e;
+    (*m_consts)["p"] = 1 - m_e;
 // 4-х режимность
 //    (*m_consts)["p"]   = 1 - 2.5*m_e;
 
     (*m_params)["tau"] = m_turnTime;
-    (*m_params)["e"]   = m_e;
+    (*m_params)["e"] = m_e;
     (*m_params)["Кол-во режимов I"] = countIInTask;
-    (*m_params)["GammaX_min"]   = gamMinX;
-    (*m_params)["GammaY_min"]   = gamMinY;
+    (*m_params)["GammaX_min"] = gamMinX;
+    (*m_params)["GammaY_min"] = gamMinY;
 
 }
 

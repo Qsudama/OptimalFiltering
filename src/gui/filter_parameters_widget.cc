@@ -7,15 +7,23 @@ static double const step = 0.01;
 
 int setting_specific_realization = 0;
 
+enum FilterFamily {
+    discrete,
+    continuous,
+    continuous_discrete,
+    logic_dynamic
+};
+
 FilterParametersWidget::FilterParametersWidget(QWidget *parent)
     : QGroupBox(parent)
     , m_updateOn(true)
     , m_parameters(new Core::FilterParameters(50.0, 1.0, 1.0, 0.1, 200, 1, 4, 2))
-    , m_currentFiltersFamily(0)
+    , m_currentFiltersFamily(discrete)
 {
     setTitle(tr("Параметры фильтрации"));
     loadFonts();
     initControls();
+    initLabels();
     connectFieldSignals();
     initLayouts();
     onFixAllToggled(m_checkFixAll->isChecked());
@@ -173,19 +181,30 @@ void FilterParametersWidget::connectFieldSignals()
     connect(m_btnUpdate, SIGNAL(clicked()), this, SLOT(onUpdateValues()));
 }
 
+void FilterParametersWidget::initLabels()
+{
+    m_maxTimeLabel = new QLabel(tr("Терминальное время"));
+    m_measurementStepLabel = new QLabel(tr("Интервал между измерениями"));
+    m_integrationStepLabel = new QLabel(tr("Шаг интегрирования"));
+    m_orderMultiplicityLabel = new QLabel(tr("Число запоминаемых измерений/оценок"));
+    m_argumentsCountLabel = new QLabel(tr("Порядок ФМП (не больше размерности X)"));
+    m_sampleSizeLabel = new QLabel(tr("Размер выборок"));
+    m_specificRealizationLabel = new QLabel(tr("Номер выводимой реализации"));
+}
+
 void FilterParametersWidget::initLayouts()
 {
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
     mainLayout->setSpacing(GuiConfig::LAYOUT_SPACING_BIG);
 
-    mainLayout->addWidget(new QLabel(tr("Терминальное время")), 0, 0);
+    mainLayout->addWidget(m_maxTimeLabel, 0, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 0, 1);
     mainLayout->addWidget(new QLabel(tr("T")), 0, 2);
     mainLayout->addWidget(new QLabel("="), 0, 3);
     mainLayout->addWidget(m_dsbMaxTime, 0, 4);
 
-    mainLayout->addWidget(new QLabel(tr("Интервал между измерениями")), 1, 0);
+    mainLayout->addWidget(m_measurementStepLabel, 1, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 1, 1);
     mainLayout->addWidget(new QLabel(tr("δt")), 1, 2);
     mainLayout->addWidget(new QLabel("="), 1, 3);
@@ -203,29 +222,29 @@ void FilterParametersWidget::initLayouts()
     mainLayout->addWidget(new QLabel("="), 3, 3);
     mainLayout->addWidget(m_sbPredictionCount, 3, 4);
 
-    mainLayout->addWidget(new QLabel(tr("Шаг интегрирования")), 4, 0);
+    mainLayout->addWidget(m_integrationStepLabel, 4, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 4, 1);
     mainLayout->addWidget(new QLabel(tr("Δt")), 4, 2);
     mainLayout->addWidget(new QLabel("="), 4, 3);
     mainLayout->addWidget(m_dsbIntegrationStep, 4, 4);
 
-    mainLayout->addWidget(new QLabel(tr("Время памяти ФКП")), 5, 0);
+    mainLayout->addWidget(m_orderMultiplicityLabel, 5, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 5, 1);
     mainLayout->addWidget(new QLabel(tr("l")), 5, 2);
     mainLayout->addWidget(new QLabel("="), 5, 3);
     mainLayout->addWidget(m_sbOrderMultiplicity, 5, 4);
 
-    mainLayout->addWidget(new QLabel(tr("Порядок ФМП (не больше размерности X)")), 6, 0);
+    mainLayout->addWidget(m_argumentsCountLabel, 6, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 6, 1);
     mainLayout->addWidget(m_argumentsCount, 6, 4);
 
-    mainLayout->addWidget(new QLabel(tr("Размер выборок")), 7, 0);
+    mainLayout->addWidget(m_sampleSizeLabel, 7, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 7, 1);
     mainLayout->addWidget(new QLabel(tr("S")), 7, 2);
     mainLayout->addWidget(new QLabel("="), 7, 3);
     mainLayout->addWidget(m_sbSampleSize, 7, 4);
 
-    mainLayout->addWidget(new QLabel(tr("Номер выводимой реализации")), 8, 0);
+    mainLayout->addWidget(m_specificRealizationLabel, 8, 0);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 8, 1);
     mainLayout->addWidget(new QLabel(tr("N")), 8, 2);
     mainLayout->addWidget(new QLabel("="), 8, 3);
@@ -338,17 +357,37 @@ void FilterParametersWidget::onFixAllToggled(bool checked)
     m_dsbPredictionStep->setEnabled(!checked && m_radioPredictionStep->isChecked());
     m_sbPredictionCount->setEnabled(!checked && m_radioPredictionCount->isChecked());
 
-    if (m_currentFiltersFamily == 0 || m_currentFiltersFamily == 3) { // дискретные и лд
+    m_argumentsCount->setEnabled(true);
+    m_sbOrderMultiplicity->setEnabled(true);
+
+    enableLabel(m_argumentsCountLabel, true);
+    enableLabel(m_orderMultiplicityLabel, true);
+
+    enableLabel(m_integrationStepLabel, false); // включено только для непрерывно-дискретных
+    m_dsbIntegrationStep->setEnabled(false); // включено только для непрерывно-дискретных
+
+    if (m_currentFiltersFamily == discrete || m_currentFiltersFamily == logic_dynamic) {
         m_dsbIntegrationStep->setEnabled(false);
         m_radioPredictionCount->setEnabled(false);
         m_radioPredictionStep->setEnabled(false);
         m_dsbPredictionStep->setEnabled(false);
         m_sbPredictionCount->setEnabled(false);
-    } else if (m_currentFiltersFamily == 1) { // непрерывные
+
+        if (m_currentFiltersFamily == logic_dynamic) {
+            enableLabel(m_argumentsCountLabel, false);
+            m_argumentsCount->setEnabled(false);
+        }
+    } else if (m_currentFiltersFamily == continuous) {
         m_radioPredictionCount->setEnabled(false);
         m_radioPredictionStep->setEnabled(false);
         m_dsbPredictionStep->setEnabled(false);
         m_sbPredictionCount->setEnabled(false);
+
+        enableLabel(m_orderMultiplicityLabel, false);
+        m_sbOrderMultiplicity->setEnabled(false);
+    } else if (m_currentFiltersFamily == continuous_discrete) {
+            enableLabel(m_integrationStepLabel, true);
+            m_dsbIntegrationStep->setEnabled(true);
     }
 }
 void FilterParametersWidget::onPredictionStepToggled(bool checked)
@@ -397,4 +436,18 @@ void FilterParametersWidget::onUpdateValues()
     m_dsbIntegrationStep->setValue(m_parameters->integrationStep());
     m_sbPredictionCount->setValue(int(m_parameters->predictionCount()) - 1);
     m_updateOn = true;
+}
+
+
+// private update labels
+
+void FilterParametersWidget::enableLabel(QLabel *label, bool enable)
+{
+    QPalette palette = label->palette();
+    if (!enable) {
+        palette.setColor(label->foregroundRole(), Qt::darkGray);
+    } else {
+        palette.setColor(label->foregroundRole(), Qt::black);
+    }
+    label->setPalette(palette);
 }
