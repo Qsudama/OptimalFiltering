@@ -342,7 +342,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetUpX(filter->result(), i, y_up, scale[i]);
         Core::GetDownX(filter->result(), i, y_down, scale[i]);
         QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") ";
-        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
+//        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
+        m_graphWindow->sheet(i).addCurve(x, y, name_sheet_x, selectRealizX, false);
 
         Core::GetMeanE(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Me" + QString::number(i + 1) + " " + fname, mePen, false);
