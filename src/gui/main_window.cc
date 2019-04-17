@@ -54,7 +54,7 @@ void MainWindow::initControls()
     connect(m_btnClear, SIGNAL(clicked()), this, SIGNAL(clear()));
     connect(m_btnShowHideTables, SIGNAL(clicked()), this, SLOT(onShowHideTables()));
     connect(m_btnShowTimes, SIGNAL(clicked()), this, SLOT(onShowTableTimer()));
-    connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
+//    connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)), this,
             SLOT(onStart(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)));
