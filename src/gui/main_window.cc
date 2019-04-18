@@ -54,7 +54,7 @@ void MainWindow::initControls()
     connect(m_btnClear, SIGNAL(clicked()), this, SIGNAL(clear()));
     connect(m_btnShowHideTables, SIGNAL(clicked()), this, SLOT(onShowHideTables()));
     connect(m_btnShowTimes, SIGNAL(clicked()), this, SLOT(onShowTableTimer()));
-    connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
+//    connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)), this,
             SLOT(onStart(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)));
@@ -283,7 +283,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
     QString subTitle = subtitleForParametrs(ftype, task);
     for (int i = 0; i < dim; i++) {
-        if (i < dim - 2) {
+        if (i < dim) {
             m_graphWindow->sheet(i).setTitleLabel(title);
             m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
         }
@@ -342,7 +342,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetUpX(filter->result(), i, y_up, scale[i]);
         Core::GetDownX(filter->result(), i, y_down, scale[i]);
         QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") ";
-        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
+//        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
+        m_graphWindow->sheet(i).addCurve(x, y, name_sheet_x, selectRealizX, false);
 
         Core::GetMeanE(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Me" + QString::number(i + 1) + " " + fname, mePen, false);
