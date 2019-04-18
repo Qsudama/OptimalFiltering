@@ -283,7 +283,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
     QString subTitle = subtitleForParametrs(ftype, task);
     for (int i = 0; i < dim; i++) {
-        if (i < dim - 2) {
+        if (i < dim) {
             m_graphWindow->sheet(i).setTitleLabel(title);
             m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
         }
