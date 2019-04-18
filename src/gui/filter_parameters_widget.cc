@@ -4,6 +4,7 @@
 static double const coeff = 0.5;
 static double const minMesStep = 0.0001;
 static double const step = 0.01;
+static int const maxSampleSize = 900000;
 
 int setting_specific_realization = 0;
 
@@ -122,10 +123,10 @@ void FilterParametersWidget::initControls()
     m_sbPredictionCount->setValue(int(m_parameters->predictionCount()) - 1);
     m_sbPredictionCount->setFont(m_monotypeFont);
     connect(m_sbPredictionCount, SIGNAL(valueChanged(int)), this, SLOT(onPredictionCountChanged(int)));
-    // Кратность фильтра (для ФКП) - orderMult
+    // Кратность фильтра (для ФКП/ФБП) - orderMult
     m_sbOrderMultiplicity = new QSpinBox;
     m_sbOrderMultiplicity->setMinimum(1);
-    m_sbOrderMultiplicity->setMaximum(50);
+    m_sbOrderMultiplicity->setMaximum(100);
     m_sbOrderMultiplicity->setSingleStep(1);
     m_sbOrderMultiplicity->setValue(int(m_parameters->orderMult()));
     m_sbOrderMultiplicity->setFont(m_monotypeFont);
@@ -144,7 +145,7 @@ void FilterParametersWidget::initControls()
     m_sbSampleSize = new QSpinBox;
     static int const singleStepSampleSize = 50;
     m_sbSampleSize->setMinimum(singleStepSampleSize);
-    m_sbSampleSize->setMaximum(10000);
+    m_sbSampleSize->setMaximum(maxSampleSize);
     m_sbSampleSize->setSingleStep(singleStepSampleSize);
     m_sbSampleSize->setValue(int(m_parameters->sampleSize()));
     m_sbSampleSize->setFont(m_monotypeFont);
@@ -153,7 +154,7 @@ void FilterParametersWidget::initControls()
 
     m_sbSpecificRealization = new QSpinBox;
     m_sbSpecificRealization->setMinimum(1);
-    m_sbSpecificRealization->setMaximum(10000);
+    m_sbSpecificRealization->setMaximum(maxSampleSize);
     m_sbSpecificRealization->setSingleStep(1);
     m_sbSpecificRealization->setValue(1);
     m_sbSpecificRealization->setFont(m_monotypeFont);
