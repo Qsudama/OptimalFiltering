@@ -16,7 +16,7 @@ namespace LinAlg
 
 
 //! \brief Набор идентификаторов методов псевдообращения матриц.
-enum class PseudoinverseMethods {
+enum PseudoinverseMethods {
     GREVILLE = 0, //!< Псевдообращение по методу Гревиля.
     SVD = 1 //!< Псевдообращение с использованием сингулярных значений.
 };

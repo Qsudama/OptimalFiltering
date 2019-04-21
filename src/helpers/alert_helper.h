@@ -11,10 +11,16 @@
 
 class AlertHelper
 {
+
 public:
+
     static void showErrorAlertWithText(QString text);
+    static void showWarningAlertWithText(QString text);
+
 private:
+
     static void showAlert(QString title, QString text, QMessageBox::Icon icon);
+
 };
 
 #endif // ALERT_HELPER_H

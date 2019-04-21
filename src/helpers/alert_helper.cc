@@ -2,7 +2,12 @@
 
 void AlertHelper::showErrorAlertWithText(QString text)
 {
-    AlertHelper::showAlert("Внимание", text, QMessageBox::Information);
+    AlertHelper::showAlert("Ошибка", text, QMessageBox::Information);
+}
+
+void AlertHelper::showWarningAlertWithText(QString text)
+{
+    AlertHelper::showAlert("Внимание", text, QMessageBox::Warning);
 }
 
 void AlertHelper::showAlert(QString title, QString text, QMessageBox::Icon icon)

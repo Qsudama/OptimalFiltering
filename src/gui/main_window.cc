@@ -8,6 +8,8 @@
 
 #include "src/helpers/alert_helper.h"
 
+#include <pthread.h>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_tablesIsVisible(false)
@@ -58,8 +60,10 @@ void MainWindow::initControls()
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)), this,
             SLOT(onStart(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)));
-    connect(m_filterStartWidget, SIGNAL(filtersFamilyChanged(int)), m_filterParamsWidget,
-            SLOT(onFiltersFamilyChanged(int)));
+    connect(m_filterStartWidget, SIGNAL(filtersFamilyChanged(Core::FILTER_TYPE)), m_filterParamsWidget,
+            SLOT(onFiltersFamilyChanged(Core::FILTER_TYPE)));
+    connect(m_filterStartWidget, SIGNAL(filtersFamilyChanged(Core::FILTER_TYPE)), m_taskWidget,
+            SLOT(onFiltersFamilyChanged(Core::FILTER_TYPE)));
 }
 
 void MainWindow::initLayouts()
@@ -217,32 +221,51 @@ void MainWindow::onFilterUpdatePercent(int p)
 
 void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE /*atype*/, FILTER_ID id)
 {
-    bool normalTask   = m_taskWidget->taskIsNull(ftype);
+    bool normalTask = m_taskWidget->taskIsNull(ftype);
     if (!normalTask) {
-        showErrorMessage();
+        AlertHelper::showErrorAlertWithText("Выбран не верный тип фильтров для данной задачи");
         return;
     }
-
-    Core::PtrTask             task   = m_taskWidget->task(ftype);
+    if (m_runningFilters.count() > 0) {
+        AlertHelper::showWarningAlertWithText("Дождитесь завершения моделирования предыдущего фильтра");
+        return;
+    }
+    RunningFilter runningFilter;
+    runningFilter.task = m_taskWidget->task(ftype);
+    runningFilter.ftype = ftype;
 
     Core::PtrFilterParameters params = m_filterParamsWidget->parameters();
     params->setInitialCondition(m_startConditionsFilterWidget->initialConditionForFilter());
 
-    Core::PtrFilter           filter = Filters::FilterFactory::create(ftype, id, params, task);
+    runningFilter.filter = Filters::FilterFactory::create(ftype, id, params, runningFilter.task);
 
-    connect(filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
+    QThread *thread = new QThread;
+    runningFilter.filter->moveToThread(thread);
+
+    m_runningFilters.append(runningFilter);
+
+    connect(runningFilter.filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
+
+    connect(thread, SIGNAL(started()), runningFilter.filter.get(), SLOT(run()));
+    connect(runningFilter.filter.get(), SIGNAL(filterFinishExecute()), thread, SLOT(quit()));
+    connect(thread, SIGNAL(finished()), this, SLOT(onFinishExecutingFilter()));
 
     m_statusProgressBar->setEnabled(true);
-    QString status = tr("Состояние: выполняется ") + QString::fromStdString(filter->info()->full_name());
+    QString status = tr("Состояние: выполняется ") + QString::fromStdString(runningFilter.filter->info()->full_name());
     statusBar()->showMessage(status);
 
-    filter->run(); // TODO сделать отдельный поток
+    thread->start();
+}
 
-    showData(filter, ftype, task);
-    m_filter_time_results.append(filter->execute_time());
+void MainWindow::onFinishExecutingFilter() {
+    RunningFilter runningFilter = m_runningFilters.first();
+
+    showData(runningFilter.filter, runningFilter.ftype, runningFilter.task);
+    m_filter_time_results.append(runningFilter.filter->execute_time());
     this->statusBar()->showMessage(tr("Состояние: ничего не выполняется"));
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
+    m_runningFilters.clear();
 }
 
 void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
@@ -288,7 +311,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
             m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
         }
     }
-    if (m_taskWidget->id() == TASK_ID::LandingLinear || m_taskWidget->id() == TASK_ID::LandingGauss || m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear  || m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
+    TASK_ID taskId = m_taskWidget->id();
+    if (taskId == TASK_ID::LandingLinear || taskId == TASK_ID::LandingGauss ||taskId == TASK_ID::LDLandingRejection3DLinear  || taskId == TASK_ID::LDLandingRejection6DLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
@@ -296,10 +320,11 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
         m_graphWindow->sheet(2).setYLabel(tr("Высота (км)"));
     }
-    if (m_taskWidget->id() == TASK_ID::LDScalarRejectionLinear) {
+
+    if (taskId == TASK_ID::LDScalarRejectionLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
     }
-    if (m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) { // потому что первый if уже сработал как надо
+    if (taskId == TASK_ID::LDLandingRejection6DLinear) { // потому что первый if уже сработал как надо
         m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
@@ -310,15 +335,15 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(5).setYLabel(tr("Ошибка гировертикали (°)"));
     }
     Math::Vector scale(dim);
-    if (m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear) {
+    if (taskId == TASK_ID::LDLandingRejection3DLinear) {
         scale[0] = scale[2] = 1.0;
         scale[1] = Math::Convert::RadToDeg(1.0);
-    } else if (m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
+    } else if (taskId == TASK_ID::LDLandingRejection6DLinear) {
         scale[0] = scale[2]    = 1.0;
         scale[1] = scale[5]     = Math::Convert::RadToDeg(1.0);
         scale[3]                      = 1.0;
         scale[4]                      = 1.0;
-    } else if (m_taskWidget->id() == TASK_ID::LandingLinear || m_taskWidget->id() == TASK_ID::LandingGauss) {
+    } else if (taskId == TASK_ID::LandingLinear || taskId == TASK_ID::LandingGauss) {
         scale[0] = 1;
         scale[1] = Math::Convert::RadToDeg(1.0);
         scale[2] = 1;
@@ -370,13 +395,13 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {
     QString subTitle = "";
         //tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
-
+    TASK_ID taskId = m_taskWidget->id();
     if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
-        if (m_taskWidget->id() == TASK_ID::LDScalarRejectionLinear) {
+        if (taskId == TASK_ID::LDScalarRejectionLinear) {
             subTitle = subTitle +
                 tr("Вероятность сбоя ") + QString::number(task->params()->at("e")) +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
-        } else if (m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear || m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
+        } else if (taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear) {
             subTitle = subTitle +
                 tr("Шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
                 tr(", вероятность одного сбоя ") + QString::number(task->params()->at("e"));
@@ -410,9 +435,4 @@ void MainWindow::addTable(const Core::FilterOutput &data, const std::string &lab
         m_tables.last()->show();
     }
     m_btnShowHideTables->setEnabled(true);
-}
-
-void MainWindow::showErrorMessage(void)
-{
-    AlertHelper::showErrorAlertWithText("Выбран не верный тип фильтра для данной задачи");
 }

@@ -15,7 +15,6 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-
 /*!
  \brief Класс виджета, предаставляющего элементы управления параметрами фильтрации.
 
@@ -43,8 +42,7 @@ public slots:
      \param index - номер текущей вкладки.
      \details Слот. Реакция на изменение текущей вкладки в FilterStartButtonBox.
     */
-    void onFiltersFamilyChanged(int index);
-
+    void onFiltersFamilyChanged(Core::FILTER_TYPE index);
 
 private slots:
     /*!
@@ -232,9 +230,9 @@ private:
      * Это может привести к изменению значения элемента, что вызовет соответствующий слот в ненужное время.
      * Чтобы разрулить это и нужна эта переменная.
      */
-    bool                      m_updateOn;
+    bool                      m_updateOn = true;
     Core::PtrFilterParameters m_parameters;
-    int                       m_currentFiltersFamily;
+    Core::FILTER_TYPE         m_currentFiltersFamily = Core::Discrete;
 
     QFont m_regularFont;
     QFont m_monotypeFont;

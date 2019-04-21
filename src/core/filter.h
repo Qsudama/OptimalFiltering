@@ -22,6 +22,8 @@
 #include "src/helpers/timer_manager.h"
 #include "src/helpers/alert_helper.h"
 
+#include <QThread>
+
 using Math::Matrix;
 using Math::Vector;
 using Math::RowVector;
@@ -71,7 +73,7 @@ public:
      algorithm();
      \endcode
     */
-    void run();
+
 
     FilterTimeResult execute_time();
 
@@ -114,9 +116,16 @@ protected:
 signals:
 #endif
 
+public slots:
+
+    void run();
+
+signals:
+
     //! \brief Информирует о прогрессе выполнения алгоритма (в процентах).
     void updatePercent(int p) const;
 
+    void filterFinishExecute();
 
 protected:
     FilterOutput        m_result; /*!< Результаты работы. */
