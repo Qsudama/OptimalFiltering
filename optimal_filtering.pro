@@ -1,5 +1,6 @@
 QT             += core gui printsupport
 CONFIG         += c++11
+CONFIG         += thread
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_MAC_SDK = macosx10.14
 

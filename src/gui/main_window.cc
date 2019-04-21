@@ -8,6 +8,8 @@
 
 #include "src/helpers/alert_helper.h"
 
+#include <pthread.h>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_tablesIsVisible(false)
@@ -217,32 +219,51 @@ void MainWindow::onFilterUpdatePercent(int p)
 
 void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE /*atype*/, FILTER_ID id)
 {
-    bool normalTask   = m_taskWidget->taskIsNull(ftype);
+    bool normalTask = m_taskWidget->taskIsNull(ftype);
     if (!normalTask) {
-        showErrorMessage();
+        AlertHelper::showErrorAlertWithText("Выбран не верный тип фильтра для данной задачи");
         return;
     }
-
-    Core::PtrTask             task   = m_taskWidget->task(ftype);
+    if (m_runningFilters.count() > 0) {
+        AlertHelper::showWarningAlertWithText("Дождитесь завершения моделирования предыдущего фильтра");
+        return;
+    }
+    RunningFilter runningFilter;
+    runningFilter.task = m_taskWidget->task(ftype);
+    runningFilter.ftype = ftype;
 
     Core::PtrFilterParameters params = m_filterParamsWidget->parameters();
     params->setInitialCondition(m_startConditionsFilterWidget->initialConditionForFilter());
 
-    Core::PtrFilter           filter = Filters::FilterFactory::create(ftype, id, params, task);
+    runningFilter.filter = Filters::FilterFactory::create(ftype, id, params, runningFilter.task);
 
-    connect(filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
+    QThread *thread = new QThread;
+    runningFilter.filter->moveToThread(thread);
+
+    m_runningFilters.append(runningFilter);
+
+    connect(runningFilter.filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
+
+    connect(thread, SIGNAL(started()), runningFilter.filter.get(), SLOT(run()));
+    connect(runningFilter.filter.get(), SIGNAL(filterFinishExecute()), thread, SLOT(quit()));
+    connect(thread, SIGNAL(finished()), this, SLOT(onFinishExecutingFilter()));
 
     m_statusProgressBar->setEnabled(true);
-    QString status = tr("Состояние: выполняется ") + QString::fromStdString(filter->info()->full_name());
+    QString status = tr("Состояние: выполняется ") + QString::fromStdString(runningFilter.filter->info()->full_name());
     statusBar()->showMessage(status);
 
-    filter->run(); // TODO сделать отдельный поток
+    thread->start();
+}
 
-    showData(filter, ftype, task);
-    m_filter_time_results.append(filter->execute_time());
+void MainWindow::onFinishExecutingFilter() {
+    RunningFilter runningFilter = m_runningFilters.first();
+
+    showData(runningFilter.filter, runningFilter.ftype, runningFilter.task);
+    m_filter_time_results.append(runningFilter.filter->execute_time());
     this->statusBar()->showMessage(tr("Состояние: ничего не выполняется"));
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
+    m_runningFilters.clear();
 }
 
 void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
@@ -410,9 +431,4 @@ void MainWindow::addTable(const Core::FilterOutput &data, const std::string &lab
         m_tables.last()->show();
     }
     m_btnShowHideTables->setEnabled(true);
-}
-
-void MainWindow::showErrorMessage(void)
-{
-    AlertHelper::showErrorAlertWithText("Выбран не верный тип фильтра для данной задачи");
 }

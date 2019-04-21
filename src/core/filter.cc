@@ -33,6 +33,7 @@ void Filter::run()
     timerInstance.start_timer();
     algorithm();
     timerInstance.stop_timer();
+    emit filterFinishExecute();
 }
 
 FilterTimeResult Filter::execute_time()
