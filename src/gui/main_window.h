@@ -22,7 +22,6 @@
 #include <QStatusBar>
 #include <QVector>
 
-
 /*!
  \brief Класс для главного окна приложения.
 */

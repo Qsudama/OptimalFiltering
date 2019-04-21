@@ -2,7 +2,11 @@
 #include "font_manager.h"
 #include <QApplication>
 #include <QDesktopWidget>
+#include "src/core/types_info.h"
 
+#include "src/helpers/alert_helper.h"
+
+using namespace Core;
 
 TaskWidget::TaskWidget(QWidget *parent)
     : QGroupBox(parent)
@@ -11,8 +15,8 @@ TaskWidget::TaskWidget(QWidget *parent)
     setTitle(tr("Решаемая задача"));
     loadFonts();
     initControls();
+    initParametersWidget();
     initLayouts();
-    onCbTaskChanged(0);
 }
 
 void TaskWidget::loadFonts()
@@ -58,8 +62,7 @@ void TaskWidget::initLayouts()
     lbl->setMinimumWidth(QFontMetrics(this->font()).width(lbl->text()));
     layout->addWidget(lbl);
     layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
-    m_btnParameters->setMinimumWidth(
-        QFontMetrics(this->font()).width("    " + m_btnParameters->text()));
+    m_btnParameters->setMinimumWidth(QFontMetrics(this->font()).width("    " + m_btnParameters->text()));
     layout->addWidget(m_btnParameters);
 
     mainLayout->addLayout(layout);
@@ -67,40 +70,28 @@ void TaskWidget::initLayouts()
     this->setLayout(mainLayout);
 }
 
-void TaskWidget::onBtnParametersClicked()
+void TaskWidget::reloadParametersWidget()
 {
-    setupParametersWindow();
-
-    if (m_parametersWidget->isHidden()) {
-        m_parametersWidget->show();
-    }
-}
-
-void TaskWidget::setupParametersWindow() {
-    TASK_ID taskId = id();
-    Core::PtrTask  tmpTask;
-    if (taskId == TASK_ID::LDScalarRejectionGauss || taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear || taskId == TASK_ID::LDVanDerPolRejectionLinear) {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::LogicDynamic, taskId);
-    } else if(taskId == TASK_ID::ScalarLinear || taskId == TASK_ID::ScalarGauss) {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
-    } else if (taskId == TASK_ID::ScalarGauss) {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
-    } else if (taskId == TASK_ID::DVanDerPolLinear || taskId == TASK_ID::DVanDerPolGauss) {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Discrete, taskId);
-    } else {
-        tmpTask = Tasks::TaskFactory::create(Core::FILTER_TYPE::Continuous, taskId);
-    }
-
-    bool hidden = true;
     if (m_parametersWidget) {
         if (!m_parametersWidget->isHidden()) {
-            hidden = false;
             m_parametersWidget->hide();
         }
         delete m_parametersWidget;
+        m_parametersWidget = nullptr;
     }
 
-    m_parametersWidget = new TaskParametersWidget(tmpTask);
+    if (initParametersWidget()) {
+        emit changed();
+    }
+}
+
+bool TaskWidget::initParametersWidget()
+{
+    PtrTask task = tempTask(m_currentFiltersFamily);
+    if (task == nullptr) {
+        return false;
+    }
+    m_parametersWidget = new TaskParametersWidget(task);
     m_parametersWidget->setWindowTitle(tr("Параметры задачи"));
     QRect screenRect = QApplication::desktop()->availableGeometry();
     int   x          = screenRect.width() / 2 - 832 / 2;
@@ -108,35 +99,42 @@ void TaskWidget::setupParametersWindow() {
     int   w          = 832;
     int   h          = screenRect.height() - y - 65;
     m_parametersWidget->setGeometry(x, y, w, h);
-    m_parametersWidget->setHidden(hidden);
+    m_parametersWidget->setHidden(true);
+    return true;
+}
 
-    emit changed();
+void TaskWidget::onBtnParametersClicked()
+{
+    if (!m_parametersWidget) {
+        AlertHelper::showErrorAlertWithText("Поменяйте тип фильтров для данной задачи.");
+    } else {
+        if (m_parametersWidget->isHidden()) {
+            m_parametersWidget->show();
+        }
+    }
+}
+
+void TaskWidget::onFiltersFamilyChanged(FILTER_TYPE index)
+{
+    m_currentFiltersFamily = index;
+    reloadParametersWidget();
 }
 
 void TaskWidget::onCbTaskChanged(int)
 {
-//    if (m_parametersWidget) {
-//        if (!m_parametersWidget->isHidden()) {
-//            m_parametersWidget->hide();
-//        }
-//        delete m_parametersWidget;
-//        m_parametersWidget = nullptr;
-//    }
+    reloadParametersWidget();
 }
 
-Core::PtrTask TaskWidget::task(Core::FILTER_TYPE ftype)
+Core::PtrTask TaskWidget::task(FILTER_TYPE ftype)
 {
-    Core::PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id());
-    if (!m_parametersWidget) {
-        setupParametersWindow();
-    }
+    PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id());
     m_parametersWidget->loadParamsTo(tmpTask);
     return tmpTask;
 }
 
-bool TaskWidget::taskIsNull(Core::FILTER_TYPE ftype)
+bool TaskWidget::taskIsNull(FILTER_TYPE ftype)
 {
-    Core::PtrTask tmpTask = Tasks::TaskFactory::create(ftype, id());
+    PtrTask tmpTask = tempTask(ftype);
     if (tmpTask == nullptr) {
         return false;
     }
@@ -175,6 +173,12 @@ TASK_ID TaskWidget::id() const
         return TASK_ID::LandingLinear;
     }
 }
+
+PtrTask TaskWidget::tempTask(FILTER_TYPE ftype)
+{
+    return Tasks::TaskFactory::create(ftype, id());
+}
+
 
 const QString TaskWidget::name() const
 {

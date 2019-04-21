@@ -7,7 +7,7 @@ namespace Core
 
 
 //! \brief Набор возможных типов фильтров.
-enum class FILTER_TYPE {
+enum FILTER_TYPE {
     Continuous,         /*!< Непрерывный фильтр. */
     ContinuousDiscrete, /*!< Непрерывно-дискретный фильтр. */
     Discrete,           /*!< Дискретный фильтр. */
@@ -15,13 +15,13 @@ enum class FILTER_TYPE {
 };
 
 //! \brief Набор возможных приближений для фильтров оптимальной структуры.
-enum class APPROX_TYPE {
+enum APPROX_TYPE {
     Linear, /*!< Линейное приближение. */
     Gauss   /*!< Гауссовское приближение. */
 };
 
 //! \brief Набор возможных способов задания начальных данных для фильтров.
-enum class INITIAL_CONDITIONS {
+enum INITIAL_CONDITIONS {
     GaussApproximation,  /*!< Гауссовское приближение */
     MonteCarlo  /*!< Метод Монте–Карло. */
 };

@@ -1,5 +1,8 @@
 #include "filter_parameters_widget.h"
 #include "src/gui/font_manager.h"
+#include "src/core/types_info.h"
+
+using namespace Core;
 
 static double const coeff = 0.5;
 static double const minMesStep = 0.0001;
@@ -8,18 +11,9 @@ static int const maxSampleSize = 900000;
 
 int setting_specific_realization = 0;
 
-enum FilterFamily {
-    discrete,
-    continuous,
-    continuous_discrete,
-    logic_dynamic
-};
-
 FilterParametersWidget::FilterParametersWidget(QWidget *parent)
     : QGroupBox(parent)
-    , m_updateOn(true)
     , m_parameters(new Core::FilterParameters(50.0, 1.0, 1.0, 0.1, 200, 1, 4, 2))
-    , m_currentFiltersFamily(discrete)
 {
     setTitle(tr("Параметры фильтрации"));
     loadFonts();
@@ -264,7 +258,7 @@ void FilterParametersWidget::initLayouts()
     this->setMinimumWidth(minWidth);
 }
 
-void FilterParametersWidget::onFiltersFamilyChanged(int index)
+void FilterParametersWidget::onFiltersFamilyChanged(FILTER_TYPE index)
 {
     m_currentFiltersFamily = index;
     onFixAllToggled(m_checkFixAll->isChecked());
@@ -367,18 +361,18 @@ void FilterParametersWidget::onFixAllToggled(bool checked)
     enableLabel(m_integrationStepLabel, false); // включено только для непрерывно-дискретных
     m_dsbIntegrationStep->setEnabled(false); // включено только для непрерывно-дискретных
 
-    if (m_currentFiltersFamily == discrete || m_currentFiltersFamily == logic_dynamic) {
+    if (m_currentFiltersFamily == Discrete || m_currentFiltersFamily == LogicDynamic) {
         m_dsbIntegrationStep->setEnabled(false);
         m_radioPredictionCount->setEnabled(false);
         m_radioPredictionStep->setEnabled(false);
         m_dsbPredictionStep->setEnabled(false);
         m_sbPredictionCount->setEnabled(false);
 
-        if (m_currentFiltersFamily == logic_dynamic) {
+        if (m_currentFiltersFamily == LogicDynamic) {
             enableLabel(m_argumentsCountLabel, false);
             m_argumentsCount->setEnabled(false);
         }
-    } else if (m_currentFiltersFamily == continuous) {
+    } else if (m_currentFiltersFamily == Continuous) {
         m_radioPredictionCount->setEnabled(false);
         m_radioPredictionStep->setEnabled(false);
         m_dsbPredictionStep->setEnabled(false);
@@ -386,7 +380,7 @@ void FilterParametersWidget::onFixAllToggled(bool checked)
 
         enableLabel(m_orderMultiplicityLabel, false);
         m_sbOrderMultiplicity->setEnabled(false);
-    } else if (m_currentFiltersFamily == continuous_discrete) {
+    } else if (m_currentFiltersFamily == ContinuousDiscrete) {
             enableLabel(m_integrationStepLabel, true);
             m_dsbIntegrationStep->setEnabled(true);
     }
