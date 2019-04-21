@@ -1,4 +1,4 @@
-#include "ld_scalar_rejection_gauss.h"
+#include "ld_scalar_rejection_linear.h"
 #include "src/math/convert.h"
 #include "src/math/matrix.h"
 #include "iostream"
@@ -14,7 +14,7 @@ int count_k = 0;
 
 using Math::Convert::DegToRad;
 
-ScalarRejectionGauss::ScalarRejectionGauss()
+ScalarRejectionLinear::ScalarRejectionLinear()
     : LogicDynamicTask()
     , m_e(0.2)
     , m_cI2(10)
@@ -48,7 +48,7 @@ ScalarRejectionGauss::ScalarRejectionGauss()
     (*m_params)["Кол-во режимов I"] = countIInTask;
 }
 
-void ScalarRejectionGauss::loadParams()
+void ScalarRejectionLinear::loadParams()
 {
     A1         = m_params->at("a1");
     A2         = m_params->at("a2");
@@ -57,7 +57,7 @@ void ScalarRejectionGauss::loadParams()
     m_cI2        = m_params->at("с(2)");
 }
 
-double ScalarRejectionGauss::C(int i) const
+double ScalarRejectionLinear::C(int i) const
 {
     if (i == 1) {
         return 1.0;
@@ -66,7 +66,7 @@ double ScalarRejectionGauss::C(int i) const
     }
 }
 
-Vector ScalarRejectionGauss::a(int /*i*/, const Vector &x) const
+Vector ScalarRejectionLinear::a(int /*i*/, const Vector &x) const
 {
     Vector dx(m_dimX);
     Vector v  = m_normalRand(m_meanV, m_varV);
@@ -75,7 +75,7 @@ Vector ScalarRejectionGauss::a(int /*i*/, const Vector &x) const
     return dx;
 }
 
-Vector ScalarRejectionGauss::b(int i, const Vector &x) const
+Vector ScalarRejectionLinear::b(int i, const Vector &x) const
 {
     Vector w  = m_normalRand(m_meanW, m_varW);
     Vector res(m_dimY);
@@ -86,7 +86,7 @@ Vector ScalarRejectionGauss::b(int i, const Vector &x) const
     return res;
 }
 
-double ScalarRejectionGauss::A(int i, int l) const
+double ScalarRejectionLinear::A(int i, int l) const
 {
     double e = m_e;
     double p = 1 - e;
@@ -97,18 +97,18 @@ double ScalarRejectionGauss::A(int i, int l) const
     return A(i - 1, l - 1);
 }
 
-double ScalarRejectionGauss::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
+double ScalarRejectionLinear::nu(int i, int l, const Vector &/*m*/, const Matrix &/*D*/) const {
     return A(i, l);
 }
 
-Vector ScalarRejectionGauss::tau(int i, int l, const Vector &z, const Matrix &/*P*/) const
+Vector ScalarRejectionLinear::tau(int i, int l, const Vector &z, const Matrix &/*P*/) const
 {
     Vector res = Vector::Zero(z.size());
     res[0] = A(i, l) * A1 * z[0];
     return res;
 }
 
-Matrix ScalarRejectionGauss::Theta(int i, int l, const Vector &z, const Matrix &P) const
+Matrix ScalarRejectionLinear::Theta(int i, int l, const Vector &z, const Matrix &P) const
 {
     Matrix m = Matrix::Zero(P.rows(), P.cols());
     m(0, 0) = z[0]*z[0];
@@ -123,12 +123,12 @@ Matrix ScalarRejectionGauss::Theta(int i, int l, const Vector &z, const Matrix &
     return res;
 }
 
-Vector ScalarRejectionGauss::h(int /*i*/, const Vector &m, const Matrix & /* D*/) const
+Vector ScalarRejectionLinear::h(int /*i*/, const Vector &m, const Matrix & /* D*/) const
 {
     return m;
 }
 
-Matrix ScalarRejectionGauss::G(int /*i*/, const Vector &m, const Matrix &D) const
+Matrix ScalarRejectionLinear::G(int /*i*/, const Vector &m, const Matrix &D) const
 {
     Matrix mm = Matrix::Zero(D.rows(), D.cols());
     mm(0, 0) = m[0]*m[0];
@@ -137,7 +137,7 @@ Matrix ScalarRejectionGauss::G(int /*i*/, const Vector &m, const Matrix &D) cons
     return res;
 }
 
-Matrix ScalarRejectionGauss::F(int i, const Vector &m, const Matrix &D) const
+Matrix ScalarRejectionLinear::F(int i, const Vector &m, const Matrix &D) const
 {
     Matrix mm = Matrix::Zero(D.rows(), D.cols());
     mm(0, 0) = m[0]*m[0];
@@ -151,35 +151,35 @@ Matrix ScalarRejectionGauss::F(int i, const Vector &m, const Matrix &D) const
     return res;
 }
 
-Matrix ScalarRejectionGauss::dadx(int /*i*/, const Vector &/*x*/) const
+Matrix ScalarRejectionLinear::dadx(int /*i*/, const Vector &/*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
     res(0, 0) = A1;
     return res;
 }
 
-Matrix ScalarRejectionGauss::dadv(int /*i*/, const Vector & /*x*/) const
+Matrix ScalarRejectionLinear::dadv(int /*i*/, const Vector & /*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
     res(0, 0) = A2;
     return res;
 }
 
-Matrix ScalarRejectionGauss::dbdx(int /*i*/, const Vector &/*x*/) const
+Matrix ScalarRejectionLinear::dbdx(int /*i*/, const Vector &/*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
     res(0, 0) = 1;
     return res;
 }
 
-Matrix ScalarRejectionGauss::dbdw(int i, const Vector &/*x*/) const
+Matrix ScalarRejectionLinear::dbdw(int i, const Vector &/*x*/) const
 {
     Matrix res = Matrix::Zero(m_dimX, m_dimX);
     res(0, 0) = C(i);
     return res;
 }
 
-double ScalarRejectionGauss::Pr(int i) const
+double ScalarRejectionLinear::Pr(int i) const
 {
     if (i == 1) {
         return 1 - m_e;
@@ -188,7 +188,7 @@ double ScalarRejectionGauss::Pr(int i) const
     }
 }
 
-//Array<int> ScalarRejectionGauss::generateArrayI(int sizeS) const
+//Array<int> ScalarRejectionLinear::generateArrayI(int sizeS) const
 //{
 //    Array<int> array(sizeS);
 //    double p = 1.0 - m_e;
@@ -212,7 +212,7 @@ double ScalarRejectionGauss::Pr(int i) const
 //    return array;
 //}
 
-Array<int> ScalarRejectionGauss::generateArrayI(int sizeS, int k) const
+Array<int> ScalarRejectionLinear::generateArrayI(int sizeS, int k) const
 {
     Array<int> array(sizeS);
     double p = 1.0 - m_e;

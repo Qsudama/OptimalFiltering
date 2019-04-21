@@ -18,12 +18,12 @@ namespace LogicDynamic
  * оптимальной структуры.
  */
 
-class ScalarRejectionGauss : public Core::LogicDynamicTask
+class ScalarRejectionLinear : public Core::LogicDynamicTask
 {
 
 public:
     //! \brief Конструктор.
-    ScalarRejectionGauss();
+    ScalarRejectionLinear();
 
     Vector a(int i, const Vector &x) const override;
     Vector b(int i, const Vector &x) const override;

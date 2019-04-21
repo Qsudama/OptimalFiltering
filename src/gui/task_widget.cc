@@ -162,7 +162,7 @@ TASK_ID TaskWidget::id() const
     case 7:
         return TASK_ID::DVanDerPolGauss;
     case 8:
-        return TASK_ID::LDScalarRejectionGauss;
+        return TASK_ID::LDScalarRejectionLinear;
     case 9:
         return TASK_ID::LDLandingRejection3DLinear;
     case 10:
