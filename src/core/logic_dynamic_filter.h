@@ -41,7 +41,12 @@ protected:
 
     FilterTimeResult execute_time_filter() override;
 
+    void computeBlock1(long s, size_t k);
     void computeBlock2(long s, size_t k);
+
+    void computeBlock4(long s, size_t k, Array<double> p, Array<Vector> sigma, Array<Matrix> upsilon);
+    void computeBlock5(long s, size_t k);
+    void computeBlock6(size_t k);
 
     double calculate_d(const Matrix &D);
     double calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);

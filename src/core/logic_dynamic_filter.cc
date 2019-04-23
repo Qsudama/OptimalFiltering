@@ -126,6 +126,22 @@ void LogicDynamicFilter::computeBlock0() {
     }
 }
 
+void LogicDynamicFilter::computeBlock1(long s, size_t k) {
+    if (k == 1 && s == 125) {
+        // все ноги растут отсюда. Очень плохая сигма в последствии дает inf при вычислении Mu
+        // Плохая из за очень больших значений Lambda. Нужно смотреть ее подсчет на k = 0
+//        qDebug() << "Внимание в блоке 1";
+    }
+    P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
+    //qDebug() << "s = " << s << " VectorRes = "  << rE[0] << " " << rE[1] << " " << rE[2];
+    for (int i = 0; i < m_task->countI; i++) {
+        K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
+        Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);
+        Upsilon[s][i] = Psi[s][i] - K[s][i]*Delta[s][i].transpose();
+    }
+}
+
+
 void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
     Vector resZ = Vector::Zero(Sigma[s][0].size());
     Vector mult = Vector::Zero(Sigma[s][0].size());
@@ -137,6 +153,66 @@ void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
 //        qDebug() << "Nan! s = " << s << "k = " << k;
     }
     m_sampleZ[s] = resZ;
+}
+
+void LogicDynamicFilter::computeBlock4(long s, size_t k, Array<double> p, Array<Vector> sigma, Array<Matrix> upsilon) {
+    if (k == 0 && s == 125) {
+//        qDebug() << "Внимание в блоке 4";
+    }
+    Array<double> resOmega(m_task->countI);
+    Array<Vector> resLambda(m_task->countI);
+    Array<Matrix> resPsi(m_task->countI);
+
+    for (int l = 0; l < m_task->countI; l++) {
+        for (int i = 0; i < m_task->countI; i++) {
+            resOmega[i] = p[i]*m_task->nu(l+1,i+1, sigma[i], upsilon[i]);
+        }
+        for (int i = 0; i < m_task->countI; i++) {
+            resLambda[i] = p[i]*m_task->tau(l+1,i+1, sigma[i], upsilon[i]); // при к = 0 на 125 выборке при i=1 (2-ой режим) беда
+        }
+        for (int i = 0; i < m_task->countI; i++) {
+            resPsi[i] = p[i]*m_task->Theta(l+1,i+1, sigma[i], upsilon[i]);
+        }
+        double sumOmega = 0.0;
+        Vector sumLambda = Vector::Zero(Lambda[s][l].size());
+        Matrix sumPsi = Matrix::Zero(Psi[s][l].rows(), Psi[s][l].cols());
+        for (int i = 0; i < m_task->countI; i++) {
+            sumOmega += resOmega[i];
+            sumLambda += resLambda[i];
+            sumPsi += resPsi[i];
+        }
+        Omega[s][l] = sumOmega;
+        if (Omega[s][l] == 0.0) {
+//            qDebug() << "Divided 0!!!";
+        }
+        Lambda[s][l] = sumLambda/Omega[s][l];
+        Psi[s][l] = sumPsi/Omega[s][l] - Lambda[s][l]*Lambda[s][l].transpose();
+    }
+}
+
+void LogicDynamicFilter::computeBlock5(long s, size_t k) {
+    for (int i = 0; i < m_task->countI; i++) {
+        if (k == 0 && s == 125) {
+//            qDebug() << "Внимание в блоке 5";
+        }
+        Mu[s][i] = m_task->h(i+1, Lambda[s][i], Psi[s][i]);
+        Delta[s][i] = m_task->G(i+1, Lambda[s][i], Psi[s][i]) - Lambda[s][i] * Mu[s][i].transpose();
+
+        Phi[s][i] =  m_task->F(i+1, Lambda[s][i], Psi[s][i]) - Mu[s][i]*Mu[s][i].transpose();
+        Matrix phi = Phi[s][i];
+        if (phi.cols() > 1) {
+            if (std::isnan(phi(0, 0)) || std::isnan(phi(1, 1))) {
+//                qDebug() << "Phi - Nan. k = " << k << "s = " << s;
+            }
+        }
+    }
+}
+
+void LogicDynamicFilter::computeBlock6(size_t /*k*/) {
+    for (size_t s = 0; s < m_params->sampleSize(); s++) {
+        m_sampleX[s] = m_task->a(m_sampleI[s], m_sampleX[s]);
+        m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
+    }
 }
 
 double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {
