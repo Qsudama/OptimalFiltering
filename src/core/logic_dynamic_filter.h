@@ -48,10 +48,15 @@ protected:
     void computeBlock5(long s, size_t k);
     void computeBlock6(size_t k);
 
+    Array<double> test(Array<double> omega, Vector u, Array<Vector> m, Array<Matrix> D);
+
+
     double calculate_d(const Matrix &D);
     double calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
 
-    double probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
+
+
+    double probabilityDensityN(double Omega, Vector u, Vector m, Matrix D);
     Array<double> computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
                                              Array<Vector> m, Array<Matrix> D);
 
