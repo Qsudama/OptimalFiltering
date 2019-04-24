@@ -46,15 +46,9 @@ LandingRejection6DLinear::LandingRejection6DLinear() : LogicDynamicTask()
     m_varX0(0, 0) = pow(0.015, 2); // Sigma_V_0
     m_varX0(1, 1) = pow(radian, 2); // Sigma_theta_0
     m_varX0(2, 2) = pow(1, 2); // Sigma_H_0
-
-// Фильтр работает только по 3-м координатам
-    //    m_varX0(3, 3) = pow(CC, 2); // Sigma_c
-    //    m_varX0(4, 4) = pow(0.02, 2); // Sigma_b
-    //    m_varX0(5, 5) = pow(radian, 2); // Sigma_varphi
-
-    m_varX0(3, 3) = pow(0.0, 2); // Sigma_c
-    m_varX0(4, 4) = pow(0.0, 2); // Sigma_b
-    m_varX0(5, 5) = pow(0.0, 2); // Sigma_varphi
+    m_varX0(3, 3) = pow(CC, 2); // Sigma_c
+    m_varX0(4, 4) = pow(0.02, 2); // Sigma_b
+    m_varX0(5, 5) = pow(radian, 2); // Sigma_varphi
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
     m_varW = Matrix::Zero(m_dimW, m_dimW);

@@ -126,6 +126,16 @@ void LogicDynamicFilter::computeBlock0() {
     }
 }
 
+void LogicDynamicFilter::computeBlock1(long s, size_t /*k*/) {
+    P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
+    for (int i = 0; i < m_task->countI; i++) {
+        K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
+        Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);
+        Upsilon[s][i] = Psi[s][i] - K[s][i]*Delta[s][i].transpose();
+    }
+}
+
+
 void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
     Vector resZ = Vector::Zero(Sigma[s][0].size());
     Vector mult = Vector::Zero(Sigma[s][0].size());
@@ -133,117 +143,92 @@ void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
         mult = P[s][i]*Sigma[s][i];
         resZ += mult;
     }
-    if (std::isnan(resZ[0])) {
-//        qDebug() << "Nan! s = " << s << "k = " << k;
-    }
     m_sampleZ[s] = resZ;
+}
+
+void LogicDynamicFilter::computeBlock4(long s, size_t /*k*/, const Array<double> &p, const Array<Vector> &sigma, const Array<Matrix> &upsilon) {
+    Array<double> resOmega(m_task->countI);
+    Array<Vector> resLambda(m_task->countI);
+    Array<Matrix> resPsi(m_task->countI);
+
+    for (int l = 0; l < m_task->countI; l++) {
+        for (int i = 0; i < m_task->countI; i++) {
+            resOmega[i] = p[i]*m_task->nu(l+1, i+1, sigma[i], upsilon[i]);
+        }
+        for (int i = 0; i < m_task->countI; i++) {
+            resLambda[i] = p[i]*m_task->tau(l+1, i+1, sigma[i], upsilon[i]);
+        }
+        for (int i = 0; i < m_task->countI; i++) {
+            resPsi[i] = p[i]*m_task->Theta(l+1, i+1, sigma[i], upsilon[i]);
+        }
+        double sumOmega = 0.0;
+        Vector sumLambda = Vector::Zero(Lambda[s][l].size());
+        Matrix sumPsi = Matrix::Zero(Psi[s][l].rows(), Psi[s][l].cols());
+        for (int i = 0; i < m_task->countI; i++) {
+            sumOmega += resOmega[i];
+            sumLambda += resLambda[i];
+            sumPsi += resPsi[i];
+        }
+        Omega[s][l] = sumOmega;
+        Lambda[s][l] = sumLambda/Omega[s][l];
+        Psi[s][l] = sumPsi/Omega[s][l] - Lambda[s][l]*Lambda[s][l].transpose();
+    }
+}
+
+void LogicDynamicFilter::computeBlock5(long s, size_t /*k*/) {
+    for (int i = 0; i < m_task->countI; i++) {
+        Mu[s][i] = m_task->h(i+1, Lambda[s][i], Psi[s][i]);
+        Delta[s][i] = m_task->G(i+1, Lambda[s][i], Psi[s][i]) - Lambda[s][i] * Mu[s][i].transpose();
+        Phi[s][i] =  m_task->F(i+1, Lambda[s][i], Psi[s][i]) - Mu[s][i]*Mu[s][i].transpose();
+    }
+}
+
+void LogicDynamicFilter::computeBlock6(size_t /*k*/) {
+    for (size_t s = 0; s < m_params->sampleSize(); s++) {
+        m_sampleX[s] = m_task->a(m_sampleI[s], m_sampleX[s]);
+        m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
+    }
+}
+
+Array<double> LogicDynamicFilter::computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &D) {
+
+    Array<double> resP(m_task->countI);
+
+    if (m_task->countI == 1) {
+        resP[0] = 1;
+    } else {
+        Array<double> temp(m_task->countI);
+
+        for (int i = 0; i < m_task->countI; i++) {
+            temp[i] = probabilityDensityN(omega[i], u, m[i], D[i]);
+        }
+        double sum = 0.0;
+        for (int i = 0; i < m_task->countI; i++) {
+            sum = sum + temp[i];
+        }
+        for (int i = 0; i < m_task->countI; i++) {
+            double tempP = temp[i];
+            resP[i] = tempP/sum;
+        }
+
+    }
+    return resP;
 }
 
 double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {
     double pi = Math::Const::PI;
-    Matrix det = 2* pi * D;
+    Matrix det = 2 * pi * D;
     double deter = det.determinant();
-    double d = sqrt(deter);
-    Matrix pin = Pinv(D);
-    double powerE = ((-1 * (u - m).transpose()) * pin * (u - m))(0, 0);
-    double resExp = exp(powerE/2);
-    double n = (Omega * resExp) / d;
-    return n;
-}
-
-double LogicDynamicFilter::calculate_d(const Matrix &D) {
-    double pi = Math::Const::PI;
-    Matrix det = 2* pi * D;
-    double deter = det.determinant();
-    if (deter <= 0.0000000001) {
-        m_bad = true;
-    }
-    if (deter < 0.0) {
+    if (deter < 0.0) { // Это тестовый if. В теории его не должно быть.
         deter = abs(deter);
     }
     double d = sqrt(deter);
-    return d;
-}
-
-double LogicDynamicFilter::calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {
-    Matrix pinD = Pinv(D);
-    double powerE = (((u - m).transpose()) * pinD * (u - m))(0, 0);
-    if (powerE < 0.0) {
-        powerE = abs(powerE);
-    }
-    double resExp = exp((-1 * powerE)/2);
-    double res = Omega * resExp;
-    return res;
-}
-
-Array<double> LogicDynamicFilter::computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
-                                                             Array<Vector> m, Array<Matrix> D) {
-    Array<double> resP(m_task->countI);
-
-    m_bad = false;
-
-    if (m_task->countI == 1 ) {
-        resP[0] = 1;
-    } else {
-        Array<double> q(m_task->countI);
-        double sumQ = 0;
-        Array<double> e(m_task->countI);
-        Array<double> d(m_task->countI);
-
-        for (int i = 0; i < m_task->countI; i++) {
-            q[i] = 1;
-            e[i] = calculate_e(omega[i], sampleVector, m[i], D[i]);
-            d[i] = calculate_d(D[i]);
-            for (int j = 0; j < m_task->countI; j++) {
-                if (j == i) {
-                    q[i] = q[i]*e[i];
-                } else {
-                    q[i] = q[i]*d[i];
-                }
-            }
-            sumQ = sumQ + q[i];
-        }
-
-        double SumP = 0;
-        for (int i = 0; i < m_task->countI; i++) {
-            if (sumQ <= 0.000000000000001) {
-                resP[i] = omega[i];
-            } else if (std::isnan(sumQ)) {
-                resP[i] = omega[i];
-            } else if (m_bad) {
-                resP[i] = omega[i];
-            } else {
-                double res = q[i] / sumQ;
-                resP[i] = res;
-                SumP = SumP + resP[i];
-            }
-
-            if (std::isnan(resP[i])) {
-//                qDebug() << "Nan!";
-            }
-        }
-    }
-
-//    if (m_task->countI == 1 ) {
-//        resDouble = omega;
-//    } else {
-//        for (int i = 0; i < m_task->countI; i++) {
-//            resP[i] = probabilityDensityN(omega[i], sampleVector, m[i], D[i]);
-//        }
-//        double resNumerator = 0.0;
-//        for (int i = 0; i < m_task->countI; i++) {
-//            resNumerator += resP[i];
-//        }
-//        for (int i = 0; i < m_task->countI; i++) {
-//            if(resNumerator == 0.0) {
-//                resDouble[i] = resP[i];
-//            } else {
-//                resDouble[i] = resP[i]/resNumerator;
-//            }
-//        }
-//    }
-//    return resDouble;
-    return resP;
+    Matrix pin = Pinv(D);
+    Vector diff = u - m;
+    double powerE = (-1 * diff.transpose() * pin * diff / 2)(0, 0);
+    double resExp = exp(powerE);
+    double n = Omega * (resExp / d);
+    return n;
 }
 
 string LogicDynamicFilter::initialConditWithType()

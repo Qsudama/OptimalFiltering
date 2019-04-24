@@ -316,37 +316,39 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(0).setYLabel(tr("Скорость (км/c)"));
-        m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
-        m_graphWindow->sheet(2).setYLabel(tr("Высота (км)"));
+        m_graphWindow->sheet(0).setYLabel(tr("По скорости (м/c)"));
+        m_graphWindow->sheet(1).setYLabel(tr("По уголу наклона (°)"));
+        m_graphWindow->sheet(2).setYLabel(tr("По высоте (м)"));
     }
 
     if (taskId == TASK_ID::LDScalarRejectionLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
     }
-    if (taskId == TASK_ID::LDLandingRejection6DLinear) { // потому что первый if уже сработал как надо
+    if (taskId == TASK_ID::LDLandingRejection6DLinear) { // продолжаем 4, 5, 6 координаты потому что первый if уже сработал как надо
         m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(0).setYLabel(tr("Скорость (км/c)"));
-        m_graphWindow->sheet(2).setYLabel(tr("Высота (км)"));
-        m_graphWindow->sheet(3).setYLabel(tr("Квазиплотность (1/км)"));
-        m_graphWindow->sheet(4).setYLabel(tr("Качество"));
-        m_graphWindow->sheet(5).setYLabel(tr("Ошибка гировертикали (°)"));
+        m_graphWindow->sheet(0).setYLabel(tr("По скорости (м/c)"));
+        m_graphWindow->sheet(2).setYLabel(tr("По высоте (м)"));
+        m_graphWindow->sheet(3).setYLabel(tr("По квазиплотности (1/м)"));
+        m_graphWindow->sheet(4).setYLabel(tr("По качеству"));
+        m_graphWindow->sheet(5).setYLabel(tr("По ошибке гировертикали (°)"));
     }
     Math::Vector scale(dim);
     if (taskId == TASK_ID::LDLandingRejection3DLinear) {
-        scale[0] = scale[2] = 1.0;
+        scale[0] = 1000.0;
+        scale[2] = 1.0;
         scale[1] = Math::Convert::RadToDeg(1.0);
     } else if (taskId == TASK_ID::LDLandingRejection6DLinear) {
-        scale[0] = scale[2]    = 1.0;
-        scale[1] = scale[5]     = Math::Convert::RadToDeg(1.0);
-        scale[3]                      = 1.0;
-        scale[4]                      = 1.0;
+        scale[0] = 1000.0;
+        scale[2] = 1.0;
+        scale[1] = scale[5] = Math::Convert::RadToDeg(1.0);
+        scale[3] = 1000.0;
+        scale[4] = 1000.0;
     } else if (taskId == TASK_ID::LandingLinear || taskId == TASK_ID::LandingGauss) {
-        scale[0] = 1;
+        scale[0] = 1000.0;
         scale[1] = Math::Convert::RadToDeg(1.0);
-        scale[2] = 1;
+        scale[2] = 1.0;
     } else {
         for (int i = 0; i < dim; ++i) {
             scale[i] = 1.0;
@@ -364,8 +366,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
 
         Core::GetRealizationX(filter->result(), i, y, scale[i]);
-        Core::GetUpX(filter->result(), i, y_up, scale[i]);
-        Core::GetDownX(filter->result(), i, y_down, scale[i]);
+//        Core::GetUpX(filter->result(), i, y_up, scale[i]);
+//        Core::GetDownX(filter->result(), i, y_down, scale[i]);
         QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") ";
 //        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
         m_graphWindow->sheet(i).addCurve(x, y, name_sheet_x, selectRealizX, false);

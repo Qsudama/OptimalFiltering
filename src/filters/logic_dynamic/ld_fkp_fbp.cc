@@ -63,15 +63,6 @@ void FKP_FBP::zeroIteration()
         } else {
             m_sampleS[s] = Vector::Zero(m_task->dimY());
         }
-//        if (m_identifier == FILTER_ID::LDFBP) {
-//            for (long i = 0; i < long(m_task->dimX()); i++) {
-//                m_sampleS[s][i] = m_sampleX[s][i];
-//            }
-//        } else {
-//            for (long i = 0; i < long(m_task->dimY()); i++) {
-//                m_sampleS[s][i] = m_sampleY[s][i];
-//            }
-//        }
     }
 }
 
@@ -85,7 +76,7 @@ void FKP_FBP::algorithm()
 
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             // Блок 1
-            computeBlock1(s);;
+            computeBlock1(s, k);
             // Блок 2
             computeBlock2(s, k);
         }
@@ -107,26 +98,17 @@ void FKP_FBP::algorithm()
 
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
                 // Блок 4
-                computeBlock4(s);
+                computeBlock4(s, k, Xi[s], u[s], T);
                 // Блок 5
-                computeBlock5(s);
+                computeBlock5(s, k);
             }
 
             // Блок 6
             timerInstance.interrupt_timer();
             m_sampleI = m_task->generateArrayI(m_params->sampleSize(), k+1);
-            computeBlock6();
+            computeBlock6(k);
             timerInstance.continue_timer();
         }
-    }
-}
-
-void FKP_FBP::computeBlock1(long s) {
-    P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
-    for (int i = 0; i < m_task->countI; i++) {
-        K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
-        Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);
-        Upsilon[s][i] = Psi[s][i] - K[s][i]*Delta[s][i].transpose();
     }
 }
 
@@ -200,50 +182,6 @@ void FKP_FBP::computeBlock3c() {
         for (int i = 0; i < m_task->countI; i++) {
             u[s][i] = Gamma[i]*m_sampleS[s] + kappa[i];
         }
-    }
-}
-
-void FKP_FBP::computeBlock4(long s) {
-    Array<double> resOmega(m_task->countI);
-    Array<Vector> resLambda(m_task->countI);
-    Array<Matrix> resPsi(m_task->countI);
-
-    for (int l = 0; l < m_task->countI; l++) {
-        for (int i = 0; i < m_task->countI; i++) {
-            resOmega[i] = Xi[s][i]*m_task->nu(l+1,i+1, u[s][i], T[i]);
-        }
-        for (int i = 0; i < m_task->countI; i++) {
-            resLambda[i] = Xi[s][i]*m_task->tau(l+1,i+1, u[s][i], T[i]);
-        }
-        for (int i = 0; i < m_task->countI; i++) {
-            resPsi[i] = Xi[s][i]*m_task->Theta(l+1,i+1, u[s][i], T[i]);
-        }
-        double sumOmega = 0.0;
-        Vector sumLambda = Vector::Zero(Lambda[s][l].size());
-        Matrix sumPsi = Matrix::Zero(Psi[s][l].rows(), Psi[s][l].cols());
-        for (int i = 0; i < m_task->countI; i++) {
-            sumOmega += resOmega[i];
-            sumLambda += resLambda[i];
-            sumPsi += resPsi[i];
-        }
-        Omega[s][l] = sumOmega;
-        Lambda[s][l] = sumLambda/Omega[s][l];
-        Psi[s][l] = sumPsi/Omega[s][l] - Lambda[s][l]*Lambda[s][l].transpose();
-    }
-}
-
-void FKP_FBP::computeBlock5(long s) {
-    for (int i = 0; i < m_task->countI; i++) {
-        Mu[s][i] = m_task->h(i+1, Lambda[s][i], Psi[s][i]);
-        Delta[s][i] = m_task->G(i+1, Lambda[s][i], Psi[s][i]) - Lambda[s][i] * Mu[s][i].transpose();
-        Phi[s][i] =  m_task->F(i+1, Lambda[s][i], Psi[s][i]) - Mu[s][i]*Mu[s][i].transpose();
-    }
-}
-
-void FKP_FBP::computeBlock6() {
-    for (size_t s = 0; s < m_params->sampleSize(); s++) {
-        m_sampleX[s] = m_task->a(m_sampleI[s], m_sampleX[s]);
-        m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
     }
 }
 

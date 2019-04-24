@@ -50,7 +50,7 @@ void GraphWindow::initMenus()
     m_menuFile = menuBar()->addMenu(tr("Файл"));
     m_menuFile->addAction(m_actionSavePng);
 
-    m_menuView  = menuBar()->addMenu(tr("Вид"));
+    m_menuView = menuBar()->addMenu(tr("Вид"));
     m_menuSheet = m_menuView->addMenu(tr("Компонента"));
     m_menuView->addSeparator();
 
