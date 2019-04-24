@@ -21,8 +21,6 @@ using Math::Statistic::Cov;
 AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
     : LogicDynamicFilter(params, task, id)
 {
-//    Неправильно считает для скалярного примера
-//    из-за того что таск 6-ти мерный а надо чтобы показывало 3-х мерный
     long n = task->dimX();
     string syffix_filter = "";
     if (m_task->countI > 1) {
@@ -39,12 +37,8 @@ void AOF::algorithm()
     m_task->setStep(m_params->measurementStep());
 
     for (size_t k = 0; k < m_result.size(); ++k) { 
-      // qDebug() << "\n\nK = " << k;
 
         m_task->setTime(m_result[k].time);
-//        if (k == 1) {
-//            qDebug() << "K = 1";
-//        }
         for (size_t s = 0; s < m_params->sampleSize(); ++s) {
             // Блок 1
             computeBlock1(s, k);

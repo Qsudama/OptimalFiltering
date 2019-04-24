@@ -44,21 +44,11 @@ protected:
     void computeBlock1(long s, size_t k);
     void computeBlock2(long s, size_t k);
 
-    void computeBlock4(long s, size_t k, Array<double> p, Array<Vector> sigma, Array<Matrix> upsilon);
+    void computeBlock4(long s, size_t k, const Array<double> &p, const Array<Vector> &sigma, const Array<Matrix> &upsilon);
     void computeBlock5(long s, size_t k);
     void computeBlock6(size_t k);
 
-    Array<double> test(Array<double> omega, Vector u, Array<Vector> m, Array<Matrix> D);
-
-
-    double calculate_d(const Matrix &D);
-    double calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
-
-
-
-    double probabilityDensityN(double Omega, Vector u, Vector m, Matrix D);
-    Array<double> computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
-                                             Array<Vector> m, Array<Matrix> D);
+    Array<double> computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &D);
 
 
     /*! \brief Функция возвращающая тип моделирования начальных условий фильтра для вывода на экран
@@ -86,7 +76,7 @@ private:
     void computeZeroVectors();
     void computeBlock0();
 
-    bool m_bad;
+    double probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
 };
 
 

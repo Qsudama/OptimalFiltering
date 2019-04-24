@@ -178,8 +178,7 @@ void FKP_FBP::computeBlock3b() {
 
 void FKP_FBP::computeBlock3c() {
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
-//        Xi[s] = computeProbabilityDensityN(Q, m_sampleS[s], meanS, Dzz);
-        Xi[s] = test(Q, m_sampleS[s], meanS, Dzz);
+        Xi[s] = computeProbabilityDensityN(Q, m_sampleS[s], meanS, Dzz);
         for (int i = 0; i < m_task->countI; i++) {
             u[s][i] = Gamma[i]*m_sampleS[s] + kappa[i];
         }
