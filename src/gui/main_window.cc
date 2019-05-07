@@ -52,6 +52,7 @@ void MainWindow::initControls()
     m_btnShowTimes             = new QPushButton(tr("Показать время выполнения"));
 
     m_btnShowHideTables->setEnabled(false);
+    m_btnShowTimes->setEnabled(false);
 
     connect(m_btnClear, SIGNAL(clicked()), this, SIGNAL(clear()));
     connect(m_btnShowHideTables, SIGNAL(clicked()), this, SLOT(onShowHideTables()));
@@ -183,6 +184,7 @@ void MainWindow::onClear()
     m_tablesIsVisible = false;
     m_btnShowHideTables->setText(tr("Показать таблицы"));
     m_btnShowHideTables->setEnabled(false);
+    m_btnShowTimes->setEnabled(false);
 }
 
 void MainWindow::onShowHideTables()
@@ -266,6 +268,7 @@ void MainWindow::onFinishExecutingFilter() {
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
     m_runningFilters.clear();
+    m_btnShowTimes->setEnabled(true);
 }
 
 void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
