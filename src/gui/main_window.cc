@@ -57,7 +57,7 @@ void MainWindow::initControls()
     connect(m_btnClear, SIGNAL(clicked()), this, SIGNAL(clear()));
     connect(m_btnShowHideTables, SIGNAL(clicked()), this, SLOT(onShowHideTables()));
     connect(m_btnShowTimes, SIGNAL(clicked()), this, SLOT(onShowTableTimer()));
-//    connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
+    connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)), this,
             SLOT(onStart(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)));
@@ -304,7 +304,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
-        m_graphWindow->setCountSheets(dim + 2);
+        m_graphWindow->setCountSheets(dim);
     }
 
     QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
@@ -315,8 +315,9 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
             m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
         }
     }
+
     TASK_ID taskId = m_taskWidget->id();
-    if (taskId == TASK_ID::LandingLinear || taskId == TASK_ID::LandingGauss ||taskId == TASK_ID::LDLandingRejection3DLinear  || taskId == TASK_ID::LDLandingRejection6DLinear) {
+    if (taskId == LandingLinear || taskId == LandingGauss ||taskId == LDLandingRejection3DLinear  || taskId == LDLandingRejection6DLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
@@ -325,10 +326,10 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(2).setYLabel(tr("По высоте (м)"));
     }
 
-    if (taskId == TASK_ID::LDScalarRejectionLinear) {
+    if (taskId == LDScalarRejectionLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
     }
-    if (taskId == TASK_ID::LDLandingRejection6DLinear) { // продолжаем 4, 5, 6 координаты потому что первый if уже сработал как надо
+    if (taskId == LDLandingRejection6DLinear) { // продолжаем 4, 5, 6 координаты потому что первый if уже сработал как надо
         m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
@@ -339,17 +340,17 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(5).setYLabel(tr("По ошибке гировертикали (°)"));
     }
     Math::Vector scale(dim);
-    if (taskId == TASK_ID::LDLandingRejection3DLinear) {
+    if (taskId == LDLandingRejection3DLinear) {
         scale[0] = 1000.0;
         scale[2] = 1.0;
         scale[1] = Math::Convert::RadToDeg(1.0);
-    } else if (taskId == TASK_ID::LDLandingRejection6DLinear) {
+    } else if (taskId == LDLandingRejection6DLinear) {
         scale[0] = 1000.0;
         scale[2] = 1.0;
         scale[1] = scale[5] = Math::Convert::RadToDeg(1.0);
         scale[3] = 1000.0;
         scale[4] = 1000.0;
-    } else if (taskId == TASK_ID::LandingLinear || taskId == TASK_ID::LandingGauss) {
+    } else if (taskId == LandingLinear || taskId == LandingGauss) {
         scale[0] = 1000.0;
         scale[1] = Math::Convert::RadToDeg(1.0);
         scale[2] = 1.0;
@@ -362,6 +363,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QVector<double> x, y, y_up, y_down;
     Core::GetTime(filter->result(), x);
 
+    int numberTraectory = filter->params()->specificRealization();
+
     for (int i = 0; i < dim; i++) {
         Core::GetMeanX(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Mx" + QString::number(i + 1), mxPen, false);
@@ -372,7 +375,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetRealizationX(filter->result(), i, y, scale[i]);
 //        Core::GetUpX(filter->result(), i, y_up, scale[i]);
 //        Core::GetDownX(filter->result(), i, y_down, scale[i]);
-        QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") ";
+        QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") ";
 //        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
         m_graphWindow->sheet(i).addCurve(x, y, name_sheet_x, selectRealizX, false);
 
@@ -385,13 +388,42 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetRealizationE(filter->result(), i, y, scale[i]);
         Core::GetUpE(filter->result(), i, y_up, scale[i]);
         Core::GetDownE(filter->result(), i, y_down, scale[i]);
-        QString name_sheet_e = "E" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        QString name_sheet_e = "E" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") " + fname;
         m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE);
 
         Core::GetRealizationZ(filter->result(), i, y, scale[i]);
-        QString name_sheet_z = "Z" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        QString name_sheet_z = "Z" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") " + fname;
         m_graphWindow->sheet(i).addCurve(x, y, name_sheet_z, selectRealizZ, false);
     }
+
+
+    if (ftype == LogicDynamic) {
+
+        m_graphWindow->setStatisticSheet();
+        QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
+        QString subTitle = tr("I");
+
+        m_graphWindow->statisticSheet().setTitleLabel(title);
+        m_graphWindow->statisticSheet().setSubTitleLabel(subTitle);
+
+        m_graphWindow->statisticSheet().setXLabel(tr("Что-то там"));
+
+        QVector<double> I, evaluationI, deltaI, PdeltaI;
+        double scaleI = 1.0;
+
+        Core::GetI(filter->result(), numberTraectory, I, scaleI);
+        m_graphWindow->statisticSheet().addCurve(x, I, tr("I ") + fname, mxPen, true);
+
+        Core::GetEvaluationI(filter->result(), numberTraectory, evaluationI, scaleI);
+        m_graphWindow->statisticSheet().addCurve(x, evaluationI, tr("оценка I ") + fname, sxPen, false);
+
+        Core::GetDeltaI(filter->result(), numberTraectory, deltaI, scaleI);
+        m_graphWindow->statisticSheet().addCurve(x, deltaI, tr("ΔI ") + fname, selectRealizX, false);
+
+        Core::GetPDeltaI(filter->result(), PdeltaI, scaleI);
+        m_graphWindow->statisticSheet().addCurve(x, PdeltaI, tr("вероятность ΔI ") + fname, selectRealizZ, false);
+    }
+
 
     m_graphWindow->updatePlotter();
     std::string filter_name = filter->info()->name();
@@ -401,11 +433,11 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {
     QString subTitle = m_startConditionsFilterWidget->initialConditionString();
     TASK_ID taskId = m_taskWidget->id();
-    if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
-        if (taskId == TASK_ID::LDScalarRejectionLinear) {
+    if (ftype == Discrete || ftype == LogicDynamic) {
+        if (taskId == LDScalarRejectionLinear) {
             subTitle = subTitle +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
-        } else if (taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear) {
+        } else if (taskId == LDLandingRejection3DLinear || taskId == LDLandingRejection6DLinear) {
             subTitle = subTitle +
                 tr("шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
         } else {

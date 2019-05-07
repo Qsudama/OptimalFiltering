@@ -65,7 +65,7 @@ private:
     /*!
      \brief Настраивает окно параметров задачи.
     */
-    void reloadParametersWidget();
+    void reloadParametersWidget(bool emitChanged);
 
     /*!
      \brief Загружает шрифты и устанавливает их параметры (начертание, размер и т.д.).

@@ -2,6 +2,8 @@
 
 #include "src/helpers/alert_helper.h"
 
+int countFake = 2;
+
 GraphWindow::GraphWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -145,7 +147,8 @@ void GraphWindow::updateMenu()
 {
     //меню - выбор страницы
     m_menuSheet->clear();
-    for (int i = 0; i < m_sheets.size() - 2; i++) {
+
+    for (int i = 0; i < m_sheets.size(); i++) {
         QAction *action = new QAction(QString::number(i + 1), m_menuSheet);
         action->setData(i + 100);
         action->setCheckable(true);
@@ -154,6 +157,15 @@ void GraphWindow::updateMenu()
         } else {
             action->setChecked(false);
         }
+        action->setAutoRepeat(false);
+        m_menuSheet->addAction(action);
+    }
+
+    if (m_statisticLDFiltersSheet) {
+        QAction *action = new QAction(tr("Test LD"), m_menuSheet);
+        action->setData(m_sheets.size() + 100);
+        action->setCheckable(true);
+        action->setChecked(m_currentSheet == m_statisticLDFiltersSheet);
         action->setAutoRepeat(false);
         m_menuSheet->addAction(action);
     }
@@ -300,6 +312,8 @@ void GraphWindow::onMoveLegend()
 void GraphWindow::onClear()
 {
     m_sheets.clear();
+    delete m_statisticLDFiltersSheet;
+    m_statisticLDFiltersSheet = nullptr;
     setCountSheets(1);
     updateMenu();
 }
@@ -353,14 +367,18 @@ void GraphWindow::onSetAutoRanges(bool checked)
 void GraphWindow::onCurrentSheetChanged(QAction *action)
 {
     int snum = action->data().toInt() - 100;
-    if (snum < 0 || snum >= m_sheets.size()) {
+    if (snum < 0 || snum >= m_sheets.size() + 1) {
         return;
     }
-    if (m_currentSheet == &(m_sheets[snum])) {
-        return;
+    if (snum < m_sheets.size()) {
+        if (m_currentSheet == &(m_sheets[snum])) {
+            return;
+        }
+        m_currentSheet = &(m_sheets[snum]);
+    } else {
+        m_currentSheet = m_statisticLDFiltersSheet;
     }
     m_menuSheet->removeAction(action);
-    m_currentSheet = &(m_sheets[snum]);
     m_actionSetAutoRanges->setChecked(m_currentSheet->autoCalcRanges());
     updatePlotter();
 }
@@ -444,6 +462,11 @@ GraphSheet &GraphWindow::sheet(int index)
     return m_sheets[index];
 }
 
+GraphSheet &GraphWindow::statisticSheet()
+{
+    return *m_statisticLDFiltersSheet;
+}
+
 GraphSheet &GraphWindow::currentSheet()
 {
     return *m_currentSheet;
@@ -454,6 +477,13 @@ void GraphWindow::setCountSheets(int count)
     m_sheets.resize(count);
     m_currentSheet = &(m_sheets[0]);
     updatePlotter();
+}
+
+void GraphWindow::setStatisticSheet()
+{
+    if (!m_statisticLDFiltersSheet) {
+        m_statisticLDFiltersSheet = new GraphSheet;
+    }
 }
 
 void GraphWindow::updatePlotter()

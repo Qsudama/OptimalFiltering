@@ -38,11 +38,16 @@ public:
     //! \brief Возвращает ссылку на страницу с номером index.
     GraphSheet &sheet(int index);
 
+    //! \brief Возвращает ссылку на страницу с номером index.
+    GraphSheet &statisticSheet();
+
     //! \brief Возвращает ссылку страницу, котороая отображается в данный момент.
     GraphSheet &currentSheet();
 
     //! \brief Устанавливает количество страниц
     void setCountSheets(int count);
+
+    void setStatisticSheet();
 
     //! \brief Обновляет поле рисовальщика QCustomPlot (заставляет перерисовать себя).
     void updatePlotter();
@@ -133,6 +138,7 @@ private:
 
 private:
     QVector<GraphSheet> m_sheets;
+    GraphSheet *m_statisticLDFiltersSheet;
     GraphSheet *        m_currentSheet;
     QCustomPlot *       m_plotter;
 

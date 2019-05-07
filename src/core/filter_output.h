@@ -135,6 +135,14 @@ void GetRealizationX(const FilterOutput &fo, long index, ArrayDbl &array, double
 
 void GetRealizationZ(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
+void GetI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff);
+
+void GetEvaluationI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff);
+
+void GetDeltaI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff);
+
+void GetPDeltaI(const FilterOutput &fo, ArrayDbl &array, double coeff);
+
 } // end Core
 
 

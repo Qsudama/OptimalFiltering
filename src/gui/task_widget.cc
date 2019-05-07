@@ -70,7 +70,7 @@ void TaskWidget::initLayouts()
     this->setLayout(mainLayout);
 }
 
-void TaskWidget::reloadParametersWidget()
+void TaskWidget::reloadParametersWidget(bool emitChanged)
 {
     if (m_parametersWidget) {
         if (!m_parametersWidget->isHidden()) {
@@ -81,7 +81,9 @@ void TaskWidget::reloadParametersWidget()
     }
 
     if (initParametersWidget()) {
-        emit changed();
+        if (emitChanged) {
+            emit changed();
+        }
     }
 }
 
@@ -117,12 +119,12 @@ void TaskWidget::onBtnParametersClicked()
 void TaskWidget::onFiltersFamilyChanged(FILTER_TYPE index)
 {
     m_currentFiltersFamily = index;
-    reloadParametersWidget();
+    reloadParametersWidget(false);
 }
 
 void TaskWidget::onCbTaskChanged(int)
 {
-    reloadParametersWidget();
+    reloadParametersWidget(true);
 }
 
 Core::PtrTask TaskWidget::task(FILTER_TYPE ftype)
