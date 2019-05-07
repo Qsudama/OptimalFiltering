@@ -31,12 +31,15 @@ void LogicDynamicFilter::init()
     m_sampleY.resize(m_params->sampleSize());
     m_sampleZ.resize(m_params->sampleSize());
     m_sampleE.resize(m_params->sampleSize());
-    m_sampleI.resize(m_params->sampleSize());
+    m_sampleI.resize(m_params->sampleSize());    
 
     size_t size = size_t(m_params->measurementCount());
     m_result.resize(size);
     for (size_t i = 0; i < size; ++i) {
         m_result[i].time = m_params->measurementStep() * i;
+        m_result[i].I.resize(m_params->sampleSize());
+        m_result[i].evaluationI.resize(m_params->sampleSize());
+        m_result[i].deltaI.resize(m_params->sampleSize());
     }
 }
 
@@ -67,12 +70,6 @@ void LogicDynamicFilter::zeroIteration()
         K[s].resize(m_task->countI);
         Sigma[s].resize(m_task->countI);
         Upsilon[s].resize(m_task->countI);
-    }
-
-    size_t size = size_t(m_params->measurementCount());
-    m_result.resize(size);
-    for (size_t i = 0; i < size; ++i) {
-        m_result[i].time = m_params->measurementStep() * i;
     }
 
     // Блок 0
@@ -140,7 +137,7 @@ void LogicDynamicFilter::computeBlock1(long s, size_t /*k*/)
 }
 
 
-void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/)
+void LogicDynamicFilter::computeBlock2(long s, size_t k)
 {
     Vector resZ = Vector::Zero(Sigma[s][0].size());
     Vector mult = Vector::Zero(Sigma[s][0].size());
@@ -149,6 +146,15 @@ void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/)
         resZ += mult;
     }
     m_sampleZ[s] = resZ;
+    m_result[k].I[s] = m_sampleI[s];
+    double maxP = 0.0;
+    for (int i = 0; i < m_task->countI; i++) {
+        if (P[s][i] > maxP) {
+            maxP = P[s][i];
+            m_result[k].evaluationI[s] = i+1;
+        }
+    }
+    m_result[k].deltaI[s] = abs(m_sampleI[s] - m_result[k].evaluationI[s]);
 }
 
 void LogicDynamicFilter::computeBlock4(long s, size_t /*k*/, const Array<double> &p, const Array<Vector> &sigma, const Array<Matrix> &upsilon)

@@ -63,7 +63,7 @@ protected:
     Array<Array<double>> P;
     Array<Array<Matrix>> K;
     Array<Array<Vector>> Sigma;
-    Array<Array<Matrix>> Upsilon;
+    Array<Array<Matrix>> Upsilon; 
 
     FILTER_ID m_identifier;
 
