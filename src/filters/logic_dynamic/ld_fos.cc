@@ -22,9 +22,8 @@ FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
     if (m_task->countI > 1) {
         syffix_filter = "лд";
     }
-    m_info->setName("ФОС" + syffix_filter);
+    m_info->setName("ФОС" + syffix_filter + probabilityForView());
     m_info->setType(syffix_filter);
-    m_info->setCondition(initialConditWithType());
     m_info->setDimension("(p=" + std::to_string(n) + ")");
 }
 
@@ -94,7 +93,8 @@ void FOS::algorithm()
     }
 }
 
-void FOS::computeBlock3b() {
+void FOS::computeBlock3b()
+{
     Array<Vector> meanX(m_task->countI);
     Array<Matrix> Dxx(m_task->countI);
     Array<Matrix> Dxz(m_task->countI);
@@ -113,7 +113,8 @@ void FOS::computeBlock3b() {
     }
 }
 
-void FOS::computeBlock3c() {
+void FOS::computeBlock3c()
+{
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         Xi[s] = computeProbabilityDensityN(Q, m_sampleZ[s], meanZ, Dzz);
         for (int i = 0; i < m_task->countI; i++) {

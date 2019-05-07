@@ -45,10 +45,20 @@ INITIAL_CONDITIONS StartConditionsFilterWidget::initialConditionForFilter()
 {
     int index = m_InitialConditionsFilter->currentIndex();
     switch (index) {
-    case 0:
+        case 0:
             return INITIAL_CONDITIONS::GaussApproximation;
-    case 1:
+        case 1:
             return INITIAL_CONDITIONS::MonteCarlo;
     }
     return INITIAL_CONDITIONS::GaussApproximation;
+}
+
+QString StartConditionsFilterWidget::initialConditionString()
+{
+    switch (this->initialConditionForFilter()) {
+        case INITIAL_CONDITIONS::GaussApproximation:
+            return tr("Начальные условия - приближенные, ");
+        case INITIAL_CONDITIONS::MonteCarlo:
+            return tr("Начальные условия - точные, ");
+    }
 }

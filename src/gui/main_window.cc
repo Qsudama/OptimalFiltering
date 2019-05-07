@@ -259,7 +259,8 @@ void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE /*atype*/, F
     thread->start();
 }
 
-void MainWindow::onFinishExecutingFilter() {
+void MainWindow::onFinishExecutingFilter()
+{
     RunningFilter runningFilter = m_runningFilters.first();
 
     showData(runningFilter.filter, runningFilter.ftype, runningFilter.task);
@@ -398,25 +399,22 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 }
 
 QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {
-    QString subTitle = "";
-        //tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
+    QString subTitle = m_startConditionsFilterWidget->initialConditionString();
     TASK_ID taskId = m_taskWidget->id();
     if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
         if (taskId == TASK_ID::LDScalarRejectionLinear) {
             subTitle = subTitle +
-                tr("Вероятность сбоя ") + QString::number(task->params()->at("e")) +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
         } else if (taskId == TASK_ID::LDLandingRejection3DLinear || taskId == TASK_ID::LDLandingRejection6DLinear) {
             subTitle = subTitle +
-                tr("Шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
-                tr(", вероятность одного сбоя ") + QString::number(task->params()->at("e"));
+                tr("шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
         } else {
           subTitle = subTitle +
-            tr("Шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+            tr("шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
         }
     } else {
         subTitle = subTitle +
-                tr("Шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
+                tr("шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
                 tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
     }
     return subTitle;

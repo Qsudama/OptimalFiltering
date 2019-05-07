@@ -62,6 +62,8 @@ void Info::setCondition(const std::string &condition)
     m_condition = condition;
 }
 
+
+
 void Info::setType(const std::string &type)
 {
     m_type = type;

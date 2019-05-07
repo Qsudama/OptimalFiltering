@@ -14,7 +14,8 @@ static string LOCAL_PATH_FILE_WIN = "~\\Desctop\\"; //Нужно указыва�
 static string NAME_SYFIX_FILE = "Log_";
 static string FORMAT_FILE = ".txt";
 
-string localTimeForFileName() {
+string localTimeForFileName()
+{
     time_t rawtime;
     struct tm *timeinfo;
     char buffer[80];
@@ -29,7 +30,8 @@ string localTimeForFileName() {
     return result;
 }
 
-void LogInFileManager::SettingLogFileNameString() {
+void LogInFileManager::SettingLogFileNameString()
+{
     string pathFile;
 #ifdef Q_OS_MAC
     pathFile = LOCAL_PATH_FILE_MACOS;

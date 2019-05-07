@@ -25,7 +25,8 @@ DFMP::DFMP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilte
     m_info->setDimension("- " + argsCount + " (p=" + dimX + ")");
 }
 
-void DFMP::zeroIteration() {
+void DFMP::zeroIteration()
+{
     DiscreteFilter::zeroIteration();
 
     S.resize(m_params->sampleSize());
@@ -61,7 +62,8 @@ void DFMP::zeroIteration() {
     }
 }
 
-void DFMP::algorithm() {
+void DFMP::algorithm()
+{
 
     m_task->setTime(m_result[0].time);
     m_task->setStep(m_params->measurementStep());
@@ -137,30 +139,36 @@ void DFMP::compute_U(long i) {
 }
 
 
-Matrix DFMP::compute_Gamma() {
+Matrix DFMP::compute_Gamma()
+{
 
     return Cov(m_sampleX, U) * Pinv(Var(U));
 }
 
-Matrix DFMP::compute_Psi() {
+Matrix DFMP::compute_Psi()
+{
     return Var(m_sampleX) - L * Cov(m_sampleX, S).transpose();
 }
 
-Matrix DFMP::compute_L() {
+Matrix DFMP::compute_L()
+{
     return Cov(m_sampleX, S) * Pinv(Var(S));
 }
 
-Matrix DFMP::compute_T() {
+Matrix DFMP::compute_T()
+{
 
     return Var(m_sampleX) - Gamma * Cov(m_sampleX, U).transpose();
 }
 
 
-Vector DFMP::compute_chi() {
+Vector DFMP::compute_chi()
+{
     return Mean(m_sampleX) - Gamma * Mean(U);
 }
 
-Vector DFMP::compute_o() {
+Vector DFMP::compute_o()
+{
     return Mean(m_sampleX) - L * Mean(S);
 }
 

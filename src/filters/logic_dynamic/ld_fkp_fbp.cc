@@ -33,9 +33,8 @@ FKP_FBP::FKP_FBP(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID
 
     long p  = ny * long(m_params->orderMult());
 
-    m_info->setName(filter_identifier + syffix_filter);
+    m_info->setName(filter_identifier + syffix_filter + probabilityForView());
     m_info->setType(syffix_filter);
-    m_info->setCondition(initialConditWithType());
     m_info->setDimension("(p=" + to_string(p) + ")");
 }
 
@@ -157,7 +156,8 @@ void FKP_FBP::computeBlock3a(long k) {
     }
 }
 
-void FKP_FBP::computeBlock3b() {
+void FKP_FBP::computeBlock3b()
+{
     Array<Vector> meanX(m_task->countI);
     Array<Matrix> Dxx(m_task->countI);
     Array<Matrix> Dxz(m_task->countI);
@@ -176,7 +176,8 @@ void FKP_FBP::computeBlock3b() {
     }
 }
 
-void FKP_FBP::computeBlock3c() {
+void FKP_FBP::computeBlock3c()
+{
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         Xi[s] = computeProbabilityDensityN(Q, m_sampleS[s], meanS, Dzz);
         for (int i = 0; i < m_task->countI; i++) {

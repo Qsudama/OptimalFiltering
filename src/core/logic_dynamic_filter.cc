@@ -40,7 +40,8 @@ void LogicDynamicFilter::init()
     }
 }
 
-void LogicDynamicFilter::zeroIteration() {
+void LogicDynamicFilter::zeroIteration()
+{
     srand(1252); // Для генерации массива I нужно!
 
     // Инициализация
@@ -79,7 +80,8 @@ void LogicDynamicFilter::zeroIteration() {
     computeBlock0();
 }
 
-void LogicDynamicFilter::computeZeroVectors() {
+void LogicDynamicFilter::computeZeroVectors()
+{
     m_sampleI = m_task->generateArrayI(m_params->sampleSize(), 0);
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         m_sampleX[s] = m_task->x0();
@@ -87,7 +89,8 @@ void LogicDynamicFilter::computeZeroVectors() {
     }
 }
 
-void LogicDynamicFilter::computeBlock0() {
+void LogicDynamicFilter::computeBlock0()
+{
 
     Array<Vector> mx(m_task->countI);
     Array<Matrix> varX(m_task->countI);
@@ -126,7 +129,8 @@ void LogicDynamicFilter::computeBlock0() {
     }
 }
 
-void LogicDynamicFilter::computeBlock1(long s, size_t /*k*/) {
+void LogicDynamicFilter::computeBlock1(long s, size_t /*k*/)
+{
     P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
     for (int i = 0; i < m_task->countI; i++) {
         K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
@@ -136,7 +140,8 @@ void LogicDynamicFilter::computeBlock1(long s, size_t /*k*/) {
 }
 
 
-void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
+void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/)
+{
     Vector resZ = Vector::Zero(Sigma[s][0].size());
     Vector mult = Vector::Zero(Sigma[s][0].size());
     for (int i = 0; i < m_task->countI; i++) {
@@ -146,7 +151,8 @@ void LogicDynamicFilter::computeBlock2(long s, size_t /*k*/) {
     m_sampleZ[s] = resZ;
 }
 
-void LogicDynamicFilter::computeBlock4(long s, size_t /*k*/, const Array<double> &p, const Array<Vector> &sigma, const Array<Matrix> &upsilon) {
+void LogicDynamicFilter::computeBlock4(long s, size_t /*k*/, const Array<double> &p, const Array<Vector> &sigma, const Array<Matrix> &upsilon)
+{
     Array<double> resOmega(m_task->countI);
     Array<Vector> resLambda(m_task->countI);
     Array<Matrix> resPsi(m_task->countI);
@@ -175,7 +181,8 @@ void LogicDynamicFilter::computeBlock4(long s, size_t /*k*/, const Array<double>
     }
 }
 
-void LogicDynamicFilter::computeBlock5(long s, size_t /*k*/) {
+void LogicDynamicFilter::computeBlock5(long s, size_t /*k*/)
+{
     for (int i = 0; i < m_task->countI; i++) {
         Mu[s][i] = m_task->h(i+1, Lambda[s][i], Psi[s][i]);
         Delta[s][i] = m_task->G(i+1, Lambda[s][i], Psi[s][i]) - Lambda[s][i] * Mu[s][i].transpose();
@@ -183,14 +190,16 @@ void LogicDynamicFilter::computeBlock5(long s, size_t /*k*/) {
     }
 }
 
-void LogicDynamicFilter::computeBlock6(size_t /*k*/) {
+void LogicDynamicFilter::computeBlock6(size_t /*k*/)
+{
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         m_sampleX[s] = m_task->a(m_sampleI[s], m_sampleX[s]);
         m_sampleY[s] = m_task->b(m_sampleI[s], m_sampleX[s]);
     }
 }
 
-Array<double> LogicDynamicFilter::computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &D) {
+Array<double> LogicDynamicFilter::computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &D)
+{
 
     Array<double> resP(m_task->countI);
 
@@ -215,7 +224,8 @@ Array<double> LogicDynamicFilter::computeProbabilityDensityN(const Array<double>
     return resP;
 }
 
-double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D) {
+double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D)
+{
     double pi = Math::Const::PI;
     Matrix det = 2 * pi * D;
     double deter = det.determinant();
@@ -231,15 +241,11 @@ double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector
     return n;
 }
 
-string LogicDynamicFilter::initialConditWithType()
+string LogicDynamicFilter::probabilityForView()
 {
-    string condit = "";
-    if (m_params->initialCondition() == INITIAL_CONDITIONS::GaussApproximation) {
-            condit = ", н.у.-прибл";
-    } else {
-            condit = ", н.у.-точн";
-    }
-    return condit;
+    double e = m_task->params()->at("e");
+    QString res = QString("%1").arg(e, 0, 'f', 2);
+    return " e =" + res.toStdString() + "; ";
 }
 
 } // end Core

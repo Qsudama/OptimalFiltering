@@ -23,13 +23,15 @@ FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(
     m_info->setDimension("(p=" + std::to_string(p) + ")");
 }
 
-void FKP::zeroIteration() {
+void FKP::zeroIteration()
+{
     DiscreteFilter::zeroIteration();
 
     m_sampleS.resize(m_params->sampleSize());
 }
 
-void FKP::algorithm() {
+void FKP::algorithm()
+{
 
     Vector h, lambda;
     Matrix G, F, Psi, T;

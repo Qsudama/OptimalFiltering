@@ -48,7 +48,8 @@ VanDerPolLinear::VanDerPolLinear()
     (*m_params)["Δt"] = deltaT;
 }
 
-void VanDerPolLinear::loadParams() {
+void VanDerPolLinear::loadParams()
+{
     deltaT = (*m_params).at("Δt");
 }
 
