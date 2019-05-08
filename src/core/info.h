@@ -30,7 +30,7 @@ public:
     const std::string &dimension() const;
 
     //! \brief Возвращает строку методом задания начальных условий.
-    const std::string &condition() const;
+    const std::string &condition() const;   
 
     //! \brief Возвращает строку с типом.
     const std::string &type() const;

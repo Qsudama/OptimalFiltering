@@ -50,11 +50,7 @@ protected:
 
     Array<double> computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &D);
 
-
-    /*! \brief Функция возвращающая тип моделирования начальных условий фильтра для вывода на экран
-    */
-    string initialConditWithType();
-
+    string probabilityForView();
 protected:
     PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
 
@@ -67,7 +63,7 @@ protected:
     Array<Array<double>> P;
     Array<Array<Matrix>> K;
     Array<Array<Vector>> Sigma;
-    Array<Array<Matrix>> Upsilon;
+    Array<Array<Matrix>> Upsilon; 
 
     FILTER_ID m_identifier;
 

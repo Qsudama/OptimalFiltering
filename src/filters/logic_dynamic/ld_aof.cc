@@ -26,9 +26,9 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task, FILTER_ID id)
     if (m_task->countI > 1) {
         syffix_filter = "лд";
     }
-    m_info->setName("AОФ" + syffix_filter);
+
+    m_info->setName("AОФ" + syffix_filter + probabilityForView());
     m_info->setType(syffix_filter);
-    m_info->setCondition(initialConditWithType());
     m_info->setDimension("(p=" + to_string(n * (n + 3) / 2) + ")");
 }
 

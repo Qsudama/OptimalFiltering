@@ -48,7 +48,8 @@ VanDerPolGauss::VanDerPolGauss()
     (*m_params)["Δt"] = deltaT;
 }
 
-void VanDerPolGauss::loadParams() {
+void VanDerPolGauss::loadParams()
+{
     deltaT = (*m_params).at("Δt");
 }
 

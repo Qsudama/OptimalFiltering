@@ -173,5 +173,36 @@ void GetRealizationZ(const FilterOutput &fo, long index, ArrayDbl &array, double
     }
 }
 
+void GetI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff)
+{
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].I[numberTraektor];
+    }
+}
+
+void GetEvaluationI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff)
+{
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].evaluationI[numberTraektor];
+    }
+}
+
+void GetDeltaI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff)
+{
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].deltaI[numberTraektor];
+    }
+}
+
+void GetPDeltaI(const FilterOutput &fo, ArrayDbl &array, double coeff)
+{
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].PdeltaI;
+    }
+}
 
 } // end Core

@@ -24,7 +24,8 @@ MDFMP::MDFMP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFil
     m_info->setDimension("- " + argsCount + " (p=" + dimX + ")");
 }
 
-void MDFMP::zeroIteration() {
+void MDFMP::zeroIteration()
+{
     DiscreteFilter::zeroIteration();
 
     S.resize(m_params->sampleSize());
@@ -64,7 +65,8 @@ void MDFMP::zeroIteration() {
     }
 }
 
-void MDFMP::algorithm() {
+void MDFMP::algorithm()
+{
 
     m_task->setTime(m_result[0].time);
     m_task->setStep(m_params->measurementStep());
@@ -156,37 +158,45 @@ void MDFMP::compute_U(long i) {
 }
 
 
-Matrix MDFMP::compute_Gamma() {
+Matrix MDFMP::compute_Gamma()
+{
     return Cov(m_sampleX, U) * Pinv(Var(U));
 }
 
-Matrix MDFMP::compute_Psi() {
+Matrix MDFMP::compute_Psi()
+{
     return Var(m_sampleX) - L * Cov(m_sampleX, S).transpose();
 }
 
-Matrix MDFMP::compute_L() {
+Matrix MDFMP::compute_L()
+{
     return Cov(m_sampleX, S) * Pinv(Var(S));
 }
 
-Matrix MDFMP::compute_T() {
+Matrix MDFMP::compute_T()
+{
 
     return Var(m_sampleX) - Gamma * Cov(m_sampleX, U).transpose();
 }
 
-Matrix MDFMP::compute_H() {
+Matrix MDFMP::compute_H()
+{
     return Cov(Delta, Sigma) * Pinv(Var(Delta));
 }
 
 
-Vector MDFMP::compute_chi() {
+Vector MDFMP::compute_chi()
+{
     return Mean(m_sampleX) - Gamma * Mean(U);
 }
 
-Vector MDFMP::compute_o() {
+Vector MDFMP::compute_o()
+{
     return Mean(m_sampleX) - L * Mean(S);
 }
 
-Vector MDFMP::compute_e() {
+Vector MDFMP::compute_e()
+{
     return Mean(Delta) - H * Mean(Sigma);
 }
 
