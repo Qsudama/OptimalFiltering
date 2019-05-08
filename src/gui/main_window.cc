@@ -425,10 +425,10 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
             customRange.yMin = 0.5;
             customRange.yMax = *std::max_element(I.begin(), I.end()) + 0.5;
 
-            m_graphWindow->statisticSheet().addICurve(x, I, tr("I"), mxPen, customRange, true);
+            m_graphWindow->statisticSheet().addICurve(x, I, tr("I"), mxPen, customRange, false);
             m_graphWindow->statisticSheet().addICurve(x, evaluationI, tr("оценка I"), selectRealizE, customRange, false);
             m_graphWindow->statisticSheet().addICurve(x, deltaI, tr("ΔI"), deltaIColor, customRange, false);
-            m_graphWindow->statisticSheet().addICurve(x, PdeltaI, tr("вероятность ΔI"), PdeltaIColor, customRange, false);
+            m_graphWindow->statisticSheet().addICurve(x, PdeltaI, tr("вероятность ΔI"), PdeltaIColor, customRange, true);
         }
     }
 
