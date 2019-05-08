@@ -47,7 +47,7 @@ public:
     //! \brief Устанавливает количество страниц
     void setCountSheets(int count);
 
-    void setStatisticSheet();
+    bool reloadStatisticSheet();
 
     //! \brief Обновляет поле рисовальщика QCustomPlot (заставляет перерисовать себя).
     void updatePlotter();

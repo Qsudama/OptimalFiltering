@@ -280,7 +280,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
 
-    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ;
+    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ, deltaIColor, PdeltaIColor;
     mxPen.setWidthF(2.0);
     mxPen.setColor(Qt::darkMagenta);
     mePen.setWidthF(2.0);
@@ -296,11 +296,16 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     upDownE.setWidthF(1.0);
     upDownE.setColor(color_realization_e);
     selectRealizX.setWidthF(1.5);
-    selectRealizX.setColor(Qt::magenta);
+    selectRealizX.setColor(Qt::darkGreen);
     selectRealizE.setWidthF(1.5);
     selectRealizE.setColor(color_realization_e);
     selectRealizZ.setWidthF(1.5);
     selectRealizZ.setColor(color_realization_z);
+    deltaIColor.setWidthF(1.5);
+    deltaIColor.setColor(QColor::fromRgb(0, 4, 255));
+    PdeltaIColor.setWidthF(1.5);
+    PdeltaIColor.setColor(QColor::fromRgb(0, 255, 123));
+
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
@@ -396,32 +401,35 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(i).addCurve(x, y, name_sheet_z, selectRealizZ, false);
     }
 
-
     if (ftype == LogicDynamic) {
+        if (m_graphWindow->reloadStatisticSheet()) {
+            QString titleStatistic = tr("Статистика <") + m_taskWidget->name() + QString(">");
 
-        m_graphWindow->setStatisticSheet();
-        QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
-        QString subTitle = tr("I");
+            m_graphWindow->statisticSheet().setTitleLabel(titleStatistic);
+            m_graphWindow->statisticSheet().setSubTitleLabel(tr("I"));
 
-        m_graphWindow->statisticSheet().setTitleLabel(title);
-        m_graphWindow->statisticSheet().setSubTitleLabel(subTitle);
+            m_graphWindow->statisticSheet().setXLabel(tr("Время (с)"));
+            m_graphWindow->statisticSheet().setYLabel(tr("Номер режима"));
 
-        m_graphWindow->statisticSheet().setXLabel(tr("Что-то там"));
+            QVector<double> I, evaluationI, deltaI, PdeltaI;
+            double scaleI = 1.0;
 
-        QVector<double> I, evaluationI, deltaI, PdeltaI;
-        double scaleI = 1.0;
+            Core::GetI(filter->result(), numberTraectory, I, scaleI);
+            Core::GetEvaluationI(filter->result(), numberTraectory, evaluationI, scaleI);
+            Core::GetDeltaI(filter->result(), numberTraectory, deltaI, scaleI);
+            Core::GetPDeltaI(filter->result(), PdeltaI, scaleI);
 
-        Core::GetI(filter->result(), numberTraectory, I, scaleI);
-        m_graphWindow->statisticSheet().addCurve(x, I, tr("I ") + fname, mxPen, true);
+            GAxisRange customRange;
+            customRange.xMin = 0.0;
+            customRange.xMax = *std::max_element(x.begin(), x.end());
+            customRange.yMin = 0.5;
+            customRange.yMax = *std::max_element(I.begin(), I.end()) + 0.5;
 
-        Core::GetEvaluationI(filter->result(), numberTraectory, evaluationI, scaleI);
-        m_graphWindow->statisticSheet().addCurve(x, evaluationI, tr("оценка I ") + fname, sxPen, false);
-
-        Core::GetDeltaI(filter->result(), numberTraectory, deltaI, scaleI);
-        m_graphWindow->statisticSheet().addCurve(x, deltaI, tr("ΔI ") + fname, selectRealizX, false);
-
-        Core::GetPDeltaI(filter->result(), PdeltaI, scaleI);
-        m_graphWindow->statisticSheet().addCurve(x, PdeltaI, tr("вероятность ΔI ") + fname, selectRealizZ, false);
+            m_graphWindow->statisticSheet().addICurve(x, I, tr("I"), mxPen, customRange, true);
+            m_graphWindow->statisticSheet().addICurve(x, evaluationI, tr("оценка I"), selectRealizE, customRange, false);
+            m_graphWindow->statisticSheet().addICurve(x, deltaI, tr("ΔI"), deltaIColor, customRange, false);
+            m_graphWindow->statisticSheet().addICurve(x, PdeltaI, tr("вероятность ΔI"), PdeltaIColor, customRange, false);
+        }
     }
 
 

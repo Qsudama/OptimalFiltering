@@ -149,6 +149,13 @@ public:
                   const QPen &penSide,
                   bool visible = false);
 
+    void addICurve(const QVector<double> &x,
+                  const QVector<double> &y,
+                  const QString &name,
+                  const QPen &pen,
+                  GAxisRange customRange,
+                  bool visible = true);
+
 
 private:
     /*!

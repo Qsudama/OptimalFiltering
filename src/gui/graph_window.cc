@@ -162,7 +162,7 @@ void GraphWindow::updateMenu()
     }
 
     if (m_statisticLDFiltersSheet) {
-        QAction *action = new QAction(tr("Test LD"), m_menuSheet);
+        QAction *action = new QAction(tr("I для логико-динамики"), m_menuSheet);
         action->setData(m_sheets.size() + 100);
         action->setCheckable(true);
         action->setChecked(m_currentSheet == m_statisticLDFiltersSheet);
@@ -479,11 +479,13 @@ void GraphWindow::setCountSheets(int count)
     updatePlotter();
 }
 
-void GraphWindow::setStatisticSheet()
+bool GraphWindow::reloadStatisticSheet()
 {
     if (!m_statisticLDFiltersSheet) {
         m_statisticLDFiltersSheet = new GraphSheet;
+        return true;
     }
+    return false;
 }
 
 void GraphWindow::updatePlotter()
