@@ -33,6 +33,7 @@ void Filter::run()
     timerInstance.start_timer();
     algorithm();
     timerInstance.stop_timer();
+    emit filterFinishExecute();
 }
 
 FilterTimeResult Filter::execute_time()
@@ -175,6 +176,9 @@ void Filter::writeResult(size_t n, int countI) // для логико-динам
     m_result[n].upX  = m_result[n].meanX + deviationX;
     m_result[n].downX  = m_result[n].meanX - deviationX;
 
+    int countSuccessI = std::count(m_result[n].deltaI.begin(), m_result[n].deltaI.end(), 0); // Считаем кол-во совпадений I с I-крышка
+    int sizeS = m_result[n].deltaI.size();
+    m_result[n].PdeltaI = countSuccessI / (double)sizeS;
 
 #ifdef QT_ENABLED
     emit updatePercent(int(100 * n / m_result.size()));

@@ -21,7 +21,8 @@ DUOF::DUOF(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilte
     m_info->setDimension("(p=" + std::to_string(task->dimX()) + ")");
 }
 
-void DUOF::zeroIteration() {
+void DUOF::zeroIteration()
+{
     DiscreteFilter::zeroIteration();
 
     Lambda.resize(m_params->sampleSize());
@@ -34,7 +35,8 @@ void DUOF::zeroIteration() {
     }
 }
 
-void DUOF::algorithm() {
+void DUOF::algorithm()
+{
 
     m_task->setTime(m_result[0].time);
     m_task->setStep(m_params->measurementStep());
@@ -85,19 +87,23 @@ void DUOF::computeThirdStep(long k, long i) {
 }
 
 #pragma mark - Parameters Compution
-Matrix DUOF::compute_F() {
+Matrix DUOF::compute_F()
+{
     return Cov(m_sampleX, A) * Pinv(Var(A));
 }
 
-Vector DUOF::compute_g() {
+Vector DUOF::compute_g()
+{
     return Mean(m_sampleX) - F * Mean(A);
 }
 
-Matrix DUOF::compute_H() {
+Matrix DUOF::compute_H()
+{
     return Cov(m_sampleE, Omega) * Pinv(Var(Omega));
 }
 
-Vector DUOF::compute_e() {
+Vector DUOF::compute_e()
+{
     return Mean(m_sampleE) - H * Mean(Omega);
 }
 

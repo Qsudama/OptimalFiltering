@@ -23,14 +23,16 @@ DFKP::DFKP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilte
     m_info->setDimension("(p=" + std::to_string(p) + ")");
 }
 
-void DFKP::zeroIteration() {
+void DFKP::zeroIteration()
+{
     DiscreteFilter::zeroIteration();
 
     m_sampleS.resize(m_params->sampleSize());
     S.resize(m_params->sampleSize());
 }
 
-void DFKP::algorithm() {
+void DFKP::algorithm()
+{
 
     Vector h, o, lambda;
     Matrix G, F, Psi, T, L;

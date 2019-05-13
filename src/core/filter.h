@@ -22,6 +22,8 @@
 #include "src/helpers/timer_manager.h"
 #include "src/helpers/alert_helper.h"
 
+#include <QThread>
+
 using Math::Matrix;
 using Math::Vector;
 using Math::RowVector;
@@ -71,7 +73,7 @@ public:
      algorithm();
      \endcode
     */
-    void run();
+
 
     FilterTimeResult execute_time();
 
@@ -114,9 +116,16 @@ protected:
 signals:
 #endif
 
+public slots:
+
+    void run();
+
+signals:
+
     //! \brief Информирует о прогрессе выполнения алгоритма (в процентах).
     void updatePercent(int p) const;
 
+    void filterFinishExecute();
 
 protected:
     FilterOutput        m_result; /*!< Результаты работы. */
@@ -127,7 +136,9 @@ protected:
     Array<Vector> m_sampleY; /*!< Массив под выборку \f$Y\f$. */
     Array<Vector> m_sampleZ; /*!< Массив под выборку \f$Z\f$. */
     Array<Vector> m_sampleE; /*!< Массив под выборку \f$E\f$. */
-    Array<int>    m_sampleI; /*!< Массив для выборки режимов (Только для логик-динамических фильтров). */
+
+    /*!< Только для логико-динамических фильтров */
+    Array<int>    m_sampleI; /*!< Массив под режимы для всех выборок */
 
     Math::MultivariateNormalDistribution m_normalRand; /*!< Генератор гауссовских случайных векторов. */
 

@@ -8,6 +8,8 @@
 
 #include "src/helpers/alert_helper.h"
 
+#include <pthread.h>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_tablesIsVisible(false)
@@ -50,16 +52,19 @@ void MainWindow::initControls()
     m_btnShowTimes             = new QPushButton(tr("Показать время выполнения"));
 
     m_btnShowHideTables->setEnabled(false);
+    m_btnShowTimes->setEnabled(false);
 
     connect(m_btnClear, SIGNAL(clicked()), this, SIGNAL(clear()));
     connect(m_btnShowHideTables, SIGNAL(clicked()), this, SLOT(onShowHideTables()));
     connect(m_btnShowTimes, SIGNAL(clicked()), this, SLOT(onShowTableTimer()));
-//    connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
+    connect(m_taskWidget, SIGNAL(changed()), this, SIGNAL(clear()));
     connect(this, SIGNAL(clear()), this, SLOT(onClear()));
     connect(m_filterStartWidget, SIGNAL(start(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)), this,
             SLOT(onStart(Core::FILTER_TYPE, Core::APPROX_TYPE, FILTER_ID)));
-    connect(m_filterStartWidget, SIGNAL(filtersFamilyChanged(int)), m_filterParamsWidget,
-            SLOT(onFiltersFamilyChanged(int)));
+    connect(m_filterStartWidget, SIGNAL(filtersFamilyChanged(Core::FILTER_TYPE)), m_filterParamsWidget,
+            SLOT(onFiltersFamilyChanged(Core::FILTER_TYPE)));
+    connect(m_filterStartWidget, SIGNAL(filtersFamilyChanged(Core::FILTER_TYPE)), m_taskWidget,
+            SLOT(onFiltersFamilyChanged(Core::FILTER_TYPE)));
 }
 
 void MainWindow::initLayouts()
@@ -179,6 +184,7 @@ void MainWindow::onClear()
     m_tablesIsVisible = false;
     m_btnShowHideTables->setText(tr("Показать таблицы"));
     m_btnShowHideTables->setEnabled(false);
+    m_btnShowTimes->setEnabled(false);
 }
 
 void MainWindow::onShowHideTables()
@@ -217,32 +223,53 @@ void MainWindow::onFilterUpdatePercent(int p)
 
 void MainWindow::onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE /*atype*/, FILTER_ID id)
 {
-    bool normalTask   = m_taskWidget->taskIsNull(ftype);
+    bool normalTask = m_taskWidget->taskIsNull(ftype);
     if (!normalTask) {
-        showErrorMessage();
+        AlertHelper::showErrorAlertWithText("Выбран не верный тип фильтров для данной задачи");
         return;
     }
-
-    Core::PtrTask             task   = m_taskWidget->task(ftype);
+    if (m_runningFilters.count() > 0) {
+        AlertHelper::showWarningAlertWithText("Дождитесь завершения моделирования предыдущего фильтра");
+        return;
+    }
+    RunningFilter runningFilter;
+    runningFilter.task = m_taskWidget->task(ftype);
+    runningFilter.ftype = ftype;
 
     Core::PtrFilterParameters params = m_filterParamsWidget->parameters();
     params->setInitialCondition(m_startConditionsFilterWidget->initialConditionForFilter());
 
-    Core::PtrFilter           filter = Filters::FilterFactory::create(ftype, id, params, task);
+    runningFilter.filter = Filters::FilterFactory::create(ftype, id, params, runningFilter.task);
 
-    connect(filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
+    QThread *thread = new QThread;
+    runningFilter.filter->moveToThread(thread);
+
+    m_runningFilters.append(runningFilter);
+
+    connect(runningFilter.filter.get(), SIGNAL(updatePercent(int)), this, SLOT(onFilterUpdatePercent(int)));
+
+    connect(thread, SIGNAL(started()), runningFilter.filter.get(), SLOT(run()));
+    connect(runningFilter.filter.get(), SIGNAL(filterFinishExecute()), thread, SLOT(quit()));
+    connect(thread, SIGNAL(finished()), this, SLOT(onFinishExecutingFilter()));
 
     m_statusProgressBar->setEnabled(true);
-    QString status = tr("Состояние: выполняется ") + QString::fromStdString(filter->info()->full_name());
+    QString status = tr("Состояние: выполняется ") + QString::fromStdString(runningFilter.filter->info()->full_name());
     statusBar()->showMessage(status);
 
-    filter->run(); // TODO сделать отдельный поток
+    thread->start();
+}
 
-    showData(filter, ftype, task);
-    m_filter_time_results.append(filter->execute_time());
+void MainWindow::onFinishExecutingFilter()
+{
+    RunningFilter runningFilter = m_runningFilters.first();
+
+    showData(runningFilter.filter, runningFilter.ftype, runningFilter.task);
+    m_filter_time_results.append(runningFilter.filter->execute_time());
     this->statusBar()->showMessage(tr("Состояние: ничего не выполняется"));
     m_statusProgressBar->setEnabled(false);
     m_statusProgressBar->setValue(0);
+    m_runningFilters.clear();
+    m_btnShowTimes->setEnabled(true);
 }
 
 void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core::PtrTask task)
@@ -253,7 +280,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
 
-    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ;
+    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ, deltaIColor, PdeltaIColor;
     mxPen.setWidthF(2.0);
     mxPen.setColor(Qt::darkMagenta);
     mePen.setWidthF(2.0);
@@ -269,15 +296,20 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     upDownE.setWidthF(1.0);
     upDownE.setColor(color_realization_e);
     selectRealizX.setWidthF(1.5);
-    selectRealizX.setColor(Qt::magenta);
+    selectRealizX.setColor(Qt::darkGreen);
     selectRealizE.setWidthF(1.5);
     selectRealizE.setColor(color_realization_e);
     selectRealizZ.setWidthF(1.5);
     selectRealizZ.setColor(color_realization_z);
+    deltaIColor.setWidthF(1.5);
+    deltaIColor.setColor(QColor::fromRgb(0, 4, 255));
+    PdeltaIColor.setWidthF(1.5);
+    PdeltaIColor.setColor(QColor::fromRgb(0, 255, 123));
+
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
-        m_graphWindow->setCountSheets(dim + 2);
+        m_graphWindow->setCountSheets(dim);
     }
 
     QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
@@ -288,40 +320,45 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
             m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
         }
     }
-    if (m_taskWidget->id() == TASK_ID::LandingLinear || m_taskWidget->id() == TASK_ID::LandingGauss || m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear  || m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
+
+    TASK_ID taskId = m_taskWidget->id();
+    if (taskId == LandingLinear || taskId == LandingGauss ||taskId == LDLandingRejection3DLinear  || taskId == LDLandingRejection6DLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(0).setYLabel(tr("Скорость (км/c)"));
-        m_graphWindow->sheet(1).setYLabel(tr("Угол наклона (°)"));
-        m_graphWindow->sheet(2).setYLabel(tr("Высота (км)"));
+        m_graphWindow->sheet(0).setYLabel(tr("По скорости (м/c)"));
+        m_graphWindow->sheet(1).setYLabel(tr("По уголу наклона (°)"));
+        m_graphWindow->sheet(2).setYLabel(tr("По высоте (м)"));
     }
-    if (m_taskWidget->id() == TASK_ID::LDScalarRejectionLinear) {
+
+    if (taskId == LDScalarRejectionLinear) {
         m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
     }
-    if (m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) { // потому что первый if уже сработал как надо
+    if (taskId == LDLandingRejection6DLinear) { // продолжаем 4, 5, 6 координаты потому что первый if уже сработал как надо
         m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
         m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(0).setYLabel(tr("Скорость (км/c)"));
-        m_graphWindow->sheet(2).setYLabel(tr("Высота (км)"));
-        m_graphWindow->sheet(3).setYLabel(tr("Квазиплотность (1/км)"));
-        m_graphWindow->sheet(4).setYLabel(tr("Качество"));
-        m_graphWindow->sheet(5).setYLabel(tr("Ошибка гировертикали (°)"));
+        m_graphWindow->sheet(0).setYLabel(tr("По скорости (м/c)"));
+        m_graphWindow->sheet(2).setYLabel(tr("По высоте (м)"));
+        m_graphWindow->sheet(3).setYLabel(tr("По квазиплотности (1/м)"));
+        m_graphWindow->sheet(4).setYLabel(tr("По качеству"));
+        m_graphWindow->sheet(5).setYLabel(tr("По ошибке гировертикали (°)"));
     }
     Math::Vector scale(dim);
-    if (m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear) {
-        scale[0] = scale[2] = 1.0;
+    if (taskId == LDLandingRejection3DLinear) {
+        scale[0] = 1000.0;
+        scale[2] = 1.0;
         scale[1] = Math::Convert::RadToDeg(1.0);
-    } else if (m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
-        scale[0] = scale[2]    = 1.0;
-        scale[1] = scale[5]     = Math::Convert::RadToDeg(1.0);
-        scale[3]                      = 1.0;
-        scale[4]                      = 1.0;
-    } else if (m_taskWidget->id() == TASK_ID::LandingLinear || m_taskWidget->id() == TASK_ID::LandingGauss) {
-        scale[0] = 1;
+    } else if (taskId == LDLandingRejection6DLinear) {
+        scale[0] = 1000.0;
+        scale[2] = 1.0;
+        scale[1] = scale[5] = Math::Convert::RadToDeg(1.0);
+        scale[3] = 1000.0;
+        scale[4] = 1000.0;
+    } else if (taskId == LandingLinear || taskId == LandingGauss) {
+        scale[0] = 1000.0;
         scale[1] = Math::Convert::RadToDeg(1.0);
-        scale[2] = 1;
+        scale[2] = 1.0;
     } else {
         for (int i = 0; i < dim; ++i) {
             scale[i] = 1.0;
@@ -331,6 +368,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QVector<double> x, y, y_up, y_down;
     Core::GetTime(filter->result(), x);
 
+    int numberTraectory = filter->params()->specificRealization();
+
     for (int i = 0; i < dim; i++) {
         Core::GetMeanX(filter->result(), i, y, scale[i]);
         m_graphWindow->sheet(i).addCurve(x, y, "Mx" + QString::number(i + 1), mxPen, false);
@@ -339,9 +378,9 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->sheet(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
 
         Core::GetRealizationX(filter->result(), i, y, scale[i]);
-        Core::GetUpX(filter->result(), i, y_up, scale[i]);
-        Core::GetDownX(filter->result(), i, y_down, scale[i]);
-        QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") ";
+//        Core::GetUpX(filter->result(), i, y_up, scale[i]);
+//        Core::GetDownX(filter->result(), i, y_down, scale[i]);
+        QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") ";
 //        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
         m_graphWindow->sheet(i).addCurve(x, y, name_sheet_x, selectRealizX, false);
 
@@ -354,13 +393,45 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetRealizationE(filter->result(), i, y, scale[i]);
         Core::GetUpE(filter->result(), i, y_up, scale[i]);
         Core::GetDownE(filter->result(), i, y_down, scale[i]);
-        QString name_sheet_e = "E" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        QString name_sheet_e = "E" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") " + fname;
         m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE);
 
         Core::GetRealizationZ(filter->result(), i, y, scale[i]);
-        QString name_sheet_z = "Z" + QString::number(i + 1) + " (" + QString::number(filter->params()->specificRealization()) + ") " + fname;
+        QString name_sheet_z = "Z" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") " + fname;
         m_graphWindow->sheet(i).addCurve(x, y, name_sheet_z, selectRealizZ, false);
     }
+
+    if (ftype == LogicDynamic) {
+        if (m_graphWindow->reloadStatisticSheet()) {
+            QString titleStatistic = tr("Статистика <") + m_taskWidget->name() + QString(">");
+
+            m_graphWindow->statisticSheet().setTitleLabel(titleStatistic);
+            m_graphWindow->statisticSheet().setSubTitleLabel(tr("I"));
+
+            m_graphWindow->statisticSheet().setXLabel(tr("Время (с)"));
+            m_graphWindow->statisticSheet().setYLabel(tr("Номер режима"));
+
+            QVector<double> I, evaluationI, deltaI, PdeltaI;
+            double scaleI = 1.0;
+
+            Core::GetI(filter->result(), numberTraectory, I, scaleI);
+            Core::GetEvaluationI(filter->result(), numberTraectory, evaluationI, scaleI);
+            Core::GetDeltaI(filter->result(), numberTraectory, deltaI, scaleI);
+            Core::GetPDeltaI(filter->result(), PdeltaI, scaleI);
+
+            GAxisRange customRange;
+            customRange.xMin = 0.0;
+            customRange.xMax = *std::max_element(x.begin(), x.end());
+            customRange.yMin = 0.5;
+            customRange.yMax = *std::max_element(I.begin(), I.end()) + 0.5;
+
+            m_graphWindow->statisticSheet().addICurve(x, I, tr("I"), mxPen, customRange, false);
+            m_graphWindow->statisticSheet().addICurve(x, evaluationI, tr("оценка I"), selectRealizE, customRange, false);
+            m_graphWindow->statisticSheet().addICurve(x, deltaI, tr("ΔI"), deltaIColor, customRange, false);
+            m_graphWindow->statisticSheet().addICurve(x, PdeltaI, tr("вероятность ΔI"), PdeltaIColor, customRange, true);
+        }
+    }
+
 
     m_graphWindow->updatePlotter();
     std::string filter_name = filter->info()->name();
@@ -368,25 +439,22 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 }
 
 QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {
-    QString subTitle = "";
-        //tr("Размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
-
-    if (ftype == Core::FILTER_TYPE::Discrete || ftype == Core::FILTER_TYPE::LogicDynamic) {
-        if (m_taskWidget->id() == TASK_ID::LDScalarRejectionLinear) {
+    QString subTitle = m_startConditionsFilterWidget->initialConditionString();
+    TASK_ID taskId = m_taskWidget->id();
+    if (ftype == Discrete || ftype == LogicDynamic) {
+        if (taskId == LDScalarRejectionLinear) {
             subTitle = subTitle +
-                tr("Вероятность сбоя ") + QString::number(task->params()->at("e")) +
                 tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
-        } else if (m_taskWidget->id() == TASK_ID::LDLandingRejection3DLinear || m_taskWidget->id() == TASK_ID::LDLandingRejection6DLinear) {
+        } else if (taskId == LDLandingRejection3DLinear || taskId == LDLandingRejection6DLinear) {
             subTitle = subTitle +
-                tr("Шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep()) +
-                tr(", вероятность одного сбоя ") + QString::number(task->params()->at("e"));
+                tr("шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
         } else {
           subTitle = subTitle +
-            tr("Шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+            tr("шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
         }
     } else {
         subTitle = subTitle +
-                tr("Шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
+                tr("шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
                 tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
     }
     return subTitle;
@@ -410,9 +478,4 @@ void MainWindow::addTable(const Core::FilterOutput &data, const std::string &lab
         m_tables.last()->show();
     }
     m_btnShowHideTables->setEnabled(true);
-}
-
-void MainWindow::showErrorMessage(void)
-{
-    AlertHelper::showErrorAlertWithText("Выбран не верный тип фильтра для данной задачи");
 }

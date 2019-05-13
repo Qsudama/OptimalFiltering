@@ -170,7 +170,16 @@ void GraphSheet::addCurve(const QVector<double> &x,
     calcRanges();
 }
 
-
+void GraphSheet::addICurve(const QVector<double> &x,
+                           const QVector<double> &y,
+                           const QString &name,
+                           const QPen &pen,
+                           GAxisRange customRange,
+                           bool visible)
+{
+    addCurve(x, y, name, pen, visible, false);
+    m_axisRange = customRange;
+}
 
 void GraphSheet::calcRanges()
 {

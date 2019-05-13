@@ -29,6 +29,12 @@ struct SingleFilterOutput {
     Math::Vector specificX; /*!< Конкретная реализация X выбранной траектории*/
     Math::Vector specificE; /*!< Конкретная реализация E выбранной траектории*/
     Math::Vector specificZ; /*!< Конкретная реализация Z выбранной траектории*/
+
+    /*Только для логико-динамических фильтров*/
+    Array<int>   I; /*!< I всех траекторий*/
+    Array<int>   evaluationI; /*!< I с крышкой всех траекторий*/
+    Array<int>   deltaI; /*!< ΔI всех траекторий*/
+    double       PdeltaI; /*!< Вероятность ΔI*/
 };
 
 
@@ -128,6 +134,14 @@ void GetDownX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff 
 void GetRealizationX(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
 
 void GetRealizationZ(const FilterOutput &fo, long index, ArrayDbl &array, double coeff = 1.0);
+
+void GetI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff);
+
+void GetEvaluationI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff);
+
+void GetDeltaI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff);
+
+void GetPDeltaI(const FilterOutput &fo, ArrayDbl &array, double coeff);
 
 } // end Core
 

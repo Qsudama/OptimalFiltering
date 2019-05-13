@@ -105,7 +105,7 @@ void FilterStartButtonsBox::initLayouts()
     tabWidget->addTab(tab3, tr("Непрерывно-дискретные"));
     tabWidget->addTab(tab4, tr("Логико-Динамические"));
 
-    connect(tabWidget, SIGNAL(currentChanged(int)), this, SIGNAL(filtersFamilyChanged(int)));
+    connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabWidgetCurrentChanged(int)));
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setMargin(GuiConfig::LAYOUT_MARGIN_BIG);
@@ -165,6 +165,12 @@ void FilterStartButtonsBox::initLayouts()
     tab4->setLayout(tab4Layout);
 }
 
+
+void FilterStartButtonsBox::tabWidgetCurrentChanged(int index)
+{
+    FILTER_TYPE filter_type = static_cast<FILTER_TYPE>(index);
+    emit filtersFamilyChanged(filter_type);
+}
 
 // непрерывно-дискретные:
 

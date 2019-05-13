@@ -58,12 +58,14 @@ private slots:
     //! \brief Изменяет окно работы с параметрами, а так же испускает сигнал changed().
     void onCbTaskChanged(int);
 
+public slots:
+    void onFiltersFamilyChanged(Core::FILTER_TYPE index);
 
 private:
     /*!
      \brief Настраивает окно параметров задачи.
     */
-    void setupParametersWindow();
+    void reloadParametersWidget(bool emitChanged);
 
     /*!
      \brief Загружает шрифты и устанавливает их параметры (начертание, размер и т.д.).
@@ -77,11 +79,15 @@ private:
     //! \brief Устанавливает расположение всех элементов на виджете.
     void initLayouts();
 
+    bool initParametersWidget();
+
+    Core::PtrTask tempTask(Core::FILTER_TYPE ftype);
 
 private:
     QComboBox *           m_cbTask;
     QPushButton *         m_btnParameters;
     TaskParametersWidget *m_parametersWidget;
+    Core::FILTER_TYPE     m_currentFiltersFamily = Core::Discrete;
 };
 
 
