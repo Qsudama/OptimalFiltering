@@ -277,10 +277,11 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QColor color = m_colorManager.nextColor();
     QColor color_realization_e = m_colorManager.nextColorRealizationE();
     QColor color_realization_z = m_colorManager.nextColorRealizationZ();
+    QColor color_PI = m_colorManager.nextColorPI();
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
 
-    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ, deltaIColor, PdeltaIColor;
+    QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ, deltaIColor, PIColor, PdeltaIColor;
     mxPen.setWidthF(2.0);
     mxPen.setColor(Qt::darkMagenta);
     mePen.setWidthF(2.0);
@@ -303,46 +304,51 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     selectRealizZ.setColor(color_realization_z);
     deltaIColor.setWidthF(1.5);
     deltaIColor.setColor(QColor::fromRgb(0, 4, 255));
+    PIColor.setWidthF(1.5);
+    PIColor.setColor(QColor::fromRgb(0, 255, 123));
     PdeltaIColor.setWidthF(1.5);
-    PdeltaIColor.setColor(QColor::fromRgb(0, 255, 123));
-
+    PdeltaIColor.setColor(color_PI);
 
     int dim = int(filter->result()[0].meanX.size());
     if (m_graphWindow->countSheets() != dim) {
         m_graphWindow->setCountSheets(dim);
+        m_graphWindow->setCountRealizationSheets(dim);
     }
 
-    QString title = tr("Статистика <") + m_taskWidget->name() + QString(">");
+    QString titleStatistic = tr("Статистика <") + m_taskWidget->name() + QString(">");
+    QString titleRealization = tr("Реализации <") + m_taskWidget->name() + QString(">");
     QString subTitle = subtitleForParametrs(ftype, task);
     for (int i = 0; i < dim; i++) {
         if (i < dim) {
-            m_graphWindow->sheet(i).setTitleLabel(title);
-            m_graphWindow->sheet(i).setSubTitleLabel(subTitle);
+            m_graphWindow->sheetAtIndex(i).setTitleLabel(titleStatistic);
+            m_graphWindow->sheetAtIndex(i).setSubTitleLabel(subTitle);
+            m_graphWindow->realizationSheetAtIndex(i).setTitleLabel(titleRealization);
+            m_graphWindow->realizationSheetAtIndex(i).setSubTitleLabel(subTitle);
         }
     }
 
     TASK_ID taskId = m_taskWidget->id();
     if (taskId == LandingLinear || taskId == LandingGauss ||taskId == LDLandingRejection3DLinear  || taskId == LDLandingRejection6DLinear) {
-        m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(1).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(2).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(0).setYLabel(tr("По скорости (м/c)"));
-        m_graphWindow->sheet(1).setYLabel(tr("По уголу наклона (°)"));
-        m_graphWindow->sheet(2).setYLabel(tr("По высоте (м)"));
+        m_graphWindow->sheetAtIndex(0).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheetAtIndex(1).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheetAtIndex(2).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheetAtIndex(0).setYLabel(tr("По скорости (м/c)"));
+        m_graphWindow->sheetAtIndex(1).setYLabel(tr("По уголу наклона (°)"));
+        m_graphWindow->sheetAtIndex(2).setYLabel(tr("По высоте (м)"));
     }
 
     if (taskId == LDScalarRejectionLinear) {
-        m_graphWindow->sheet(0).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheetAtIndex(0).setXLabel(tr("Время (с)"));
     }
     if (taskId == LDLandingRejection6DLinear) { // продолжаем 4, 5, 6 координаты потому что первый if уже сработал как надо
-        m_graphWindow->sheet(3).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(4).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(5).setXLabel(tr("Время (с)"));
-        m_graphWindow->sheet(0).setYLabel(tr("По скорости (м/c)"));
-        m_graphWindow->sheet(2).setYLabel(tr("По высоте (м)"));
-        m_graphWindow->sheet(3).setYLabel(tr("По квазиплотности (1/м)"));
-        m_graphWindow->sheet(4).setYLabel(tr("По качеству"));
-        m_graphWindow->sheet(5).setYLabel(tr("По ошибке гировертикали (°)"));
+        m_graphWindow->sheetAtIndex(3).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheetAtIndex(4).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheetAtIndex(5).setXLabel(tr("Время (с)"));
+        m_graphWindow->sheetAtIndex(0).setYLabel(tr("По скорости (м/c)"));
+        m_graphWindow->sheetAtIndex(2).setYLabel(tr("По высоте (м)"));
+        m_graphWindow->sheetAtIndex(3).setYLabel(tr("По квазиплотности (1/м)"));
+        m_graphWindow->sheetAtIndex(4).setYLabel(tr("По качеству"));
+        m_graphWindow->sheetAtIndex(5).setYLabel(tr("По ошибке гировертикали (°)"));
     }
     Math::Vector scale(dim);
     if (taskId == LDLandingRejection3DLinear) {
@@ -370,69 +376,79 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 
     int numberTraectory = filter->params()->specificRealization();
 
+//    m_graphWindow->realizationSheetAtIndex(0).setXLabel(tr("Время (с)"));
+//    m_graphWindow->realizationSheetAtIndex(1).setXLabel(tr("Время (с)"));
+//    m_graphWindow->realizationSheetAtIndex(0).setYLabel(tr("Скорости"));
+//    m_graphWindow->realizationSheetAtIndex(1).setYLabel(tr("Номер режима"));
+
     for (int i = 0; i < dim; i++) {
         Core::GetMeanX(filter->result(), i, y, scale[i]);
-        m_graphWindow->sheet(i).addCurve(x, y, "Mx" + QString::number(i + 1), mxPen, false);
+        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Mx" + QString::number(i + 1), mxPen, false);
 
         Core::GetStdDeviationX(filter->result(), i, y, scale[i]);
-        m_graphWindow->sheet(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
-
-        Core::GetRealizationX(filter->result(), i, y, scale[i]);
-//        Core::GetUpX(filter->result(), i, y_up, scale[i]);
-//        Core::GetDownX(filter->result(), i, y_down, scale[i]);
-        QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") ";
-//        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
-        m_graphWindow->sheet(i).addCurve(x, y, name_sheet_x, selectRealizX, false);
+        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
 
         Core::GetMeanE(filter->result(), i, y, scale[i]);
-        m_graphWindow->sheet(i).addCurve(x, y, "Me" + QString::number(i + 1) + " " + fname, mePen, false);
+        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Me" + QString::number(i + 1) + " " + fname, mePen, false);
 
         Core::GetStdDeviationE(filter->result(), i, y, scale[i]);
-        m_graphWindow->sheet(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname, sePen, true);
+        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname, sePen, true);
 
         Core::GetRealizationE(filter->result(), i, y, scale[i]);
         Core::GetUpE(filter->result(), i, y_up, scale[i]);
         Core::GetDownE(filter->result(), i, y_down, scale[i]);
         QString name_sheet_e = "E" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") " + fname;
-        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE);
+        m_graphWindow->realizationSheetAtIndex(i).addCurve(x, y, y_up, y_down, name_sheet_e, selectRealizE, upDownE);
 
         Core::GetRealizationZ(filter->result(), i, y, scale[i]);
         QString name_sheet_z = "Z" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") " + fname;
-        m_graphWindow->sheet(i).addCurve(x, y, name_sheet_z, selectRealizZ, false);
+        m_graphWindow->realizationSheetAtIndex(i).addCurve(x, y, name_sheet_z, selectRealizZ, false);
+
+        Core::GetRealizationX(filter->result(), i, y, scale[i]);
+//        Core::GetUpX(filter->result(), i, y_up, scale[i]);
+//        Core::GetDownX(filter->result(), i, y_down, scale[i]);
+//        m_graphWindow->sheet(i).addCurve(x, y, y_up, y_down, name_sheet_x, selectRealizX, upDownX);
+        QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") ";
+        m_graphWindow->realizationSheetAtIndex(i).addCurve(x, y, name_sheet_x, selectRealizX, false);
     }
 
-    if (ftype == LogicDynamic) {
-        if (m_graphWindow->reloadStatisticSheet()) {
-            QString titleStatistic = tr("Статистика <") + m_taskWidget->name() + QString(">");
+//    if (ftype == LogicDynamic) {
+//        QVector<double> I, evaluationI, deltaI, PI, PdeltaI;
+//        double scaleI = 1.0;
 
-            m_graphWindow->statisticSheet().setTitleLabel(titleStatistic);
-            m_graphWindow->statisticSheet().setSubTitleLabel(tr("I"));
+//        Core::GetI(filter->result(), numberTraectory, I, scaleI);
+//        Core::GetEvaluationI(filter->result(), numberTraectory, evaluationI, scaleI);
+//        Core::GetDeltaI(filter->result(), numberTraectory, deltaI, scaleI);
 
-            m_graphWindow->statisticSheet().setXLabel(tr("Время (с)"));
-            m_graphWindow->statisticSheet().setYLabel(tr("Номер режима"));
+//        Core::GetPI(filter->result(), PI, scaleI);
+//        Core::GetPDeltaI(filter->result(), PdeltaI, scaleI);
 
-            QVector<double> I, evaluationI, deltaI, PdeltaI;
-            double scaleI = 1.0;
+//        GAxisRange customRange;
+//        customRange.xMin = 0.0;
+//        customRange.xMax = *std::max_element(x.begin(), x.end());
+//        customRange.yMin = 0.5;
+//        customRange.yMax = *std::max_element(I.begin(), I.end()) + 0.5;
 
-            Core::GetI(filter->result(), numberTraectory, I, scaleI);
-            Core::GetEvaluationI(filter->result(), numberTraectory, evaluationI, scaleI);
-            Core::GetDeltaI(filter->result(), numberTraectory, deltaI, scaleI);
-            Core::GetPDeltaI(filter->result(), PdeltaI, scaleI);
+//        if (m_graphWindow->reloadStatisticSheet()) {
+////            QString titleStatistic = tr("Статистика <") + m_taskWidget->name() + QString(">");
 
-            GAxisRange customRange;
-            customRange.xMin = 0.0;
-            customRange.xMax = *std::max_element(x.begin(), x.end());
-            customRange.yMin = 0.5;
-            customRange.yMax = *std::max_element(I.begin(), I.end()) + 0.5;
+//            m_graphWindow->statisticSheet().setTitleLabel(titleStatistic);
+//            m_graphWindow->statisticSheet().setSubTitleLabel(tr("I"));
 
-            m_graphWindow->statisticSheet().addICurve(x, I, tr("I") + " (" + QString::number(numberTraectory) + ") ", mxPen, customRange, false);
-            m_graphWindow->statisticSheet().addICurve(x, evaluationI, tr("оценка I") + " (" + QString::number(numberTraectory) + ") ", selectRealizE, customRange, false);
-            m_graphWindow->statisticSheet().addICurve(x, deltaI, tr("ΔI") + " (" + QString::number(numberTraectory) + ") ", deltaIColor, customRange, false);
-            m_graphWindow->statisticSheet().addICurve(x, PdeltaI, tr("вероятность ΔI"), PdeltaIColor, customRange, true);
-        }
-    }
+//            m_graphWindow->statisticSheet().setXLabel(tr("Время (с)"));
+//            m_graphWindow->statisticSheet().setYLabel(tr("Вероятность режима"));
 
+//            m_graphWindow->statisticSheet().addICurve(x, PI, tr("P (I = 1)"), PIColor, customRange, true);
 
+//            m_graphWindow->realizationSheet().addICurve(x, I, tr("I") + " (" + QString::number(numberTraectory) + ") ", mxPen, customRange, false);
+//        }
+
+//        m_graphWindow->realizationSheet().addICurve(x, evaluationI, tr("оценка I") + " (" + QString::number(numberTraectory) + ") ", selectRealizE, customRange, false);
+//        m_graphWindow->realizationSheet().addICurve(x, deltaI, tr("ΔI") + " (" + QString::number(numberTraectory) + ") ", deltaIColor, customRange, false);
+//        m_graphWindow->statisticSheet().addICurve(x, PdeltaI, tr("P (ΔI = 0)") + " " + fname, PdeltaIColor, customRange, true);
+//    }
+
+    m_graphWindow->updateDefaultSheet();
     m_graphWindow->updatePlotter();
     std::string filter_name = filter->info()->name();
     addTable(filter->result(), filter_name, scale);
