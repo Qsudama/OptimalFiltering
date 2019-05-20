@@ -142,7 +142,10 @@ protected:
 
     Math::MultivariateNormalDistribution m_normalRand; /*!< Генератор гауссовских случайных векторов. */
 
-    std::map<std::string, Array<Vector>> m_specific_params; /*!< Спецефические параметры фильтров. */
+    std::map<string, Array<double>> m_specific_params; /*!< Спецефические параметры фильтров. */
+
+    void registerSpecificParameter(string name, int cols, int rows);
+    void saveSpecificParameter(Matrix param, string name, int step);
 };
 
 

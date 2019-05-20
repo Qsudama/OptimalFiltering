@@ -30,12 +30,18 @@ struct SingleFilterOutput {
     Math::Vector specificE; /*!< Конкретная реализация E выбранной траектории*/
     Math::Vector specificZ; /*!< Конкретная реализация Z выбранной траектории*/
 
+
     /*Только для логико-динамических фильтров*/
     Array<int>   I; /*!< I всех траекторий*/
     Array<int>   evaluationI; /*!< I с крышкой всех траекторий*/
     Array<int>   deltaI; /*!< ΔI всех траекторий*/
     double       PdeltaI; /*!< Вероятность ΔI*/
 };
+
+//struct SpecificParameter {
+//    std::string name;
+//    Math::Matrix parameter;
+//};
 
 
 //! \brief Тип результата работы фильтра.

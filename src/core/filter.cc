@@ -200,4 +200,31 @@ FilterTimeResult Filter::execute_time_filter()
     return timerInstance.result_execute_time("filter");
 }
 
+void Filter::registerSpecificParameter(string name, int cols, int rows) {
+
+    size_t size = size_t(m_params->measurementCount() * m_params->predictionCount() * m_params->integrationCount());
+
+    qDebug() << QString::number(size);
+
+    for (int x = 1; x <= cols; x++) {
+        for (int y = 1; y <= rows; ++y) {
+            string paramKey = name + "_" + to_string(x) + "_" + to_string(y);
+            m_specific_params[paramKey] = Array<double>(size);
+            qDebug() << QString::fromStdString(paramKey);
+        }
+    }
+}
+
+void Filter::saveSpecificParameter(Matrix param, string name, int step) {
+
+    for (int x = 1; x <= param.cols(); x++) {
+        for (int y = 1; y <= param.rows(); ++y) {
+            string paramKey = name + "_" + to_string(x) + "_" + to_string(y);
+            qDebug() << QString::fromStdString(paramKey) << QString::number(param(y-1, x-1));
+            m_specific_params[paramKey][step] = param(y-1, x-1);
+        }
+    }
+
+}
+
 } // end Core
