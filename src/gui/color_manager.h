@@ -21,7 +21,7 @@ public:
 
 
     //! \brief Достает цвет из массива, сдвигает (циклически) индекс.
-    const QColor &nextColor();
+    const QColor &nextColorAtIndex(int index);
 
     //! \brief Достает цвет из массива, сдвигает (циклически) индекс.
     const QColor &nextColorRealizationE();
@@ -35,6 +35,8 @@ public:
     //! \brief Сбрасывает индекс последнего извлеченного цвета до нулевого.
     void reset();
 
+    const int &nextColorIndex();
+
 
 private:
 
@@ -43,11 +45,9 @@ private:
     int             m_currentIndex;                                     /*!< Индекс последнего цвета, котороый "взяли". */
     int             m_realizationECollorsCurrentIndex;                  /*!< Индекс последнего цвета, котороый "взяли". */
     int             m_realizationZCollorsCurrentIndex;                  /*!< Индекс последнего цвета, котороый "взяли". */
-    int             m_PICurrentIndex;                                   /*!< Индекс последнего цвета, котороый "взяли". */
     QVector<QColor> m_colors;                                           /*!< Массив под набор цветов. */
     QVector<QColor> m_realization_e_colors;                             /*!< Массив под набор цветов для конкретных реализаций. */
     QVector<QColor> m_realization_z_colors;                             /*!< Массив под набор цветов для конкретных реализаций. */
-    QVector<QColor> m_colorsPI;                                         /*!< Массив под набор цветов. */
 };
 
 

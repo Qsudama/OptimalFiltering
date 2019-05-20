@@ -2,14 +2,9 @@
 
 #include "src/helpers/alert_helper.h"
 
-#include "src/helpers/log_in_console_manager.h"
-
-int countFake = 2;
-
 GraphWindow::GraphWindow(QWidget *parent)
     : QMainWindow(parent) 
 {
-//    m_showRealizationSheets = false;
     loadFonts();
     initPlotter();
     initLayouts();
@@ -49,13 +44,13 @@ void GraphWindow::initActions()
     m_actionShowStatisticSheet->setEnabled(true);
     m_actionShowStatisticSheet->setCheckable(true);
     m_actionShowStatisticSheet->setChecked(true);
-    connect(m_actionShowStatisticSheet, SIGNAL(toggled(bool)), this, SLOT(onChangeSheetFamily(m_actionShowStatisticSheet)));
+    connect(m_actionShowStatisticSheet, SIGNAL(toggled(bool)), this, SLOT(onShowStatisticSheet(bool)));
 
     m_actionShowRealizationSheet = new QAction(tr("Реализации"), this);
     m_actionShowRealizationSheet->setEnabled(false);
     m_actionShowRealizationSheet->setCheckable(true);
     m_actionShowRealizationSheet->setChecked(false);
-    connect(m_actionShowRealizationSheet, SIGNAL(toggled(bool)), this, SLOT(onChangeSheetFamily(m_actionShowRealizationSheet)));
+    connect(m_actionShowRealizationSheet, SIGNAL(toggled(bool)), this, SLOT(onShowRealizationSheet(bool)));
 }
 
 void GraphWindow::initMenus()
@@ -363,13 +358,19 @@ void GraphWindow::onClear()
 {
     m_sheets.clear();
     m_realizationFiltersSheets.clear();
+
     delete m_statisticLDFiltersSheet;
     m_statisticLDFiltersSheet = nullptr;
+
     delete m_realizationLDFiltersSheet;
     m_realizationLDFiltersSheet = nullptr;
+
+    m_currentSheet = nullptr;
+    delete m_currentSheet;
+
+    m_actionShowStatisticSheet->setChecked(true);
     m_actionShowRealizationSheet->setEnabled(false);
-    setCountSheets(1);
-    updateMenu();
+    updatePlotter();
 }
 
 void GraphWindow::onRangesChanged(Math::Vector2 x, Math::Vector2 y)
@@ -392,12 +393,25 @@ void GraphWindow::onSavePng()
     m_plotter->savePng(fileName);
 }
 
-void GraphWindow::onChangeSheetFamily(QAction *action)
+void GraphWindow::onShowStatisticSheet(bool checked)
 {
-    if (action == m_actionShowStatisticSheet) {
+    if (checked) {
+        m_actionShowRealizationSheet->setChecked(false);
+        if (m_sheets.count() > 0) {
+            m_currentSheet = &(m_sheets[0]);
+            updatePlotter();
+        }
+    }
+}
 
-    } else {
-
+void GraphWindow::onShowRealizationSheet(bool checked)
+{
+    if (checked) {
+        m_actionShowStatisticSheet->setChecked(false);
+        if (m_realizationFiltersSheets.count() > 0) {
+            m_currentSheet = &(m_realizationFiltersSheets[0]);
+            updatePlotter();
+        }
     }
 }
 
@@ -429,17 +443,32 @@ void GraphWindow::onSetAutoRanges(bool checked)
 void GraphWindow::onCurrentSheetChanged(QAction *action)
 {
     int snum = action->data().toInt() - 100;
-    if (snum < 0 || snum >= m_sheets.size() + 1) {
-        return;
-    }
-    if (snum < m_sheets.size()) {
-        if (m_currentSheet == &(m_sheets[snum])) {
+    if (m_actionShowStatisticSheet->isChecked()) {
+        if (snum < 0 || snum >= m_sheets.size() + 1) {
             return;
         }
-        m_currentSheet = &(m_sheets[snum]);
+        if (snum < m_sheets.size()) {
+            if (m_currentSheet == &(m_sheets[snum])) {
+                return;
+            }
+            m_currentSheet = &(m_sheets[snum]);
+        } else {
+            m_currentSheet = m_statisticLDFiltersSheet;
+        }
     } else {
-        m_currentSheet = m_statisticLDFiltersSheet;
-    } // m_realizationFiltersSheets
+        if (snum < 0 || snum >= m_realizationFiltersSheets.size() + 1) {
+            return;
+        }
+        if (snum < m_sheets.size()) {
+            if (m_currentSheet == &(m_realizationFiltersSheets[snum])) {
+                return;
+            }
+            m_currentSheet = &(m_realizationFiltersSheets[snum]);
+        } else {
+            m_currentSheet = m_realizationLDFiltersSheet;
+        }
+    }
+
     m_menuSheet->removeAction(action);
     m_actionSetAutoRanges->setChecked(m_currentSheet->autoCalcRanges());
     updatePlotter();
@@ -527,7 +556,7 @@ GraphSheet &GraphWindow::sheetAtIndex(int index)
 GraphSheet &GraphWindow::realizationSheetAtIndex(int index)
 {
     if (index <= 0 && index >= m_realizationFiltersSheets.size()) {
-        AlertHelper::showErrorAlertWithText("GraphWindow::sheet\nВыход за пределы!");
+        AlertHelper::showErrorAlertWithText("GraphWindow::realizationSheetAtIndex\nВыход за пределы!");
         return m_realizationFiltersSheets[0];
     }
     return m_realizationFiltersSheets[index];
@@ -551,8 +580,6 @@ GraphSheet &GraphWindow::currentSheet()
 void GraphWindow::setCountSheets(int count)
 {
     m_sheets.resize(count);
-//    m_currentSheet = &(m_sheets[0]);
-//    updatePlotter();
 }
 
 void GraphWindow::setCountRealizationSheets(int count)

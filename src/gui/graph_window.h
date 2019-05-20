@@ -104,10 +104,9 @@ private slots:
     */
     void onSavePng();
 
-//    void onShowStatisticSheet(bool checked);
+    void onShowStatisticSheet(bool checked);
 
-//    void onShowRealizationSheet(bool checked);
-    void onChangeSheetFamily(QAction *action);
+    void onShowRealizationSheet(bool checked);
 
     //! \brief Показывает окно выбора границ осей координат при нажатии кнопки меню.
     void onShowSetRangesDialog();
@@ -177,12 +176,8 @@ private:
 
     QMenu *m_menuFile;
     QMenu *m_menuView;
-    QMenu *m_menuSheet;
-
-//    QMenu *m_menuComponents;
-
     QMenu *m_menuViewSheets;
-
+    QMenu *m_menuSheet;
     QMenu *m_menuShow;
     QMenu *m_menuHide;
 };
