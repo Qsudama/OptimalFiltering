@@ -46,16 +46,27 @@ void ColorManager::initColors()
     m_realization_z_colors[7]  = QColor::fromRgb(132, 172, 0);
     m_realization_z_colors[8]  = QColor::fromRgb(90, 0, 181);
     m_realization_z_colors[9]  = QColor::fromRgb(187, 0, 120);
+
 }
 
-const QColor &ColorManager::nextColor()
+const int &ColorManager::nextColorIndex()
 {
     int index = m_currentIndex;
     ++m_currentIndex;
     if (m_currentIndex >= m_colors.size()) {
         m_currentIndex = 0;
     }
-    return m_colors[index];
+    return index;
+}
+
+const QColor &ColorManager::nextColorAtIndex(int index)
+{
+    if (index < m_colors.count()) {
+        return m_colors[index];
+    } else {
+        return m_colors[0];
+    }
+
 }
 
 const QColor &ColorManager::nextColorRealizationE()
