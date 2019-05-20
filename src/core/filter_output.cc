@@ -197,6 +197,14 @@ void GetDeltaI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, dou
     }
 }
 
+void GetPI(const FilterOutput &fo, ArrayDbl &array, double coeff)
+{
+    array.resize(IndexType(fo.size()));
+    for (size_t i = 0; i < size_t(fo.size()); ++i) {
+        array[IndexType(i)] = coeff * fo[i].PI;
+    }
+}
+
 void GetPDeltaI(const FilterOutput &fo, ArrayDbl &array, double coeff)
 {
     array.resize(IndexType(fo.size()));

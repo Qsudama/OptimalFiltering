@@ -14,10 +14,10 @@ using Math::Convert::DegToRad;
 
 LandingRejection3DLinear::LandingRejection3DLinear() : LogicDynamicTask()
     , m_turnTime(45.0) // Время t_y
-    , m_e(0.0) // Вероятность сбоя
-    , gamMinX(0.1)
-    , gamMinY(0.1)
-    , countIInTask(1) // Количество режимов
+    , m_e(0.2) // Вероятность сбоя
+    , gamMinX(0.01)
+    , gamMinY(0.01)
+    , countIInTask(2) // Количество режимов
 {
     m_info->setName("3-мерный спуск ЛА со сбоями 2-х датчиков");
     m_info->setType("Л-");
@@ -367,6 +367,9 @@ Array<int> LandingRejection3DLinear::generateArrayI(int sizeS, int k) const // �
            array[i] = 2;
         }
     }
+
+//    logInstance.logStringWithQDebug("НОМЕР: " + std::to_string(k));
+//    logInstance.logArrayWithQDebug(array);
 
     return array;
 }

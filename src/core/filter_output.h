@@ -35,6 +35,7 @@ struct SingleFilterOutput {
     Array<int>   evaluationI; /*!< I с крышкой всех траекторий*/
     Array<int>   deltaI; /*!< ΔI всех траекторий*/
     double       PdeltaI; /*!< Вероятность ΔI*/
+    double       PI; /*!< Вероятность I*/
 };
 
 
@@ -140,6 +141,8 @@ void GetI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double c
 void GetEvaluationI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff);
 
 void GetDeltaI(const FilterOutput &fo, long numberTraektor, ArrayDbl &array, double coeff);
+
+void GetPI(const FilterOutput &fo, ArrayDbl &array, double coeff);
 
 void GetPDeltaI(const FilterOutput &fo, ArrayDbl &array, double coeff);
 

@@ -21,7 +21,7 @@ public:
 
 
     //! \brief Достает цвет из массива, сдвигает (циклически) индекс.
-    const QColor &nextColor();
+    const QColor &nextColorAtIndex(int index);
 
     //! \brief Достает цвет из массива, сдвигает (циклически) индекс.
     const QColor &nextColorRealizationE();
@@ -29,8 +29,13 @@ public:
     //! \brief Достает цвет из массива, сдвигает (циклически) индекс.
     const QColor &nextColorRealizationZ();
 
+    //! \brief Достает цвет из массива, сдвигает (циклически) индекс.
+    const QColor &nextColorPI();
+
     //! \brief Сбрасывает индекс последнего извлеченного цвета до нулевого.
     void reset();
+
+    const int &nextColorIndex();
 
 
 private:

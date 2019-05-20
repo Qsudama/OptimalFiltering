@@ -2,10 +2,8 @@
 
 #include "src/helpers/alert_helper.h"
 
-int countFake = 2;
-
 GraphWindow::GraphWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent) 
 {
     loadFonts();
     initPlotter();
@@ -41,6 +39,18 @@ void GraphWindow::initActions()
     m_actionSetAutoRanges->setCheckable(true);
     m_actionSetAutoRanges->setChecked(true);
     connect(m_actionSetAutoRanges, SIGNAL(toggled(bool)), this, SLOT(onSetAutoRanges(bool)));
+
+    m_actionShowStatisticSheet = new QAction(tr("Статистики"), this);
+    m_actionShowStatisticSheet->setEnabled(true);
+    m_actionShowStatisticSheet->setCheckable(true);
+    m_actionShowStatisticSheet->setChecked(true);
+    connect(m_actionShowStatisticSheet, SIGNAL(toggled(bool)), this, SLOT(onShowStatisticSheet(bool)));
+
+    m_actionShowRealizationSheet = new QAction(tr("Реализации"), this);
+    m_actionShowRealizationSheet->setEnabled(false);
+    m_actionShowRealizationSheet->setCheckable(true);
+    m_actionShowRealizationSheet->setChecked(false);
+    connect(m_actionShowRealizationSheet, SIGNAL(toggled(bool)), this, SLOT(onShowRealizationSheet(bool)));
 }
 
 void GraphWindow::initMenus()
@@ -53,8 +63,14 @@ void GraphWindow::initMenus()
     m_menuFile->addAction(m_actionSavePng);
 
     m_menuView = menuBar()->addMenu(tr("Вид"));
-    m_menuSheet = m_menuView->addMenu(tr("Компонента"));
+
+    m_menuViewSheets = m_menuView->addMenu(tr("Отображение"));
+    m_menuViewSheets->addAction(m_actionShowStatisticSheet);
+    m_menuViewSheets->addAction(m_actionShowRealizationSheet);
     m_menuView->addSeparator();
+
+    m_menuSheet = m_menuView->addMenu(tr("Компонентa"));
+    m_menuView->addSeparator(); 
 
     m_menuShow = m_menuView->addMenu(tr("Показать"));
     m_menuHide = m_menuView->addMenu(tr("Скрыть"));
@@ -145,44 +161,71 @@ void GraphWindow::initPlotter()
 
 void GraphWindow::updateMenu()
 {
+
     //меню - выбор страницы
     m_menuSheet->clear();
-
-    for (int i = 0; i < m_sheets.size(); i++) {
-        QAction *action = new QAction(QString::number(i + 1), m_menuSheet);
-        action->setData(i + 100);
-        action->setCheckable(true);
-        if (m_currentSheet == &(m_sheets[i])) {
-            action->setChecked(true);
-        } else {
-            action->setChecked(false);
+    if (m_actionShowStatisticSheet->isChecked()) {
+        for (int i = 0; i < m_sheets.size(); i++) {
+            QAction *action = new QAction(QString::number(i + 1), m_menuSheet);
+            action->setData(i + 100);
+            action->setCheckable(true);
+            if (m_currentSheet == &(m_sheets[i])) {
+                action->setChecked(true);
+            } else {
+                action->setChecked(false);
+            }
+            action->setAutoRepeat(false);
+            m_menuSheet->addAction(action);
         }
-        action->setAutoRepeat(false);
-        m_menuSheet->addAction(action);
-    }
 
-    if (m_statisticLDFiltersSheet) {
-        QAction *action = new QAction(tr("I для логико-динамики"), m_menuSheet);
-        action->setData(m_sheets.size() + 100);
-        action->setCheckable(true);
-        action->setChecked(m_currentSheet == m_statisticLDFiltersSheet);
-        action->setAutoRepeat(false);
-        m_menuSheet->addAction(action);
+        if (m_statisticLDFiltersSheet) {
+            QAction *action = new QAction(tr("Режим I"), m_menuSheet);
+            action->setData(m_sheets.size() + 100);
+            action->setCheckable(true);
+            action->setChecked(m_currentSheet == m_statisticLDFiltersSheet);
+            action->setAutoRepeat(false);
+            m_menuSheet->addAction(action);
+        }
+    } else {
+        for (int i = 0; i < m_realizationFiltersSheets.size(); i++) {
+            QAction *action = new QAction(QString::number(i + 1), m_menuSheet);
+            action->setData(i + 100);
+            action->setCheckable(true);
+            if (m_currentSheet == &(m_realizationFiltersSheets[i])) {
+                action->setChecked(true);
+            } else {
+                action->setChecked(false);
+            }
+            action->setAutoRepeat(false);
+            m_menuSheet->addAction(action);
+        }
+
+        if (m_realizationLDFiltersSheet) {
+            QAction *action = new QAction(tr("Режим I"), m_menuSheet);
+            action->setData(m_realizationFiltersSheets.size() + 100);
+            action->setCheckable(true);
+            action->setChecked(m_currentSheet == m_realizationLDFiltersSheet);
+            action->setAutoRepeat(false);
+            m_menuSheet->addAction(action);
+        }
     }
     connect(m_menuSheet, SIGNAL(triggered(QAction *)), this, SLOT(onCurrentSheetChanged(QAction *)));
 
     //меню - скрыть графики
     m_menuHide->clear();
     int count = 0;
-    for (int i = 0; i < m_currentSheet->curves().size(); i++) {
-        if (m_currentSheet->curves()[i].visible == true) {
-            QAction *action = new QAction(m_currentSheet->curves()[i].fullName(), m_menuHide);
-            action->setData(m_currentSheet->curves()[i].fullName());
-            action->setAutoRepeat(false);
-            m_menuHide->addAction(action);
-            count++;
+    if (m_currentSheet) {
+        for (int i = 0; i < m_currentSheet->curves().size(); i++) {
+            if (m_currentSheet->curves()[i].visible == true) {
+                QAction *action = new QAction(m_currentSheet->curves()[i].fullName(), m_menuHide);
+                action->setData(m_currentSheet->curves()[i].fullName());
+                action->setAutoRepeat(false);
+                m_menuHide->addAction(action);
+                count++;
+            }
         }
     }
+
     if (count == 0) {
         QAction *action = new QAction(tr("Нет показываемых графиков"), m_menuHide);
         action->setAutoRepeat(false);
@@ -193,13 +236,15 @@ void GraphWindow::updateMenu()
     //меню - показать скрытые
     m_menuShow->clear();
     count = 0;
-    for (int i = 0; i < m_currentSheet->curves().size(); i++) {
-        if (m_currentSheet->curves()[i].visible == false) {
-            QAction *action = new QAction(m_currentSheet->curves()[i].fullName(), m_menuShow);
-            action->setData(m_currentSheet->curves()[i].fullName());
-            action->setAutoRepeat(false);
-            m_menuShow->addAction(action);
-            count++;
+    if (m_currentSheet) {
+        for (int i = 0; i < m_currentSheet->curves().size(); i++) {
+            if (m_currentSheet->curves()[i].visible == false) {
+                QAction *action = new QAction(m_currentSheet->curves()[i].fullName(), m_menuShow);
+                action->setData(m_currentSheet->curves()[i].fullName());
+                action->setAutoRepeat(false);
+                m_menuShow->addAction(action);
+                count++;
+            }
         }
     }
     if (count == 0) {
@@ -312,10 +357,20 @@ void GraphWindow::onMoveLegend()
 void GraphWindow::onClear()
 {
     m_sheets.clear();
+    m_realizationFiltersSheets.clear();
+
     delete m_statisticLDFiltersSheet;
     m_statisticLDFiltersSheet = nullptr;
-    setCountSheets(1);
-    updateMenu();
+
+    delete m_realizationLDFiltersSheet;
+    m_realizationLDFiltersSheet = nullptr;
+
+    m_currentSheet = nullptr;
+    delete m_currentSheet;
+
+    m_actionShowStatisticSheet->setChecked(true);
+    m_actionShowRealizationSheet->setEnabled(false);
+    updatePlotter();
 }
 
 void GraphWindow::onRangesChanged(Math::Vector2 x, Math::Vector2 y)
@@ -338,6 +393,27 @@ void GraphWindow::onSavePng()
     m_plotter->savePng(fileName);
 }
 
+void GraphWindow::onShowStatisticSheet(bool checked)
+{
+    if (checked) {
+        m_actionShowRealizationSheet->setChecked(false);
+        if (m_sheets.count() > 0) {
+            m_currentSheet = &(m_sheets[0]);
+            updatePlotter();
+        }
+    }
+}
+
+void GraphWindow::onShowRealizationSheet(bool checked)
+{
+    if (checked) {
+        m_actionShowStatisticSheet->setChecked(false);
+        if (m_realizationFiltersSheets.count() > 0) {
+            m_currentSheet = &(m_realizationFiltersSheets[0]);
+            updatePlotter();
+        }
+    }
+}
 
 void GraphWindow::onShowSetRangesDialog()
 {
@@ -367,17 +443,32 @@ void GraphWindow::onSetAutoRanges(bool checked)
 void GraphWindow::onCurrentSheetChanged(QAction *action)
 {
     int snum = action->data().toInt() - 100;
-    if (snum < 0 || snum >= m_sheets.size() + 1) {
-        return;
-    }
-    if (snum < m_sheets.size()) {
-        if (m_currentSheet == &(m_sheets[snum])) {
+    if (m_actionShowStatisticSheet->isChecked()) {
+        if (snum < 0 || snum >= m_sheets.size() + 1) {
             return;
         }
-        m_currentSheet = &(m_sheets[snum]);
+        if (snum < m_sheets.size()) {
+            if (m_currentSheet == &(m_sheets[snum])) {
+                return;
+            }
+            m_currentSheet = &(m_sheets[snum]);
+        } else {
+            m_currentSheet = m_statisticLDFiltersSheet;
+        }
     } else {
-        m_currentSheet = m_statisticLDFiltersSheet;
+        if (snum < 0 || snum >= m_realizationFiltersSheets.size() + 1) {
+            return;
+        }
+        if (snum < m_sheets.size()) {
+            if (m_currentSheet == &(m_realizationFiltersSheets[snum])) {
+                return;
+            }
+            m_currentSheet = &(m_realizationFiltersSheets[snum]);
+        } else {
+            m_currentSheet = m_realizationLDFiltersSheet;
+        }
     }
+
     m_menuSheet->removeAction(action);
     m_actionSetAutoRanges->setChecked(m_currentSheet->autoCalcRanges());
     updatePlotter();
@@ -453,7 +544,7 @@ int GraphWindow::countSheets() const
     return m_sheets.size();
 }
 
-GraphSheet &GraphWindow::sheet(int index)
+GraphSheet &GraphWindow::sheetAtIndex(int index)
 {
     if (index <= 0 && index >= m_sheets.size()) {
         AlertHelper::showErrorAlertWithText("GraphWindow::sheet\nВыход за пределы!");
@@ -462,9 +553,23 @@ GraphSheet &GraphWindow::sheet(int index)
     return m_sheets[index];
 }
 
-GraphSheet &GraphWindow::statisticSheet()
+GraphSheet &GraphWindow::realizationSheetAtIndex(int index)
+{
+    if (index <= 0 && index >= m_realizationFiltersSheets.size()) {
+        AlertHelper::showErrorAlertWithText("GraphWindow::realizationSheetAtIndex\nВыход за пределы!");
+        return m_realizationFiltersSheets[0];
+    }
+    return m_realizationFiltersSheets[index];
+}
+
+GraphSheet &GraphWindow::statisticLDSheet()
 {
     return *m_statisticLDFiltersSheet;
+}
+
+GraphSheet &GraphWindow::realizationLDSheet()
+{
+    return *m_realizationLDFiltersSheet;
 }
 
 GraphSheet &GraphWindow::currentSheet()
@@ -475,8 +580,14 @@ GraphSheet &GraphWindow::currentSheet()
 void GraphWindow::setCountSheets(int count)
 {
     m_sheets.resize(count);
-    m_currentSheet = &(m_sheets[0]);
-    updatePlotter();
+}
+
+void GraphWindow::setCountRealizationSheets(int count)
+{
+    if (count > 0) {
+        m_actionShowRealizationSheet->setEnabled(true);
+    }
+    m_realizationFiltersSheets.resize(count);
 }
 
 bool GraphWindow::reloadStatisticSheet()
@@ -488,62 +599,83 @@ bool GraphWindow::reloadStatisticSheet()
     return false;
 }
 
+bool GraphWindow::reloadRealizationSheet()
+{
+    if (!m_realizationLDFiltersSheet) {
+        m_realizationLDFiltersSheet = new GraphSheet;
+        return true;
+    }
+    return false;
+}
+
+void GraphWindow::updateDefaultSheet()
+{
+    if (!m_currentSheet) {
+        m_currentSheet = &(m_sheets[0]);
+    }
+}
+
 void GraphWindow::updatePlotter()
 {
     m_plotter->clearGraphs();
 
-    GAxisRange range = m_currentSheet->axisRange();
-    m_plotter->xAxis->setRange(range.xMin, range.xMax);
-    m_plotter->yAxis->setRange(range.yMin, range.yMax);
-
-    QString title = m_currentSheet->titleLabel();
-    if (title.length() == 0) {
-        title = tr("Статистика <...>");
-    }
-    QString subTitle = m_currentSheet->subTitleLabel();
-    if (subTitle.length() == 0) {
-//        subTitle = tr("размер выборки <...>, шаг интегрирования <...>, между измерениями <...>");
-        subTitle = tr("Шаг интегрирования <...>, между измерениями <...>");
-    }
-
-    QCPTextElement *plotTitle = new QCPTextElement(m_plotter, title);
-    plotTitle->setFont(m_plotterTitleFont);
-    m_plotter->plotLayout()->remove(m_plotter->plotLayout()->element(0, 0));
-    m_plotter->plotLayout()->addElement(0, 0, plotTitle);
-    m_plotter->plotLayout()->element(0, 0)->setAntialiased(true);
-
-    QCPTextElement *plotSubTitle = new QCPTextElement(m_plotter, subTitle);
-    plotSubTitle->setFont(m_plotterSubTitleFont);
-    m_plotter->plotLayout()->remove(m_plotter->plotLayout()->element(1, 0));
-    m_plotter->plotLayout()->addElement(1, 0, plotSubTitle);
-    m_plotter->plotLayout()->element(1, 0)->setAntialiased(true);
-
-    m_plotter->xAxis->setLabel(m_currentSheet->xLabel());
-    m_plotter->yAxis->setLabel(m_currentSheet->yLabel());
-
-    for (int i = 0; i < m_currentSheet->curves().size(); i++) {
-        if (m_currentSheet->curves()[i].visible == false) {
-            continue;
+    if (m_currentSheet) {
+        if (m_realizationFiltersSheets.count() > 0) {
         }
-        int j = m_plotter->graphCount();
-        m_plotter->addGraph();
-        m_plotter->graph(j)->setTag(i);
-        m_plotter->graph(j)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y);
-        m_plotter->graph(j)->setPen(m_currentSheet->curves()[i].pen);
-        m_plotter->graph(j)->setName(m_currentSheet->curves()[i].fullName());
-        m_plotter->graph(j)->setAntialiased(true);
-        m_plotter->graph(j)->setAdaptiveSampling(true);
-        if (m_currentSheet->curves()[i].with_side) {
+
+        GAxisRange range = m_currentSheet->axisRange();
+        m_plotter->xAxis->setRange(range.xMin, range.xMax);
+        m_plotter->yAxis->setRange(range.yMin, range.yMax);
+
+        QString title = m_currentSheet->titleLabel();
+        if (title.length() == 0) {
+            title = tr("Статистика <...>");
+        }
+        QString subTitle = m_currentSheet->subTitleLabel();
+        if (subTitle.length() == 0) {
+    //        subTitle = tr("размер выборки <...>, шаг интегрирования <...>, между измерениями <...>");
+            subTitle = tr("Шаг интегрирования <...>, между измерениями <...>");
+        }
+
+        QCPTextElement *plotTitle = new QCPTextElement(m_plotter, title);
+        plotTitle->setFont(m_plotterTitleFont);
+        m_plotter->plotLayout()->remove(m_plotter->plotLayout()->element(0, 0));
+        m_plotter->plotLayout()->addElement(0, 0, plotTitle);
+        m_plotter->plotLayout()->element(0, 0)->setAntialiased(true);
+
+        QCPTextElement *plotSubTitle = new QCPTextElement(m_plotter, subTitle);
+        plotSubTitle->setFont(m_plotterSubTitleFont);
+        m_plotter->plotLayout()->remove(m_plotter->plotLayout()->element(1, 0));
+        m_plotter->plotLayout()->addElement(1, 0, plotSubTitle);
+        m_plotter->plotLayout()->element(1, 0)->setAntialiased(true);
+
+        m_plotter->xAxis->setLabel(m_currentSheet->xLabel());
+        m_plotter->yAxis->setLabel(m_currentSheet->yLabel());
+
+        for (int i = 0; i < m_currentSheet->curves().size(); i++) {
+            if (m_currentSheet->curves()[i].visible == false) {
+                continue;
+            }
+            int j = m_plotter->graphCount();
             m_plotter->addGraph();
-            m_plotter->addGraph();
-            m_plotter->graph(j+1)->setTag(i);
-            m_plotter->graph(j+2)->setTag(i);
-            m_plotter->graph(j+1)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_up);
-            m_plotter->graph(j+1)->setPen(m_currentSheet->curves()[i].up_down_pen);
-            m_plotter->graph(j+1)->setName("Верхняя граница " + m_currentSheet->curves()[i].name);
-            m_plotter->graph(j+2)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_down);
-            m_plotter->graph(j+2)->setName("Нижняя граница " + m_currentSheet->curves()[i].name);
-            m_plotter->graph(j+2)->setPen(m_currentSheet->curves()[i].up_down_pen);
+            m_plotter->graph(j)->setTag(i);
+            m_plotter->graph(j)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y);
+            m_plotter->graph(j)->setPen(m_currentSheet->curves()[i].pen);
+            m_plotter->graph(j)->setName(m_currentSheet->curves()[i].fullName());
+            m_plotter->graph(j)->setAntialiased(true);
+            m_plotter->graph(j)->setAdaptiveSampling(true);
+            if (m_currentSheet->curves()[i].with_side) {
+                m_plotter->addGraph();
+                m_plotter->addGraph();
+                m_plotter->graph(j+1)->setTag(i);
+                m_plotter->graph(j+2)->setTag(i);
+                m_plotter->graph(j+1)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_up);
+                m_plotter->graph(j+1)->setPen(m_currentSheet->curves()[i].up_down_pen);
+                m_plotter->graph(j+1)->setName("Верхняя граница " + m_currentSheet->curves()[i].name);
+                m_plotter->graph(j+2)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_down);
+                m_plotter->graph(j+2)->setName("Нижняя граница " + m_currentSheet->curves()[i].name);
+                m_plotter->graph(j+2)->setPen(m_currentSheet->curves()[i].up_down_pen);
+            }
         }
     }
 
