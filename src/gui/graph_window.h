@@ -46,6 +46,8 @@ public:
 
     GraphSheet &realizationLDSheet();
 
+    GraphSheet &parametersSheet();
+
     //! \brief Возвращает ссылку страницу, котороая отображается в данный момент.
     GraphSheet &currentSheet();
 
@@ -57,6 +59,8 @@ public:
     bool reloadStatisticSheet();
 
     bool reloadRealizationSheet();
+
+    bool reloadFilterParamsSheet();
 
     //! \brief Обновляет поле рисовальщика QCustomPlot (заставляет перерисовать себя).
     void updatePlotter();
@@ -108,6 +112,8 @@ private slots:
 
     void onShowRealizationSheet(bool checked);
 
+    void onShowFilterParamsSheet(bool checked);
+
     //! \brief Показывает окно выбора границ осей координат при нажатии кнопки меню.
     void onShowSetRangesDialog();
 
@@ -157,6 +163,7 @@ private:
     QVector<GraphSheet> m_realizationFiltersSheets;
     GraphSheet *m_statisticLDFiltersSheet;
     GraphSheet *m_realizationLDFiltersSheet;
+    GraphSheet *m_filterParametersSheet;
 
     GraphSheet *        m_currentSheet;
     QCustomPlot *       m_plotter;
@@ -173,6 +180,7 @@ private:
 
     QAction *m_actionShowStatisticSheet;
     QAction *m_actionShowRealizationSheet;
+    QAction *m_actionShowFilterParamsSheet;
 
     QMenu *m_menuFile;
     QMenu *m_menuView;

@@ -319,6 +319,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 
     QString titleStatistic = tr("Статистика <") + m_taskWidget->name() + QString(">");
     QString titleRealization = tr("Реализации <") + m_taskWidget->name() + QString(">");
+    QString titleParametrs = tr("Параметры <") + m_taskWidget->name() + QString(">");
     QString subTitle = subtitleForParametrs(ftype, task);
     for (int i = 0; i < dim; i++) {
         if (i < dim) {
@@ -421,6 +422,11 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->realizationSheetAtIndex(i).addCurve(x, y, name_sheet_x, selectRealizX, false);
     }
 
+//    for (auto param : filter->m_specific_params) {
+//        Core::GetStdDeviationX(filter->result(), i, y, scale[i]);
+//        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
+//    }
+
     if (ftype == LogicDynamic) {
         QVector<double> I, evaluationI, deltaI, PI, PdeltaI;
         double scaleI = 1.0;
@@ -466,6 +472,27 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->realizationLDSheet().addICurve(x, evaluationI, tr("Оценка I") + " (" + QString::number(numberTraectory) + ") ", selectRealizE, customRange, false);
         m_graphWindow->realizationLDSheet().addICurve(x, deltaI, tr("ΔI") + " (" + QString::number(numberTraectory) + ") ", deltaIColor, customRange, true);
 
+    }
+
+    if (filter->m_specific_params.size() > 0) {
+        if (m_graphWindow->reloadFilterParamsSheet()) {
+            m_graphWindow->parametersSheet().setTitleLabel(titleParametrs);
+            m_graphWindow->parametersSheet().setSubTitleLabel(tr(" "));
+
+            m_graphWindow->parametersSheet().setXLabel(tr("Время (с)"));
+            m_graphWindow->parametersSheet().setYLabel(tr("Значение параметра"));
+
+//            m_graphWindow->parametersSheet();
+
+            for (auto param : filter->m_specific_params) {
+
+                QPen paramPen;
+                paramPen.setWidthF(1.5);
+                paramPen.setColor(m_colorManager.nextColorAtIndex(m_colorManager.nextColorIndex()));
+
+                m_graphWindow->parametersSheet().addCurve(x, param.second, QString::fromStdString(param.first) + " " + fname, paramPen, true, true);
+            }
+        }
     }
 
     m_graphWindow->updateDefaultSheet();
