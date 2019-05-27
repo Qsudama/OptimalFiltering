@@ -440,7 +440,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 
         if (m_graphWindow->reloadStatisticSheet()) {
             m_graphWindow->statisticLDSheet().setTitleLabel(titleStatistic);
-            m_graphWindow->statisticLDSheet().setSubTitleLabel(tr("I"));
+            m_graphWindow->statisticLDSheet().setSubTitleLabel(subTitle);
 
             m_graphWindow->statisticLDSheet().setXLabel(tr("Время (с)"));
             m_graphWindow->statisticLDSheet().setYLabel(tr("Вероятность режима"));
@@ -455,7 +455,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 
         if (m_graphWindow->reloadRealizationSheet()) {
             m_graphWindow->realizationLDSheet().setTitleLabel(titleRealization);
-            m_graphWindow->realizationLDSheet().setSubTitleLabel(tr("I"));
+            m_graphWindow->realizationLDSheet().setSubTitleLabel(subTitle);
 
             m_graphWindow->realizationLDSheet().setXLabel(tr("Время (с)"));
             m_graphWindow->realizationLDSheet().setYLabel(tr("Номер режима"));
@@ -463,8 +463,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
             m_graphWindow->realizationLDSheet().addICurve(x, I, tr("I") + " (" + QString::number(numberTraectory) + ") ", mxPen, customRange, false);
         }
 
-        m_graphWindow->realizationLDSheet().addICurve(x, evaluationI, tr("Оценка I") + " (" + QString::number(numberTraectory) + ") ", selectRealizE, customRange, false);
-        m_graphWindow->realizationLDSheet().addICurve(x, deltaI, tr("ΔI") + " (" + QString::number(numberTraectory) + ") ", deltaIColor, customRange, true);
+        m_graphWindow->realizationLDSheet().addICurve(x, evaluationI, tr("Оценка I") + " (" + QString::number(numberTraectory) + ") " + " " + fname, selectRealizE, customRange, false);
+        m_graphWindow->realizationLDSheet().addICurve(x, deltaI, tr("ΔI") + " (" + QString::number(numberTraectory) + ") " + " " + fname, deltaIColor, customRange, true);
 
     }
 

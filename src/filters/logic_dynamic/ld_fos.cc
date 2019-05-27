@@ -116,6 +116,9 @@ void FOS::computeBlock3b()
 void FOS::computeBlock3c()
 {
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
+        if (s == 306) {
+            qDebug() << "K";
+        }
         Xi[s] = computeProbabilityDensityN(Q, m_sampleZ[s], meanZ, Dzz);
         for (int i = 0; i < m_task->countI; i++) {
             u[s][i] = Gamma[i]*m_sampleZ[s] + kappa[i];
