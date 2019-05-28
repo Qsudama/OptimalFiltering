@@ -42,11 +42,16 @@ public:
     GraphSheet &realizationSheetAtIndex(int index);
 
     //! \brief Возвращает ссылку на страницу с номером index.
+    GraphSheet &SeToSxSheetAtIndex(int index);
+
+    //! \brief Возвращает ссылку на страницу с номером index.
     GraphSheet &statisticLDSheet();
 
     GraphSheet &realizationLDSheet();
 
     GraphSheet &parametersSheet();
+
+    GraphSheet &SeToSxSheet();
 
     //! \brief Возвращает ссылку страницу, котороая отображается в данный момент.
     GraphSheet &currentSheet();
@@ -55,6 +60,8 @@ public:
     void setCountSheets(int count);
 
     void setCountRealizationSheets(int count);
+
+    void setCountSeToSxSheets(int count);
 
     bool reloadStatisticSheet();
 
@@ -114,6 +121,8 @@ private slots:
 
     void onShowFilterParamsSheet(bool checked);
 
+    void onShowSeToSxSheet(bool checked);
+
     //! \brief Показывает окно выбора границ осей координат при нажатии кнопки меню.
     void onShowSetRangesDialog();
 
@@ -161,6 +170,7 @@ private:
 
     QVector<GraphSheet> m_sheets;
     QVector<GraphSheet> m_realizationFiltersSheets;
+    QVector<GraphSheet> m_SeToSxSheets;
     GraphSheet *m_statisticLDFiltersSheet;
     GraphSheet *m_realizationLDFiltersSheet;
     GraphSheet *m_filterParametersSheet;
@@ -181,6 +191,7 @@ private:
     QAction *m_actionShowStatisticSheet;
     QAction *m_actionShowRealizationSheet;
     QAction *m_actionShowFilterParamsSheet;
+    QAction *m_actionShowSeToSxSheet;
 
     QMenu *m_menuFile;
     QMenu *m_menuView;

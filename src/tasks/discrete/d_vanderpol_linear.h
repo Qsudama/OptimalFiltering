@@ -51,8 +51,8 @@ protected:
     double deltaT = 0.1;
 
     static constexpr double m_omega = 0.1 * M_PI;
-    static constexpr double m_alpha = 2.0;
-    static constexpr double m_beta = 1.0;
+    static constexpr double m_alpha = 1.0;
+    static constexpr double m_beta = 0.25;
 };
 
 
