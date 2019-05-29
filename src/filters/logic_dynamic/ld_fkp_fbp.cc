@@ -82,10 +82,10 @@ void FKP_FBP::algorithm()
 
         // Блок 3
         writeResult(k, m_task->countI); // таймер паузится внутри
+        timerInstance.interrupt_timer();
         // Блок 3а
         computeBlock3a(k);
         // Блок 3б
-        timerInstance.interrupt_timer();
         computeBlock3b();
         // Блок 3в
         computeBlock3c();
