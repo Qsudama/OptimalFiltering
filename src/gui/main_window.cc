@@ -537,7 +537,7 @@ QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask 
     if (ftype == Discrete || ftype == LogicDynamic) {
         if (taskId == LDScalarRejectionLinear) {
             subTitle = subTitle +
-                tr(", СКО выброса ") + QString::number(task->params()->at("с(2)"));
+                tr(" СКО выброса ") + QString::number(task->params()->at("с(2)"));
         } else if (taskId == LDLandingRejection3DLinear || taskId == LDLandingRejection6DLinear) {
             subTitle = subTitle +
                 tr("шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());

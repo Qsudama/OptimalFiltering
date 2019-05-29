@@ -178,8 +178,10 @@ void FKP_FBP::computeBlock3b()
 
 void FKP_FBP::computeBlock3c()
 {
+    Array<double> det = calculateSqrtDeterminantForProbabilityDensityN(Dzz);
+    Array<Matrix> pinDs = pinvDForProbabilityDensityN(Dzz);
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
-        Xi[s] = computeProbabilityDensityN(Q, m_sampleS[s], meanS, Dzz);
+        Xi[s] = computeProbabilityDensityN(Q, m_sampleS[s], meanS, pinDs, det);
         for (int i = 0; i < m_task->countI; i++) {
             u[s][i] = Gamma[i]*m_sampleS[s] + kappa[i];
         }

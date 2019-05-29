@@ -115,11 +115,13 @@ void FOS::computeBlock3b()
 
 void FOS::computeBlock3c()
 {
+    Array<double> det = calculateSqrtDeterminantForProbabilityDensityN(Dzz);
+    Array<Matrix> pinDs = pinvDForProbabilityDensityN(Dzz);
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         if (s == 306) {
             qDebug() << "K";
         }
-        Xi[s] = computeProbabilityDensityN(Q, m_sampleZ[s], meanZ, Dzz);
+        Xi[s] = computeProbabilityDensityN(Q, m_sampleZ[s], meanZ, pinDs, det);
         for (int i = 0; i < m_task->countI; i++) {
             u[s][i] = Gamma[i]*m_sampleZ[s] + kappa[i];
         }
