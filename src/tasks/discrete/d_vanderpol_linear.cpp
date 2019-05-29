@@ -19,8 +19,8 @@ VanDerPolLinear::VanDerPolLinear()
 
     m_dimX      = 2;
     m_meanX0    = Vector(m_dimX);
-    m_meanX0[0] = 10.0;
-    m_meanX0[1] = -3.0;
+    m_meanX0[0] = 2.0;
+    m_meanX0[1] = 0.0;
 
     m_dimV  = 1;
     m_meanV = Vector::Zero(m_dimV);
@@ -99,7 +99,7 @@ Vector VanDerPolLinear::b_m(const Vector &x) const
 
 Vector VanDerPolLinear::tau(const Vector &z, const Matrix & /*D*/) const
 {
-    return a(z);
+    return a(z, m_meanV);
 }
 
 Matrix VanDerPolLinear::Theta(const Vector &z, const Matrix &P) const

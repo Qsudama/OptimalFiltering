@@ -53,6 +53,9 @@ protected:
     static constexpr double cc = 1.02;
     static constexpr double dd = 0.2;
     static constexpr double ee = 1.0;
+
+//    double dd = 0.2;
+//    double ee = 0.2;
 };
 
 

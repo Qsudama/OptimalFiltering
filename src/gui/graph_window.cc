@@ -51,6 +51,18 @@ void GraphWindow::initActions()
     m_actionShowRealizationSheet->setCheckable(true);
     m_actionShowRealizationSheet->setChecked(false);
     connect(m_actionShowRealizationSheet, SIGNAL(toggled(bool)), this, SLOT(onShowRealizationSheet(bool)));
+
+    m_actionShowFilterParamsSheet = new QAction(tr("Параметры"), this);
+    m_actionShowFilterParamsSheet->setEnabled(false);
+    m_actionShowFilterParamsSheet->setCheckable(true);
+    m_actionShowFilterParamsSheet->setChecked(false);
+    connect(m_actionShowFilterParamsSheet, SIGNAL(toggled(bool)), this, SLOT(onShowFilterParamsSheet(bool)));
+
+    m_actionShowSeToSxSheet = new QAction(tr("Se / Sx"), this);
+    m_actionShowSeToSxSheet->setEnabled(false);
+    m_actionShowSeToSxSheet->setCheckable(true);
+    m_actionShowSeToSxSheet->setChecked(false);
+    connect(m_actionShowSeToSxSheet, SIGNAL(toggled(bool)), this, SLOT(onShowSeToSxSheet(bool)));
 }
 
 void GraphWindow::initMenus()
@@ -67,6 +79,8 @@ void GraphWindow::initMenus()
     m_menuViewSheets = m_menuView->addMenu(tr("Отображение"));
     m_menuViewSheets->addAction(m_actionShowStatisticSheet);
     m_menuViewSheets->addAction(m_actionShowRealizationSheet);
+    m_menuViewSheets->addAction(m_actionShowFilterParamsSheet);
+    m_menuViewSheets->addAction(m_actionShowSeToSxSheet);
     m_menuView->addSeparator();
 
     m_menuSheet = m_menuView->addMenu(tr("Компонентa"));
@@ -186,7 +200,7 @@ void GraphWindow::updateMenu()
             action->setAutoRepeat(false);
             m_menuSheet->addAction(action);
         }
-    } else {
+    } else if (m_actionShowRealizationSheet->isChecked()) {
         for (int i = 0; i < m_realizationFiltersSheets.size(); i++) {
             QAction *action = new QAction(QString::number(i + 1), m_menuSheet);
             action->setData(i + 100);
@@ -208,7 +222,28 @@ void GraphWindow::updateMenu()
             action->setAutoRepeat(false);
             m_menuSheet->addAction(action);
         }
+    } else if (m_filterParametersSheet && m_actionShowFilterParamsSheet->isChecked()) {
+        QAction *action = new QAction(tr("Параметрыыыы"), m_menuSheet);
+        action->setData(99999999);
+        action->setCheckable(true);
+        action->setChecked(m_currentSheet == m_filterParametersSheet);
+        action->setAutoRepeat(false);
+        m_menuSheet->addAction(action);
+    } else if (m_actionShowSeToSxSheet->isChecked()) {
+        for (int i = 0; i < m_SeToSxSheets.size(); i++) {
+            QAction *action = new QAction(QString::number(i + 1), m_menuSheet);
+            action->setData(i + 1000);
+            action->setCheckable(true);
+            if (m_currentSheet == &(m_SeToSxSheets[i])) {
+                action->setChecked(true);
+            } else {
+                action->setChecked(false);
+            }
+            action->setAutoRepeat(false);
+            m_menuSheet->addAction(action);
+        }
     }
+
     connect(m_menuSheet, SIGNAL(triggered(QAction *)), this, SLOT(onCurrentSheetChanged(QAction *)));
 
     //меню - скрыть графики
@@ -358,18 +393,32 @@ void GraphWindow::onClear()
 {
     m_sheets.clear();
     m_realizationFiltersSheets.clear();
+    m_SeToSxSheets.clear();
 
-    delete m_statisticLDFiltersSheet;
-    m_statisticLDFiltersSheet = nullptr;
+    if (m_statisticLDFiltersSheet) {
+        delete m_statisticLDFiltersSheet;
+        m_statisticLDFiltersSheet = nullptr;
+    }
 
-    delete m_realizationLDFiltersSheet;
-    m_realizationLDFiltersSheet = nullptr;
+    if (m_realizationLDFiltersSheet) {
+        delete m_realizationLDFiltersSheet;
+        m_realizationLDFiltersSheet = nullptr;
+    }
 
-    m_currentSheet = nullptr;
-    delete m_currentSheet;
+    if (m_filterParametersSheet) {
+        delete m_filterParametersSheet;
+        m_filterParametersSheet = nullptr;
+    }
+
+    if (m_currentSheet) {
+        m_currentSheet = nullptr;
+        delete m_currentSheet;
+    }
 
     m_actionShowStatisticSheet->setChecked(true);
     m_actionShowRealizationSheet->setEnabled(false);
+    m_actionShowFilterParamsSheet->setEnabled(false);
+    m_actionShowSeToSxSheet->setEnabled(false);
     updatePlotter();
 }
 
@@ -397,6 +446,8 @@ void GraphWindow::onShowStatisticSheet(bool checked)
 {
     if (checked) {
         m_actionShowRealizationSheet->setChecked(false);
+        m_actionShowFilterParamsSheet->setChecked(false);
+        m_actionShowSeToSxSheet->setChecked(false);
         if (m_sheets.count() > 0) {
             m_currentSheet = &(m_sheets[0]);
             updatePlotter();
@@ -408,12 +459,41 @@ void GraphWindow::onShowRealizationSheet(bool checked)
 {
     if (checked) {
         m_actionShowStatisticSheet->setChecked(false);
+        m_actionShowFilterParamsSheet->setChecked(false);
+        m_actionShowSeToSxSheet->setChecked(false);
         if (m_realizationFiltersSheets.count() > 0) {
             m_currentSheet = &(m_realizationFiltersSheets[0]);
             updatePlotter();
         }
     }
 }
+
+void GraphWindow::onShowFilterParamsSheet(bool checked)
+{
+    if (checked) {
+        m_actionShowRealizationSheet->setChecked(false);
+        m_actionShowStatisticSheet->setChecked(false);
+        m_actionShowSeToSxSheet->setChecked(false);
+        if (m_filterParametersSheet) {
+            m_currentSheet = m_filterParametersSheet;
+            updatePlotter();
+        }
+    }
+}
+
+void GraphWindow::onShowSeToSxSheet(bool checked)
+{
+    if (checked) {
+        m_actionShowStatisticSheet->setChecked(false);
+        m_actionShowRealizationSheet->setChecked(false);
+        m_actionShowFilterParamsSheet->setChecked(false);
+        if (m_SeToSxSheets.count() > 0) {
+            m_currentSheet = &(m_SeToSxSheets[0]);
+            updatePlotter();
+        }
+    }
+}
+
 
 void GraphWindow::onShowSetRangesDialog()
 {
@@ -455,7 +535,7 @@ void GraphWindow::onCurrentSheetChanged(QAction *action)
         } else {
             m_currentSheet = m_statisticLDFiltersSheet;
         }
-    } else {
+    } else if (m_actionShowRealizationSheet->isChecked())  {
         if (snum < 0 || snum >= m_realizationFiltersSheets.size() + 1) {
             return;
         }
@@ -466,6 +546,21 @@ void GraphWindow::onCurrentSheetChanged(QAction *action)
             m_currentSheet = &(m_realizationFiltersSheets[snum]);
         } else {
             m_currentSheet = m_realizationLDFiltersSheet;
+        }
+    } else if (m_actionShowFilterParamsSheet->isChecked()) {
+        m_currentSheet = m_filterParametersSheet;
+    } else if (m_actionShowSeToSxSheet->isChecked()) {
+        int snum = action->data().toInt() - 1000;
+        if (snum < 0 || snum >= m_SeToSxSheets.size() + 1) {
+            return;
+        }
+        if (snum < m_SeToSxSheets.size()) {
+            if (m_currentSheet == &(m_SeToSxSheets[snum])) {
+                return;
+            }
+            m_currentSheet = &(m_SeToSxSheets[snum]);
+        } else {
+            m_currentSheet = m_statisticLDFiltersSheet;
         }
     }
 
@@ -562,6 +657,15 @@ GraphSheet &GraphWindow::realizationSheetAtIndex(int index)
     return m_realizationFiltersSheets[index];
 }
 
+GraphSheet &GraphWindow::SeToSxSheetAtIndex(int index)
+{
+    if (index <= 0 && index >= m_SeToSxSheets.size()) {
+        AlertHelper::showErrorAlertWithText("GraphWindow::realizationSheetAtIndex\nВыход за пределы!");
+        return m_SeToSxSheets[0];
+    }
+    return m_SeToSxSheets[index];
+}
+
 GraphSheet &GraphWindow::statisticLDSheet()
 {
     return *m_statisticLDFiltersSheet;
@@ -570,6 +674,11 @@ GraphSheet &GraphWindow::statisticLDSheet()
 GraphSheet &GraphWindow::realizationLDSheet()
 {
     return *m_realizationLDFiltersSheet;
+}
+
+GraphSheet &GraphWindow::parametersSheet()
+{
+    return *m_filterParametersSheet;
 }
 
 GraphSheet &GraphWindow::currentSheet()
@@ -590,6 +699,14 @@ void GraphWindow::setCountRealizationSheets(int count)
     m_realizationFiltersSheets.resize(count);
 }
 
+void GraphWindow::setCountSeToSxSheets(int count)
+{
+    if (count > 0) {
+        m_actionShowSeToSxSheet->setEnabled(true);
+    }
+    m_SeToSxSheets.resize(count);
+}
+
 bool GraphWindow::reloadStatisticSheet()
 {
     if (!m_statisticLDFiltersSheet) {
@@ -608,6 +725,16 @@ bool GraphWindow::reloadRealizationSheet()
     return false;
 }
 
+bool GraphWindow::reloadFilterParamsSheet()
+{
+    if (!m_filterParametersSheet) {
+        m_filterParametersSheet = new GraphSheet;
+        m_actionShowFilterParamsSheet->setEnabled(true);
+        return true;
+    }
+    return false;
+}
+
 void GraphWindow::updateDefaultSheet()
 {
     if (!m_currentSheet) {
@@ -620,9 +747,6 @@ void GraphWindow::updatePlotter()
     m_plotter->clearGraphs();
 
     if (m_currentSheet) {
-        if (m_realizationFiltersSheets.count() > 0) {
-        }
-
         GAxisRange range = m_currentSheet->axisRange();
         m_plotter->xAxis->setRange(range.xMin, range.xMax);
         m_plotter->yAxis->setRange(range.yMin, range.yMax);

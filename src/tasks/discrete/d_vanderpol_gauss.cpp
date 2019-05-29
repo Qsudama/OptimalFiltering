@@ -19,8 +19,8 @@ VanDerPolGauss::VanDerPolGauss()
 
     m_dimX      = 2;
     m_meanX0    = Vector(m_dimX);
-    m_meanX0[0] = 10.0;
-    m_meanX0[1] = -3.0;
+    m_meanX0[0] = 2.0;
+    m_meanX0[1] = 0.0;
 
     m_dimV  = 1;
     m_meanV = Vector::Zero(m_dimV);
@@ -138,16 +138,34 @@ Matrix VanDerPolGauss::F(const Vector &m, const Matrix &D) const {
 
 
 double VanDerPolGauss::moment(int k, int l, const Vector &m, const Matrix &D) const {
+
     if (k == 0 && l == 0) {
         return 1.0;
     } else if (k < 0 || l < 0) {
         return 0.0;
     }
 
+    if (k > l) {
+        return momentLowerK(k, l, m, D);
+    } else {
+        return momentLowerL(k, l, m, D);
+    }
+}
+
+double VanDerPolGauss::momentLowerK(int k, int l, const Vector &m, const Matrix &D) const {
+
     double arg2 = k > 1 ? (k - 1) * D(0, 0) * moment(k - 2, l, m, D) : 0.0;
     double arg3 = (l > 0 && k > 0) ? l * D(0, 1) * moment(k - 1, l - 1, m, D) : 0.0;
 
     return m[0] * moment(k - 1, l, m, D) + arg2 + arg3;
+}
+
+double VanDerPolGauss::momentLowerL(int k, int l, const Vector &m, const Matrix &D) const {
+
+    double arg2 = k > 0 ? k * D(1, 0) * moment(k - 1, l, m, D) : 0.0;
+    double arg3 = l > 1 ? (l - 1) * D(1, 1) * moment(k, l - 2, m, D) : 0.0;
+
+    return m[1] * moment(k, l - 1, m, D) + arg2 + arg3;
 }
 
 Matrix VanDerPolGauss::mXi(const Vector &m, const Matrix &D) const {

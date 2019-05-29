@@ -281,7 +281,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QColor color_realization_z = m_colorManager.nextColorRealizationZ();
 //    QColor color_PI = m_colorManager.nextColorPI();
     QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
-    QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ") + ss_filter;
+    QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ");
 
     QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ, deltaIColor, PIColor, PdeltaIColor;
     mxPen.setWidthF(2.0);
@@ -315,10 +315,13 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     if (m_graphWindow->countSheets() != dim) {
         m_graphWindow->setCountSheets(dim);
         m_graphWindow->setCountRealizationSheets(dim);
+        m_graphWindow->setCountSeToSxSheets(dim);
     }
 
     QString titleStatistic = tr("Статистика <") + m_taskWidget->name() + QString(">");
     QString titleRealization = tr("Реализации <") + m_taskWidget->name() + QString(">");
+    QString titleParametrs = tr("Параметры <") + m_taskWidget->name() + QString(">");
+    QString titleSeToSx = tr("Se / Sx <") + m_taskWidget->name() + QString(">");
     QString subTitle = subtitleForParametrs(ftype, task);
     for (int i = 0; i < dim; i++) {
         if (i < dim) {
@@ -326,6 +329,8 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
             m_graphWindow->sheetAtIndex(i).setSubTitleLabel(subTitle);
             m_graphWindow->realizationSheetAtIndex(i).setTitleLabel(titleRealization);
             m_graphWindow->realizationSheetAtIndex(i).setSubTitleLabel(subTitle);
+            m_graphWindow->SeToSxSheetAtIndex(i).setTitleLabel(titleSeToSx);
+            m_graphWindow->SeToSxSheetAtIndex(i).setSubTitleLabel(subTitle);
         }
     }
 
@@ -344,6 +349,13 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->realizationSheetAtIndex(0).setYLabel(tr("Скорости (м/с)"));
         m_graphWindow->realizationSheetAtIndex(1).setYLabel(tr("Угола наклона (°)"));
         m_graphWindow->realizationSheetAtIndex(2).setYLabel(tr("Высоты (м)"));
+
+        m_graphWindow->SeToSxSheetAtIndex(0).setXLabel(tr("Время (с)"));
+        m_graphWindow->SeToSxSheetAtIndex(1).setXLabel(tr("Время (с)"));
+        m_graphWindow->SeToSxSheetAtIndex(2).setXLabel(tr("Время (с)"));
+        m_graphWindow->SeToSxSheetAtIndex(0).setYLabel(tr("По скорости (м/c)"));
+        m_graphWindow->SeToSxSheetAtIndex(1).setYLabel(tr("По уголу наклона (°)"));
+        m_graphWindow->SeToSxSheetAtIndex(2).setYLabel(tr("По высоте (м)"));
     }
 
     if (taskId == LDScalarRejectionLinear) {
@@ -363,6 +375,13 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->realizationSheetAtIndex(3).setYLabel(tr("Квазиплотности (1/м)"));
         m_graphWindow->realizationSheetAtIndex(4).setYLabel(tr("Качества"));
         m_graphWindow->realizationSheetAtIndex(5).setYLabel(tr("Ошибки гировертикали (°)"));
+
+        m_graphWindow->SeToSxSheetAtIndex(3).setXLabel(tr("Время (с)"));
+        m_graphWindow->SeToSxSheetAtIndex(4).setXLabel(tr("Время (с)"));
+        m_graphWindow->SeToSxSheetAtIndex(5).setXLabel(tr("Время (с)"));
+        m_graphWindow->SeToSxSheetAtIndex(3).setYLabel(tr("По квазиплотности (1/м)"));
+        m_graphWindow->SeToSxSheetAtIndex(4).setYLabel(tr("По качеству"));
+        m_graphWindow->SeToSxSheetAtIndex(5).setYLabel(tr("По ошибке гировертикали (°)"));
     }
     Math::Vector scale(dim);
     if (taskId == LDLandingRejection3DLinear) {
@@ -385,7 +404,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         }
     }
 
-    QVector<double> x, y, y_up, y_down;
+    QVector<double> x, y, sx, seToSx, y_up, y_down;
     Core::GetTime(filter->result(), x);
 
     int numberTraectory = filter->params()->specificRealization();
@@ -394,14 +413,28 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         Core::GetMeanX(filter->result(), i, y, scale[i]);
         m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Mx" + QString::number(i + 1), mxPen, false);
 
-        Core::GetStdDeviationX(filter->result(), i, y, scale[i]);
-        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
+        Core::GetStdDeviationX(filter->result(), i, sx, scale[i]);
+        m_graphWindow->sheetAtIndex(i).addCurve(x, sx, "Sx" + QString::number(i + 1), sxPen, false);
 
         Core::GetMeanE(filter->result(), i, y, scale[i]);
         m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Me" + QString::number(i + 1) + " " + fname, mePen, false);
 
         Core::GetStdDeviationE(filter->result(), i, y, scale[i]);
-        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname, sePen, true);
+        double avrg = 0;
+        for (auto se : y) {
+            avrg += se / y.size();
+        }
+        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname + "Среднее = " + QString::number(avrg), sePen, true);
+
+        seToSx.resize(y.size());
+
+        double avrgSeToSx = 0;
+        for (int index = 0; index < y.size(); index++) {
+            seToSx[index] = y[index] / sx[index];
+            avrgSeToSx += seToSx[index] / y.size();
+        }
+
+        m_graphWindow->SeToSxSheetAtIndex(i).addCurve(x, seToSx, "Se" + QString::number(i + 1) + "/Sx" + QString::number(i + 1) + " " + fname + "Среднее = " + QString::number(avrgSeToSx), sePen, true);
 
         Core::GetRealizationE(filter->result(), i, y, scale[i]);
         Core::GetUpE(filter->result(), i, y_up, scale[i]);
@@ -420,6 +453,11 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         QString name_sheet_x = "X" + QString::number(i + 1) + " (" + QString::number(numberTraectory) + ") ";
         m_graphWindow->realizationSheetAtIndex(i).addCurve(x, y, name_sheet_x, selectRealizX, false);
     }
+
+//    for (auto param : filter->m_specific_params) {
+//        Core::GetStdDeviationX(filter->result(), i, y, scale[i]);
+//        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Sx" + QString::number(i + 1), sxPen, false);
+//    }
 
     if (ftype == LogicDynamic) {
         QVector<double> I, evaluationI, deltaI, PI, PdeltaI;
@@ -466,6 +504,25 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->realizationLDSheet().addICurve(x, evaluationI, tr("Оценка I") + " (" + QString::number(numberTraectory) + ") " + " " + fname, selectRealizE, customRange, false);
         m_graphWindow->realizationLDSheet().addICurve(x, deltaI, tr("ΔI") + " (" + QString::number(numberTraectory) + ") " + " " + fname, deltaIColor, customRange, true);
 
+    }
+
+    if (filter->m_specific_params.size() > 0) {
+        if (m_graphWindow->reloadFilterParamsSheet()) {
+            m_graphWindow->parametersSheet().setTitleLabel(titleParametrs);
+            m_graphWindow->parametersSheet().setSubTitleLabel(tr(" "));
+
+            m_graphWindow->parametersSheet().setXLabel(tr("Время (с)"));
+            m_graphWindow->parametersSheet().setYLabel(tr("Значение параметра"));
+
+            for (auto param : filter->m_specific_params) {
+
+                QPen paramPen;
+                paramPen.setWidthF(1.5);
+                paramPen.setColor(m_colorManager.nextColorAtIndex(m_colorManager.nextColorIndex()));
+
+                m_graphWindow->parametersSheet().addCurve(x, param.second, QString::fromStdString(param.first) + " " + fname, paramPen, true, true);
+            }
+        }
     }
 
     m_graphWindow->updateDefaultSheet();

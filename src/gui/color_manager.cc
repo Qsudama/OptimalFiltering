@@ -53,10 +53,8 @@ const int &ColorManager::nextColorIndex()
 {
     int index = m_currentIndex;
     ++m_currentIndex;
-    if (m_currentIndex >= m_colors.size()) {
-        m_currentIndex = 0;
-    }
-    return index;
+
+    return index % m_colors.size();
 }
 
 const QColor &ColorManager::nextColorAtIndex(int index)

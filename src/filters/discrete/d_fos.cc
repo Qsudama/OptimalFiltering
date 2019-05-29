@@ -29,6 +29,10 @@ void FOS::algorithm()
     Vector h, lambda;
     Matrix G, F, Psi, T;
 
+    registerSpecificParameter("Gamma", m_sampleX[0].size(), m_sampleX[0].size());
+    registerSpecificParameter("kappa", 1, m_sampleX[0].size());
+    registerSpecificParameter("T", m_sampleX[0].size(), m_sampleX[0].size());
+
     Array<Vector> sampleU(m_params->sampleSize());
 
     m_task->setStep(m_params->measurementStep());
@@ -82,6 +86,10 @@ void FOS::computeParams(size_t k, Array<Vector> &u, Matrix &T)
 
     chi = m_result[k].meanX - Gamma * Mean(sampleDelta);
     T   = m_result[k].varX - Gamma * Dxu.transpose();
+
+    saveSpecificParameter(Gamma, "Gamma", k);
+    saveSpecificParameter(chi, "kappa", k);
+    saveSpecificParameter(T, "T", k);
 
     // Индекс s пробегает по всем элементам выборки:
     for (size_t s = 0; s < m_params->sampleSize(); ++s) {

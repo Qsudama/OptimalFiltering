@@ -89,6 +89,8 @@ public:
     //! \brief Менеджер таймера работы фильтра.
     TimerManager& timerInstance;
 
+    std::map<string, QVector<double>> m_specific_params; /*!< Спецефические параметры фильтров. */
+
 protected:
     //! \brief Инициализирует массивы по входным данным.
     virtual void init();
@@ -120,6 +122,7 @@ public slots:
 
     void run();
 
+
 signals:
 
     //! \brief Информирует о прогрессе выполнения алгоритма (в процентах).
@@ -142,7 +145,8 @@ protected:
 
     Math::MultivariateNormalDistribution m_normalRand; /*!< Генератор гауссовских случайных векторов. */
 
-    std::map<std::string, Array<Vector>> m_specific_params; /*!< Спецефические параметры фильтров. */
+    void registerSpecificParameter(string name, int cols, int rows);
+    void saveSpecificParameter(Matrix param, string name, int step);
 };
 
 
