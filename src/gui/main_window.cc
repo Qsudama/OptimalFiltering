@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     initStatusBar();
 
     QRect screenRect = QApplication::desktop()->availableGeometry();
-    setGeometry(screenRect.x() + 25, screenRect.y() + 50, this->minimumWidth(), screenRect.height() - 75);
+    setGeometry(screenRect.x() + 25, screenRect.y() + 50, this->minimumWidth(), 760);//screenRect.height() - 75);
 
     initGraphWindow();
 }
@@ -152,8 +152,8 @@ void MainWindow::initGraphWindow()
                                   Qt::CustomizeWindowHint);
     m_graphWindow->setWindowTitle(tr("Графики"));
     QRect screenRect = QApplication::desktop()->availableGeometry();
-    m_graphWindow->setGeometry(this->x() + this->width() + 25, screenRect.y() + 50,
-                               screenRect.width() - this->width() - 75, screenRect.height() - 75);
+    m_graphWindow->setGeometry(this->x() + this->width() + 25, screenRect.y() + 50, 760, 760);
+                              // screenRect.width() - this->width() - 75, screenRect.height() - 75);
 
     connect(this, SIGNAL(clear()), m_graphWindow, SLOT(onClear()));
 

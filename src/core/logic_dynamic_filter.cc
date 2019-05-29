@@ -235,9 +235,19 @@ Array<double> LogicDynamicFilter::computeProbabilityDensityN(const Array<double>
 double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const double &det, const Matrix &pinD)
 {
     Vector diff = u - m;
-    double powerE = (-1 * diff.transpose() * pinD * diff / 2)(0, 0);
-    double resExp = exp(powerE);
+    double temp = (diff.transpose() * pinD * diff / 2)(0, 0);
+    if (temp < 0.0) {
+        temp = abs(temp);
+    }
+    double powerE = (-1 * temp);
+//    if (powerE > 0.0) {
+//        powerE = -1 * powerE;
+//    }
+    long double resExp = exp(powerE);
     double n = Omega * (resExp / det);
+//    if (std::isnan(n)) {
+//        qDebug() << "Nan";
+//    }
     return n;
 }
 
