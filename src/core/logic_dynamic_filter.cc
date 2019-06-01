@@ -128,7 +128,9 @@ void LogicDynamicFilter::computeBlock0()
 
 void LogicDynamicFilter::computeBlock1(long s, size_t /*k*/)
 {
-    P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], Phi[s]);
+    Array<double> det = calculateSqrtDeterminantForProbabilityDensityN(Phi[s]);
+    Array<Matrix> pinDs = pinvDForProbabilityDensityN(Phi[s]);
+    P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], pinDs, det);
     for (int i = 0; i < m_task->countI; i++) {
         K[s][i] = Delta[s][i]*Pinv(Phi[s][i]);
         Sigma[s][i] = Lambda[s][i] + K[s][i]*(m_sampleY[s] - Mu[s][i]);
@@ -204,7 +206,7 @@ void LogicDynamicFilter::computeBlock6(size_t /*k*/)
     }
 }
 
-Array<double> LogicDynamicFilter::computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &D)
+Array<double> LogicDynamicFilter::computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &pinD, const Array<double> &determinants)
 {
 
     Array<double> resP(m_task->countI);
@@ -215,7 +217,7 @@ Array<double> LogicDynamicFilter::computeProbabilityDensityN(const Array<double>
         Array<double> temp(m_task->countI);
 
         for (int i = 0; i < m_task->countI; i++) {
-            temp[i] = probabilityDensityN(omega[i], u, m[i], D[i]);
+            temp[i] = probabilityDensityN(omega[i], u, m[i], determinants[i], pinD[i]);
         }
         double sum = 0.0;
         for (int i = 0; i < m_task->countI; i++) {
@@ -230,21 +232,47 @@ Array<double> LogicDynamicFilter::computeProbabilityDensityN(const Array<double>
     return resP;
 }
 
-double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D)
+double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const double &det, const Matrix &pinD)
 {
-    double pi = Math::Const::PI;
-    Matrix det = 2 * pi * D;
-    double deter = det.determinant();
-    if (deter < 0.0) { // Это тестовый if. В теории его не должно быть.
-        deter = abs(deter);
-    }
-    double d = sqrt(deter);
-    Matrix pin = Pinv(D);
     Vector diff = u - m;
-    double powerE = (-1 * diff.transpose() * pin * diff / 2)(0, 0);
-    double resExp = exp(powerE);
-    double n = Omega * (resExp / d);
+    double temp = (diff.transpose() * pinD * diff / 2)(0, 0);
+    if (temp < 0.0) {
+        temp = abs(temp);
+    }
+    double powerE = (-1 * temp);
+//    if (powerE > 0.0) {
+//        powerE = -1 * powerE;
+//    }
+    long double resExp = exp(powerE);
+    double n = Omega * (resExp / det);
+//    if (std::isnan(n)) {
+//        qDebug() << "Nan";
+//    }
     return n;
+}
+
+Array<double> LogicDynamicFilter::calculateSqrtDeterminantForProbabilityDensityN(const Array<Math::Matrix> &D)
+{
+    Array<double> res(D.size());
+    for (size_t i = 0; i < D.size(); i++) {
+        double pi = Math::Const::PI;
+        Matrix det = 2 * pi * D[i];
+        double deter = det.determinant();
+        if (deter < 0.0) { // Это тестовый if. В теории его не должно быть.
+            deter = abs(deter);
+        }
+        res[i] = sqrt(deter);
+    }
+    return res;
+}
+
+Array<Matrix> LogicDynamicFilter::pinvDForProbabilityDensityN(const Array<Matrix> &D)
+{
+    Array<Matrix> res(D.size());
+    for (size_t i = 0; i < D.size(); i++) {
+        res[i] = Pinv(D[i]);
+    }
+    return res;
 }
 
 string LogicDynamicFilter::probabilityForView()

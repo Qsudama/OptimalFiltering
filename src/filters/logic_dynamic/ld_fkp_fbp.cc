@@ -82,10 +82,10 @@ void FKP_FBP::algorithm()
 
         // Блок 3
         writeResult(k, m_task->countI); // таймер паузится внутри
+        timerInstance.interrupt_timer();
         // Блок 3а
         computeBlock3a(k);
         // Блок 3б
-        timerInstance.interrupt_timer();
         computeBlock3b();
         // Блок 3в
         computeBlock3c();
@@ -178,8 +178,10 @@ void FKP_FBP::computeBlock3b()
 
 void FKP_FBP::computeBlock3c()
 {
+    Array<double> det = calculateSqrtDeterminantForProbabilityDensityN(Dzz);
+    Array<Matrix> pinDs = pinvDForProbabilityDensityN(Dzz);
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
-        Xi[s] = computeProbabilityDensityN(Q, m_sampleS[s], meanS, Dzz);
+        Xi[s] = computeProbabilityDensityN(Q, m_sampleS[s], meanS, pinDs, det);
         for (int i = 0; i < m_task->countI; i++) {
             u[s][i] = Gamma[i]*m_sampleS[s] + kappa[i];
         }
