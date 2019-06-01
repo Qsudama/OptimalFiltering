@@ -280,7 +280,6 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
     QColor color_realization_e = m_colorManager.nextColorRealizationE();
     QColor color_realization_z = m_colorManager.nextColorRealizationZ();
 //    QColor color_PI = m_colorManager.nextColorPI();
-    QString ss_filter = tr("s = ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString fname = QString::fromStdString(filter->info()->full_name()) + tr("; ");
 
     QPen mxPen, mePen, sxPen, sePen, upDownX, upDownE, selectRealizX, selectRealizE, selectRealizZ, deltaIColor, PIColor, PdeltaIColor;
@@ -424,7 +423,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         for (auto se : y) {
             avrg += se / y.size();
         }
-        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname + "Среднее = " + QString::number(avrg), sePen, true);
+        m_graphWindow->sheetAtIndex(i).addCurve(x, y, "Se" + QString::number(i + 1) + " " + fname + "среднее = " + QString::number(avrg), sePen, true);
 
         seToSx.resize(y.size());
 
@@ -434,7 +433,7 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
             avrgSeToSx += seToSx[index] / y.size();
         }
 
-        m_graphWindow->SeToSxSheetAtIndex(i).addCurve(x, seToSx, "Se" + QString::number(i + 1) + "/Sx" + QString::number(i + 1) + " " + fname + "Среднее = " + QString::number(avrgSeToSx), sePen, true);
+        m_graphWindow->SeToSxSheetAtIndex(i).addCurve(x, seToSx, "Se" + QString::number(i + 1) + "/Sx" + QString::number(i + 1) + " " + fname + "среднее = " + QString::number(avrgSeToSx), sePen, true);
 
         Core::GetRealizationE(filter->result(), i, y, scale[i]);
         Core::GetUpE(filter->result(), i, y_up, scale[i]);
@@ -532,15 +531,14 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
 }
 
 QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask task) {
+    QString ss_filter = tr(", размер выборки ") + QString::number(m_filterParamsWidget->parameters()->sampleSize());
     QString subTitle = m_startConditionsFilterWidget->initialConditionString();
     TASK_ID taskId = m_taskWidget->id();
     if (ftype == Discrete || ftype == LogicDynamic) {
         if (taskId == LDScalarRejectionLinear) {
-            subTitle = subTitle +
-                tr(" СКО выброса ") + QString::number(task->params()->at("с(2)"));
+            subTitle = subTitle + tr(" СКО выброса ") + QString::number(task->params()->at("с(2)"));
         } else if (taskId == LDLandingRejection3DLinear || taskId == LDLandingRejection6DLinear) {
-            subTitle = subTitle +
-                tr("шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
+            subTitle = subTitle + tr("шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
         } else {
           subTitle = subTitle +
             tr("шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
@@ -550,6 +548,7 @@ QString MainWindow::subtitleForParametrs(Core::FILTER_TYPE ftype, Core::PtrTask 
                 tr("шаг интегрирования ") + QString::number(m_filterParamsWidget->parameters()->integrationStep()) +
                 tr(", шаг между измерениями ") + QString::number(m_filterParamsWidget->parameters()->measurementStep());
     }
+    subTitle = subTitle + ss_filter;
     return subTitle;
 }
 
