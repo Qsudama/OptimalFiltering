@@ -91,13 +91,17 @@ Vector VanDerPolGauss::b_m(const Vector &x) const {
     return b(x, w);
 }
 
-Vector VanDerPolGauss::tau(const Vector &z, const Matrix & D) const {
+Vector VanDerPolGauss::tau(const Vector &m, const Matrix & D) const {
+    double a01 = moment(0, 1, m, D);
+    double a10 = moment(1, 0, m, D);
+    double a21 = moment(2, 1, m, D);
+
     Vector tau(m_dimX);
 
-    tau[0] = z[0] + deltaT * z[1];
-    tau[1] = z[1] + deltaT * (-pow(m_omega, 2) * z[0] + m_alpha * z[1] - m_alpha * m_beta * (pow(z[0], 2) * z[1] + 2.0 * z[0] * D(0, 1) + z[1] * D(0, 0)));
+    tau[0] = a10 + deltaT * a01;
+    tau[1] = a01 + deltaT * (-pow(m_omega, 2) * a10 + m_alpha * a01 - m_alpha * m_beta * a21) + a10 * m_meanV[0];
 
-    return a(z);
+    return tau;
 }
 
 Matrix VanDerPolGauss::Theta(const Vector &z, const Matrix &P) const {
@@ -125,14 +129,8 @@ Matrix VanDerPolGauss::G(const Vector &m, const Matrix & /*D*/) const {
 }
 
 Matrix VanDerPolGauss::F(const Vector &m, const Matrix &D) const {
-    Matrix F = Matrix::Zero(m_dimX, m_dimX);
 
-    F(0, 0) = 4.0 * pow(m[0], 2) * D(0, 0) + 2.0 * pow(D(0, 0), 2);
-    F(0, 1) = 2.0 * m[0] * D(0, 1);
-    F(1, 0) = 2.0 * m[0] * D(1, 0);
-    F(1, 1) = D(1, 1);
-
-    return F;
+    return mPi(m, D) - h(m, D) * h(m, D).transpose();
 }
 
 
@@ -168,6 +166,23 @@ double VanDerPolGauss::momentLowerL(int k, int l, const Vector &m, const Matrix 
     return m[1] * moment(k, l - 1, m, D) + arg2 + arg3;
 }
 
+Matrix VanDerPolGauss::mPi(const Vector &m, const Matrix &D) const {
+    double a01 = moment(0, 1, m, D);
+    double a11 = moment(1, 1, m, D);
+    double a20 = moment(2, 0, m, D);
+    double a02 = moment(0, 2, m, D);
+    double a40 = moment(4, 0, m, D);
+
+    Matrix mPi = Matrix::Zero(m_dimX, m_dimX);
+
+    mPi(0, 0) = a40 + 2.0 * a20 * pow(m_meanW[0], 2); //a20 + 2.0 * deltaT * a11 + pow(deltaT, 2) * a02;
+    mPi(0, 1) = a11 + a20 * m_meanW[1] + a01 * m_meanW[0] + m_meanW[0] * m_meanW[1];
+    mPi(1, 0) = mPi(0, 1);
+    mPi(1, 1) = a02 + 2.0 * a01 * m_meanW[1] + pow(m_meanW[1], 2);
+
+    return mPi;
+}
+
 Matrix VanDerPolGauss::mXi(const Vector &m, const Matrix &D) const {
     double a11 = moment(1, 1, m, D);
     double a20 = moment(2, 0, m, D);
@@ -181,10 +196,11 @@ Matrix VanDerPolGauss::mXi(const Vector &m, const Matrix &D) const {
     mXi(0, 0) = a20 + 2.0 * deltaT * a11 + pow(deltaT, 2) * a02;
     mXi(0, 1) = -a31 * m_alpha * m_beta * deltaT - a22 * m_alpha * m_beta * pow(deltaT, 2) + a02 * (m_alpha * pow(deltaT, 2) + deltaT) - a20 * deltaT * pow(m_omega, 2) + a11 * (m_alpha * deltaT - pow(deltaT, 2) * pow(m_omega, 2) + 1);
     mXi(1, 0) = mXi(0, 1);
-    mXi(1, 1) = a42 * pow(deltaT, 2) * pow(m_alpha, 2) * pow(m_beta, 2) - a22 * deltaT * m_alpha * m_beta *(deltaT * m_alpha + 2.0) + a31 * (2.0 * pow(deltaT, 2) * pow(m_omega, 2) * m_alpha * m_beta) + a20 * pow(deltaT, 2) * pow(m_omega, 4) + a02 * (pow(deltaT, 2) * pow(m_alpha, 2) + 2.0 * deltaT * m_alpha + 1.0) - a11 * 2.0 * deltaT * pow(m_omega, 2) * (deltaT * m_alpha + 1.0);
+    mXi(1, 1) = a42 * pow(deltaT, 2) * pow(m_alpha, 2) * pow(m_beta, 2) - a22 * 2.0 * deltaT * m_alpha * m_beta *(deltaT * m_alpha + 1.0) + a31 * (2.0 * pow(deltaT, 2) * pow(m_omega, 2) * m_alpha * m_beta) + a20 * (pow(deltaT, 2) * pow(m_omega, 4) + deltaT) + a02 * (pow(deltaT, 2) * pow(m_alpha, 2) + 2.0 * deltaT * m_alpha + 1.0) - a11 * 2.0 * deltaT * pow(m_omega, 2) * (deltaT * m_alpha + 1.0);
 
     return mXi;
 }
+
 
 
 Matrix VanDerPolGauss::dadx(const Vector &/*x*/) const

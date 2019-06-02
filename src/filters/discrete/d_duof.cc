@@ -76,7 +76,7 @@ void DUOF::computeSecondStep(long k, long i) {
     m_task->setTime(m_result[k - 1].time);
     Lambda[i] = compute_Lambda(i);
     m_sampleE[i] = compute_E(i);
-    m_sampleY[i] = m_task->b(m_sampleX[i], Lambda[i]);
+    m_sampleY[i] = m_task->b(m_sampleX[i]);
     deltaY[i] = compute_DeltaY(i);
     Omega[i] = compute_Omega(i);
 }

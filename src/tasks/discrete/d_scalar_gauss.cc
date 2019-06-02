@@ -37,15 +37,17 @@ ScalarGauss::ScalarGauss()
     m_varW(0, 0) = 1.0;
 
     (*m_consts)["a"] = aa;
-    (*m_consts)["b"] = bb;
     (*m_consts)["c"] = cc;
     (*m_consts)["d"] = dd;
-    (*m_consts)["e"] = ee;
+
+    (*m_params)["b"] = bb;
+    (*m_params)["e"] = ee;
 }
 
 void ScalarGauss::loadParams()
 {
-
+    bb = (*m_params).at("b");
+    ee = (*m_params).at("e");
 }
 
 Vector ScalarGauss::a(const Vector &x) const

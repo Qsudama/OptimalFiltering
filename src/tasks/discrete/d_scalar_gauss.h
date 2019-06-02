@@ -49,10 +49,11 @@ protected:
 
 protected:
     static constexpr double aa = 1.05;
-    static constexpr double bb = 0.01;
     static constexpr double cc = 1.02;
     static constexpr double dd = 0.2;
-    static constexpr double ee = 1.0;
+
+    double bb = 0.01;
+    double ee = 1.0;
 };
 
 
