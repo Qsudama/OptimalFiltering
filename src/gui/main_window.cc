@@ -345,9 +345,9 @@ void MainWindow::showData(Core::PtrFilter filter, Core::FILTER_TYPE ftype, Core:
         m_graphWindow->realizationSheetAtIndex(0).setXLabel(tr("Время (с)"));
         m_graphWindow->realizationSheetAtIndex(1).setXLabel(tr("Время (с)"));
         m_graphWindow->realizationSheetAtIndex(2).setXLabel(tr("Время (с)"));
-        m_graphWindow->realizationSheetAtIndex(0).setYLabel(tr("Скорости (м/с)"));
-        m_graphWindow->realizationSheetAtIndex(1).setYLabel(tr("Угола наклона (°)"));
-        m_graphWindow->realizationSheetAtIndex(2).setYLabel(tr("Высоты (м)"));
+        m_graphWindow->realizationSheetAtIndex(0).setYLabel(tr("По скорости (м/с)"));
+        m_graphWindow->realizationSheetAtIndex(1).setYLabel(tr("ПО уголу наклона (°)"));
+        m_graphWindow->realizationSheetAtIndex(2).setYLabel(tr("По высоте (м)"));
 
         m_graphWindow->SeToSxSheetAtIndex(0).setXLabel(tr("Время (с)"));
         m_graphWindow->SeToSxSheetAtIndex(1).setXLabel(tr("Время (с)"));
