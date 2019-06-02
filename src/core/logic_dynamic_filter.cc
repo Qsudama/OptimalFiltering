@@ -128,7 +128,7 @@ void LogicDynamicFilter::computeBlock0()
 
 void LogicDynamicFilter::computeBlock1(long s, size_t /*k*/)
 {
-    Array<double> det = calculateSqrtDeterminantForProbabilityDensityN(Phi[s]);
+    Array<double> det = calculateDeterminantForProbabilityDensityN(Phi[s]);
     Array<Matrix> pinDs = pinvDForProbabilityDensityN(Phi[s]);
     P[s] = computeProbabilityDensityN(Omega[s], m_sampleY[s], Mu[s], pinDs, det);
     for (int i = 0; i < m_task->countI; i++) {
@@ -240,9 +240,6 @@ double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector
         temp = abs(temp);
     }
     double powerE = (-1 * temp);
-//    if (powerE > 0.0) {
-//        powerE = -1 * powerE;
-//    }
     long double resExp = exp(powerE);
     double n = Omega * (resExp / det);
 //    if (std::isnan(n)) {
@@ -251,7 +248,7 @@ double LogicDynamicFilter::probabilityDensityN(const double &Omega, const Vector
     return n;
 }
 
-Array<double> LogicDynamicFilter::calculateSqrtDeterminantForProbabilityDensityN(const Array<Math::Matrix> &D)
+Array<double> LogicDynamicFilter::calculateDeterminantForProbabilityDensityN(const Array<Math::Matrix> &D)
 {
     Array<double> res(D.size());
     for (size_t i = 0; i < D.size(); i++) {
