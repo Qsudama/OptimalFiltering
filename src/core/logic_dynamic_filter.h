@@ -48,7 +48,9 @@ protected:
     void computeBlock5(long s, size_t k);
     void computeBlock6(size_t k);
 
-    Array<double> computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &D);
+    Array<double> computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &pinD, const Array<double> &determinants);
+    Array<double> calculateSqrtDeterminantForProbabilityDensityN(const Array<Matrix> &D);
+    Array<Matrix> pinvDForProbabilityDensityN(const Array<Matrix> &D);
 
     string probabilityForView();
 protected:
@@ -72,7 +74,7 @@ private:
     void computeZeroVectors();
     void computeBlock0();
 
-    double probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
+    double probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const double &det, const Matrix &pinD);
 };
 
 

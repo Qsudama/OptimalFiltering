@@ -795,9 +795,9 @@ void GraphWindow::updatePlotter()
                 m_plotter->graph(j+2)->setTag(i);
                 m_plotter->graph(j+1)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_up);
                 m_plotter->graph(j+1)->setPen(m_currentSheet->curves()[i].up_down_pen);
-                m_plotter->graph(j+1)->setName("Верхняя граница " + m_currentSheet->curves()[i].name);
+                m_plotter->graph(j+1)->setName("Up " + m_currentSheet->curves()[i].name);
                 m_plotter->graph(j+2)->setData(m_currentSheet->curves()[i].x, m_currentSheet->curves()[i].y_down);
-                m_plotter->graph(j+2)->setName("Нижняя граница " + m_currentSheet->curves()[i].name);
+                m_plotter->graph(j+2)->setName("Down " + m_currentSheet->curves()[i].name);
                 m_plotter->graph(j+2)->setPen(m_currentSheet->curves()[i].up_down_pen);
             }
         }
