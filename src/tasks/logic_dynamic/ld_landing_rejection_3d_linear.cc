@@ -36,12 +36,14 @@ LandingRejection3DLinear::LandingRejection3DLinear() : LogicDynamicTask()
     m_meanV = Vector::Zero(m_dimV);
     m_meanW = Vector::Zero(m_dimW);
 
-    static double radian = 0.017453;
+    static double test_coeff = 0.1;
+
+    static double radian = test_coeff * 0.017453;
 
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
-    m_varX0(0, 0) = pow(0.015, 2); // Sigma_V_0
+    m_varX0(0, 0) = pow((test_coeff * 0.015), 2); // Sigma_V_0
     m_varX0(1, 1) = pow(radian, 2); // Sigma_theta_0
-    m_varX0(2, 2) = pow(1, 2); // Sigma_H_0
+    m_varX0(2, 2) = pow(test_coeff, 2); // Sigma_H_0
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
     m_varW = Matrix::Zero(m_dimW, m_dimW);
@@ -65,6 +67,7 @@ LandingRejection3DLinear::LandingRejection3DLinear() : LogicDynamicTask()
     (*m_params)["Кол-во режимов I"] = countIInTask;
     (*m_params)["GammaX_min"] = gamMinX;
     (*m_params)["GammaY_min"] = gamMinY;
+    (*m_params)["MinDetD"] = minDetD;
 
 }
 
@@ -73,6 +76,7 @@ void LandingRejection3DLinear::loadParams()
     countI              = m_params->at("Кол-во режимов I");
     gamMinX             = m_params->at("GammaX_min");
     gamMinY             = m_params->at("GammaY_min");
+    minDetD             = m_params->at("MinDetD");
     m_turnTime          = m_params->at("tau");
     m_e                 = m_params->at("e");
 

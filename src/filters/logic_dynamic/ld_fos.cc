@@ -115,7 +115,7 @@ void FOS::computeBlock3b()
 
 void FOS::computeBlock3c()
 {
-    Array<double> det = calculateSqrtDeterminantForProbabilityDensityN(Dzz);
+    Array<double> det = calculateDeterminantForProbabilityDensityN(Dzz);
     Array<Matrix> pinDs = pinvDForProbabilityDensityN(Dzz);
     for (size_t s = 0; s < m_params->sampleSize(); s++) {
         Xi[s] = computeProbabilityDensityN(Q, m_sampleZ[s], meanZ, pinDs, det);

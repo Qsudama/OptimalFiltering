@@ -49,7 +49,7 @@ protected:
     void computeBlock6(size_t k);
 
     Array<double> computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &pinD, const Array<double> &determinants);
-    Array<double> calculateSqrtDeterminantForProbabilityDensityN(const Array<Matrix> &D);
+    Array<double> calculateDeterminantForProbabilityDensityN(const Array<Matrix> &D);
     Array<Matrix> pinvDForProbabilityDensityN(const Array<Matrix> &D);
 
     string probabilityForView();
