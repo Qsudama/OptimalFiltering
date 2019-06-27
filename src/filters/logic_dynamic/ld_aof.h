@@ -43,11 +43,6 @@ protected:
 
 private:
 
-    void computeBlock1(long s, size_t k);
-    void computeBlock2(long s, size_t k);
-    void computeBlock4(long s, size_t k);
-    void computeBlock5(long s, size_t k);
-    void computeBlock6();
 };
 
 

@@ -36,7 +36,22 @@ public:
     int countSheets() const;
 
     //! \brief Возвращает ссылку на страницу с номером index.
-    GraphSheet &sheet(int index);
+    GraphSheet &sheetAtIndex(int index);
+
+    //! \brief Возвращает ссылку на страницу с номером index.
+    GraphSheet &realizationSheetAtIndex(int index);
+
+    //! \brief Возвращает ссылку на страницу с номером index.
+    GraphSheet &SeToSxSheetAtIndex(int index);
+
+    //! \brief Возвращает ссылку на страницу с номером index.
+    GraphSheet &statisticLDSheet();
+
+    GraphSheet &realizationLDSheet();
+
+    GraphSheet &parametersSheet();
+
+    GraphSheet &SeToSxSheet();
 
     //! \brief Возвращает ссылку страницу, котороая отображается в данный момент.
     GraphSheet &currentSheet();
@@ -44,9 +59,20 @@ public:
     //! \brief Устанавливает количество страниц
     void setCountSheets(int count);
 
+    void setCountRealizationSheets(int count);
+
+    void setCountSeToSxSheets(int count);
+
+    bool reloadStatisticSheet();
+
+    bool reloadRealizationSheet();
+
+    bool reloadFilterParamsSheet();
+
     //! \brief Обновляет поле рисовальщика QCustomPlot (заставляет перерисовать себя).
     void updatePlotter();
 
+    void updateDefaultSheet();
 
 public slots:
     //! \brief Удаляет пользовательские данные, устанавливает значения по-умолчанию.
@@ -88,6 +114,14 @@ private slots:
         \todo Расширение ".png" не добавляется к концу имени файла автоматически. Надо запилить.
     */
     void onSavePng();
+
+    void onShowStatisticSheet(bool checked);
+
+    void onShowRealizationSheet(bool checked);
+
+    void onShowFilterParamsSheet(bool checked);
+
+    void onShowSeToSxSheet(bool checked);
 
     //! \brief Показывает окно выбора границ осей координат при нажатии кнопки меню.
     void onShowSetRangesDialog();
@@ -132,7 +166,15 @@ private:
 
 
 private:
+//    bool m_showRealizationSheets;
+
     QVector<GraphSheet> m_sheets;
+    QVector<GraphSheet> m_realizationFiltersSheets;
+    QVector<GraphSheet> m_SeToSxSheets;
+    GraphSheet *m_statisticLDFiltersSheet;
+    GraphSheet *m_realizationLDFiltersSheet;
+    GraphSheet *m_filterParametersSheet;
+
     GraphSheet *        m_currentSheet;
     QCustomPlot *       m_plotter;
 
@@ -146,8 +188,14 @@ private:
     QAction *m_actionShowSetRangesDialog;
     QAction *m_actionSetAutoRanges;
 
+    QAction *m_actionShowStatisticSheet;
+    QAction *m_actionShowRealizationSheet;
+    QAction *m_actionShowFilterParamsSheet;
+    QAction *m_actionShowSeToSxSheet;
+
     QMenu *m_menuFile;
     QMenu *m_menuView;
+    QMenu *m_menuViewSheets;
     QMenu *m_menuSheet;
     QMenu *m_menuShow;
     QMenu *m_menuHide;

@@ -50,7 +50,7 @@ private:
     MatrixWidget *m_varV;
     MatrixWidget *m_varW;
 
-    QVector<QDoubleSpinBox *> m_params;
+    QVector<QCustomDoubleSpinBox *> m_params;
     QVector<QDoubleSpinBox *> m_consts;
 };
 

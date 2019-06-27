@@ -22,10 +22,16 @@
 #include <QStatusBar>
 #include <QVector>
 
-
 /*!
  \brief Класс для главного окна приложения.
 */
+
+struct RunningFilter
+{
+    PtrTask task;
+    Core::FILTER_TYPE ftype;
+    PtrFilter filter;
+};
 
 class MainWindow : public QMainWindow
 {
@@ -50,6 +56,9 @@ private slots:
     //! Показывает / скрывает таблицы результатов.
     void onShowHideTables();
 
+    //! Показывает таблицу результатов работы таймера.
+    void onShowTableTimer();
+
     //! Отображает прогресс выполнеия алгоритма (связывается с Filter).
     void onFilterUpdatePercent(int p);
 
@@ -61,7 +70,8 @@ private slots:
      \param id    - идентификатор алгоритма.
     */
     void onStart(Core::FILTER_TYPE ftype, Core::APPROX_TYPE atype, FILTER_ID id);
-
+public slots:
+    void onFinishExecutingFilter();
 
 protected:
     //! \brief Закрывает все второстепенные окна, затем себя.
@@ -95,9 +105,6 @@ private:
     //! \brief Добавляет новую таблицу и открывает ее окно.
     void addTable(const Core::FilterOutput &data, const std::string &label, const Vector &scale);
 
-
-    void showErrorMessage (void);
-
 private:
     ColorManager m_colorManager;
     bool         m_tablesIsVisible;
@@ -111,9 +118,12 @@ private:
     StartConditionsFilterWidget *m_startConditionsFilterWidget;
     QPushButton *             m_btnClear;
     QPushButton *             m_btnShowHideTables;
+    QPushButton *             m_btnShowTimes;
 
     QVector<FilterResultsTable *> m_tables;
-};
+    QVector<FilterTimeResult> m_filter_time_results;
 
+    QVector<RunningFilter> m_runningFilters;
+};
 
 #endif // MAINWINDOW_H

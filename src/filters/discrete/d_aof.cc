@@ -15,7 +15,9 @@ AOF::AOF(Core::PtrFilterParameters params, Core::PtrTask task)
     : DiscreteFilter(params, task)
 {
     long n = task->dimX();
-    m_info->setName(m_task->info()->type() + "AОФд (p=" + std::to_string(n * (n + 3) / 2) + ")");
+//    m_info->setFullName(m_task->info()->type() + "AОФд (p=" + std::to_string(n * (n + 3) / 2) + ")");
+    m_info->setName("AОФд");
+    m_info->setDimension("(p=" + std::to_string(n * (n + 3) / 2) + ")");
 }
 
 void AOF::zeroIteration()

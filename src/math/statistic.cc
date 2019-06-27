@@ -1,6 +1,7 @@
 #include "statistic.h"
 #include <algorithm>
 
+#include "src/helpers/alert_helper.h"
 
 namespace Math
 {
@@ -22,8 +23,10 @@ double Mean(const Array<double> &sampleX)
 
 double Mean(const Array<double> &sampleX, const Array<int> sampleI, int i)
 {
-    assert(sampleX.size() == sampleI.size());
-
+    if (sampleX.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Mean(sampleX, sampleI)(1)\nsampleX.size() != sampleI.size()");
+        return 0.0;
+    }
     double sumXi   = 0.0;
     int    countXi = 0;
     for (size_t j = 0; j < sampleI.size(); ++j) {
@@ -45,11 +48,12 @@ Vector Mean(const Array<Vector> &sampleX)
 }
 
 // Логико - динамика
-
 Vector Mean(const Array<Vector> &sampleX, const Array<int> sampleI, int i)
 {
-    assert(sampleX.size() == sampleI.size());
-
+    if (sampleX.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Mean(sampleX, sampleI)(2)\nsampleX.size() != sampleI.size()");
+        return Vector::Zero(sampleX.size());
+    }
     Vector sumXi   = Vector::Zero(sampleX[0].size());
     int    countXi = 0;
     for (size_t j = 0; j < sampleI.size(); ++j) {
@@ -74,8 +78,10 @@ double Var(const Array<double> &sampleX, double meanX)
 
 double Var(const Array<double> &sampleX, double meanXi, const Array<int> sampleI, int i)
 {
-    assert(sampleX.size() == sampleI.size());
-
+    if (sampleX.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Var(sampleX, meanXi, sampleI)(3)\nsampleX.size() != sampleI.size()");
+        return 0.0;
+    }
     double sumXi = 0.0;
     int    count = 0;
     for (size_t j = 0; j < sampleI.size(); ++j) {
@@ -95,16 +101,20 @@ double Var(const Array<double> &sampleX)
 
 double Var(const Array<double> &sampleX, const Array<int> sampleI, int i)
 {
-    assert(sampleX.size() == sampleI.size());
-
+    if (sampleX.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Var(sampleX, sampleI)(4)\nsampleX.size() != sampleI.size()");
+        return 0.0;
+    }
     double meanXi = Mean(sampleX, sampleI, i);
     return Var(sampleX, meanXi, sampleI, i);
 }
 
 Matrix Var(const Array<Vector> &sampleX, const Vector &meanX)
 {
-    assert(sampleX[0].size() == meanX.size());
-
+    if (sampleX[0].size() != meanX.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Var(sampleX, meanX)(5)\nsampleX[0].size() != meanX.size()");
+        return Vector::Zero(sampleX[0].size());
+    }
     Matrix sumXX = Matrix::Zero(sampleX[0].size(), sampleX[0].size());
     for (size_t i = 0; i < sampleX.size(); ++i) {
         sumXX += sampleX[i] * sampleX[i].transpose();
@@ -116,9 +126,14 @@ Matrix Var(const Array<Vector> &sampleX, const Vector &meanX)
 
 Matrix Var(const Array<Vector> &sampleX, const Vector &meanX, const Array<int> sampleI, int i)
 {
-    assert(sampleX.size() == sampleI.size());
-    assert(sampleX[0].size() == meanX.size());
-
+    if (sampleX.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Var(sampleX, meanX, sampleI)(6)\nsampleX.size() != sampleI.size()");
+        return Vector::Zero(sampleX.size());
+    }
+    if (sampleX[0].size() != meanX.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Var(sampleX, meanX, sampleI)(7)\nsampleX[0].size() != meanX.size()");
+        return Vector::Zero(sampleX.size());
+    }
     Matrix sumXX = Matrix::Zero(sampleX[0].size(), sampleX[0].size());
     int    count = 0;
     for (size_t j = 0; j < sampleX.size(); ++j) {
@@ -146,8 +161,10 @@ Matrix Var(const Array<Vector> &sampleX, const Array<int> sampleI, int i)
 
 double Cov(const Array<double> &sampleX, const Array<double> &sampleY)
 {
-    assert(sampleX.size() == sampleY.size());
-
+    if (sampleX.size() != sampleY.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY)(8)\nsampleX.size() != sampleY.size()");
+        return 0.0;
+    }
     size_t size  = sampleX.size();
     double sumX  = 0.0;
     double sumY  = 0.0;
@@ -165,9 +182,14 @@ double Cov(const Array<double> &sampleX, const Array<double> &sampleY)
 double Cov(const Array<double> &sampleX, const Array<double> &sampleY, const Array<int> sampleI,
            int i)
 {
-    assert(sampleX.size() == sampleI.size());
-    assert(sampleY.size() == sampleI.size());
-
+    if (sampleX.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY, sampleI)(9)\nsampleX.size() != sampleI.size()");
+        return 0.0;
+    }
+    if (sampleY.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY, sampleI)(10)\nsampleY.size() != sampleI.size()");
+        return 0.0;
+    }
     double meanXi = Mean(sampleX, sampleI, i);
     double meanYi = Mean(sampleY, sampleI, i);
 
@@ -179,9 +201,14 @@ double Cov(const Array<double> &sampleX, const Array<double> &sampleY, const Arr
 double Cov(const Array<double> &sampleX, const Array<double> &sampleY, const double &meanX,
            const double &meanY, const Array<int> sampleI, int i)
 {
-    assert(sampleX.size() == sampleI.size());
-    assert(sampleY.size() == sampleI.size());
-
+    if (sampleX.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY, sampleI)(11)\nsampleX.size() != sampleI.size()");
+        return 0.0;
+    }
+    if (sampleY.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY, sampleI)(12)\nsampleY.size() != sampleI.size()");
+        return 0.0;
+    }
     double res = 0.0;
     int count = 0;
     for (size_t j = 0; j < sampleI.size(); ++j) {
@@ -196,8 +223,10 @@ double Cov(const Array<double> &sampleX, const Array<double> &sampleY, const dou
 
 Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
 {
-    assert(sampleX.size() == sampleY.size());
-
+    if (sampleX.size() != sampleY.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY)(13)\nsampleX.size() != sampleY.size()");
+        return Vector::Zero(sampleX.size());
+    }
     size_t size  = sampleX.size();
     long   dimX  = sampleX[0].size();
     long   dimY  = sampleY[0].size();
@@ -217,9 +246,14 @@ Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY)
 Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Array<int> sampleI,
            int i)
 {
-    assert(sampleX.size() == sampleI.size());
-    assert(sampleY.size() == sampleI.size());
-
+    if (sampleX.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY, sampleI)(14)\nsampleX.size() != sampleI.size()");
+        return Vector::Zero(sampleX.size());
+    }
+    if (sampleY.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY, sampleI)(15)\nsampleY.size() != sampleI.size()");
+        return Vector::Zero(sampleY.size());
+    }
     Vector meanXi = Mean(sampleX, sampleI, i);
     Vector meanYi = Mean(sampleY, sampleI, i);
 
@@ -231,9 +265,14 @@ Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Arr
 Matrix Cov(const Array<Vector> &sampleX, const Array<Vector> &sampleY, const Vector &meanXi,
            const Vector &meanYi,  const Array<int> sampleI, int i)
 {
-    assert(sampleX.size() == sampleI.size());
-    assert(sampleY.size() == sampleI.size());
-
+    if (sampleX.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY, sampleI)(16)\nsampleX.size() != sampleI.size()");
+        return Vector::Zero(sampleX.size());
+    }
+    if (sampleY.size() != sampleI.size()) {
+        AlertHelper::showErrorAlertWithText("Math::Statistic::Cov(sampleX, sampleY, sampleI)(17)\nsampleY.size() != sampleI.size()");
+        return Vector::Zero(sampleY.size());
+    }
     long   dimX  = sampleX[0].size();
     long   dimY  = sampleY[0].size();
     Matrix sumXY = Matrix::Zero(dimX, dimY);

@@ -36,7 +36,7 @@ LandingLinear::LandingLinear()
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
     m_varX0(0, 0) = pow(15E-3, 2);
     m_varX0(1, 1) = pow(DegToRad(1.0), 2);
-    m_varX0(2, 2) = pow(7.0, 2);
+    m_varX0(2, 2) = pow(1.0, 2);
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
 
@@ -114,30 +114,29 @@ Matrix LandingLinear::A(const Vector &m, const Matrix & /*D*/) const
 }
 
 
-Vector LandingLinear::c(const Vector &x) const
+Vector LandingLinear::c(const Vector &x, double measurementStep) const
 {
     double e = exp(-BB * x[2]);
-    Vector w = m_normalRand(m_meanW, m_varW);
+    Vector w = 1.0 / sqrt(measurementStep) * m_normalRand(m_meanW, m_varW);
     Vector res(m_dimY);
 
     res[0] = CC * (w[0] + 1.0) * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1])) + w[2];
-    res[1] = CC * (w[1] + 1.0) * x[0] * x[0] * e * (sin(x[1]) - k(m_time) * cos(x[1])) + w[3];
-
+    res[1] = CC * (w[1] + 1.0) * x[0] * x[0] * e * (sin(x[1]) + k(m_time) * cos(x[1])) + w[3];
     return res;
 }
 
-Vector LandingLinear::h(const Vector &m, const Matrix & /* D*/) const
+Vector LandingLinear::h(const Vector &m, const Matrix & /* D*/, double /*measurementStep*/) const
 {
     double e = exp(-BB * m[2]);
     Vector res(m_dimY);
 
     res[0] = CC * m[0] * m[0] * e * (cos(m[1]) - k(m_time) * sin(m[1])) * (1.0 + m_meanW[0]) + m_meanW[2];
-    res[1] = CC * m[0] * m[0] * e * (sin(m[1]) - k(m_time) * cos(m[1])) * (1.0 + m_meanW[1]) + m_meanW[3];
+    res[1] = CC * m[0] * m[0] * e * (sin(m[1]) + k(m_time) * cos(m[1])) * (1.0 + m_meanW[1]) + m_meanW[3];
 
     return res;
 }
 
-Matrix LandingLinear::G(const Vector &m, const Matrix & /*D*/) const
+Matrix LandingLinear::G(const Vector &m, const Matrix & /*D*/, double /*measurementStep*/) const
 {
     double e  = exp(-BB * m[2]);
     double kt = k(m_time);
@@ -147,17 +146,16 @@ Matrix LandingLinear::G(const Vector &m, const Matrix & /*D*/) const
     res(0, 1) = -CC * m[0] * m[0] * (m_meanW[0] + 1.0) * e * sin(m[1]);
     res(0, 2) = -BB * CC * m[0] * m[0] * (m_meanW[0] + 1.0) * e * (cos(m[1]) - kt * sin(m[1]));
 
-    res(1, 0) = 2.0 * CC * m[0] * (m_meanW[1] + 1.0) * e * (sin(m[1]) - kt * cos(m[1]));
+    res(1, 0) = 2.0 * CC * m[0] * (m_meanW[1] + 1.0) * e * (sin(m[1]) + kt * cos(m[1]));
     res(1, 1) = CC * m[0] * m[0] * (m_meanW[1] + 1.0) * e * cos(m[1]);
-    res(1, 2) = -BB * CC * m[0] * m[0] * (m_meanW[1] + 1.0) * e * (sin(m[1]) - kt * cos(m[1]));
-
+    res(1, 2) = -BB * CC * m[0] * m[0] * (m_meanW[1] + 1.0) * e * (sin(m[1]) + kt * cos(m[1]));
     return res;
 }
 
-Matrix LandingLinear::F(const Vector &m, const Matrix &D) const
+Matrix LandingLinear::F(const Vector &m, const Matrix &D, double measurementStep) const
 {
     double e  = exp(-BB * m[2]);
-    Matrix cx = G(m, D);
+    Matrix cx = G(m, D, measurementStep);
     Matrix cw(m_dimY, m_dimW);
 
     cw(0, 0) = CC * m[0] * m[0] * e * (cos(m[1]) - k(m_time) * sin(m[1]));
@@ -170,7 +168,7 @@ Matrix LandingLinear::F(const Vector &m, const Matrix &D) const
     cw(1, 2) = 0.0;
     cw(1, 3) = 1.0;
 
-    return cx * D * cx.transpose() + cw * m_varW * cw.transpose();
+    return cx * D * cx.transpose() + cw * 1.0/measurementStep * cw.transpose();
 }
 
 

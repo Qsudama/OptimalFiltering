@@ -39,20 +39,20 @@ protected:
     */
     void zeroIteration() override;
 
-    double execute_time_filter() override;
+    FilterTimeResult execute_time_filter() override;
 
-    double calculate_d(const Matrix &D);
-    double calculate_e(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
+    void computeBlock1(long s, size_t k);
+    void computeBlock2(long s, size_t k);
 
-    double probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const Matrix &D);
-    Array<double> computeProbabilityDensityN(Array<double> omega, Vector sampleVector,
-                                             Array<Vector> m, Array<Matrix> D);
+    void computeBlock4(long s, size_t k, const Array<double> &p, const Array<Vector> &sigma, const Array<Matrix> &upsilon);
+    void computeBlock5(long s, size_t k);
+    void computeBlock6(size_t k);
 
+    Array<double> computeProbabilityDensityN(const Array<double> &omega, const Vector &u, const Array<Vector> &m, const Array<Matrix> &pinD, const Array<double> &determinants);
+    Array<double> calculateDeterminantForProbabilityDensityN(const Array<Matrix> &D);
+    Array<Matrix> pinvDForProbabilityDensityN(const Array<Matrix> &D);
 
-    /*! \brief Функция возвращающая тип моделирования начальных условий фильтра для вывода на экран
-    */
-    string initialConditWithType();
-
+    string probabilityForView();
 protected:
     PtrLDTask  m_task; /*!< Указатель на экземпляр задачи, с которой происходит работа. */
 
@@ -65,7 +65,7 @@ protected:
     Array<Array<double>> P;
     Array<Array<Matrix>> K;
     Array<Array<Vector>> Sigma;
-    Array<Array<Matrix>> Upsilon;
+    Array<Array<Matrix>> Upsilon; 
 
     FILTER_ID m_identifier;
 
@@ -74,7 +74,7 @@ private:
     void computeZeroVectors();
     void computeBlock0();
 
-    bool m_bad;
+    double probabilityDensityN(const double &Omega, const Vector &u, const Vector &m, const double &det, const Matrix &pinD);
 };
 
 

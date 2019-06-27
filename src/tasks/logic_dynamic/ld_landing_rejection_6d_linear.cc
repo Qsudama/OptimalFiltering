@@ -45,16 +45,10 @@ LandingRejection6DLinear::LandingRejection6DLinear() : LogicDynamicTask()
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
     m_varX0(0, 0) = pow(0.015, 2); // Sigma_V_0
     m_varX0(1, 1) = pow(radian, 2); // Sigma_theta_0
-    m_varX0(2, 2) = pow(7, 2); // Sigma_H_0
-
-// Фильтр работает только по 3-м координатам
-    //    m_varX0(3, 3) = pow(CC, 2); // Sigma_c
-    //    m_varX0(4, 4) = pow(0.02, 2); // Sigma_b
-    //    m_varX0(5, 5) = pow(radian, 2); // Sigma_varphi
-
-    m_varX0(3, 3) = pow(0.0, 2); // Sigma_c
-    m_varX0(4, 4) = pow(0.0, 2); // Sigma_b
-    m_varX0(5, 5) = pow(0.0, 2); // Sigma_varphi
+    m_varX0(2, 2) = pow(1, 2); // Sigma_H_0
+    m_varX0(3, 3) = pow(CC, 2); // Sigma_c
+    m_varX0(4, 4) = pow(0.02, 2); // Sigma_b
+    m_varX0(5, 5) = pow(radian, 2); // Sigma_varphi
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
     m_varW = Matrix::Zero(m_dimW, m_dimW);
@@ -64,20 +58,20 @@ LandingRejection6DLinear::LandingRejection6DLinear() : LogicDynamicTask()
     m_varW(2, 2) = pow(0.00002, 2); // Sigma_W
     m_varW(3, 3) = pow(0.00002, 2); // Sigma_W
 
-    (*m_consts)["Kb"]     = KB;
-    (*m_consts)["Beta"]   = BB;
-    (*m_consts)["g"]      = GG;
-    (*m_consts)["R"]      = RR;
+    (*m_consts)["Kb"] = KB;
+    (*m_consts)["Beta"] = BB;
+    (*m_consts)["g"] = GG;
+    (*m_consts)["R"] = RR;
 
-    (*m_consts)["p"]   = 1 - m_e;
+    (*m_consts)["p"] = 1 - m_e;
 // 4-х режимность
 //    (*m_consts)["p"]   = 1 - 2.5*m_e;
 
     (*m_params)["tau"] = m_turnTime;
-    (*m_params)["e"]   = m_e;
+    (*m_params)["e"] = m_e;
     (*m_params)["Кол-во режимов I"] = countIInTask;
-    (*m_params)["GammaX_min"]   = gamMinX;
-    (*m_params)["GammaY_min"]   = gamMinY;
+    (*m_params)["GammaX_min"] = gamMinX;
+    (*m_params)["GammaY_min"] = gamMinY;
 
 }
 

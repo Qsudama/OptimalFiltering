@@ -14,10 +14,10 @@ using Math::Convert::DegToRad;
 
 LandingRejection3DLinear::LandingRejection3DLinear() : LogicDynamicTask()
     , m_turnTime(45.0) // Время t_y
-    , m_e(0.0) // Вероятность сбоя
-    , gamMinX(0.1)
-    , gamMinY(0.1)
-    , countIInTask(1) // Количество режимов
+    , m_e(0.2) // Вероятность сбоя
+    , gamMinX(0.01)
+    , gamMinY(0.01)
+    , countIInTask(2) // Количество режимов
 {
     m_info->setName("3-мерный спуск ЛА со сбоями 2-х датчиков");
     m_info->setType("Л-");
@@ -36,12 +36,14 @@ LandingRejection3DLinear::LandingRejection3DLinear() : LogicDynamicTask()
     m_meanV = Vector::Zero(m_dimV);
     m_meanW = Vector::Zero(m_dimW);
 
-    static double radian = 0.017453;
+    static double test_coeff = 0.1;
+
+    static double radian = test_coeff * 0.017453;
 
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
-    m_varX0(0, 0) = pow(0.015, 2); // Sigma_V_0
+    m_varX0(0, 0) = pow((test_coeff * 0.015), 2); // Sigma_V_0
     m_varX0(1, 1) = pow(radian, 2); // Sigma_theta_0
-    m_varX0(2, 2) = pow(7, 2); // Sigma_H_0
+    m_varX0(2, 2) = pow(test_coeff, 2); // Sigma_H_0
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
     m_varW = Matrix::Zero(m_dimW, m_dimW);
@@ -51,20 +53,21 @@ LandingRejection3DLinear::LandingRejection3DLinear() : LogicDynamicTask()
     m_varW(2, 2) = pow(0.00002, 2); // Sigma_W
     m_varW(3, 3) = pow(0.00002, 2); // Sigma_W
 
-    (*m_consts)["Kb"]     = KB;
-    (*m_consts)["Beta"]   = BB;
-    (*m_consts)["g"]      = GG;
-    (*m_consts)["R"]      = RR;
+    (*m_consts)["Kb"] = KB;
+    (*m_consts)["Beta"] = BB;
+    (*m_consts)["g"] = GG;
+    (*m_consts)["R"] = RR;
 
-    (*m_consts)["p"]   = 1 - m_e;
+    (*m_consts)["p"] = 1 - m_e;
 // 4-х режимность
 //    (*m_consts)["p"]   = 1 - 2.5*m_e;
 
     (*m_params)["tau"] = m_turnTime;
-    (*m_params)["e"]   = m_e;
+    (*m_params)["e"] = m_e;
     (*m_params)["Кол-во режимов I"] = countIInTask;
-    (*m_params)["GammaX_min"]   = gamMinX;
-    (*m_params)["GammaY_min"]   = gamMinY;
+    (*m_params)["GammaX_min"] = gamMinX;
+    (*m_params)["GammaY_min"] = gamMinY;
+    (*m_params)["MinDetD"] = minDetD;
 
 }
 
@@ -73,6 +76,7 @@ void LandingRejection3DLinear::loadParams()
     countI              = m_params->at("Кол-во режимов I");
     gamMinX             = m_params->at("GammaX_min");
     gamMinY             = m_params->at("GammaY_min");
+    minDetD             = m_params->at("MinDetD");
     m_turnTime          = m_params->at("tau");
     m_e                 = m_params->at("e");
 
@@ -367,6 +371,9 @@ Array<int> LandingRejection3DLinear::generateArrayI(int sizeS, int k) const // �
            array[i] = 2;
         }
     }
+
+//    logInstance.logStringWithQDebug("НОМЕР: " + std::to_string(k));
+//    logInstance.logArrayWithQDebug(array);
 
     return array;
 }

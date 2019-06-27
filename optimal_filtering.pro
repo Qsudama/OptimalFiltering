@@ -1,5 +1,7 @@
 QT             += core gui printsupport
 CONFIG         += c++11
+CONFIG         += thread
+CONFIG         += stl
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_MAC_SDK = macosx10.14
 
@@ -14,62 +16,6 @@ RESOURCES += \
     resources.qrc
 
 HEADERS += \
-    src/core/continuous_discrete_filter.h \
-    src/core/continuous_discrete_task.h \
-    src/core/continuous_filter.h \
-    src/core/continuous_task.h \
-    src/core/discrete_filter.h \
-    src/core/discrete_task.h \
-    src/core/filter.h \
-    src/core/filter_output.h \
-    src/core/filter_parameters.h \
-    src/core/function_time.h \
-    src/core/info.h \
-    src/core/task.h \
-    src/core/types_info.h \
-    src/filters/continuous/c_aof.h \
-    src/filters/continuous/c_fos.h \
-    src/filters/continuous_discrete/cd_aof.h \
-    src/filters/continuous_discrete/cd_dfos.h \
-    src/filters/continuous_discrete/cd_dfosbo.h \
-    src/filters/continuous_discrete/cd_fos.h \
-    src/filters/discrete/d_aof.h \
-    src/filters/discrete/d_fos.h \
-    src/filters/discrete/d_mfos.h \
-    src/filters/filters_factory.h \
-    src/gui/color_manager.h \
-    src/gui/filter_parameters_widget.h \
-    src/gui/filter_results_table.h \
-    src/gui/filter_start_buttons_box.h \
-    src/gui/font_manager.h \
-    src/gui/graph_sheet.h \
-    src/gui/graph_window.h \
-    src/gui/gui_config.h \
-    src/gui/main_window.h \
-    src/gui/matrix_widget.h \
-    src/gui/ranges_dialog.h \
-    src/gui/task_parameters_widget.h \
-    src/gui/task_widget.h \
-    src/math/constants.h \
-    src/math/convert.h \
-    src/math/linear_algebra.h \
-    src/math/math.h \
-    src/math/matrix.h \
-    src/math/random.h \
-    src/math/statistic.h \
-    src/tasks/continuous/c_landing_gauss.h \
-    src/tasks/continuous/c_landing_linear.h \
-    src/tasks/continuous/c_vanderpol_gauss.h \
-    src/tasks/continuous/c_vanderpol_linear.h \
-    src/tasks/continuous_discrete/cd_landing_gauss.h \
-    src/tasks/continuous_discrete/cd_landing_linear.h \
-    src/tasks/continuous_discrete/cd_vanderpol_gauss.h \
-    src/tasks/continuous_discrete/cd_vanderpol_linear.h \
-    src/tasks/discrete/d_landing_gauss.h \
-    src/tasks/discrete/d_landing_linear.h \
-    src/tasks/tasks_factory.h \
-    src/array.h \
-    src/config.h \
     third_party/eigen/src/Cholesky/LDLT.h \
     third_party/eigen/src/Cholesky/LLT.h \
     third_party/eigen/src/Cholesky/LLT_LAPACKE.h \
@@ -301,14 +247,139 @@ HEADERS += \
     third_party/eigen/StdList \
     third_party/eigen/StdVector \
     third_party/eigen/SVD \
+    third_party/eigen/CholmodSupport \
+    third_party/eigen/MetisSupport \
+    third_party/eigen/PardisoSupport \
+    third_party/eigen/PaStiXSupport \
+    third_party/eigen/Sparse \
+    third_party/eigen/SparseCholesky \
+    third_party/eigen/SparseCore \
+    third_party/eigen/SparseLU \
+    third_party/eigen/SparseQR \
+    third_party/eigen/SPQRSupport \
+    third_party/eigen/SuperLUSupport \
+    third_party/eigen/UmfPackSupport \
+    third_party/eigen/src/CholmodSupport/CholmodSupport.h \
+    third_party/eigen/src/Core/arch/Default/ConjHelper.h \
+    third_party/eigen/src/MetisSupport/MetisSupport.h \
+    third_party/eigen/src/PardisoSupport/PardisoSupport.h \
+    third_party/eigen/src/PaStiXSupport/PaStiXSupport.h \
+    third_party/eigen/src/SparseCholesky/SimplicialCholesky.h \
+    third_party/eigen/src/SparseCholesky/SimplicialCholesky_impl.h \
+    third_party/eigen/src/SparseCore/AmbiVector.h \
+    third_party/eigen/src/SparseCore/CompressedStorage.h \
+    third_party/eigen/src/SparseCore/ConservativeSparseSparseProduct.h \
+    third_party/eigen/src/SparseCore/MappedSparseMatrix.h \
+    third_party/eigen/src/SparseCore/SparseAssign.h \
+    third_party/eigen/src/SparseCore/SparseBlock.h \
+    third_party/eigen/src/SparseCore/SparseColEtree.h \
+    third_party/eigen/src/SparseCore/SparseCompressedBase.h \
+    third_party/eigen/src/SparseCore/SparseCwiseBinaryOp.h \
+    third_party/eigen/src/SparseCore/SparseCwiseUnaryOp.h \
+    third_party/eigen/src/SparseCore/SparseDenseProduct.h \
+    third_party/eigen/src/SparseCore/SparseDiagonalProduct.h \
+    third_party/eigen/src/SparseCore/SparseDot.h \
+    third_party/eigen/src/SparseCore/SparseFuzzy.h \
+    third_party/eigen/src/SparseCore/SparseMap.h \
+    third_party/eigen/src/SparseCore/SparseMatrix.h \
+    third_party/eigen/src/SparseCore/SparseMatrixBase.h \
+    third_party/eigen/src/SparseCore/SparsePermutation.h \
+    third_party/eigen/src/SparseCore/SparseProduct.h \
+    third_party/eigen/src/SparseCore/SparseRedux.h \
+    third_party/eigen/src/SparseCore/SparseRef.h \
+    third_party/eigen/src/SparseCore/SparseSelfAdjointView.h \
+    third_party/eigen/src/SparseCore/SparseSolverBase.h \
+    third_party/eigen/src/SparseCore/SparseSparseProductWithPruning.h \
+    third_party/eigen/src/SparseCore/SparseTranspose.h \
+    third_party/eigen/src/SparseCore/SparseTriangularView.h \
+    third_party/eigen/src/SparseCore/SparseUtil.h \
+    third_party/eigen/src/SparseCore/SparseVector.h \
+    third_party/eigen/src/SparseCore/SparseView.h \
+    third_party/eigen/src/SparseCore/TriangularSolver.h \
+    third_party/eigen/src/SparseLU/SparseLU.h \
+    third_party/eigen/src/SparseLU/SparseLU_column_bmod.h \
+    third_party/eigen/src/SparseLU/SparseLU_column_dfs.h \
+    third_party/eigen/src/SparseLU/SparseLU_copy_to_ucol.h \
+    third_party/eigen/src/SparseLU/SparseLU_gemm_kernel.h \
+    third_party/eigen/src/SparseLU/SparseLU_heap_relax_snode.h \
+    third_party/eigen/src/SparseLU/SparseLU_kernel_bmod.h \
+    third_party/eigen/src/SparseLU/SparseLU_Memory.h \
+    third_party/eigen/src/SparseLU/SparseLU_panel_bmod.h \
+    third_party/eigen/src/SparseLU/SparseLU_panel_dfs.h \
+    third_party/eigen/src/SparseLU/SparseLU_pivotL.h \
+    third_party/eigen/src/SparseLU/SparseLU_pruneL.h \
+    third_party/eigen/src/SparseLU/SparseLU_relax_snode.h \
+    third_party/eigen/src/SparseLU/SparseLU_Structs.h \
+    third_party/eigen/src/SparseLU/SparseLU_SupernodalMatrix.h \
+    third_party/eigen/src/SparseLU/SparseLU_Utils.h \
+    third_party/eigen/src/SparseLU/SparseLUImpl.h \
+    third_party/eigen/src/SparseQR/SparseQR.h \
+    third_party/eigen/src/SPQRSupport/SuiteSparseQRSupport.h \
+    third_party/eigen/src/SuperLUSupport/SuperLUSupport.h \
+    third_party/eigen/src/UmfPackSupport/UmfPackSupport.h \
     third_party/qcustomplot/qcustomplot.h \
+    src/core/continuous_discrete_filter.h \
+    src/core/continuous_discrete_task.h \
+    src/core/continuous_filter.h \
+    src/core/continuous_task.h \
+    src/core/discrete_filter.h \
+    src/core/discrete_task.h \
+    src/core/filter.h \
+    src/core/filter_output.h \
+    src/core/filter_parameters.h \
+    src/core/function_time.h \
+    src/core/info.h \
+    src/core/task.h \
+    src/core/types_info.h \
+    src/filters/continuous/c_aof.h \
+    src/filters/continuous/c_fos.h \
+    src/filters/continuous_discrete/cd_aof.h \
+    src/filters/continuous_discrete/cd_dfos.h \
+    src/filters/continuous_discrete/cd_dfosbo.h \
+    src/filters/continuous_discrete/cd_fos.h \
+    src/filters/discrete/d_aof.h \
+    src/filters/discrete/d_fos.h \
+    src/filters/discrete/d_mfos.h \
+    src/filters/filters_factory.h \
+    src/gui/color_manager.h \
+    src/gui/filter_parameters_widget.h \
+    src/gui/filter_results_table.h \
+    src/gui/filter_start_buttons_box.h \
+    src/gui/font_manager.h \
+    src/gui/graph_sheet.h \
+    src/gui/graph_window.h \
+    src/gui/gui_config.h \
+    src/gui/main_window.h \
+    src/gui/matrix_widget.h \
+    src/gui/ranges_dialog.h \
+    src/gui/task_parameters_widget.h \
+    src/gui/task_widget.h \
+    src/math/constants.h \
+    src/math/convert.h \
+    src/math/linear_algebra.h \
+    src/math/math.h \
+    src/math/matrix.h \
+    src/math/random.h \
+    src/math/statistic.h \
+    src/tasks/continuous/c_landing_gauss.h \
+    src/tasks/continuous/c_landing_linear.h \
+    src/tasks/continuous/c_vanderpol_gauss.h \
+    src/tasks/continuous/c_vanderpol_linear.h \
+    src/tasks/continuous_discrete/cd_landing_gauss.h \
+    src/tasks/continuous_discrete/cd_landing_linear.h \
+    src/tasks/continuous_discrete/cd_vanderpol_gauss.h \
+    src/tasks/continuous_discrete/cd_vanderpol_linear.h \
+    src/tasks/discrete/d_landing_gauss.h \
+    src/tasks/discrete/d_landing_linear.h \
+    src/tasks/tasks_factory.h \
+    src/array.h \
+    src/config.h \
     src/filters/discrete/d_duof.h \
     src/tasks/discrete/d_scalar_linear.h \
     src/core/logic_dynamic_filter.h \
     src/core/logic_dynamic_task.h \
     src/filters/logic_dynamic/ld_aof.h \
     src/filters/logic_dynamic/ld_fos.h \
-    src/filters/logic_dynamic/ld_fkp.h \
     src/filters/discrete/d_dfmp.h \
     src/filters/discrete/d_fkp.h \
     src/filters/discrete/d_dfkp.h \
@@ -316,7 +387,6 @@ HEADERS += \
     src/tasks/discrete/d_scalar_gauss.h \
     src/gui/pinv_method_setting_widget.h \
     src/gui/start_conditions_filter_widget.h \
-    src/tasks/logic_dynamic/ld_scalar_rejection_gauss.h \
     src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.h \
     src/helpers/log_in_file_manager.h \
     src/helpers/log_in_console_manager.h \
@@ -325,9 +395,19 @@ HEADERS += \
     src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.h \
     src/filters/logic_dynamic/ld_fkp_fbp.h \
     src/filters/filters_identifiers.h \
-    src/tasks/tasks_identifiers.h
+    src/tasks/tasks_identifiers.h \
+    src/tasks/discrete/d_vanderpol_linear.h \
+    src/tasks/discrete/d_vanderpol_gauss.h \
+    src/helpers/alert_helper.h \
+    src/tasks/continuous_discrete/cd_scalar_linear.h \
+    src/tasks/continuous/c_scalar_gauss.h \
+    src/tasks/continuous/c_scalar_linear.h \
+    src/gui/timer_results_table.h \
+    src/gui/custom_double_spin_box.h \
+    src/tasks/logic_dynamic/ld_scalar_rejection_linear.h
 
 SOURCES += \
+    third_party/qcustomplot/qcustomplot.cc \
     src/core/continuous_discrete_filter.cc \
     src/core/continuous_discrete_task.cc \
     src/core/continuous_filter.cc \
@@ -378,14 +458,12 @@ SOURCES += \
     src/tasks/discrete/d_landing_linear.cc \
     src/tasks/tasks_factory.cc \
     src/main.cc \
-    third_party/qcustomplot/qcustomplot.cc \
     src/filters/discrete/d_duof.cc \
     src/tasks/discrete/d_scalar_linear.cc \
     src/core/logic_dynamic_filter.cc \
     src/core/logic_dynamic_task.cc \
     src/filters/logic_dynamic/ld_aof.cc \
     src/filters/logic_dynamic/ld_fos.cc \
-    src/filters/logic_dynamic/ld_fkp.cc \
     src/filters/discrete/d_dfkp.cc \
     src/filters/discrete/d_dfmp.cc \
     src/filters/discrete/d_fkp.cc \
@@ -393,11 +471,22 @@ SOURCES += \
     src/tasks/discrete/d_scalar_gauss.cc \
     src/gui/pinv_method_setting_widget.cc \
     src/gui/start_conditions_filter_widget.cc \
-    src/tasks/logic_dynamic/ld_scalar_rejection_gauss.cc \
     src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.cc \
     src/helpers/log_in_file_manager.cc \
     src/helpers/log_in_console_manager.cc \
     src/helpers/timer_manager.cc \
     src/tasks/logic_dynamic/ld_landing_rejection_3d_linear.cc \
     src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.cc \
-    src/filters/logic_dynamic/ld_fkp_fbp.cc
+    src/filters/logic_dynamic/ld_fkp_fbp.cc \
+    src/tasks/discrete/d_vanderpol_linear.cpp \
+    src/tasks/discrete/d_vanderpol_gauss.cpp \
+    src/helpers/alert_helper.cc \
+    src/tasks/continuous_discrete/cd_scalar_linear.cc \
+    src/tasks/continuous/c_scalar_gauss.cc \
+    src/tasks/continuous/c_scalar_linear.cc \
+    src/gui/timer_results_table.cc \
+    src/gui/custom_double_spin_box.cc \
+    src/tasks/logic_dynamic/ld_scalar_rejection_linear.cc
+
+DISTFILES += \
+    third_party/eigen/CMakeLists.txt

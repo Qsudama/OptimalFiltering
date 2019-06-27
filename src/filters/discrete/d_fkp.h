@@ -22,6 +22,7 @@ namespace Filters {
         private:
 
             void computeParams(size_t k, Array<Math::Vector> &u, Math::Matrix &T);
+            void countSize(Matrix matrix);
         };
 
 

@@ -26,13 +26,13 @@ public:
 
     Vector a(const Vector &x) const override;
     Matrix B(const Vector &x) const override;
-    Vector c(const Vector &x) const override;
+    Vector c(const Vector &x, double measurementStep) const override;
     Vector tau(const Vector &m, const Matrix &D) const override;
     Matrix Theta(const Vector &m, const Matrix &D) const override;
     Matrix A(const Vector &m, const Matrix &D) const override;
-    Vector h(const Vector &m, const Matrix &D) const override;
-    Matrix G(const Vector &m, const Matrix &D) const override;
-    Matrix F(const Vector &m, const Matrix &D) const override;
+    Vector h(const Vector &m, const Matrix &D, double measurementStep) const override;
+    Matrix G(const Vector &m, const Matrix &D, double measurementStep) const override;
+    Matrix F(const Vector &m, const Matrix &D, double measurementStep) const override;
 
 
 protected:

@@ -17,7 +17,9 @@ using Math::Statistic::Mean;
 FOS::FOS(Core::PtrFilterParameters params, Core::PtrTask task)
     : ContinuousDiscreteFilter(params, task)
 {
-    m_info->setName(m_task->info()->type() + "ФМПнд-нп (p=" + std::to_string(task->dimX()) + ")");
+//    m_info->setName(m_task->info()->type() + "ФМПнд-нп (p=" + std::to_string(task->dimX()) + ")");
+    m_info->setName("ФМПнд-дп");
+    m_info->setDimension("(p=" + std::to_string(task->dimX()) + ")");
 }
 
 void FOS::algorithm()
@@ -46,11 +48,11 @@ void FOS::algorithm()
 
             // Индекс s пробегает по всем элементам выборки:
             for (size_t s = 0; s < m_params->sampleSize(); ++s) {
-                m_sampleY[s] = m_task->c(m_sampleX[s]);
+                m_sampleY[s] = m_task->c(m_sampleX[s], m_params->measurementStep());
 
-                h = m_task->h(m_sampleZ[s], Gamma);
-                G = m_task->G(m_sampleZ[s], Gamma);
-                F = m_task->F(m_sampleZ[s], Gamma);
+                h = m_task->h(m_sampleZ[s], Gamma, m_params->measurementStep());
+                G = m_task->G(m_sampleZ[s], Gamma, m_params->measurementStep());
+                F = m_task->F(m_sampleZ[s], Gamma, m_params->measurementStep());
 
                 m_sampleZ[s] = m_sampleZ[s] + Gamma * G.transpose() * Pinv(F) * (m_sampleY[s] - h);
             }

@@ -12,27 +12,31 @@ using Math::LinAlg::Pinv;
 using Math::Statistic::Mean;
 using Math::Statistic::Var;
 using Math::Statistic::Cov;
-using Math::MakeBlockVector;
-using Math::MakeBlockMatrix;
 
 
 FKP::FKP(Core::PtrFilterParameters params, Core::PtrTask task) : DiscreteFilter(params, task)
 {
     long ny = long(m_task->dimY());
     long p = ny * long(m_params->orderMult());
-    m_info->setName(m_task->info()->type() + "ФКПд (p=" + std::to_string(p) + ")");
+//    m_info->setFullName(m_task->info()->type() + "ФКПд (p=" + std::to_string(p) + ")");
+    m_info->setName("ФКПд");
+    m_info->setDimension("(p=" + std::to_string(p) + ")");
 }
 
-void FKP::zeroIteration() {
+void FKP::zeroIteration()
+{
     DiscreteFilter::zeroIteration();
 
     m_sampleS.resize(m_params->sampleSize());
 }
 
-void FKP::algorithm() {
+void FKP::algorithm()
+{
 
     Vector h, lambda;
     Matrix G, F, Psi, T;
+
+    registerSpecificParameter("lambda", 2, 3);
 
     long ny = long(m_task->dimY());
     long p = ny * long(m_params->orderMult());
@@ -60,6 +64,10 @@ void FKP::algorithm() {
             lambda = m_task->tau(sampleU[s], T);
             Psi    = m_task->Theta(sampleU[s], T);
 
+            double x = lambda[0];
+            countSize(Psi);
+            countSize(lambda);
+
             //ставим время обратно и продолжаем:
             m_task->setTime(m_result[k].time);
 
@@ -80,6 +88,14 @@ void FKP::algorithm() {
         writeResult(k);
         computeParams(k, sampleU, T);
     }
+}
+
+void FKP::countSize(Matrix matrix) {
+
+    long cols = matrix.cols();
+    long rows = matrix.rows();
+
+
 }
 
 void FKP::computeParams(size_t k, Array<Vector> &u, Matrix &T)

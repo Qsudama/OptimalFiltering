@@ -15,7 +15,6 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-
 /*!
  \brief Класс виджета, предаставляющего элементы управления параметрами фильтрации.
 
@@ -43,8 +42,7 @@ public slots:
      \param index - номер текущей вкладки.
      \details Слот. Реакция на изменение текущей вкладки в FilterStartButtonBox.
     */
-    void onFiltersFamilyChanged(int index);
-
+    void onFiltersFamilyChanged(Core::FILTER_TYPE index);
 
 private slots:
     /*!
@@ -120,6 +118,13 @@ private slots:
     void onSampleSizeChanged(int value);
 
     /*!
+     \brief Устанавливает новый номер выводимой реализации в трубке.
+     \param value - новое значение выводимой реализации.
+     \details Слот. Реакция на сигнал valueChanged(int) элемента m_sbSpecificRealization.
+    */
+    void onSpecificRealizationChanged(int value);
+
+    /*!
      \brief Обновляет значения во всех элементах.
      \note Параметры хранятся в экземпляре класса Core::FilterParameters.
             При изменении какого-либо параметра его значение предварительно корректируется
@@ -140,12 +145,16 @@ private:
     */
     void loadFonts();
 
-    //! \brief Инициализирует управляющие элементы и связывает их сигналы с нужными слотами.
+    //! \brief Инициализирует управляющие элементы.
     void initControls();
+
+    //! \brief Связывает управляющие элементы c их сигналами с нужными слотами.
+    void connectFieldSignals();
 
     //! \brief Устанавливает расположение всех элементов на виджете.
     void initLayouts();
 
+    void initLabels();
     /*!
      \brief Изменяет диапозон значений QDoubleSpinBox.
 
@@ -186,19 +195,30 @@ private:
     int computeMinimumWidth();
 
 
+    void enableLabel(QLabel *label, bool enable);
+
 private:
     QDoubleSpinBox *m_dsbMaxTime;
     QDoubleSpinBox *m_dsbMeasurementStep;
     QDoubleSpinBox *m_dsbPredictionStep;
-    QSpinBox *      m_sbPredictionCount;
+    QSpinBox *m_sbPredictionCount;
     QDoubleSpinBox *m_dsbIntegrationStep;
-    QSpinBox *      m_sbOrderMultiplicity;
-    QSpinBox *      m_argumentsCount;
-    QSpinBox *      m_sbSampleSize;
-    QRadioButton *  m_radioPredictionStep;
-    QRadioButton *  m_radioPredictionCount;
-    QCheckBox *     m_checkFixAll;
-    QPushButton *   m_btnUpdate;
+    QSpinBox *m_sbOrderMultiplicity;
+    QSpinBox *m_argumentsCount;
+    QSpinBox *m_sbSampleSize;
+    QSpinBox *m_sbSpecificRealization;
+    QRadioButton *m_radioPredictionStep;
+    QRadioButton *m_radioPredictionCount;
+    QCheckBox *m_checkFixAll;
+    QPushButton *m_btnUpdate;
+
+    QLabel *m_maxTimeLabel;
+    QLabel *m_measurementStepLabel;
+    QLabel *m_integrationStepLabel;
+    QLabel *m_orderMultiplicityLabel;
+    QLabel *m_argumentsCountLabel;
+    QLabel *m_sampleSizeLabel;
+    QLabel *m_specificRealizationLabel;
 
     /*!
      * \details Если true, то запрещает виджетам изменяться.
@@ -210,9 +230,9 @@ private:
      * Это может привести к изменению значения элемента, что вызовет соответствующий слот в ненужное время.
      * Чтобы разрулить это и нужна эта переменная.
      */
-    bool                      m_updateOn;
+    bool                      m_updateOn = true;
     Core::PtrFilterParameters m_parameters;
-    int                       m_currentFiltersFamily;
+    Core::FILTER_TYPE         m_currentFiltersFamily = Core::Discrete;
 
     QFont m_regularFont;
     QFont m_monotypeFont;

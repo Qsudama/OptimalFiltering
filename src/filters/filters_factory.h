@@ -19,9 +19,7 @@
 #include "src/filters/discrete/d_mdfmp.h"
 #include "src/filters/logic_dynamic/ld_aof.h"
 #include "src/filters/logic_dynamic/ld_fos.h"
-#include "src/filters/logic_dynamic/ld_fkp.h"
 #include "src/filters/logic_dynamic/ld_fkp_fbp.h"
-
 
 //! \brief Модуль, содержащий реализации конкретных алгоритмов фильтрации.
 

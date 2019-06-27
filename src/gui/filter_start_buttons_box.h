@@ -41,8 +41,8 @@ signals:
      \brief Сигнал. Отправляет сообщение о том, что текущая вкладка с кнопками изменилась.
      \param index - номер текущей вкладки.
     */
-    void filtersFamilyChanged(int);
 
+    void filtersFamilyChanged(Core::FILTER_TYPE);
 
 private slots:
     //@{
@@ -76,6 +76,7 @@ private slots:
     void onBtnLDFbpClicked();
     //@}
 
+    void tabWidgetCurrentChanged(int);
 
 private:
     /*!

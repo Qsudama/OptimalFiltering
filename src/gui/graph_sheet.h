@@ -25,10 +25,14 @@ struct GCurve {
 
     QVector<double> x;      /*!< Массив координат \f$x\f$ точек \f$p = (x,y)\f$. */
     QVector<double> y;      /*!< Массив координат \f$y\f$ точек \f$p = (x,y)\f$. */
+    QVector<double> y_up;      /*!< Массив координат \f$y_up\f$ точек \f$p = (x,y_up)\f$. */
+    QVector<double> y_down;      /*!< Массив координат \f$y_down\f$ точек \f$p = (x,y_down)\f$. */
     QString         name;   /*!< Название кривой. */
     int             number; /*!< Количество кривых с таким же названием. */
     QPen            pen; /*!< Экземпляр QPen, которым будет рисоваться кривая. */
+    QPen            up_down_pen; /*!< Экземпляр QPen, которым будут рисоваться кривые границ. */
     bool            visible; /*!< Видимость кривой (отображается или скрыта?) */
+    bool            with_side; /*!< С границами или нет */
 };
 
 /*!
@@ -129,7 +133,27 @@ public:
      \param pen - экземпляр QPen, которым будет рисоваться кривая.
      \param visible - видимость кривой (отображается или скрыта?)
     */
-    void addCurve(const QVector<double> &x, const QVector<double> &y, const QString &name, const QPen &pen,
+    void addCurve(const QVector<double> &x,
+                  const QVector<double> &y,
+                  const QString &name,
+                  const QPen &pen,
+                  bool visible = true,
+                  bool calc_ranges = true);
+
+    void addCurve(const QVector<double> &x,
+                  const QVector<double> &y,
+                  const QVector<double> &y_up,
+                  const QVector<double> &y_down,
+                  const QString &name,
+                  const QPen &penRealize,
+                  const QPen &penSide,
+                  bool visible = false);
+
+    void addICurve(const QVector<double> &x,
+                  const QVector<double> &y,
+                  const QString &name,
+                  const QPen &pen,
+                  GAxisRange customRange,
                   bool visible = true);
 
 

@@ -3,19 +3,31 @@
 
 #include "tasks_identifiers.h"
 #include "src/core/types_info.h"
+// continuous
 #include "src/tasks/continuous/c_landing_gauss.h"
 #include "src/tasks/continuous/c_landing_linear.h"
 #include "src/tasks/continuous/c_vanderpol_gauss.h"
 #include "src/tasks/continuous/c_vanderpol_linear.h"
+#include "src/tasks/continuous/c_scalar_linear.h"
+#include "src/tasks/continuous/c_scalar_gauss.h"
+
+// continuous_discrete
 #include "src/tasks/continuous_discrete/cd_landing_gauss.h"
 #include "src/tasks/continuous_discrete/cd_landing_linear.h"
 #include "src/tasks/continuous_discrete/cd_vanderpol_gauss.h"
 #include "src/tasks/continuous_discrete/cd_vanderpol_linear.h"
+#include "src/tasks/continuous_discrete/cd_scalar_linear.h"
+
+// discrete
 #include "src/tasks/discrete/d_landing_gauss.h"
 #include "src/tasks/discrete/d_landing_linear.h"
 #include "src/tasks/discrete/d_scalar_linear.h"
 #include "src/tasks/discrete/d_scalar_gauss.h"
-#include "src/tasks/logic_dynamic/ld_scalar_rejection_gauss.h"
+#include "src/tasks/discrete/d_vanderpol_linear.h"
+#include "src/tasks/discrete/d_vanderpol_gauss.h"
+
+// logic_dynamic
+#include "src/tasks/logic_dynamic/ld_scalar_rejection_linear.h"
 #include "src/tasks/logic_dynamic/ld_landing_rejection_6d_linear.h"
 #include "src/tasks/logic_dynamic/ld_landing_rejection_3d_linear.h"
 #include "src/tasks/logic_dynamic/ld_vanderpol_rejection_linear.h"

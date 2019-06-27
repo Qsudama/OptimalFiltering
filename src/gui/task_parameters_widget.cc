@@ -100,14 +100,14 @@ void TaskParametersWidget::initParameters(Core::PtrTask task, QVBoxLayout *mainL
     }
 
     for (auto &p : *(task->params().get())) {
-        QDoubleSpinBox *dsb = new QDoubleSpinBox;
-        dsb->setDecimals(6);
+        QCustomDoubleSpinBox *dsb = new QCustomDoubleSpinBox;
+        dsb->setDecimals(3);
         dsb->setMinimum(-9999999.0);
         dsb->setMaximum(9999999.0);
         dsb->setSingleStep(0.01);
         dsb->setValue(p.second);
         dsb->setAlignment(Qt::AlignRight);
-        dsb->setButtonSymbols(QDoubleSpinBox::NoButtons);
+        dsb->setButtonSymbols(QCustomDoubleSpinBox::NoButtons);
         dsb->setFont(FontManager::instance().mono(GuiConfig::FONT_SIZE_NORMAL));
         m_params.push_back(dsb);
 

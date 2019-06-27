@@ -35,7 +35,7 @@ LandingLinear::LandingLinear()
     m_varX0 = Matrix::Zero(m_dimX, m_dimX);
     m_varX0(0, 0) = pow(15E-3, 2);
     m_varX0(1, 1) = pow(DegToRad(1.0), 2);
-    m_varX0(2, 2) = pow(7.0, 2);
+    m_varX0(2, 2) = pow(1.0, 2);
 
     m_varV = Matrix::Zero(m_dimV, m_dimV);
 
@@ -88,7 +88,7 @@ Vector LandingLinear::c(const Vector &x) const
     Vector res(m_dimY);
 
     res[0] = CC * x[0] * x[0] * e * (cos(x[1]) - k(m_time) * sin(x[1]));
-    res[1] = CC * x[0] * x[0] * e * (sin(x[1]) - k(m_time) * cos(x[1]));
+    res[1] = CC * x[0] * x[0] * e * (sin(x[1]) + k(m_time) * cos(x[1]));
 
     return res;
 }
@@ -98,10 +98,10 @@ Matrix LandingLinear::D(const Vector &x) const
     Matrix res = Matrix::Zero(m_dimY, m_dimW);
     Vector cc  = c(x);
 
-    res(0, 0) = cc[0];
-    res(0, 2) = 1.0;
-    res(1, 1) = cc[1];
-    res(1, 3) = 1.0;
+    res(0, 0) = cc[0] * sigma_m;
+    res(0, 2) = 1.0 * sigma_a;
+    res(1, 1) = cc[1] * sigma_m;
+    res(1, 3) = 1.0 * sigma_a;
 
     return res;
 }
@@ -155,9 +155,9 @@ Matrix LandingLinear::G(const Vector &m, const Matrix & /*D*/) const
     res(0, 1) = -CC * m[0] * m[0] * e * sin(m[1]);
     res(0, 2) = -BB * CC * m[0] * m[0] * e * (cos(m[1]) - kt * sin(m[1]));
 
-    res(1, 0) = 2.0 * CC * m[0] * e * (sin(m[1]) - kt * cos(m[1]));
+    res(1, 0) = 2.0 * CC * m[0] * e * (sin(m[1]) + kt * cos(m[1]));
     res(1, 1) = CC * m[0] * m[0] * e * cos(m[1]);
-    res(1, 2) = -BB * CC * m[0] * m[0] * e * (sin(m[1]) - kt * cos(m[1]));
+    res(1, 2) = -BB * CC * m[0] * m[0] * e * (sin(m[1]) + kt * cos(m[1]));
 
     return res;
 }

@@ -23,6 +23,7 @@ public:
 
     //! \brief Возвращает способ задания начальных данных для фильтра в данный момент.
     INITIAL_CONDITIONS initialConditionForFilter();
+    QString initialConditionString();
 
 private:
     /*!

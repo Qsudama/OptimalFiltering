@@ -47,9 +47,15 @@ protected:
 
     void loadParams() override;
 
+    double C(int i) const;
+
 protected:
+    double m_e, m_cI2;
     double m_omega, m_alpha, m_beta, m_gamma, m_deltaT;
     int countIInTask; /*!< Количество режимов в задаче*/
+
+    double A1 = 0.9;
+    double A2 = 0.7071067812;
 
     long m_dimE;
     Math::Matrix m_E;
