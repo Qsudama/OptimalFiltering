@@ -49,6 +49,7 @@ protected:
     double momentLowerL(int k, int l, const Vector &m, const Matrix &D) const;
 
     Matrix mXi(const Vector &m, const Matrix &D) const;
+    Matrix mPi(const Vector &m, const Matrix &D) const;
 
     void loadParams() override;
 
